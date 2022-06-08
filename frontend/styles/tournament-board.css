@@ -1,0 +1,9 @@
+.playerCell {
+  background-color: lightgrey;
+}
+
+.emptyCell {
+  border-right: 0 !important;
+}
+
+

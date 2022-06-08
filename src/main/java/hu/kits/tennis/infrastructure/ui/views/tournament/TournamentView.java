@@ -1,0 +1,146 @@
+package hu.kits.tennis.infrastructure.ui.views.tournament;
+
+import java.util.List;
+import java.util.Optional;
+
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
+
+import hu.kits.tennis.Main;
+import hu.kits.tennis.common.Formatters;
+import hu.kits.tennis.domain.tournament.DrawMode;
+import hu.kits.tennis.domain.tournament.Tournament;
+import hu.kits.tennis.domain.tournament.Tournament.Status;
+import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.utr.Match;
+import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.infrastructure.ui.MainLayout;
+import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
+import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
+import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
+import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
+import hu.kits.tennis.infrastructure.ui.views.View;
+import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentBoard.PlayerWithResult;
+
+@Route(value = "tournament/:tournamentId", layout = MainLayout.class)
+@PageTitle("Tournament")
+public class TournamentView extends SplitViewFrame implements View, BeforeEnterObserver  {
+
+    private static final int MOBILE_BREAKPOINT = 800;
+    
+    private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
+    
+    private final ContestantsTable contestantsTable = new ContestantsTable(this);
+    private TournamentBoard tournamentBoard;
+    private VerticalLayout tableWithButton;
+    
+    private Tournament tournament;
+    
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+        initAppBar();
+        createUI();
+    }
+    
+    private Component createContent() {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+        
+        Label title = UIUtils.createH1Label(tournament.name());
+        Label date = UIUtils.createH3Label(Formatters.formatDateLong(tournament.date()));
+        //TournamentBoard tournamentBoard = createTournamentBoard(); 
+        
+        contestantsTable.setPlayers(tournament.players());
+        
+        tournamentBoard = createTournamentBoard();
+        
+        Button fillBoardButton = UIUtils.createButton("Táblára", VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
+        fillBoardButton.addClickListener(click -> fillBoard());
+        
+        tableWithButton = new VerticalLayout(contestantsTable, fillBoardButton);
+        tableWithButton.setPadding(false);
+        tableWithButton.setSizeUndefined();
+        tableWithButton.setAlignItems(Alignment.CENTER);
+        tableWithButton.setVisible(tournament.status() == Status.DRAFT);
+        
+        HorizontalLayout horizontalLayout = new HorizontalLayout(tournamentBoard, tableWithButton);
+        horizontalLayout.setWidthFull();
+        horizontalLayout.setFlexGrow(1, tournamentBoard);
+        
+        layout.add(title, date, horizontalLayout);
+        
+        return layout;
+    }
+
+    private void fillBoard() {
+        tournamentService.createMatches(tournament.id(), DrawMode.SIMPLE);
+        refresh();
+    }
+
+    private static void initAppBar() {
+        AppBar appBar = MainLayout.get().getAppBar();
+        appBar.removeAllActionItems();
+    }
+    
+    public void refresh() {
+        tournament = tournamentService.findTournament(tournament.id()).get();
+        createUI();
+    }
+    
+    private void createUI() {
+        setViewContent(createContent());
+        
+        UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleParts(e.getBodyClientWidth()));
+        UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleParts(e.getWidth()));
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        String tournamentId = event.getRouteParameters().get("tournamentId").orElse("");
+        Optional<Tournament> tournament = tournamentService.findTournament(tournamentId);
+        if(tournament.isEmpty()) {
+            KITSNotification.showError("A " + tournamentId + " azonosítójú verseny nem található");
+        } else {
+            this.tournament = tournament.get();
+        }
+    }
+    
+    public void updateContestants(List<Player> players) {
+        tournamentService.updateContestants(tournament, players);
+    }
+
+    private void updateVisibleParts(int width) {
+        boolean mobile = width < MOBILE_BREAKPOINT;
+        
+        tableWithButton.setVisible(!mobile || tournament.status() == Status.DRAFT);
+    }
+    
+    private TournamentBoard createTournamentBoard() {
+        int rounds = 5;
+        TournamentBoard tournamentBoard = new TournamentBoard(rounds);
+        
+        for(int matchNumber=1;matchNumber<=tournament.matches().size();matchNumber++) {
+            Match match = tournament.matches().get(matchNumber-1);
+            Player player1 = match.player1();
+            Player player2 = match.player2();
+            tournamentBoard.setPlayer(1, matchNumber, 1, new PlayerWithResult(player1, null));
+            tournamentBoard.setPlayer(1, matchNumber, 2, new PlayerWithResult(player2, null));
+        }
+        
+        return tournamentBoard;
+    }
+    
+}

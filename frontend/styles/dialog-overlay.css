@@ -1,0 +1,7 @@
+:host([theme~="reservation-dialog"]) [part="overlay"] {
+  overflow: hidden;
+}
+
+:host([theme~="reservation-dialog"]) [part="content"] {
+  padding: 0;
+}
