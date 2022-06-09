@@ -1,10 +1,14 @@
 package hu.kits.tennis.infrastructure.database;
 
+import static java.util.stream.Collectors.toMap;
+
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,6 +16,7 @@ import javax.sql.DataSource;
 
 import org.jdbi.v3.core.Jdbi;
 
+import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.MatchRepository;
 import hu.kits.tennis.domain.utr.MatchResult;
@@ -68,26 +73,31 @@ public class MatchJdbcRepository implements MatchRepository  {
     }
     
     @Override
-    public List<Match> loadMatchesForTournament(String tournamentId) {
+    public Map<Integer, Match> loadMatchesForTournament(String tournamentId) {
         String sql = String.format("SELECT * FROM %s WHERE %s = :tournamentId ORDER BY %s", TABLE_TENNIS_MATCH, COLUMN_TOURNAMENT_ID, COLUMN_TOURNAMENT_MATCH_NUMBER);
         
         Players players = playerRepository.loadAllPlayers();
         
-        return jdbi.withHandle(handle -> 
+        List<Pair<Integer, Match>> matches = jdbi.withHandle(handle -> 
             handle.createQuery(sql)
             .bind("tournamentId", tournamentId)
             .map((rs, ctx) -> mapToMatch(rs,players)).list());
+        
+        return matches.stream().collect(toMap(Pair::getFirst, Pair::getSecond));
     }
     
-    private static Match mapToMatch(ResultSet rs, Players players) throws SQLException {
-        return new Match(
+    private static Pair<Integer, Match> mapToMatch(ResultSet rs, Players players) throws SQLException {
+        int tournamentMatchNumber = rs.getInt(COLUMN_TOURNAMENT_MATCH_NUMBER);
+        Match match = new Match(
                 rs.getInt(COLUMN_ID),
                 rs.getString(COLUMN_TOURNAMENT_ID),
                 JdbiUtil.mapToOptionalInt(rs, COLUMN_TOURNAMENT_MATCH_NUMBER).orElse(null),
-                rs.getDate(COLUMN_DATETIME).toLocalDate(),
+                Optional.ofNullable(rs.getDate(COLUMN_DATETIME)).map(Date::toLocalDate).orElse(null),
                 players.get(rs.getInt(COLUMN_PLAYER1_ID)), 
                 players.get(rs.getInt(COLUMN_PLAYER2_ID)), 
                 MatchResult.parse(rs.getString(COLUMN_RESULT)));
+        
+        return new Pair<>(tournamentMatchNumber, match);
     }
 
     private static BookedMatch mapToBookedMatch(ResultSet rs, Players players) throws SQLException {
@@ -132,7 +142,7 @@ public class MatchJdbcRepository implements MatchRepository  {
     
     private static BookedMatch updateWithId(BookedMatch bookedMatch, int matchId) {
         return new BookedMatch(
-                new Match(matchId, bookedMatch.playedMatch().tournamentId(), bookedMatch.playedMatch().torunamentMatchNumber(),
+                new Match(matchId, bookedMatch.playedMatch().tournamentId(), bookedMatch.playedMatch().tournamentMatchNumber(),
                         bookedMatch.playedMatch().date(),
                         bookedMatch.playedMatch().player1(), bookedMatch.playedMatch().player2(), 
                         bookedMatch.playedMatch().result()),
@@ -144,10 +154,10 @@ public class MatchJdbcRepository implements MatchRepository  {
         Map<String, Object> valuesMap = new HashMap<>();
         valuesMap.put(COLUMN_ID, bookedMatch.playedMatch().id());
         valuesMap.put(COLUMN_TOURNAMENT_ID, bookedMatch.playedMatch().tournamentId());
-        valuesMap.put(COLUMN_TOURNAMENT_MATCH_NUMBER, bookedMatch.playedMatch().torunamentMatchNumber());
+        valuesMap.put(COLUMN_TOURNAMENT_MATCH_NUMBER, bookedMatch.playedMatch().tournamentMatchNumber());
         valuesMap.put(COLUMN_DATETIME, bookedMatch.playedMatch().date());
-        valuesMap.put(COLUMN_PLAYER1_ID, bookedMatch.playedMatch().player1().id());
-        valuesMap.put(COLUMN_PLAYER2_ID, bookedMatch.playedMatch().player2().id());
+        valuesMap.put(COLUMN_PLAYER1_ID, bookedMatch.playedMatch().player1() != null ? bookedMatch.playedMatch().player1().id() : null);
+        valuesMap.put(COLUMN_PLAYER2_ID, bookedMatch.playedMatch().player2() != null ? bookedMatch.playedMatch().player2().id() : null);
         valuesMap.put(COLUMN_RESULT, bookedMatch.playedMatch().result() != null ? bookedMatch.playedMatch().result().serialize() : null);
         /*
         valuesMap.put(COLUMN_PLAYER1_UTR, bookedMatch.player1UTR().value());
@@ -158,6 +168,20 @@ public class MatchJdbcRepository implements MatchRepository  {
         return valuesMap;
     }
     
+    @Override
+    public void setResult(int matchId, MatchResult matchResult) {
+        jdbi.useHandle(handle -> JdbiUtil.executeSimpleUpdate(jdbi, TABLE_TENNIS_MATCH, COLUMN_RESULT, matchResult.serialize(), COLUMN_ID, matchId));
+    }
+    
+    @Override
+    public void setPlayer1(int matchId, Player player) {
+        jdbi.useHandle(handle -> JdbiUtil.executeSimpleUpdate(jdbi, TABLE_TENNIS_MATCH, COLUMN_PLAYER1_ID, player.id(), COLUMN_ID, matchId));
+    }
+
+    @Override
+    public void setPlayer2(int matchId, Player player) {
+        jdbi.useHandle(handle -> JdbiUtil.executeSimpleUpdate(jdbi, TABLE_TENNIS_MATCH, COLUMN_PLAYER2_ID, player.id(), COLUMN_ID, matchId));
+    }
     
     @Override
     public void deleteMatch(int matchId) {

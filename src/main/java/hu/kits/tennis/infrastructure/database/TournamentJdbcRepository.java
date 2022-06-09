@@ -58,7 +58,7 @@ public class TournamentJdbcRepository implements TournamentRepository {
             .map((rs, ctx) -> mapToTournament(rs, contestantsByTournament, Map.of())).list());
     }
     
-    private static Tournament mapToTournament(ResultSet rs, Map<String, List<Contestant>> contestantsByTournament, Map<String, List<Match>> matchesByTournament) throws SQLException {
+    private static Tournament mapToTournament(ResultSet rs, Map<String, List<Contestant>> contestantsByTournament, Map<String, Map<Integer, Match>> matchesByTournament) throws SQLException {
         
         String tournamentId = rs.getString(COLUMN_ID);
         
@@ -71,7 +71,7 @@ public class TournamentJdbcRepository implements TournamentRepository {
                 rs.getInt(COLUMN_BEST_OF_N_SETS),
                 contestantsByTournament.getOrDefault(tournamentId, List.of()),
                 Status.valueOf(rs.getString(COLUMN_STATUS)),
-                matchesByTournament.getOrDefault(tournamentId, List.of()));
+                matchesByTournament.getOrDefault(tournamentId, Map.of()));
     }
     
     @Override
@@ -98,7 +98,7 @@ public class TournamentJdbcRepository implements TournamentRepository {
         
         Players players = playerRepository.loadAllPlayers();
         List<Contestant> contestants = contestantDBTable.loadAllContestantsForTournament(players, tournamentId);
-        List<Match> matches = matchRepository.loadMatchesForTournament(tournamentId);
+        Map<Integer, Match> matches = matchRepository.loadMatchesForTournament(tournamentId);
         
         String sql = String.format("SELECT * FROM %s WHERE %s = :id", TABLE_TOURNAMENT, COLUMN_ID);
         

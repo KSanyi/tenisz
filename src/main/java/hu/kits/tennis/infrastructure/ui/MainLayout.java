@@ -36,7 +36,6 @@ import hu.kits.tennis.infrastructure.ui.vaadin.util.css.Overflow;
 import hu.kits.tennis.infrastructure.ui.views.View;
 import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentsView;
 import hu.kits.tennis.infrastructure.ui.views.users.UsersView;
-import hu.kits.tennis.infrastructure.ui.views.utr.matches.MatchesView;
 import hu.kits.tennis.infrastructure.ui.views.utr.ranking.UTRRankingView;
 import hu.kits.tennis.infrastructure.web.CookieUtil;
 
@@ -119,10 +118,14 @@ public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavi
 		
 	    menu.addNaviItem(VaadinIcon.USERS, "Felhasználók", UsersView.class);
         
+	    menu.addNaviItem(VaadinIcon.TROPHY, "Versenyek", TournamentsView.class);
+	    
+	    /*
         NaviItem utrMenu = menu.addNaviItem(VaadinIcon.AUTOMATION, "UTR", null);
         menu.addNaviItem(utrMenu, "Meccsek", MatchesView.class);
         menu.addNaviItem(utrMenu, "UTR ranking", UTRRankingView.class);
         menu.addNaviItem(utrMenu, "Versenyek", TournamentsView.class);
+        */
 	}
 
 	/**

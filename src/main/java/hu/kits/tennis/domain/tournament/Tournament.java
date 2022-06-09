@@ -5,8 +5,10 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.Player;
 
@@ -18,11 +20,11 @@ public record Tournament(String id,
         int bestOfNSets,
         List<Contestant> contestants, 
         Status status, 
-        List<Match> matches) {
-
+        Map<Integer, Match> matches) {
+    
     public static Tournament createNew(String name, String venue, LocalDate date, Tournament.Type type, int bestOfNSets) {
         String id = UUID.randomUUID().toString().substring(0, 8);
-        return new Tournament(id, date, name, venue, type, bestOfNSets, List.of(), Status.DRAFT, List.of());
+        return new Tournament(id, date, name, venue, type, bestOfNSets, List.of(), Status.DRAFT, Map.of());
     }
     
     public static enum Type {
@@ -45,6 +47,56 @@ public record Tournament(String id,
     @Override
     public String toString() {
         return name + "(" + id + ")";
+    }
+
+    public int numberOfRounds() {
+        int numberOfContestants = contestants.size();
+        for(int i=1;i<twoPows.length;i++) {
+            if(numberOfContestants <= twoPows[i]) {
+                return i;
+            }
+        }
+        throw new IllegalArgumentException();
+    }
+    
+    public Match getMatch(int round, int matchNumberInRound) {
+        return matches.get(matchNumber(round, matchNumberInRound));
+    }
+    
+    private int matchNumber(int round, int matchNumberInRound) {
+        int numberOfRounds = numberOfRounds();
+        return pow2(numberOfRounds) - pow2(numberOfRounds - round + 1) + matchNumberInRound;
+    }
+    
+    public Pair<Integer, Integer> roundAndMatchNumberInRound(int matchNumber) {
+        int numberOfRounds = numberOfRounds();
+        int counter = 0;
+        int round = 1;
+        for(round=1;round<twoPows.length;round++) {
+            if(matchNumber > counter) {
+                counter += twoPows[numberOfRounds - round];
+            } else {
+                break;
+            }
+        }
+        round--;
+        int matchNumberInRound = matchNumber - (pow2(numberOfRounds) - pow2(numberOfRounds - round + 1));
+        
+        return new Pair<>(round, matchNumberInRound);
+    }
+    
+    public int nextRoundMatchNumber(Integer matchNumber) {
+        var roundAndMatchNumberInRound = roundAndMatchNumberInRound(matchNumber);
+        int round = roundAndMatchNumberInRound.getFirst();
+        int matchNumberInRound = roundAndMatchNumberInRound.getSecond();
+        
+        return matchNumber(round + 1, (matchNumberInRound + 1) / 2);
+    }
+    
+    private static final int[] twoPows = new int[] {1, 2, 4, 8, 16, 32, 64, 128, 256};
+
+    private static int pow2(int x) {
+        return twoPows[x];
     }
     
 }

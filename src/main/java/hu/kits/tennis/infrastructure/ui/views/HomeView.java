@@ -6,7 +6,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import hu.kits.tennis.infrastructure.ui.views.utr.ranking.UTRRankingView;
+import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentsView;
 
 @Route(value = "")
 @PageTitle("Home")
@@ -15,7 +15,7 @@ public class HomeView extends Div {
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
-        UI.getCurrent().navigate(UTRRankingView.class);
+        UI.getCurrent().navigate(TournamentsView.class);
     }
     
 }

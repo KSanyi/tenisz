@@ -16,6 +16,7 @@ import hu.kits.tennis.domain.tournament.Tournament.Status;
 import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchRepository;
+import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.Player;
 
 public class TournamentService {
@@ -97,6 +98,40 @@ public class TournamentService {
             }
             
             logger.info("{} matches created for {}", matches.size(), tournament);
+        }
+        
+    }
+
+    public void setTournamentMatchResult(Match match, MatchResult matchResult) {
+        
+        matchRepository.setResult(match.id(), matchResult);
+        
+        Tournament tournament = tournamentRepository.findTournament(match.tournamentId()).get();
+        
+        if(tournament.status() == Status.DRAFT) {
+            tournamentRepository.updateTournamentStatus(match.tournamentId(), Status.LIVE);
+        }
+        
+        Player winner = matchResult.isPlayer1Winner() ? match.player1() : match.player2();
+        Player loser = matchResult.isPlayer1Winner() ? match.player2() : match.player1();
+        
+        int nextRoundMatchNumber = tournament.nextRoundMatchNumber(match.tournamentMatchNumber());
+        
+        Match nextMatch = tournament.matches().get(nextRoundMatchNumber);
+        
+        if(nextMatch == null) {
+            if(match.tournamentMatchNumber() % 2 == 1) {
+                nextMatch = new Match(nextRoundMatchNumber, match.tournamentId(), nextRoundMatchNumber, null, winner, null, null);
+            } else {
+                nextMatch = new Match(nextRoundMatchNumber, match.tournamentId(), nextRoundMatchNumber, null, null, winner, null);
+            }
+            matchRepository.save(new BookedMatch(nextMatch, null, null, null, null));
+        } else {
+            if(match.tournamentMatchNumber() % 2 == 1) {
+                matchRepository.setPlayer1(nextMatch.id(), winner);    
+            } else {
+                matchRepository.setPlayer2(nextMatch.id(), winner);
+            }
         }
         
     }

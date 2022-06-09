@@ -2,6 +2,7 @@ package hu.kits.tennis.infrastructure.ui.views.tournament;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
@@ -20,11 +21,13 @@ import com.vaadin.flow.router.Route;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.Formatters;
+import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.tournament.DrawMode;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Status;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.Match;
+import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
@@ -32,7 +35,6 @@ import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 import hu.kits.tennis.infrastructure.ui.views.View;
-import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentBoard.PlayerWithResult;
 
 @Route(value = "tournament/:tournamentId", layout = MainLayout.class)
 @PageTitle("Tournament")
@@ -61,11 +63,15 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         
         Label title = UIUtils.createH1Label(tournament.name());
         Label date = UIUtils.createH3Label(Formatters.formatDateLong(tournament.date()));
-        //TournamentBoard tournamentBoard = createTournamentBoard(); 
         
         contestantsTable.setPlayers(tournament.players());
         
-        tournamentBoard = createTournamentBoard();
+        Consumer<Pair<Match, MatchResult>> matchResultSetCallback = p -> {
+            tournamentService.setTournamentMatchResult(p.getFirst(), p.getSecond());
+            refresh();
+        };
+        
+        tournamentBoard = new TournamentBoard(tournament, matchResultSetCallback);
         
         Button fillBoardButton = UIUtils.createButton("Táblára", VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
         fillBoardButton.addClickListener(click -> fillBoard());
@@ -126,21 +132,6 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         boolean mobile = width < MOBILE_BREAKPOINT;
         
         tableWithButton.setVisible(!mobile || tournament.status() == Status.DRAFT);
-    }
-    
-    private TournamentBoard createTournamentBoard() {
-        int rounds = 5;
-        TournamentBoard tournamentBoard = new TournamentBoard(rounds);
-        
-        for(int matchNumber=1;matchNumber<=tournament.matches().size();matchNumber++) {
-            Match match = tournament.matches().get(matchNumber-1);
-            Player player1 = match.player1();
-            Player player2 = match.player2();
-            tournamentBoard.setPlayer(1, matchNumber, 1, new PlayerWithResult(player1, null));
-            tournamentBoard.setPlayer(1, matchNumber, 2, new PlayerWithResult(player2, null));
-        }
-        
-        return tournamentBoard;
     }
     
 }
