@@ -148,7 +148,8 @@ class ScoreFields extends HorizontalLayout {
 
     private TextField createScoreField() {
         TextField scoreField = new TextField();
-        scoreField.setPattern("\\d{1,2}");
+        scoreField.setPattern("[0-9]*");
+        scoreField.setMaxLength(2);
         scoreField.setPreventInvalidInput(true);
         scoreField.setAutoselect(true);
         scoreField.setWidth(40, Unit.PIXELS);
