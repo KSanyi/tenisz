@@ -10,14 +10,10 @@ import com.vaadin.flow.component.grid.dataview.GridListDataView;
 import com.vaadin.flow.component.grid.dnd.GridDropLocation;
 import com.vaadin.flow.component.grid.dnd.GridDropMode;
 
-import hu.kits.tennis.Main;
-import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.Player;
 
 class ContestantsTable extends Grid<Player> {
 
-    private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
-    
     private GridListDataView<Player> dataView;
     
     private Player draggedItem;
@@ -41,7 +37,7 @@ class ContestantsTable extends Grid<Player> {
             .setAutoWidth(true)
             .setFlexGrow(1);
         
-        setWidth("400px");
+        setWidth("300px");
         
         this.setAllRowsVisible(true);
         

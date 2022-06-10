@@ -22,10 +22,10 @@ public class BrandExpression extends Div {
         logo.setAlt(" logo");
         logo.setClassName(CLASS_NAME + "__logo");
 
-        title = UIUtils.createH3Label("OPFR");
+        title = UIUtils.createH3Label("TENISZ");
         title.addClassName(CLASS_NAME + "__title");
 
-        add(logo, title);
+        add(title);
     }
     
 }

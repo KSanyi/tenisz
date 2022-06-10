@@ -14,7 +14,6 @@ import com.vaadin.flow.component.datepicker.DatePickerVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -34,8 +33,7 @@ public class MatchDialog extends Dialog {
     
     private final Match match;
     
-    private final ScoreFields scoreFields1;
-    private final ScoreFields scoreFields2;
+    private final ScoreFields scoreFields;
     
     private final Button saveButton = UIUtils.createButton("Mentés", ButtonVariant.LUMO_PRIMARY);
     
@@ -46,8 +44,7 @@ public class MatchDialog extends Dialog {
         this.match = match;
         this.matchResulCallback = matchResulCallback;
         
-        scoreFields1 = new ScoreFields(bestOfNSets);
-        scoreFields2 = new ScoreFields(bestOfNSets);
+        scoreFields = new ScoreFields(bestOfNSets);
 
         setDraggable(true);
         setResizable(true);
@@ -73,17 +70,16 @@ public class MatchDialog extends Dialog {
         datePicker.setWidth("130px");
         datePicker.setLocale(new Locale("HU"));
         
-        HorizontalLayout player1Layout = new HorizontalLayout(createPlayerLabel(match.player1()), scoreFields1);
-        player1Layout.setAlignItems(Alignment.CENTER);
-        player1Layout.setJustifyContentMode(JustifyContentMode.BETWEEN);
-        player1Layout.setWidthFull();
-        HorizontalLayout player2Layout = new HorizontalLayout(createPlayerLabel(match.player2()), scoreFields2);
-        player2Layout.setWidthFull();
-        player2Layout.setAlignItems(Alignment.CENTER);
-        player2Layout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+        VerticalLayout playersLayout = new VerticalLayout(createPlayerLabel(match.player1()), createPlayerLabel(match.player2()));
+        playersLayout.setPadding(false);
+        
+        HorizontalLayout playersWithScoresLayout = new HorizontalLayout(playersLayout, scoreFields);
+        playersWithScoresLayout.setSizeFull();
+        playersWithScoresLayout.setAlignItems(Alignment.CENTER);
+        
         Div spacer = new Div();
         spacer.setHeight("10px");
-        layout.add(datePicker, spacer, player1Layout, player2Layout);
+        layout.add(datePicker, spacer, playersWithScoresLayout);
         
         return layout;
     }
@@ -93,16 +89,12 @@ public class MatchDialog extends Dialog {
     }
 
     private void save() {
-        try {
-            
-            List<SetResult> setResults = new ArrayList<>();
-            for(int i=0;i<scoreFields1.size();i++) {
-                setResults.add(new SetResult(scoreFields1.getGamesForSet(i), scoreFields1.getGamesForSet(i)));
-            }
-            
-            matchResulCallback.accept(new Pair<>(match, new MatchResult(setResults)));
+        
+        if(scoreFields.hasValidScore()) {
+            MatchResult matchResult = scoreFields.getMatchResult();
+            matchResulCallback.accept(new Pair<>(match, matchResult));
             close();
-        } catch(Exception ex) {
+        } else {
             KITSNotification.showError("Az eredményt meg kell adni");
         }
     }
@@ -111,34 +103,88 @@ public class MatchDialog extends Dialog {
 
 class ScoreFields extends HorizontalLayout {
     
-    private final List<TextField> scoreFields = new ArrayList<>();
+    private final List<Pair<TextField, TextField>> scoreFields = new ArrayList<>();
+    
+    private final int setsNeedToWin;
     
     ScoreFields(int bestOfNSets) {
-        int minimumSets = bestOfNSets / 2 + 1;
-        for(int i=0;i<minimumSets;i++) {
-            TextField scoreField = createScoreField();
-            scoreFields.add(scoreField);
-            add(scoreField);
+        setsNeedToWin = bestOfNSets / 2 + 1;
+        for(int i=0;i<setsNeedToWin;i++) {
+            addSet();
         }
     }
     
-    public int getGamesForSet(int i) {
-        return Integer.parseInt(scoreFields.get(i).getValue());
-    }
-
-    public int size() {
-        return scoreFields.size();
-    }
-
-    private static TextField createScoreField() {
-        TextField scoreField1 = new TextField();
-        scoreField1.setPattern("\\d{1,2}");
-        scoreField1.setPreventInvalidInput(true);
-        scoreField1.setAutoselect(true);
-        scoreField1.setWidth(45, Unit.PIXELS);
-        scoreField1.addThemeVariants(TextFieldVariant.LUMO_ALIGN_CENTER);
+    MatchResult getMatchResult() {
+        List<SetResult> setResults = new ArrayList<>();
         
-        return scoreField1;
+        for(int setNumber=0;setNumber<scoreFields.size();setNumber++) {
+            setResults.add(getSetResult(setNumber));
+        }
+        return new MatchResult(setResults);
+    }
+    
+    private SetResult getSetResult(int setNumber) {
+        var fields = scoreFields.get(setNumber);
+        return new SetResult(getScore(fields.getFirst()), getScore(fields.getSecond()));
+    }
+
+    boolean hasValidScore() {
+        return scoreFields.stream().allMatch(fields -> hasValidGameNumber(fields.getFirst()) && hasValidGameNumber(fields.getSecond()));
+    }
+    
+    private static boolean hasValidGameNumber(TextField textField) {
+        String value = textField.getValue();
+        try {
+            int intValue = Integer.parseInt(value);
+            return intValue >= 0;
+        } catch(Exception ex) {
+            return false;
+        }
+    }
+    
+    int getScore(TextField textField) {
+        return Integer.parseInt(textField.getValue());
+    }
+
+    private TextField createScoreField() {
+        TextField scoreField = new TextField();
+        scoreField.setPattern("\\d{1,2}");
+        scoreField.setPreventInvalidInput(true);
+        scoreField.setAutoselect(true);
+        scoreField.setWidth(40, Unit.PIXELS);
+        scoreField.addThemeVariants(TextFieldVariant.LUMO_ALIGN_CENTER);
+        scoreField.addValueChangeListener(e -> scoreChanged());
+        
+        return scoreField;
+    }
+
+    private void scoreChanged() {
+        int player1Sets = 0;
+        int player2Sets = 0;
+        if(hasValidScore()) {
+            for(int setNumber=0;setNumber<scoreFields.size();setNumber++) {
+                SetResult setResult = getSetResult(setNumber);
+                if(setResult.isPlayer1Winner()) {
+                    player1Sets++;
+                } else {
+                    player2Sets++;
+                }
+            }
+            if(player1Sets < setsNeedToWin && player2Sets < setsNeedToWin) {
+                addSet();
+            }
+        }
+    }
+
+    private void addSet() {
+        TextField scoreField1 = createScoreField();
+        TextField scoreField2 = createScoreField();
+        scoreFields.add(new Pair<>(scoreField1, scoreField2));
+        VerticalLayout verticalLayout = new VerticalLayout(scoreField1, scoreField2);
+        verticalLayout.setPadding(false);
+        verticalLayout.setSpacing(false);
+        add(verticalLayout);
+        scoreField1.focus();
     }
     
 }

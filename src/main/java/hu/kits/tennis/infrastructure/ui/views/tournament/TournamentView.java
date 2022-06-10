@@ -61,8 +61,8 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         VerticalLayout layout = new VerticalLayout();
         layout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         
-        Label title = UIUtils.createH1Label(tournament.name());
-        Label date = UIUtils.createH3Label(Formatters.formatDateLong(tournament.date()));
+        Label title = UIUtils.createH2Label(tournament.name());
+        //Label date = UIUtils.createH3Label(Formatters.formatDateLong(tournament.date()));
         
         contestantsTable.setPlayers(tournament.players());
         
@@ -75,6 +75,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         
         Button fillBoardButton = UIUtils.createButton("Táblára", VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
         fillBoardButton.addClickListener(click -> fillBoard());
+        fillBoardButton.setVisible(tournament.status() == Status.DRAFT);
         
         tableWithButton = new VerticalLayout(contestantsTable, fillBoardButton);
         tableWithButton.setPadding(false);
@@ -86,7 +87,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         horizontalLayout.setWidthFull();
         horizontalLayout.setFlexGrow(1, tournamentBoard);
         
-        layout.add(title, date, horizontalLayout);
+        layout.add(title, horizontalLayout);
         
         return layout;
     }

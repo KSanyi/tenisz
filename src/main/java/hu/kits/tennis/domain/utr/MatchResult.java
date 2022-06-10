@@ -103,7 +103,7 @@ public record MatchResult(List<SetResult> setResults) {
     public static MatchResult parse(String stringValue) {
         if(stringValue == null || stringValue.isBlank()) return null;
         try {
-            return new MatchResult(Stream.of(stringValue.split(","))
+            return new MatchResult(Stream.of(stringValue.split(" "))
                     .map(String::trim)
                     .map(SetResult::parse)
                     .collect(toList()));    

@@ -2,6 +2,7 @@ package hu.kits.tennis.infrastructure.ui.views.tournament;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.vaadin.flow.component.dependency.CssImport;
@@ -38,7 +39,7 @@ class TournamentBoard extends Grid<Row> {
         for(int i=1;i<=rounds+1;i++) {
             int round = i;
             
-            addColumn(row -> playerName(row, round - 1))
+            addColumn(row -> playerNameAndResult(row, round - 1))
                 .setKey(String.valueOf(round))
                 .setHeader(createHeader(rounds, round))
                 .setTextAlign(ColumnTextAlign.CENTER)
@@ -58,8 +59,14 @@ class TournamentBoard extends Grid<Row> {
             var roundAndMatchNumberInRound = tournament.roundAndMatchNumberInRound(match.tournamentMatchNumber());
             int round = roundAndMatchNumberInRound.getFirst();
             int matchNumberInRound = roundAndMatchNumberInRound.getSecond();
-            setPlayer(round, matchNumberInRound, 1, new PlayerWithResult(player1, null));
-            setPlayer(round, matchNumberInRound, 2, new PlayerWithResult(player2, null));
+            
+            Optional<Match> prevMatchForPlayer1 = tournament.findPrevMatch(match, player1);
+            MatchResult prevMatchResultForPlayer1 = prevMatchForPlayer1.map(Match::result).orElse(null);
+            Optional<Match> prevMatchForPlayer2 = tournament.findPrevMatch(match, player2);
+            MatchResult prevMatchResultForPlayer2 = prevMatchForPlayer2.map(Match::result).orElse(null);
+            
+            setPlayer(round, matchNumberInRound, 1, new PlayerWithResult(player1, prevMatchResultForPlayer1));
+            setPlayer(round, matchNumberInRound, 2, new PlayerWithResult(player2, prevMatchResultForPlayer2));
         }
         
         setAllRowsVisible(true);
@@ -73,8 +80,13 @@ class TournamentBoard extends Grid<Row> {
         addThemeVariants(GridVariant.LUMO_COMPACT);
     }
     
-    private static String playerName(Row row, int round) {
-        return row.values.get(round) != null && row.values.get(round).player != null ? row.values.get(round).player.name() : null;
+    private static String playerNameAndResult(Row row, int round) {
+        PlayerWithResult playerWithResult = row.values.get(round);
+        if(playerWithResult != null && playerWithResult.player != null) {
+            return playerWithResult.player.name() + (playerWithResult.result() != null ? (" " + playerWithResult.result()) : ""); 
+        } else {
+            return null;
+        }
     }
     
     private void itemClicked(ItemClickEvent<Row> e) {
@@ -117,7 +129,7 @@ class TournamentBoard extends Grid<Row> {
         }
     }
 
-    void setPlayer(int round, int match, int playerNumber, PlayerWithResult playerWithResult) {
+    private void setPlayer(int round, int match, int playerNumber, PlayerWithResult playerWithResult) {
         int startRow = pow2(round-1) - 1;
         
         int rowsBetweenMatches = pow2(round + 1);

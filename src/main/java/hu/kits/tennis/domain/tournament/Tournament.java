@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toList;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import hu.kits.tennis.common.Pair;
@@ -97,6 +98,27 @@ public record Tournament(String id,
 
     private static int pow2(int x) {
         return twoPows[x];
+    }
+
+    public Optional<Match> findPrevMatch(Match match, Player player) {
+        var roundAndMatchNumberInRound = roundAndMatchNumberInRound(match.tournamentMatchNumber());
+        int round = roundAndMatchNumberInRound.getFirst();
+        int matchNumberInRound = roundAndMatchNumberInRound.getSecond();
+        Match match1 = getMatch(round-1, matchNumberInRound * 2 - 1);
+        if(match1 != null && match1.hasPlayed(player)) {
+            if(match1.player2().equals(player)) {
+                match1 = match1.swap();
+            }
+            return Optional.of(match1);
+        }
+        Match match2 = getMatch(round-1, matchNumberInRound * 2);
+        if(match2 != null && match2.hasPlayed(player)) {
+            if(match2.player2().equals(player)) {
+                match2 = match2.swap();
+            }
+            return Optional.of(match2);
+        }
+        return Optional.empty();
     }
     
 }
