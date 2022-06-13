@@ -52,7 +52,7 @@ public class UTRCalculator {
         int matchesToAdd = 1;
         List<BookedMatch> extendedMatches = new ArrayList<>(matches);
         for(int i=0;i<matchesToAdd;i++) {
-            extendedMatches.add(new BookedMatch(new Match(0, null, null, LocalDate.MIN, player, null, new MatchResult(List.of(new SetResult(6,0)))), 
+            extendedMatches.add(new BookedMatch(new Match(0, null, null, null, LocalDate.MIN, player, null, new MatchResult(List.of(new SetResult(6,0)))), 
                     UTR.UNDEFINED, UTR.UNDEFINED, utr, UTR.UNDEFINED));
         }
         return extendedMatches;

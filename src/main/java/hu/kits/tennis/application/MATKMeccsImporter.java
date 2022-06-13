@@ -56,7 +56,7 @@ public class MATKMeccsImporter {
                 Player player1 = findOrCreatePlayer(players, playerOne);
                 Player player2 = findOrCreatePlayer(players, playerTwo);
                 
-                Match playedMatch = new Match(0, null, null, date, player1, player2, new MatchResult(List.of(new SetResult(score1, score2))));
+                Match playedMatch = new Match(0, null, null, null, date, player1, player2, new MatchResult(List.of(new SetResult(score1, score2))));
                 
                 utrService.calculatUTRAndSaveMatch(playedMatch);
                 

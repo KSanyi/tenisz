@@ -11,8 +11,10 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.ItemClickEvent;
 
+import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.tournament.Tournament;
+import hu.kits.tennis.domain.tournament.Tournament.Board;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.Player;
@@ -21,20 +23,21 @@ import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentBoard.Row;
 @CssImport(value = "./styles/tournament-board.css", themeFor = "vaadin-grid")
 class TournamentBoard extends Grid<Row> {
 
-    private static final int[] twoPows = new int[] {1, 2, 4, 8, 16, 32, 64, 128, 256};
-    
     private final Tournament tournament;
+    
+    private final Board board;
     
     private final List<Row> rows = new ArrayList<>();
     
     private final Consumer<Pair<Match, MatchResult>> matchResultSetCallback;
     
-    TournamentBoard(Tournament tournament, Consumer<Pair<Match, MatchResult>> matchResultSetCallback) {
+    TournamentBoard(Tournament tournament, Board board, Consumer<Pair<Match, MatchResult>> matchResultSetCallback) {
         
         this.tournament = tournament;
+        this.board = board;
         this.matchResultSetCallback = matchResultSetCallback;
         
-        int rounds = tournament.numberOfRounds();
+        int rounds = board.numberOfRounds();
         
         for(int i=1;i<=rounds+1;i++) {
             int round = i;
@@ -47,22 +50,23 @@ class TournamentBoard extends Grid<Row> {
                 .setClassNameGenerator(row -> createCellStyle(round, row.rowNum));
         }
         
-        for(int i=1;i<=pow2(rounds+1)-1;i++) {
+        for(int i=1;i<=MathUtil.pow2(rounds+1)-1;i++) {
             rows.add(new Row(rounds, i));
         }
         
         setItems(rows);
         
-        for(Match match : tournament.matches().values()) {
+        for(Match match : board.matches().values()) {
             Player player1 = match.player1();
             Player player2 = match.player2();
-            var roundAndMatchNumberInRound = tournament.roundAndMatchNumberInRound(match.tournamentMatchNumber());
+            
+            var roundAndMatchNumberInRound = MathUtil.roundAndMatchNumberInRound(match.tournamentMatchNumber(), board.numberOfRounds());
             int round = roundAndMatchNumberInRound.getFirst();
             int matchNumberInRound = roundAndMatchNumberInRound.getSecond();
             
-            Optional<Match> prevMatchForPlayer1 = tournament.findPrevMatch(match, player1);
+            Optional<Match> prevMatchForPlayer1 = board.findPrevMatch(match, player1);
             MatchResult prevMatchResultForPlayer1 = prevMatchForPlayer1.map(Match::result).orElse(null);
-            Optional<Match> prevMatchForPlayer2 = tournament.findPrevMatch(match, player2);
+            Optional<Match> prevMatchForPlayer2 = board.findPrevMatch(match, player2);
             MatchResult prevMatchResultForPlayer2 = prevMatchForPlayer2.map(Match::result).orElse(null);
             
             setPlayer(round, matchNumberInRound, 1, new PlayerWithResult(player1, prevMatchResultForPlayer1));
@@ -96,10 +100,10 @@ class TournamentBoard extends Grid<Row> {
         int round = Integer.parseInt(key) - 1;
         
         if(round > 0 && isMatchCell(round, row.rowNum)) {
-            int matchNumberInRound = row.rowNum / pow2(round+1) + 1;
-            Match match = tournament.getMatch(round, matchNumberInRound);
+            int matchNumberInRound = row.rowNum / MathUtil.pow2(round+1) + 1;
+            Match match = board.getMatch(round, matchNumberInRound);
             if(match != null && match.arePlayersSet()) {
-                String title = createHeader(tournament.numberOfRounds(), round) + " meccs " + matchNumberInRound;
+                String title = createHeader(board.numberOfRounds(), round) + " meccs " + matchNumberInRound;
                 new MatchDialog(title, match, tournament.bestOfNSets(), matchResultSetCallback).open();
             }
         }
@@ -107,17 +111,13 @@ class TournamentBoard extends Grid<Row> {
     }
 
     private static boolean isMatchCell(int round, int rowNum) {
-        return (rowNum) % pow2(round+1) == pow2(round);
+        return (rowNum) % MathUtil.pow2(round+1) == MathUtil.pow2(round);
     }
 
-    private static int pow2(int x) {
-        return twoPows[x];
-    }
-    
     private static String createCellStyle(int round, int rowNum) {
-        int startRow = pow2(round-1) - 1;
+        int startRow = MathUtil.pow2(round-1) - 1;
         
-        int rowsBetweenMatches = pow2(round + 1);
+        int rowsBetweenMatches = MathUtil.pow2(round + 1);
         int x = (rowNum - startRow) % rowsBetweenMatches;
         
         if(isMatchCell(round-1, rowNum)) {
@@ -130,10 +130,10 @@ class TournamentBoard extends Grid<Row> {
     }
 
     private void setPlayer(int round, int match, int playerNumber, PlayerWithResult playerWithResult) {
-        int startRow = pow2(round-1) - 1;
+        int startRow = MathUtil.pow2(round-1) - 1;
         
-        int rowsBetweenMatches = pow2(round + 1);
-        int rowsBetweenPlayers = pow2(round);
+        int rowsBetweenMatches = MathUtil.pow2(round + 1);
+        int rowsBetweenPlayers = MathUtil.pow2(round);
         
         int rowNumber = startRow + (match-1) * rowsBetweenMatches + (playerNumber-1) * rowsBetweenPlayers;
         rows.get(rowNumber).values.set(round-1, playerWithResult);

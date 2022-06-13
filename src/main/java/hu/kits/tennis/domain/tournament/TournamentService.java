@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.domain.tournament.Tournament.Status;
+import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchRepository;
@@ -91,7 +92,7 @@ public class TournamentService {
             int matchNumber = 1;
             List<Match> matches = new ArrayList<>();
             for(int i=0;i<players.size();i+=2) {
-                Match match = Match.createNew(tournament.id(), matchNumber, tournament.date(), players.get(i), players.get(i+1));
+                Match match = Match.createNew(tournament.id(), 1, matchNumber, tournament.date(), players.get(i), players.get(i+1));
                 matchRepository.save(new BookedMatch(match, null, null, null, null));
                 matches.add(match);
                 matchNumber++;
@@ -113,17 +114,16 @@ public class TournamentService {
         }
         
         Player winner = matchResult.isPlayer1Winner() ? match.player1() : match.player2();
-        Player loser = matchResult.isPlayer1Winner() ? match.player2() : match.player1();
         
-        int nextRoundMatchNumber = tournament.nextRoundMatchNumber(match.tournamentMatchNumber());
+        int nextRoundMatchNumber = tournament.nextRoundMatchNumber(match);
         
-        Match nextMatch = tournament.matches().get(nextRoundMatchNumber);
+        Match nextMatch = tournament.getMatch(match.tournamentBoardNumber(), nextRoundMatchNumber);
         
         if(nextMatch == null) {
             if(match.tournamentMatchNumber() % 2 == 1) {
-                nextMatch = new Match(nextRoundMatchNumber, match.tournamentId(), nextRoundMatchNumber, null, winner, null, null);
+                nextMatch = Match.createNew(match.tournamentId(), match.tournamentBoardNumber(), nextRoundMatchNumber, null, winner, null);
             } else {
-                nextMatch = new Match(nextRoundMatchNumber, match.tournamentId(), nextRoundMatchNumber, null, null, winner, null);
+                nextMatch = Match.createNew(match.tournamentId(), match.tournamentBoardNumber(), nextRoundMatchNumber, null, null, winner);
             }
             matchRepository.save(new BookedMatch(nextMatch, null, null, null, null));
         } else {
@@ -131,6 +131,29 @@ public class TournamentService {
                 matchRepository.setPlayer1(nextMatch.id(), winner);    
             } else {
                 matchRepository.setPlayer2(nextMatch.id(), winner);
+            }
+        }
+        
+        if(tournament.type() == Type.BOARD_AND_CONSOLATION && match.tournamentBoardNumber() == 1 && tournament.mainBoard().roundNumber(match) == 1) {
+            Player loser = matchResult.isPlayer1Winner() ? match.player2() : match.player1();
+            
+            int consolationMatchNumber = (match.tournamentMatchNumber() + 1) / 2;
+            
+            Match consolationMatch = tournament.getMatch(2, consolationMatchNumber);
+            
+            if(consolationMatch == null) {
+                if(match.tournamentMatchNumber() % 2 == 1) {
+                    consolationMatch = Match.createNew(match.tournamentId(), 2, consolationMatchNumber, null, loser, null);
+                } else {
+                    consolationMatch = Match.createNew(match.tournamentId(), 2, consolationMatchNumber, null, null, loser);
+                }
+                matchRepository.save(new BookedMatch(consolationMatch, null, null, null, null));
+            } else {
+                if(match.tournamentMatchNumber() % 2 == 1) {
+                    matchRepository.setPlayer1(consolationMatch.id(), winner);    
+                } else {
+                    matchRepository.setPlayer2(consolationMatch.id(), winner);
+                }
             }
         }
         

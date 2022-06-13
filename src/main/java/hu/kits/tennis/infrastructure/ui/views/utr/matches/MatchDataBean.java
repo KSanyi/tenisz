@@ -71,7 +71,7 @@ public class MatchDataBean {
     }
 
     public Match toPlayedMatch() {
-        return new Match(id, null, null, date, player1, player2, new MatchResult(List.of(new SetResult(score1, score2))));
+        return new Match(id, null, null, null, date, player1, player2, new MatchResult(List.of(new SetResult(score1, score2))));
     }
 
     public boolean isNewBean() {

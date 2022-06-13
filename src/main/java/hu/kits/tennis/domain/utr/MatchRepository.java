@@ -1,7 +1,8 @@
 package hu.kits.tennis.domain.utr;
 
 import java.util.List;
-import java.util.Map;
+
+import hu.kits.tennis.domain.tournament.TournamentMatches;
 
 public interface MatchRepository {
 
@@ -17,7 +18,7 @@ public interface MatchRepository {
 
     void deleteMatchesForTournament(String id);
 
-    Map<Integer, Match> loadMatchesForTournament(String tournamentId);
+    TournamentMatches loadMatchesForTournament(String tournamentId);
 
     void setResult(int matchId, MatchResult matchResult);
 

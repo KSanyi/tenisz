@@ -3,6 +3,7 @@ package hu.kits.tennis.infrastructure.database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +13,14 @@ import javax.sql.DataSource;
 
 import org.jdbi.v3.core.Jdbi;
 
+import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.Tournament;
+import hu.kits.tennis.domain.tournament.Tournament.Board;
 import hu.kits.tennis.domain.tournament.Tournament.Status;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
+import hu.kits.tennis.domain.tournament.TournamentMatches;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
-import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchRepository;
 import hu.kits.tennis.domain.utr.PlayerRepository;
 import hu.kits.tennis.domain.utr.Players;
@@ -58,20 +61,34 @@ public class TournamentJdbcRepository implements TournamentRepository {
             .map((rs, ctx) -> mapToTournament(rs, contestantsByTournament, Map.of())).list());
     }
     
-    private static Tournament mapToTournament(ResultSet rs, Map<String, List<Contestant>> contestantsByTournament, Map<String, Map<Integer, Match>> matchesByTournament) throws SQLException {
+    private static Tournament mapToTournament(ResultSet rs, Map<String, List<Contestant>> contestantsByTournament, Map<String, TournamentMatches> matchesByTournament) throws SQLException {
         
         String tournamentId = rs.getString(COLUMN_ID);
+        
+        List<Contestant> contestants = contestantsByTournament.getOrDefault(tournamentId, List.of());
+        
+        Tournament.Type type = Tournament.Type.valueOf(rs.getString(COLUMN_TYPE));
+        
+        TournamentMatches tournamentMatches = matchesByTournament.getOrDefault(tournamentId, TournamentMatches.empty());
+        
+        List<Board> boards = new ArrayList<>();
+        
+        int numberOfRounds = MathUtil.log2(contestants.size());
+        boards.add(new Board(numberOfRounds, tournamentMatches.matchesInBoard(1)));
+        if(type == Type.BOARD_AND_CONSOLATION) {
+            boards.add(new Board(numberOfRounds - 1, tournamentMatches.matchesInBoard(2)));
+        }
         
         return new Tournament(
                 tournamentId,
                 rs.getDate(COLUMN_DATE).toLocalDate(),
                 rs.getString(COLUMN_NAME),
                 rs.getString(COLUMN_VENUE),
-                Tournament.Type.valueOf(rs.getString(COLUMN_TYPE)),
+                type,
                 rs.getInt(COLUMN_BEST_OF_N_SETS),
-                contestantsByTournament.getOrDefault(tournamentId, List.of()),
+                contestants,
                 Status.valueOf(rs.getString(COLUMN_STATUS)),
-                matchesByTournament.getOrDefault(tournamentId, Map.of()));
+                boards);
     }
     
     @Override
@@ -98,7 +115,7 @@ public class TournamentJdbcRepository implements TournamentRepository {
         
         Players players = playerRepository.loadAllPlayers();
         List<Contestant> contestants = contestantDBTable.loadAllContestantsForTournament(players, tournamentId);
-        Map<Integer, Match> matches = matchRepository.loadMatchesForTournament(tournamentId);
+        TournamentMatches matches = matchRepository.loadMatchesForTournament(tournamentId);
         
         String sql = String.format("SELECT * FROM %s WHERE %s = :id", TABLE_TOURNAMENT, COLUMN_ID);
         

@@ -20,11 +20,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import hu.kits.tennis.Main;
-import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.tournament.DrawMode;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Status;
+import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchResult;
@@ -45,7 +45,8 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
     
     private final ContestantsTable contestantsTable = new ContestantsTable(this);
-    private TournamentBoard tournamentBoard;
+    private TournamentBoard mainBoard;
+    private TournamentBoard consolationBoard;
     private VerticalLayout tableWithButton;
     
     private Tournament tournament;
@@ -71,7 +72,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             refresh();
         };
         
-        tournamentBoard = new TournamentBoard(tournament, matchResultSetCallback);
+        mainBoard = new TournamentBoard(tournament, tournament.mainBoard(), matchResultSetCallback);
         
         Button fillBoardButton = UIUtils.createButton("Táblára", VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
         fillBoardButton.addClickListener(click -> fillBoard());
@@ -83,11 +84,16 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         tableWithButton.setAlignItems(Alignment.CENTER);
         tableWithButton.setVisible(tournament.status() == Status.DRAFT);
         
-        HorizontalLayout horizontalLayout = new HorizontalLayout(tournamentBoard, tableWithButton);
+        HorizontalLayout horizontalLayout = new HorizontalLayout(mainBoard, tableWithButton);
         horizontalLayout.setWidthFull();
-        horizontalLayout.setFlexGrow(1, tournamentBoard);
+        horizontalLayout.setFlexGrow(1, mainBoard);
         
         layout.add(title, horizontalLayout);
+        
+        if(tournament.type() == Type.BOARD_AND_CONSOLATION) {
+            consolationBoard = new TournamentBoard(tournament, tournament.consolationBoard(), matchResultSetCallback);
+            layout.add(UIUtils.createH2Label("Vigaszág"), consolationBoard);
+        }
         
         return layout;
     }

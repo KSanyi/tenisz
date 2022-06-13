@@ -112,7 +112,7 @@ public class TeniszPartnerMeccsImporter {
         
         Optional<SetResult> setResult = parseSetResult(resultString);
         
-        return setResult.map(setRes ->  new Match(0, null, null, date, player1, player2, new MatchResult(List.of(setRes))));
+        return setResult.map(setRes ->  new Match(0, null, null, null, date, player1, player2, new MatchResult(List.of(setRes))));
     }
     
     private static Optional<SetResult> parseSetResult(String resultString) {
