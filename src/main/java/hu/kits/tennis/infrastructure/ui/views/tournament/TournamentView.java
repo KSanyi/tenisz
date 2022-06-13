@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Label;
@@ -40,8 +39,6 @@ import hu.kits.tennis.infrastructure.ui.views.View;
 @PageTitle("Tournament")
 public class TournamentView extends SplitViewFrame implements View, BeforeEnterObserver  {
 
-    private static final int MOBILE_BREAKPOINT = 800;
-    
     private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
     
     private final ContestantsTable contestantsTable = new ContestantsTable(this);
@@ -116,8 +113,8 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     private void createUI() {
         setViewContent(createContent());
         
-        UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleParts(e.getBodyClientWidth()));
-        UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleParts(e.getWidth()));
+        //UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleParts(e.getBodyClientWidth()));
+        //UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleParts(e.getWidth()));
     }
 
     @Override
@@ -135,10 +132,11 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         tournamentService.updateContestants(tournament, players);
     }
 
+    /*
     private void updateVisibleParts(int width) {
         boolean mobile = width < MOBILE_BREAKPOINT;
-        
         tableWithButton.setVisible(!mobile || tournament.status() == Status.DRAFT);
     }
+    */
     
 }
