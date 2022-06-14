@@ -13,11 +13,15 @@ public record Match(int id, String tournamentId, Integer tournamentBoardNumber, 
     }
 
     public Match swap() {
-        return new Match(id, tournamentId, tournamentBoardNumber, tournamentMatchNumber, date, player2, player1, result.swap());
+        return new Match(id, tournamentId, tournamentBoardNumber, tournamentMatchNumber, date, player2, player1, result != null ? result.swap() : null);
     }
 
     public boolean arePlayersSet() {
         return player1 != null && player2 != null;
+    }
+
+    public Player winner() {
+        return result.isPlayer1Winner() ? player1 : player2;
     }
 
 }

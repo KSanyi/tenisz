@@ -15,6 +15,7 @@ public class Players {
     
     public Players(List<Player> entries) {
         playersMap = entries.stream().collect(Collectors.toMap(Player::id, Function.identity()));
+        playersMap.put(0, Player.BYE);
     }
     
     public boolean containsPlayerWithName(String playerName) {

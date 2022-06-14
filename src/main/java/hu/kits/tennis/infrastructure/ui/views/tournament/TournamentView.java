@@ -62,7 +62,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         Label title = UIUtils.createH2Label(tournament.name());
         //Label date = UIUtils.createH3Label(Formatters.formatDateLong(tournament.date()));
         
-        contestantsTable.setPlayers(tournament.players());
+        contestantsTable.setPlayers(tournament.playersLineup());
         
         Consumer<Pair<Match, MatchResult>> matchResultSetCallback = p -> {
             tournamentService.setTournamentMatchResult(p.getFirst(), p.getSecond());

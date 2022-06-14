@@ -12,13 +12,13 @@ import com.vaadin.flow.component.grid.dnd.GridDropMode;
 
 import hu.kits.tennis.domain.utr.Player;
 
-class ContestantsTable extends Grid<Player> {
+class ContestantsTable extends Grid<hu.kits.tennis.infrastructure.ui.views.tournament.ContestantsTable.GridItem> {
 
-    private GridListDataView<Player> dataView;
+    private GridListDataView<GridItem> dataView;
     
-    private Player draggedItem;
+    private GridItem draggedItem;
     
-    private List<Player> items;
+    private List<GridItem> items;
     
     private final TournamentView tournamentView;
     
@@ -26,13 +26,13 @@ class ContestantsTable extends Grid<Player> {
         
         this.tournamentView = tournamentView;
         
-        addColumn(player -> items.indexOf(player) + 1)
+        addColumn(item -> items.indexOf(item) + 1)
             .setHeader("Rank")
             .setAutoWidth(true)
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(0);
         
-        addColumn(Player::name)
+        addColumn(item -> item.player.name())
             .setHeader("Név")
             .setAutoWidth(true)
             .setFlexGrow(1);
@@ -52,7 +52,7 @@ class ContestantsTable extends Grid<Player> {
         addDragEndListener(e -> draggedItem = null);
         
         addDropListener(e -> {
-            Player targetPlayer = e.getDropTargetItem().orElse(null);
+            GridItem targetPlayer = e.getDropTargetItem().orElse(null);
             GridDropLocation dropLocation = e.getDropLocation();
 
             if (targetPlayer != null || !draggedItem.equals(targetPlayer)) {
@@ -63,14 +63,24 @@ class ContestantsTable extends Grid<Player> {
                     dataView.addItemBefore(draggedItem, targetPlayer);
                 }
                 items = dataView.getItems().collect(toList());
-                tournamentView.updateContestants(items);
+                List<Player> players = items.stream().map(gridItem -> gridItem.player).collect(toList());
+                tournamentView.updateContestants(players);
             }
         });
     }
     
     void setPlayers(List<Player> players) {
-        dataView = this.setItems(players);
-        items = players;
+        items = players.stream().map(GridItem::new).collect(toList());
+        dataView = this.setItems(items);
+    }
+    
+    static class GridItem {
+        final Player player;
+
+        public GridItem(Player player) {
+            this.player = player;
+        }
+        
     }
     
 }

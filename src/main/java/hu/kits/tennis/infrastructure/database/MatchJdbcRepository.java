@@ -94,14 +94,18 @@ public class MatchJdbcRepository implements MatchRepository  {
     }
     
     private static Match mapToMatch(ResultSet rs, Players players) throws SQLException {
+        
+        Player player1 = JdbiUtil.mapToOptionalInt(rs, COLUMN_PLAYER1_ID).map(players::get).orElse(null);
+        Player player2 = JdbiUtil.mapToOptionalInt(rs, COLUMN_PLAYER2_ID).map(players::get).orElse(null);
+        
         return new Match(
                 rs.getInt(COLUMN_ID),
                 rs.getString(COLUMN_TOURNAMENT_ID),
                 JdbiUtil.mapToOptionalInt(rs, COLUMN_TOURNAMENT_BOARD_NUMBER).orElse(null),
                 JdbiUtil.mapToOptionalInt(rs, COLUMN_TOURNAMENT_MATCH_NUMBER).orElse(null),
                 Optional.ofNullable(rs.getDate(COLUMN_DATETIME)).map(Date::toLocalDate).orElse(null),
-                players.get(rs.getInt(COLUMN_PLAYER1_ID)), 
-                players.get(rs.getInt(COLUMN_PLAYER2_ID)), 
+                player1, 
+                player2, 
                 MatchResult.parse(rs.getString(COLUMN_RESULT)));
     }
 

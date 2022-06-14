@@ -73,6 +73,12 @@ class TournamentBoard extends Grid<Row> {
             setPlayer(round, matchNumberInRound, 2, new PlayerWithResult(player2, prevMatchResultForPlayer2));
         }
         
+        Match finalMatch = board.finalMatch();
+        
+        if(finalMatch != null && finalMatch.result() != null) {
+            setPlayer(board.numberOfRounds(), 1, 1, new PlayerWithResult(finalMatch.winner(), finalMatch.result()));
+        }
+        
         setAllRowsVisible(true);
         
         setSelectionMode(SelectionMode.NONE);

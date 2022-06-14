@@ -1,13 +1,12 @@
 package hu.kits.tennis.domain.tournament;
 
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
-
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.utr.Match;
@@ -85,13 +84,28 @@ public record Tournament(String id,
         public int roundNumber(Match match) {
             return MathUtil.roundAndMatchNumberInRound(match.tournamentMatchNumber(), numberOfRounds).getFirst();
         }
+
+        public boolean isFinal(Match match) {
+            return roundNumber(match) == numberOfRounds;
+        }
+
+        public Match finalMatch() {
+            return matches.get(MathUtil.pow2(numberOfRounds)-1);
+        }
         
     }
     
-    public List<Player> players() {
-        return contestants.stream()
-                .sorted(comparing(Contestant::rank)).map(Contestant::player)
-                .collect(toList());
+    public List<Player> playersLineup() {
+        
+        var playersByRank = contestants.stream().collect(Collectors.toMap(Contestant::rank, Contestant::player));
+        
+        List<Player> lineup = new ArrayList<>();
+        for(int i=1;i<=MathUtil.pow2(mainBoard().numberOfRounds);i++) {
+            Player player = playersByRank.getOrDefault(i, Player.BYE);
+            lineup.add(player);
+        }
+        
+        return lineup;
     }
     
     @Override
@@ -113,6 +127,10 @@ public record Tournament(String id,
 
     public Board consolationBoard() {
         return boards.get(1);
+    }
+
+    public boolean isBoardFinal(Match match) {
+        return boards.get(match.tournamentBoardNumber() - 1).isFinal(match);
     }
     
 }

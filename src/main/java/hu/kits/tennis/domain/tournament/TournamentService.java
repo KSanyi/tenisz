@@ -65,7 +65,8 @@ public class TournamentService {
     public void updateContestants(Tournament tournament, List<Player> players) {
         
         List<Contestant> contestants = IntStream.range(0, players.size())
-                .mapToObj(rank -> new Contestant(players.get(rank), rank))
+                .mapToObj(index -> new Contestant(players.get(index), index+1))
+                .filter(c -> !c.player().equals(Player.BYE))
                 .collect(toList());
         
         tournamentRepository.updateContestants(tournament.id(), contestants);
@@ -88,13 +89,37 @@ public class TournamentService {
             
             matchRepository.deleteMatchesForTournament(tournament.id());
             
-            List<Player> players = tournament.players();
+            List<Player> players = tournament.playersLineup();
+            
             int matchNumber = 1;
             List<Match> matches = new ArrayList<>();
             for(int i=0;i<players.size();i+=2) {
-                Match match = Match.createNew(tournament.id(), 1, matchNumber, tournament.date(), players.get(i), players.get(i+1));
+                Player player1 = players.get(i);
+                Player player2 = players.get(i+1);
+                Match match = Match.createNew(tournament.id(), 1, matchNumber, tournament.date(), player1, player2);
                 matchRepository.save(new BookedMatch(match, null, null, null, null));
                 matches.add(match);
+                
+                if(player1.equals(Player.BYE)) {
+                    int nextRoundMatchNumber = tournament.mainBoard().nextRoundMatchNumber(matchNumber);
+                    Match nextRoundMatch;
+                    if(matchNumber % 2 == 1) {
+                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.date(), player2, null);    
+                    } else {
+                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.date(), null, player2);   
+                    }
+                    matchRepository.save(new BookedMatch(nextRoundMatch, null, null, null, null));
+                } else if(player2.equals(Player.BYE)) {
+                    int nextRoundMatchNumber = tournament.mainBoard().nextRoundMatchNumber(matchNumber);
+                    Match nextRoundMatch;
+                    if(matchNumber % 2 == 1) {
+                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.date(), player1, null);    
+                    } else {
+                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.date(), null, player1);   
+                    }
+                    matchRepository.save(new BookedMatch(nextRoundMatch, null, null, null, null));
+                }
+                
                 matchNumber++;
             }
             
@@ -114,6 +139,10 @@ public class TournamentService {
         }
         
         Player winner = matchResult.isPlayer1Winner() ? match.player1() : match.player2();
+        
+        if(tournament.isBoardFinal(match)) {
+            return;
+        }
         
         int nextRoundMatchNumber = tournament.nextRoundMatchNumber(match);
         
