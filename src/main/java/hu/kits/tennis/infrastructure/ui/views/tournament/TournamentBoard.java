@@ -23,9 +23,9 @@ import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentBoard.Row;
 @CssImport(value = "./styles/tournament-board.css", themeFor = "vaadin-grid")
 class TournamentBoard extends Grid<Row> {
 
-    private final Tournament tournament;
+    private Tournament tournament;
     
-    private final Board board;
+    private Board board;
     
     private final List<Row> rows = new ArrayList<>();
     
@@ -52,26 +52,6 @@ class TournamentBoard extends Grid<Row> {
         
         for(int i=1;i<=MathUtil.pow2(rounds+1)-1;i++) {
             rows.add(new Row(rounds, i));
-        }
-        
-        setItems(rows);
-        
-        for(Match match : board.matches().values()) {
-            Player player1 = match.player1();
-            Player player2 = match.player2();
-            
-            var roundAndMatchNumberInRound = MathUtil.roundAndMatchNumberInRound(match.tournamentMatchNumber(), board.numberOfRounds());
-            int round = roundAndMatchNumberInRound.getFirst();
-            int matchNumberInRound = roundAndMatchNumberInRound.getSecond();
-            
-            setPlayer(round, matchNumberInRound, 1, findPlayerWithResult(match, player1));
-            setPlayer(round, matchNumberInRound, 2, findPlayerWithResult(match, player2));;
-        }
-        
-        Match finalMatch = board.finalMatch();
-        
-        if(finalMatch != null && finalMatch.result() != null) {
-            setPlayer(board.numberOfRounds(), 1, 1, new PlayerWithResult(finalMatch.winner(), finalMatch.result()));
         }
         
         setAllRowsVisible(true);
@@ -138,6 +118,32 @@ class TournamentBoard extends Grid<Row> {
         } else {
             return "emptyCell";
         }
+    }
+    
+    void setBoard(Tournament tournament, Board board) {
+        
+        this.tournament = tournament;
+        this.board = board;
+        
+        for(Match match : board.matches().values()) {
+            Player player1 = match.player1();
+            Player player2 = match.player2();
+            
+            var roundAndMatchNumberInRound = MathUtil.roundAndMatchNumberInRound(match.tournamentMatchNumber(), board.numberOfRounds());
+            int round = roundAndMatchNumberInRound.getFirst();
+            int matchNumberInRound = roundAndMatchNumberInRound.getSecond();
+            
+            setPlayer(round, matchNumberInRound, 1, findPlayerWithResult(match, player1));
+            setPlayer(round, matchNumberInRound, 2, findPlayerWithResult(match, player2));;
+        }
+        
+        Match finalMatch = board.finalMatch();
+        
+        if(finalMatch != null && finalMatch.result() != null) {
+            setPlayer(board.numberOfRounds(), 1, 1, new PlayerWithResult(finalMatch.winner(), finalMatch.result()));
+        }
+        
+        setItems(rows);
     }
 
     private void setPlayer(int round, int match, int playerNumber, PlayerWithResult playerWithResult) {

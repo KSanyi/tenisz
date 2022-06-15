@@ -62,8 +62,6 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         Label title = UIUtils.createH2Label(tournament.name());
         //Label date = UIUtils.createH3Label(Formatters.formatDateLong(tournament.date()));
         
-        contestantsTable.setPlayers(tournament.playersLineup());
-        
         Consumer<Pair<Match, MatchResult>> matchResultSetCallback = p -> {
             tournamentService.setTournamentMatchResult(p.getFirst(), p.getSecond());
             refresh();
@@ -72,14 +70,12 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         mainBoard = new TournamentBoard(tournament, tournament.mainBoard(), matchResultSetCallback);
         
         Button fillBoardButton = UIUtils.createButton("Táblára", VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
-        fillBoardButton.addClickListener(click -> fillBoard());
-        fillBoardButton.setVisible(tournament.status() == Status.DRAFT);
+        fillBoardButton.addClickListener(click -> fillMainBoard());
         
         tableWithButton = new VerticalLayout(contestantsTable, fillBoardButton);
         tableWithButton.setPadding(false);
         tableWithButton.setSizeUndefined();
         tableWithButton.setAlignItems(Alignment.CENTER);
-        tableWithButton.setVisible(tournament.status() == Status.DRAFT);
         
         HorizontalLayout horizontalLayout = new HorizontalLayout(mainBoard, tableWithButton);
         horizontalLayout.setWidthFull();
@@ -95,7 +91,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         return layout;
     }
 
-    private void fillBoard() {
+    private void fillMainBoard() {
         tournamentService.createMatches(tournament.id(), DrawMode.SIMPLE);
         refresh();
     }
@@ -107,11 +103,22 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     
     public void refresh() {
         tournament = tournamentService.findTournament(tournament.id()).get();
-        createUI();
+        loadData();
     }
     
+    private void loadData() {
+        contestantsTable.setPlayers(tournament.playersLineup());
+        tableWithButton.setVisible(tournament.status() == Status.DRAFT);
+        mainBoard.setBoard(tournament, tournament.mainBoard());
+        if(tournament.type() == Type.BOARD_AND_CONSOLATION) {
+            consolationBoard.setBoard(tournament, tournament.consolationBoard());    
+        }
+    }
+
     private void createUI() {
         setViewContent(createContent());
+        
+        loadData();
         
         //UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleParts(e.getBodyClientWidth()));
         //UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleParts(e.getWidth()));
