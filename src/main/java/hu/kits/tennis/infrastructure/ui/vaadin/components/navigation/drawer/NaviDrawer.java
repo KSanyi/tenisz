@@ -37,6 +37,7 @@ public class NaviDrawer extends Div implements AfterNavigationObserver {
         super.onAttach(attachEvent);
         UI ui = attachEvent.getUI();
         ui.getPage().executeJavaScript("window.addSwipeAway($0,$1,$2,$3)", mainContent.getElement(), this, "onSwipeAway", scrim.getElement());
+        railButton.click();
     }
 
     @ClientCallable
