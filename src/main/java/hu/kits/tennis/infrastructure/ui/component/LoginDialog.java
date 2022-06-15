@@ -65,7 +65,7 @@ public class LoginDialog extends Dialog {
         i18n.getForm().setForgotPassword("Elfelejtett jelszó");
         i18n.getErrorMessage().setTitle("Hiba");
         i18n.getErrorMessage().setMessage("Érvénytelen felhasználónév vagy jelszó");
-        i18n.setAdditionalInformation("Pálya foglaláshoz be kell jeletkezni! Ha nincs még felhasználód, regisztrálj!");
+        i18n.setAdditionalInformation("Meccs eredmény beíráshoz be kell jeletkezni! Ha nincs még felhasználód, regisztrálj!");
         return i18n;
     }
 

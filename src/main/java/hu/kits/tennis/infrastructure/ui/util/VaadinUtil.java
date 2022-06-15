@@ -61,4 +61,8 @@ public class VaadinUtil {
         logger.debug("{} " + log, argsList.toArray());
     }
 
+    public static boolean isUserLoggedIn() {
+        return !getUser().equals(UserData.ANONYMUS);
+    }
+
 }

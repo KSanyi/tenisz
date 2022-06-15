@@ -30,6 +30,7 @@ import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
+import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
@@ -70,6 +71,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         mainBoard = new TournamentBoard(tournament, tournament.mainBoard(), matchResultSetCallback);
         
         Button fillBoardButton = UIUtils.createButton("Táblára", VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
+        fillBoardButton.setVisible(VaadinUtil.isUserLoggedIn());
         fillBoardButton.addClickListener(click -> fillMainBoard());
         
         tableWithButton = new VerticalLayout(contestantsTable, fillBoardButton);

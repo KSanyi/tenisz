@@ -18,6 +18,7 @@ import hu.kits.tennis.domain.tournament.Tournament.Board;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentBoard.Row;
 
 @CssImport(value = "./styles/tournament-board.css", themeFor = "vaadin-grid")
@@ -86,19 +87,20 @@ class TournamentBoard extends Grid<Row> {
     
     private void itemClicked(ItemClickEvent<Row> e) {
         
-        Row row = e.getItem();
-        String key = e.getColumn().getKey();
-        int round = Integer.parseInt(key) - 1;
-        
-        if(round > 0 && isMatchCell(round, row.rowNum)) {
-            int matchNumberInRound = row.rowNum / MathUtil.pow2(round+1) + 1;
-            Match match = board.getMatch(round, matchNumberInRound);
-            if(match != null && match.arePlayersSet()) {
-                String title = createHeader(board.numberOfRounds(), round) + " meccs " + matchNumberInRound;
-                new MatchDialog(title, match, tournament.bestOfNSets(), matchResultSetCallback).open();
-            }
+        if(VaadinUtil.isUserLoggedIn()) {
+            Row row = e.getItem();
+            String key = e.getColumn().getKey();
+            int round = Integer.parseInt(key) - 1;
+            
+            if(round > 0 && isMatchCell(round, row.rowNum)) {
+                int matchNumberInRound = row.rowNum / MathUtil.pow2(round+1) + 1;
+                Match match = board.getMatch(round, matchNumberInRound);
+                if(match != null && match.arePlayersSet()) {
+                    String title = createHeader(board.numberOfRounds(), round) + " meccs " + matchNumberInRound;
+                    new MatchDialog(title, match, tournament.bestOfNSets(), matchResultSetCallback).open();
+                }
+            } 
         }
-        
     }
 
     private static boolean isMatchCell(int round, int rowNum) {
