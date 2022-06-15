@@ -48,6 +48,7 @@ class TournamentBoard extends Grid<Row> {
                 .setHeader(createHeader(rounds, round))
                 .setTextAlign(ColumnTextAlign.CENTER)
                 .setFlexGrow(1)
+                .setWidth(i == 1 ? "200px" : "250px")
                 .setClassNameGenerator(row -> createCellStyle(round, row.rowNum));
         }
         
