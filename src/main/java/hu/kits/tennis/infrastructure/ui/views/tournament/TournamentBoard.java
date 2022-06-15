@@ -64,13 +64,8 @@ class TournamentBoard extends Grid<Row> {
             int round = roundAndMatchNumberInRound.getFirst();
             int matchNumberInRound = roundAndMatchNumberInRound.getSecond();
             
-            Optional<Match> prevMatchForPlayer1 = board.findPrevMatch(match, player1);
-            MatchResult prevMatchResultForPlayer1 = prevMatchForPlayer1.map(Match::result).orElse(null);
-            Optional<Match> prevMatchForPlayer2 = board.findPrevMatch(match, player2);
-            MatchResult prevMatchResultForPlayer2 = prevMatchForPlayer2.map(Match::result).orElse(null);
-            
-            setPlayer(round, matchNumberInRound, 1, new PlayerWithResult(player1, prevMatchResultForPlayer1));
-            setPlayer(round, matchNumberInRound, 2, new PlayerWithResult(player2, prevMatchResultForPlayer2));
+            setPlayer(round, matchNumberInRound, 1, findPlayerWithResult(match, player1));
+            setPlayer(round, matchNumberInRound, 2, findPlayerWithResult(match, player2));;
         }
         
         Match finalMatch = board.finalMatch();
@@ -88,6 +83,16 @@ class TournamentBoard extends Grid<Row> {
         addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
         addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
         addThemeVariants(GridVariant.LUMO_COMPACT);
+    }
+    
+    private PlayerWithResult findPlayerWithResult(Match match, Player player) {
+        if(player == null) {
+            return new PlayerWithResult(null, null);
+        }
+        
+        Optional<Match> prevMatchForPlayer = board.findPrevMatch(match, player);
+        MatchResult prevMatchResultForPlayer = prevMatchForPlayer.map(Match::result).orElse(null);
+        return new PlayerWithResult(player, prevMatchResultForPlayer);
     }
     
     private static String playerNameAndResult(Row row, int round) {
