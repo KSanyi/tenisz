@@ -1,8 +1,12 @@
 package hu.kits.tennis.infrastructure.ui.views.tournament;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
@@ -40,6 +44,8 @@ import hu.kits.tennis.infrastructure.ui.views.View;
 @PageTitle("Tournament")
 public class TournamentView extends SplitViewFrame implements View, BeforeEnterObserver  {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
     
     private final ContestantsTable contestantsTable = new ContestantsTable(this);
@@ -132,8 +138,10 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         Optional<Tournament> tournament = tournamentService.findTournament(tournamentId);
         if(tournament.isEmpty()) {
             KITSNotification.showError("A " + tournamentId + " azonosítójú verseny nem található");
+            event.forwardTo(TournamentsView.class);
         } else {
             this.tournament = tournament.get();
+            VaadinUtil.logUserAction(logger, "views tournament {}", tournament.get().name());
         }
     }
     
