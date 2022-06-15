@@ -179,9 +179,9 @@ public class TournamentService {
                 matchRepository.save(new BookedMatch(consolationMatch, null, null, null, null));
             } else {
                 if(match.tournamentMatchNumber() % 2 == 1) {
-                    matchRepository.setPlayer1(consolationMatch.id(), winner);    
+                    matchRepository.setPlayer1(consolationMatch.id(), loser);    
                 } else {
-                    matchRepository.setPlayer2(consolationMatch.id(), winner);
+                    matchRepository.setPlayer2(consolationMatch.id(), loser);
                 }
             }
         }
