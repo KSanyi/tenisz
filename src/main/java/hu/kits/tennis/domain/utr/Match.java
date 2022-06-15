@@ -9,7 +9,7 @@ public record Match(int id, String tournamentId, Integer tournamentBoardNumber, 
     }
     
     public boolean hasPlayed(Player player) {
-        return player1.equals(player) || player2.equals(player);
+        return player.equals(player1) || player.equals(player2);
     }
 
     public Match swap() {
