@@ -1,5 +1,6 @@
 .playerCell {
-  background-color: lightgrey;
+  background-color: var(--lumo-primary-color-50pct);
+  color: white;
 }
 
 .emptyCell {
