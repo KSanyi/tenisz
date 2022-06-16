@@ -97,7 +97,7 @@ public class MatchDialog extends Dialog {
     }
     
     private static Component createPlayerLabel(Player player) {
-        return UIUtils.createH3Label(player.name());
+        return UIUtils.createH3Label(player != null ? player.name() : "?");
     }
 
     private void save() {

@@ -96,7 +96,7 @@ class TournamentBoard extends Grid<Row> {
             if(round > 0 && isMatchCell(round, row.rowNum)) {
                 int matchNumberInRound = row.rowNum / MathUtil.pow2(round+1) + 1;
                 Match match = board.getMatch(round, matchNumberInRound);
-                if(match != null && match.arePlayersSet()) {
+                if(match != null) {
                     String title = createHeader(board.numberOfRounds(), round) + " meccs " + matchNumberInRound;
                     new MatchDialog(title, match, tournament.bestOfNSets(), matchResultSetCallback).open();
                 }
