@@ -14,6 +14,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datepicker.DatePickerVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -88,7 +89,9 @@ public class MatchDialog extends Dialog {
         
         Div spacer = new Div();
         spacer.setHeight("10px");
-        layout.add(datePicker, spacer, playersWithScoresLayout);
+        Label matchIdLabel = UIUtils.createH6Label("Match id: " + match.id());
+        layout.add(matchIdLabel, datePicker, spacer, playersWithScoresLayout);
+        layout.setAlignSelf(Alignment.START, matchIdLabel);
         
         return layout;
     }
