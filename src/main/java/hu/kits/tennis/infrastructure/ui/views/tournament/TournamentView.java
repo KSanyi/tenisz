@@ -23,14 +23,12 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import hu.kits.tennis.Main;
-import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.tournament.DrawMode;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Status;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
-import hu.kits.tennis.domain.utr.Match;
-import hu.kits.tennis.domain.utr.MatchResult;
+import hu.kits.tennis.domain.utr.MatchResultInfo;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
@@ -69,8 +67,8 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         Label title = UIUtils.createH2Label(tournament.name());
         //Label date = UIUtils.createH3Label(Formatters.formatDateLong(tournament.date()));
         
-        Consumer<Pair<Match, MatchResult>> matchResultSetCallback = p -> {
-            tournamentService.setTournamentMatchResult(p.getFirst(), p.getSecond());
+        Consumer<MatchResultInfo> matchResultSetCallback = matchResultInfo -> {
+            tournamentService.setTournamentMatchResult(matchResultInfo);
             refresh();
         };
         

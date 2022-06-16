@@ -101,6 +101,7 @@ public class JdbiUtil {
                 .bind("value", value)
                 .bind("keyColumnValue", keyColumnValue)
                 .execute());
+        log.debug("{} field {} updated to {} in row with {} = {}", tableName, column, value, keyColumn, keyColumnValue);
     }
     
     private static boolean compare(Object a, Object b) {

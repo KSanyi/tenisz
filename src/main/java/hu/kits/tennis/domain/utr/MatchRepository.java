@@ -20,7 +20,7 @@ public interface MatchRepository {
 
     TournamentMatches loadMatchesForTournament(String tournamentId);
 
-    void setResult(int matchId, MatchResult matchResult);
+    void setResult(MatchResultInfo matchResultInfo);
 
     void setPlayer1(int matchId, Player player);
     

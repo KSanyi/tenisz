@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toMap;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchRepository;
 import hu.kits.tennis.domain.utr.MatchResult;
+import hu.kits.tennis.domain.utr.MatchResultInfo;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerRepository;
 import hu.kits.tennis.domain.utr.Players;
@@ -182,8 +184,12 @@ public class MatchJdbcRepository implements MatchRepository  {
     }
     
     @Override
-    public void setResult(int matchId, MatchResult matchResult) {
+    public void setResult(MatchResultInfo matchResultInfo) {
+        int matchId = matchResultInfo.match().id();
+        MatchResult matchResult = matchResultInfo.matchResult();
+        LocalDate date = matchResultInfo.date();
         jdbi.useHandle(handle -> JdbiUtil.executeSimpleUpdate(jdbi, TABLE_TENNIS_MATCH, COLUMN_RESULT, matchResult.serialize(), COLUMN_ID, matchId));
+        jdbi.useHandle(handle -> JdbiUtil.executeSimpleUpdate(jdbi, TABLE_TENNIS_MATCH, COLUMN_DATETIME, date, COLUMN_ID, matchId));
     }
     
     @Override

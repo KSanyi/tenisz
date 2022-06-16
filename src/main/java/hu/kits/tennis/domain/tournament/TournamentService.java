@@ -18,6 +18,7 @@ import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchRepository;
 import hu.kits.tennis.domain.utr.MatchResult;
+import hu.kits.tennis.domain.utr.MatchResultInfo;
 import hu.kits.tennis.domain.utr.Player;
 
 public class TournamentService {
@@ -73,8 +74,9 @@ public class TournamentService {
         logger.info("Contestants updated: {} -> {}", tournament.contestants(), contestants);
     }
     
-    public void deleteTournament(String tournamentId) {
-        tournamentRepository.deleteTournament(tournamentId);
+    public void deleteTournament(Tournament tournament) {
+        tournamentRepository.deleteTournament(tournament.id());
+        logger.info("Tournament {} is deleted", tournament);
     }
     
     public Optional<Tournament> findTournament(String tournamentId) {
@@ -96,7 +98,7 @@ public class TournamentService {
             for(int i=0;i<players.size();i+=2) {
                 Player player1 = players.get(i);
                 Player player2 = players.get(i+1);
-                Match match = Match.createNew(tournament.id(), 1, matchNumber, tournament.date(), player1, player2);
+                Match match = Match.createNew(tournament.id(), 1, matchNumber, null, player1, player2);
                 matchRepository.save(new BookedMatch(match, null, null, null, null));
                 matches.add(match);
                 
@@ -128,14 +130,20 @@ public class TournamentService {
         
     }
 
-    public void setTournamentMatchResult(Match match, MatchResult matchResult) {
+    public void setTournamentMatchResult(MatchResultInfo matchResultInfo) {
         
-        matchRepository.setResult(match.id(), matchResult);
+        logger.info("Setting {}", matchResultInfo);
+        
+        Match match = matchResultInfo.match();
+        MatchResult matchResult = matchResultInfo.matchResult();
+        
+        matchRepository.setResult(matchResultInfo);
         
         Tournament tournament = tournamentRepository.findTournament(match.tournamentId()).get();
         
         if(tournament.status() == Status.DRAFT) {
             tournamentRepository.updateTournamentStatus(match.tournamentId(), Status.LIVE);
+            logger.info("Tournament {} status is updated to LIVE", tournament);
         }
         
         Player winner = matchResult.isPlayer1Winner() ? match.player1() : match.player2();
@@ -155,12 +163,14 @@ public class TournamentService {
                 nextMatch = Match.createNew(match.tournamentId(), match.tournamentBoardNumber(), nextRoundMatchNumber, null, null, winner);
             }
             matchRepository.save(new BookedMatch(nextMatch, null, null, null, null));
+            logger.info("Next round match created: {}", nextMatch);
         } else {
             if(match.tournamentMatchNumber() % 2 == 1) {
                 matchRepository.setPlayer1(nextMatch.id(), winner);    
             } else {
                 matchRepository.setPlayer2(nextMatch.id(), winner);
             }
+            logger.info("{} is set to next round match: {}", winner.name(), nextMatch);
         }
         
         if(tournament.type() == Type.BOARD_AND_CONSOLATION && match.tournamentBoardNumber() == 1 && tournament.mainBoard().roundNumber(match) == 1) {
@@ -177,12 +187,14 @@ public class TournamentService {
                     consolationMatch = Match.createNew(match.tournamentId(), 2, consolationMatchNumber, null, null, loser);
                 }
                 matchRepository.save(new BookedMatch(consolationMatch, null, null, null, null));
+                logger.info("Consolation round match created: {}", consolationMatch);
             } else {
                 if(match.tournamentMatchNumber() % 2 == 1) {
                     matchRepository.setPlayer1(consolationMatch.id(), loser);    
                 } else {
                     matchRepository.setPlayer2(consolationMatch.id(), loser);
                 }
+                logger.info("{} is set to consolation match: {}", loser.name(), consolationMatch);
             }
         }
         

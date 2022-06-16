@@ -12,11 +12,11 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.ItemClickEvent;
 
 import hu.kits.tennis.common.MathUtil;
-import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Board;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchResult;
+import hu.kits.tennis.domain.utr.MatchResultInfo;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentBoard.Row;
@@ -30,9 +30,9 @@ class TournamentBoard extends Grid<Row> {
     
     private final List<Row> rows = new ArrayList<>();
     
-    private final Consumer<Pair<Match, MatchResult>> matchResultSetCallback;
+    private final Consumer<MatchResultInfo> matchResultSetCallback;
     
-    TournamentBoard(Tournament tournament, Board board, Consumer<Pair<Match, MatchResult>> matchResultSetCallback) {
+    TournamentBoard(Tournament tournament, Board board, Consumer<MatchResultInfo> matchResultSetCallback) {
         
         this.tournament = tournament;
         this.board = board;
@@ -137,7 +137,7 @@ class TournamentBoard extends Grid<Row> {
             int matchNumberInRound = roundAndMatchNumberInRound.getSecond();
             
             setPlayer(round, matchNumberInRound, 1, findPlayerWithResult(match, player1));
-            setPlayer(round, matchNumberInRound, 2, findPlayerWithResult(match, player2));;
+            setPlayer(round, matchNumberInRound, 2, findPlayerWithResult(match, player2));
         }
         
         Match finalMatch = board.finalMatch();

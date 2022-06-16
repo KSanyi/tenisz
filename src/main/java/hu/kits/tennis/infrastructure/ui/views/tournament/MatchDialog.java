@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.function.Consumer;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -23,6 +24,7 @@ import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.MatchResult.SetResult;
+import hu.kits.tennis.domain.utr.MatchResultInfo;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
@@ -37,14 +39,20 @@ public class MatchDialog extends Dialog {
     
     private final Button saveButton = UIUtils.createButton("Mentés", ButtonVariant.LUMO_PRIMARY);
     
-    private final Consumer<Pair<Match, MatchResult>> matchResulCallback;
+    private final Consumer<MatchResultInfo> matchResulCallback;
     
-    public MatchDialog(String title, Match match, int bestOfNSets, Consumer<Pair<Match, MatchResult>> matchResulCallback) {
+    public MatchDialog(String title, Match match, int bestOfNSets, Consumer<MatchResultInfo> matchResulCallback) {
         
         this.match = match;
         this.matchResulCallback = matchResulCallback;
         
         scoreFields = new ScoreFields(bestOfNSets);
+        if(match.result() != null) {
+            scoreFields.setMatchResult(match.result());
+        }
+        if(match.date() != null) {
+            datePicker.setValue(match.date());
+        }
 
         setDraggable(true);
         setResizable(true);
@@ -53,9 +61,10 @@ public class MatchDialog extends Dialog {
         add(createForm());
         getFooter().add(saveButton);
         saveButton.addClickListener(click -> save());
+        saveButton.addClickShortcut(Key.ENTER);
         
         //addThemeVariants(DialogVariant.LUMO_NO_PADDING);
-        setWidth("400px");
+        setWidth("420px");
     }
     
     private Component createForm() {
@@ -92,7 +101,7 @@ public class MatchDialog extends Dialog {
         
         if(scoreFields.hasValidScore()) {
             MatchResult matchResult = scoreFields.getMatchResult();
-            matchResulCallback.accept(new Pair<>(match, matchResult));
+            matchResulCallback.accept(new MatchResultInfo(match, datePicker.getValue(), matchResult));
             close();
         } else {
             KITSNotification.showError("Az eredményt meg kell adni");
@@ -114,6 +123,14 @@ class ScoreFields extends HorizontalLayout {
         }
     }
     
+    void setMatchResult(MatchResult result) {
+        for(int i=0;i<result.setResults().size();i++) {
+            SetResult setResult = result.setResults().get(i);
+            scoreFields.get(i).getFirst().setValue(String.valueOf(setResult.player1Games()));
+            scoreFields.get(i).getSecond().setValue(String.valueOf(setResult.player2Games()));
+        }
+    }
+
     MatchResult getMatchResult() {
         List<SetResult> setResults = new ArrayList<>();
         

@@ -23,5 +23,12 @@ public record Match(int id, String tournamentId, Integer tournamentBoardNumber, 
     public Player winner() {
         return result.isPlayer1Winner() ? player1 : player2;
     }
+    
+    @Override
+    public String toString() {
+        String player1Name = player1 != null ? player1.name() : "?";
+        String player2Name = player2 != null ? player2.name() : "?";
+        return (date != null ? (date.toString() + " ") : "") +  player1Name + " VS " + player2Name + " " + (result != null ? result.toString() : "");
+    }
 
 }

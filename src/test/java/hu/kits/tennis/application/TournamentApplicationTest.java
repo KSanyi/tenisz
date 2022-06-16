@@ -77,7 +77,7 @@ public class TournamentApplicationTest {
         
         Tournament tournament = tournamentService.createTournament("BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.SIMPLE_BOARD, 3);
         
-        tournamentService.deleteTournament(tournament.id());
+        tournamentService.deleteTournament(tournament);
         List<Tournament> tournaments = tournamentService.loadAllTournaments();
         assertEquals(0, tournaments.size());
     }
