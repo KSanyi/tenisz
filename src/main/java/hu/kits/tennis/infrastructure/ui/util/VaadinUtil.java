@@ -41,7 +41,10 @@ public class VaadinUtil {
                     }
                 }                
             }
+        } else {
+            logger.debug("ANONYMUS is using " + VaadinSession.getCurrent().getBrowser().getBrowserApplication());
         }
+        
         return UserData.ANONYMUS;
     }
     
