@@ -13,7 +13,7 @@ public record BookedMatch(Match playedMatch, UTR player1UTR, UTR player2UTR, UTR
     }
 
     public boolean hasPlayed(Player player) {
-        return playedMatch.hasPlayed(player);
+        return playedMatch.hasPlayer(player);
     }
 
     public boolean matches(String filterPart) {

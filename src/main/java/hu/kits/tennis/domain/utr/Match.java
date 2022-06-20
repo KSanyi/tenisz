@@ -8,7 +8,7 @@ public record Match(int id, String tournamentId, Integer tournamentBoardNumber, 
         return new Match(0, tournamentId, tournamentBoardNumber, tournamentMatchNumber, date, player1, player2, null);
     }
     
-    public boolean hasPlayed(Player player) {
+    public boolean hasPlayer(Player player) {
         return player.equals(player1) || player.equals(player2);
     }
 

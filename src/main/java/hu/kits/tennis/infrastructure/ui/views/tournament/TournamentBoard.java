@@ -3,7 +3,6 @@ package hu.kits.tennis.infrastructure.ui.views.tournament;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
@@ -16,7 +15,6 @@ import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Board;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchResult;
-import hu.kits.tennis.domain.utr.MatchResultInfo;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentBoard.Row;
@@ -30,13 +28,13 @@ class TournamentBoard extends Grid<Row> {
     
     private final List<Row> rows = new ArrayList<>();
     
-    private final Consumer<MatchResultInfo> matchResultSetCallback;
+    private final Runnable matchChangeCallback;
     
-    TournamentBoard(Tournament tournament, Board board, Consumer<MatchResultInfo> matchResultSetCallback) {
+    TournamentBoard(Tournament tournament, Board board, Runnable matchChangeCallback) {
         
         this.tournament = tournament;
         this.board = board;
-        this.matchResultSetCallback = matchResultSetCallback;
+        this.matchChangeCallback = matchChangeCallback;
         
         int rounds = board.numberOfRounds();
         
@@ -98,7 +96,7 @@ class TournamentBoard extends Grid<Row> {
                 Match match = board.getMatch(round, matchNumberInRound);
                 if(match != null) {
                     String title = createHeader(board.numberOfRounds(), round) + " meccs " + matchNumberInRound;
-                    new MatchDialog(title, match, tournament.bestOfNSets(), matchResultSetCallback).open();
+                    new MatchDialog(title, match, tournament.bestOfNSets(), matchChangeCallback).open();
                 }
             } 
         }

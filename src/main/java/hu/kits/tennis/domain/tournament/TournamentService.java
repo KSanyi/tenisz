@@ -85,7 +85,7 @@ public class TournamentService {
     
     public void createMatches(String tournamentId, DrawMode drawMode) {
         
-        Tournament tournament = tournamentRepository.findTournament(tournamentId).get();
+        Tournament tournament = loadTournament(tournamentId);
         
         if(tournament.status() == Status.DRAFT) {
             
@@ -139,7 +139,7 @@ public class TournamentService {
         
         matchRepository.setResult(matchResultInfo);
         
-        Tournament tournament = tournamentRepository.findTournament(match.tournamentId()).get();
+        Tournament tournament = loadTournament(match.tournamentId());
         
         if(tournament.status() == Status.DRAFT) {
             tournamentRepository.updateTournamentStatus(match.tournamentId(), Status.LIVE);
@@ -154,23 +154,23 @@ public class TournamentService {
         
         int nextRoundMatchNumber = tournament.nextRoundMatchNumber(match);
         
-        Match nextMatch = tournament.getMatch(match.tournamentBoardNumber(), nextRoundMatchNumber);
+        Match followUpMatch = tournament.followUpMatch(match);
         
-        if(nextMatch == null) {
+        if(followUpMatch == null) {
             if(match.tournamentMatchNumber() % 2 == 1) {
-                nextMatch = Match.createNew(match.tournamentId(), match.tournamentBoardNumber(), nextRoundMatchNumber, null, winner, null);
+                followUpMatch = Match.createNew(match.tournamentId(), match.tournamentBoardNumber(), nextRoundMatchNumber, null, winner, null);
             } else {
-                nextMatch = Match.createNew(match.tournamentId(), match.tournamentBoardNumber(), nextRoundMatchNumber, null, null, winner);
+                followUpMatch = Match.createNew(match.tournamentId(), match.tournamentBoardNumber(), nextRoundMatchNumber, null, null, winner);
             }
-            matchRepository.save(new BookedMatch(nextMatch, null, null, null, null));
-            logger.info("Next round match created: {}", nextMatch);
+            matchRepository.save(new BookedMatch(followUpMatch, null, null, null, null));
+            logger.info("Next round match created: {}", followUpMatch);
         } else {
             if(match.tournamentMatchNumber() % 2 == 1) {
-                matchRepository.setPlayer1(nextMatch.id(), winner);    
+                matchRepository.setPlayer1(followUpMatch.id(), winner);    
             } else {
-                matchRepository.setPlayer2(nextMatch.id(), winner);
+                matchRepository.setPlayer2(followUpMatch.id(), winner);
             }
-            logger.info("{} is set to next round match: {}", winner.name(), nextMatch);
+            logger.info("{} is set to next round match: {}", winner.name(), followUpMatch);
         }
         
         if(tournament.type() == Type.BOARD_AND_CONSOLATION && match.tournamentBoardNumber() == 1 && tournament.mainBoard().roundNumber(match) == 1) {
@@ -198,6 +198,37 @@ public class TournamentService {
             }
         }
         
+    }
+    
+    private Tournament loadTournament(String tournamentId) {
+        return tournamentRepository.findTournament(tournamentId).get();
+    }
+
+    public void deleteMatch(Match match) {
+        
+        if(match.tournamentId() != null) {
+            Tournament tournament = loadTournament(match.tournamentId());
+            Match followUpMatch = tournament.followUpMatch(match);
+            Player winner = match.winner();
+            if(followUpMatch != null && followUpMatch.hasPlayer(winner)) {
+                if(followUpMatch.arePlayersSet()) {
+                    deleteMatch(followUpMatch);
+                } else {
+                    if(match.winner().equals(followUpMatch.player1())) {
+                        matchRepository.setPlayer1(followUpMatch.id(), null);
+                    } else {
+                        matchRepository.setPlayer2(followUpMatch.id(), null);
+                    }
+                    if(followUpMatch.result() != null) {
+                        matchRepository.setResult(new MatchResultInfo(followUpMatch, null, null));
+                    } 
+                }
+            }
+        }
+        
+        matchRepository.deleteMatch(match.id());
+        
+        logger.info("Match deleted: {}", match);
     }
 
 }

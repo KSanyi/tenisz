@@ -65,14 +65,14 @@ public record Tournament(String id,
             int round = roundAndMatchNumberInRound.getFirst();
             int matchNumberInRound = roundAndMatchNumberInRound.getSecond();
             Match match1 = getMatch(round-1, matchNumberInRound * 2 - 1);
-            if(match1 != null && match1.hasPlayed(player)) {
+            if(match1 != null && match1.hasPlayer(player)) {
                 if(match1.player2().equals(player)) {
                     match1 = match1.swap();
                 }
                 return Optional.of(match1);
             }
             Match match2 = getMatch(round-1, matchNumberInRound * 2);
-            if(match2 != null && match2.hasPlayed(player)) {
+            if(match2 != null && match2.hasPlayer(player)) {
                 if(match2.player2().equals(player)) {
                     match2 = match2.swap();
                 }
@@ -114,7 +114,7 @@ public record Tournament(String id,
     }
 
     public Match getMatch(int boardNumber, int matchNumber) {
-        return boards.get(boardNumber-1).getMatch(matchNumber);
+        return getBoard(boardNumber).getMatch(matchNumber);
     }
 
     public int nextRoundMatchNumber(Match match) {
@@ -131,6 +131,15 @@ public record Tournament(String id,
 
     public boolean isBoardFinal(Match match) {
         return boards.get(match.tournamentBoardNumber() - 1).isFinal(match);
+    }
+
+    private Board getBoard(Integer tournamentBoardNumber) {
+        return boards.get(tournamentBoardNumber - 1);
+    }
+
+    public Match followUpMatch(Match match) {
+        int nextRoundMatchNumber = nextRoundMatchNumber(match);
+        return getMatch(match.tournamentBoardNumber(), nextRoundMatchNumber);
     }
     
 }

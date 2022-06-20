@@ -3,7 +3,6 @@ package hu.kits.tennis.infrastructure.ui.views.tournament;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +27,6 @@ import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Status;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
-import hu.kits.tennis.domain.utr.MatchResultInfo;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
@@ -67,12 +65,9 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         Label title = UIUtils.createH2Label(tournament.name());
         //Label date = UIUtils.createH3Label(Formatters.formatDateLong(tournament.date()));
         
-        Consumer<MatchResultInfo> matchResultSetCallback = matchResultInfo -> {
-            tournamentService.setTournamentMatchResult(matchResultInfo);
-            refresh();
-        };
+        Runnable matchChangeCallback = () -> refresh();
         
-        mainBoard = new TournamentBoard(tournament, tournament.mainBoard(), matchResultSetCallback);
+        mainBoard = new TournamentBoard(tournament, tournament.mainBoard(), matchChangeCallback);
         
         Button fillBoardButton = UIUtils.createButton("Táblára", VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
         fillBoardButton.setVisible(VaadinUtil.isUserLoggedIn());
@@ -90,7 +85,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         layout.add(title, horizontalLayout);
         
         if(tournament.type() == Type.BOARD_AND_CONSOLATION) {
-            consolationBoard = new TournamentBoard(tournament, tournament.consolationBoard(), matchResultSetCallback);
+            consolationBoard = new TournamentBoard(tournament, tournament.consolationBoard(), matchChangeCallback);
             layout.add(UIUtils.createH2Label("Vigaszág"), consolationBoard);
         }
         

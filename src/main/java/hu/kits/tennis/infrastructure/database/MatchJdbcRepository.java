@@ -188,7 +188,7 @@ public class MatchJdbcRepository implements MatchRepository  {
         int matchId = matchResultInfo.match().id();
         MatchResult matchResult = matchResultInfo.matchResult();
         LocalDate date = matchResultInfo.date();
-        jdbi.useHandle(handle -> JdbiUtil.executeSimpleUpdate(jdbi, TABLE_TENNIS_MATCH, COLUMN_RESULT, matchResult.serialize(), COLUMN_ID, matchId));
+        jdbi.useHandle(handle -> JdbiUtil.executeSimpleUpdate(jdbi, TABLE_TENNIS_MATCH, COLUMN_RESULT, matchResult != null ? matchResult.serialize() : null, COLUMN_ID, matchId));
         jdbi.useHandle(handle -> JdbiUtil.executeSimpleUpdate(jdbi, TABLE_TENNIS_MATCH, COLUMN_DATETIME, date, COLUMN_ID, matchId));
     }
     
@@ -199,7 +199,7 @@ public class MatchJdbcRepository implements MatchRepository  {
 
     @Override
     public void setPlayer2(int matchId, Player player) {
-        jdbi.useHandle(handle -> JdbiUtil.executeSimpleUpdate(jdbi, TABLE_TENNIS_MATCH, COLUMN_PLAYER2_ID, player.id(), COLUMN_ID, matchId));
+        jdbi.useHandle(handle -> JdbiUtil.executeSimpleUpdate(jdbi, TABLE_TENNIS_MATCH, COLUMN_PLAYER2_ID, player != null ? player.id() : null, COLUMN_ID, matchId));
     }
     
     @Override

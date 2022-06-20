@@ -18,7 +18,7 @@ public class CookieUtil {
 
     private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private final static String COOKIE_KEY = "TENISZ75465";
+    private final static String COOKIE_KEY = "TENISZ_84618";
     
     public static Optional<String> findUserFromCookie() {
         VaadinRequest vaadinRequest = VaadinService.getCurrentRequest();

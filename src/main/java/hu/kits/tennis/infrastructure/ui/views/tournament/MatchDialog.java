@@ -3,7 +3,6 @@ package hu.kits.tennis.infrastructure.ui.views.tournament;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Consumer;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
@@ -20,32 +19,36 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.data.value.ValueChangeMode;
 
+import hu.kits.tennis.Main;
 import hu.kits.tennis.common.Pair;
+import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.MatchResult.SetResult;
 import hu.kits.tennis.domain.utr.MatchResultInfo;
 import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
 public class MatchDialog extends Dialog {
 
+    private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
+    
     private final DatePicker datePicker = new DatePicker("Dátum");
     
     private final Match match;
     
     private final ScoreFields scoreFields;
     
-    private final Button saveButton = UIUtils.createButton("Mentés", ButtonVariant.LUMO_PRIMARY);
+    private final Runnable matchChangeCallback;
     
-    private final Consumer<MatchResultInfo> matchResulCallback;
-    
-    public MatchDialog(String title, Match match, int bestOfNSets, Consumer<MatchResultInfo> matchResulCallback) {
+    public MatchDialog(String title, Match match, int bestOfNSets, Runnable matchChangeCallback) {
         
         this.match = match;
-        this.matchResulCallback = matchResulCallback;
+        this.matchChangeCallback = matchChangeCallback;
         
         scoreFields = new ScoreFields(bestOfNSets);
         if(match.result() != null) {
@@ -60,6 +63,13 @@ public class MatchDialog extends Dialog {
         
         setHeaderTitle(title);
         add(createForm());
+        
+        Button deleteButton = UIUtils.createButton("Törlés", ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+        deleteButton.getStyle().set("margin-right", "auto");
+        deleteButton.addClickListener(click -> delete());
+        //getFooter().add(deleteButton);
+        
+        Button saveButton = UIUtils.createButton("Mentés", ButtonVariant.LUMO_PRIMARY);
         getFooter().add(saveButton);
         saveButton.addClickListener(click -> save());
         saveButton.addClickShortcut(Key.ENTER);
@@ -104,11 +114,20 @@ public class MatchDialog extends Dialog {
         
         if(scoreFields.hasValidScore()) {
             MatchResult matchResult = scoreFields.getMatchResult();
-            matchResulCallback.accept(new MatchResultInfo(match, datePicker.getValue(), matchResult));
+            tournamentService.setTournamentMatchResult(new MatchResultInfo(match, datePicker.getValue(), matchResult));
+            matchChangeCallback.run();
             close();
         } else {
             KITSNotification.showError("Az eredményt meg kell adni");
         }
+    }
+    
+    private void delete() {
+        new ConfirmationDialog("Biztos hogy törldöd a meccset?", () -> {
+            tournamentService.deleteMatch(match);
+            matchChangeCallback.run();
+            close();
+        }).open();
     }
 
 }
@@ -116,7 +135,6 @@ public class MatchDialog extends Dialog {
 class ScoreFields extends HorizontalLayout {
     
     private final List<Pair<TextField, TextField>> scoreFields = new ArrayList<>();
-    
     private final int setsNeedToWin;
     
     ScoreFields(int bestOfNSets) {
@@ -124,6 +142,8 @@ class ScoreFields extends HorizontalLayout {
         for(int i=0;i<setsNeedToWin;i++) {
             addSet();
         }
+        
+        scoreFields.get(0).getFirst().focus();
     }
     
     void setMatchResult(MatchResult result) {
@@ -193,6 +213,7 @@ class ScoreFields extends HorizontalLayout {
             }
             if(player1Sets < setsNeedToWin && player2Sets < setsNeedToWin) {
                 addSet();
+                scoreFields.get(scoreFields.size() - 1).getFirst().focus();
             }
         }
     }
@@ -200,12 +221,19 @@ class ScoreFields extends HorizontalLayout {
     private void addSet() {
         TextField scoreField1 = createScoreField();
         TextField scoreField2 = createScoreField();
+        
+        if(!scoreFields.isEmpty()) {
+            scoreFields.get(scoreFields.size() - 1).getSecond().addValueChangeListener(e -> scoreField1.focus());
+        }
+        scoreField1.addValueChangeListener(e -> scoreField2.focus());
+        
         scoreFields.add(new Pair<>(scoreField1, scoreField2));
         VerticalLayout verticalLayout = new VerticalLayout(scoreField1, scoreField2);
         verticalLayout.setPadding(false);
         verticalLayout.setSpacing(false);
         add(verticalLayout);
-        scoreField1.focus();
+        scoreField1.setValueChangeMode(ValueChangeMode.EAGER);
+        scoreField2.setValueChangeMode(ValueChangeMode.EAGER);
     }
     
 }
