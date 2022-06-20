@@ -115,4 +115,8 @@ public class UserData {
         }
     }
 
+    public static UserData createAnonymus(int id) {
+        return new UserData("ANONYMUS_" + id, "ANONYMUS_" + id, Role.ANONYMUS, "", "", Status.ANONYMUS);
+    }
+
 }

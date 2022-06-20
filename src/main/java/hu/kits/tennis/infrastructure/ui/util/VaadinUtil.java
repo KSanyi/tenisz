@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +14,15 @@ import com.vaadin.flow.server.VaadinSession;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.KITSException;
+import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.domain.user.UserData;
 import hu.kits.tennis.infrastructure.web.CookieUtil;
 
 public class VaadinUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
+    private static final AtomicInteger ANONYMUS_USER_COUNT = new AtomicInteger(1);
     
     private static final String USER_KEY = "USER_KEY";
     
@@ -40,7 +44,8 @@ public class VaadinUtil {
                         logger.warn("User id '{}' not found in the database", userFromCookie.get());
                     }
                 } else {
-                    logger.debug("ANONYMUS is using " + VaadinSession.getCurrent().getBrowser().getBrowserApplication());
+                    int id = ANONYMUS_USER_COUNT.getAndIncrement();
+                    setUser(UserData.createAnonymus(id));
                 }              
             }
         } else {
@@ -67,7 +72,7 @@ public class VaadinUtil {
     }
 
     public static boolean isUserLoggedIn() {
-        return !getUser().equals(UserData.ANONYMUS);
+        return getUser().role() != Role.ANONYMUS;
     }
 
 }
