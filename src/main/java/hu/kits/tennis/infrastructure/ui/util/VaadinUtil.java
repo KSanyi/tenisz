@@ -39,7 +39,9 @@ public class VaadinUtil {
                     } catch(KITSException ex) {
                         logger.warn("User id '{}' not found in the database", userFromCookie.get());
                     }
-                }                
+                } else {
+                    logger.debug("ANONYMUS is using " + VaadinSession.getCurrent().getBrowser().getBrowserApplication());
+                }              
             }
         } else {
             logger.debug("ANONYMUS is using " + VaadinSession.getCurrent().getBrowser().getBrowserApplication());
