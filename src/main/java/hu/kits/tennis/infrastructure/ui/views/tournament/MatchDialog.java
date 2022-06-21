@@ -33,7 +33,7 @@ import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
-public class MatchDialog extends Dialog {
+class MatchDialog extends Dialog {
 
     private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
     
@@ -45,7 +45,7 @@ public class MatchDialog extends Dialog {
     
     private final Runnable matchChangeCallback;
     
-    public MatchDialog(String title, Match match, int bestOfNSets, Runnable matchChangeCallback) {
+    MatchDialog(String title, Match match, int bestOfNSets, Runnable matchChangeCallback) {
         
         this.match = match;
         this.matchChangeCallback = matchChangeCallback;
@@ -118,7 +118,7 @@ public class MatchDialog extends Dialog {
             matchChangeCallback.run();
             close();
         } else {
-            KITSNotification.showError("Az eredményt meg kell adni");
+            KITSNotification.showError("Hibás eredmény");
         }
     }
     
@@ -135,6 +135,7 @@ public class MatchDialog extends Dialog {
 class ScoreFields extends HorizontalLayout {
     
     private final List<Pair<TextField, TextField>> scoreFields = new ArrayList<>();
+    private final List<Component> scoreFieldsHolder = new ArrayList<>();
     private final int setsNeedToWin;
     
     ScoreFields(int bestOfNSets) {
@@ -169,7 +170,7 @@ class ScoreFields extends HorizontalLayout {
     }
 
     boolean hasValidScore() {
-        return scoreFields.stream().allMatch(fields -> hasValidGameNumber(fields.getFirst()) && hasValidGameNumber(fields.getSecond()));
+        return scoreFields.stream().allMatch(fields -> hasValidGameNumber(fields.getFirst()) && hasValidGameNumber(fields.getSecond()) && getScore(fields.getFirst()) != getScore(fields.getSecond()));
     }
     
     private static boolean hasValidGameNumber(TextField textField) {
@@ -202,19 +203,33 @@ class ScoreFields extends HorizontalLayout {
     private void scoreChanged() {
         int player1Sets = 0;
         int player2Sets = 0;
-        if(hasValidScore()) {
-            for(int setNumber=0;setNumber<scoreFields.size();setNumber++) {
+        boolean hasNotFilledField = false;
+        for(int setNumber=0;setNumber<scoreFields.size();setNumber++) {
+            if(hasValidGameNumber(scoreFields.get(setNumber).getFirst()) && hasValidGameNumber(scoreFields.get(setNumber).getSecond())) {
                 SetResult setResult = getSetResult(setNumber);
                 if(setResult.isPlayer1Winner()) {
                     player1Sets++;
-                } else {
+                } else if(setResult.isPlayer2Winner()) {
                     player2Sets++;
+                } else {
+                    return;
                 }
+                
+                if(player1Sets == setsNeedToWin || player2Sets == setsNeedToWin) {
+                    for(setNumber++;setNumber<scoreFields.size();setNumber++) {
+                        scoreFields.remove(setNumber);
+                        scoreFieldsHolder.remove(setNumber);
+                    }
+                    return;
+                }
+                
+            } else {
+                hasNotFilledField = true;
             }
-            if(player1Sets < setsNeedToWin && player2Sets < setsNeedToWin) {
-                addSet();
-                scoreFields.get(scoreFields.size() - 1).getFirst().focus();
-            }
+        }
+        if(!hasNotFilledField) {
+            addSet();
+            scoreFields.get(scoreFields.size() - 1).getFirst().focus();
         }
     }
 
@@ -232,6 +247,7 @@ class ScoreFields extends HorizontalLayout {
         verticalLayout.setPadding(false);
         verticalLayout.setSpacing(false);
         add(verticalLayout);
+        scoreFieldsHolder.add(verticalLayout);
         scoreField1.setValueChangeMode(ValueChangeMode.EAGER);
         scoreField2.setValueChangeMode(ValueChangeMode.EAGER);
     }

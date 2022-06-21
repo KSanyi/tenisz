@@ -83,6 +83,10 @@ public record MatchResult(List<SetResult> setResults) {
             return player1Games > player2Games;
         }
         
+        public boolean isPlayer2Winner() {
+            return player1Games < player2Games;
+        }
+        
     }
 
     public static MatchResult of(int ... gamesInSets) {
