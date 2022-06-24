@@ -163,8 +163,8 @@ public class UserService {
         
         if(userWithPasswordHash.isPresent()) {
             
-            UserData user = userWithPasswordHash.get().getFirst();
-            String passwordHash = userWithPasswordHash.get().getSecond();
+            UserData user = userWithPasswordHash.get().first();
+            String passwordHash = userWithPasswordHash.get().second();
             
             if(passwordHasher.checkPassword(passwordHash, password)) {
                 if(user.status() == Status.ACTIVE) {

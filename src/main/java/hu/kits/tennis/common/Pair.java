@@ -1,26 +1,14 @@
 package hu.kits.tennis.common;
 
-public class Pair<S, T> {
+public record Pair<S, T>(S first, T second) {
 
-    private final S first;
-    private final T second;
-    
-    public Pair(S first, T second) {
-        this.first = first;
-        this.second = second;
-    }
-
-    public S getFirst() {
-        return first;
-    }
-    
-    public T getSecond() {
-        return second;
-    }
-    
     @Override
     public String toString() {
         return "(" + first + ", " + second + ")";
+    }
+    
+    public static <S, T> Pair<S, T> of(S first, T second) {
+        return new Pair<>(first, second);
     }
     
 }

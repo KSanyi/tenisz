@@ -40,7 +40,7 @@ class ContestantDBTable {
             handle.createQuery(sql)
             .map((rs, ctx) -> mapToTournamentIdContestantPair(rs, players)).list());
         
-        return list.stream().collect(groupingBy(Pair::getFirst, mapping(Pair::getSecond, toList())));
+        return list.stream().collect(groupingBy(Pair::first, mapping(Pair::second, toList())));
     }
     
     List<Contestant> loadAllContestantsForTournament(Players players, String tournamentId) {
@@ -51,7 +51,7 @@ class ContestantDBTable {
             .bind("tournamentId", tournamentId)
             .map((rs, ctx) -> mapToTournamentIdContestantPair(rs, players)).list());
         
-        return list.stream().map(Pair::getSecond).collect(toList());
+        return list.stream().map(Pair::second).collect(toList());
     }
     
     private static Pair<String, Contestant> mapToTournamentIdContestantPair(ResultSet rs, Players players) throws SQLException {

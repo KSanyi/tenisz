@@ -60,7 +60,7 @@ public class UserJdbcRepository implements UserRepository {
     
     @Override
     public UserData loadUser(String userId) {
-        return findUserWithPasswordHash(userId).map(Pair::getFirst).orElseThrow(() -> new KITSException("Can not find user with id: '" + userId + "'"));
+        return findUserWithPasswordHash(userId).map(Pair::first).orElseThrow(() -> new KITSException("Can not find user with id: '" + userId + "'"));
     }
     
     private static UserData mapToUser(ResultSet rs) throws SQLException {
@@ -106,7 +106,7 @@ public class UserJdbcRepository implements UserRepository {
         
         Optional<Pair<UserData, String>> userWithPasswordHash = findUserWithPasswordHash(userId);
         if(userWithPasswordHash.isPresent()) {
-            UserData originalUser = userWithPasswordHash.get().getFirst();
+            UserData originalUser = userWithPasswordHash.get().first();
             
             Map<String, Object> originalMap = createMap(originalUser);
             Map<String, Object> updatedMap = createMap(updatedUserData);

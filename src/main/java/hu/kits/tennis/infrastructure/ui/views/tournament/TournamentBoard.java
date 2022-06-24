@@ -131,8 +131,8 @@ class TournamentBoard extends Grid<Row> {
             Player player2 = match.player2();
             
             var roundAndMatchNumberInRound = MathUtil.roundAndMatchNumberInRound(match.tournamentMatchNumber(), board.numberOfRounds());
-            int round = roundAndMatchNumberInRound.getFirst();
-            int matchNumberInRound = roundAndMatchNumberInRound.getSecond();
+            int round = roundAndMatchNumberInRound.first();
+            int matchNumberInRound = roundAndMatchNumberInRound.second();
             
             setPlayer(round, matchNumberInRound, 1, findPlayerWithResult(match, player1));
             setPlayer(round, matchNumberInRound, 2, findPlayerWithResult(match, player2));

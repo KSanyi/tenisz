@@ -1,12 +1,13 @@
 package hu.kits.tennis.domain.tournament;
 
+import static java.util.stream.Collectors.toMap;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.utr.Match;
@@ -54,16 +55,16 @@ public record Tournament(String id,
         
         public int nextRoundMatchNumber(Integer matchNumber) {
             var roundAndMatchNumberInRound = MathUtil.roundAndMatchNumberInRound(matchNumber, numberOfRounds);
-            int round = roundAndMatchNumberInRound.getFirst();
-            int matchNumberInRound = roundAndMatchNumberInRound.getSecond();
+            int round = roundAndMatchNumberInRound.first();
+            int matchNumberInRound = roundAndMatchNumberInRound.second();
             
             return matchNumber(round + 1, (matchNumberInRound + 1) / 2);
         }
         
         public Optional<Match> findPrevMatch(Match match, Player player) {
             var roundAndMatchNumberInRound = MathUtil.roundAndMatchNumberInRound(match.tournamentMatchNumber(), numberOfRounds);
-            int round = roundAndMatchNumberInRound.getFirst();
-            int matchNumberInRound = roundAndMatchNumberInRound.getSecond();
+            int round = roundAndMatchNumberInRound.first();
+            int matchNumberInRound = roundAndMatchNumberInRound.second();
             Match match1 = getMatch(round-1, matchNumberInRound * 2 - 1);
             if(match1 != null && match1.hasPlayer(player)) {
                 if(match1.player2().equals(player)) {
@@ -82,7 +83,7 @@ public record Tournament(String id,
         }
 
         public int roundNumber(Match match) {
-            return MathUtil.roundAndMatchNumberInRound(match.tournamentMatchNumber(), numberOfRounds).getFirst();
+            return MathUtil.roundAndMatchNumberInRound(match.tournamentMatchNumber(), numberOfRounds).first();
         }
 
         public boolean isFinal(Match match) {
@@ -97,7 +98,7 @@ public record Tournament(String id,
     
     public List<Player> playersLineup() {
         
-        var playersByRank = contestants.stream().collect(Collectors.toMap(Contestant::rank, Contestant::player));
+        var playersByRank = contestants.stream().collect(toMap(Contestant::rank, Contestant::player));
         
         List<Player> lineup = new ArrayList<>();
         for(int i=1;i<=MathUtil.pow2(mainBoard().numberOfRounds);i++) {

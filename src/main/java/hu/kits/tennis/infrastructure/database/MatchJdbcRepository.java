@@ -140,7 +140,7 @@ public class MatchJdbcRepository implements MatchRepository  {
     @Override
     public BookedMatch save(BookedMatch bookedMatch) {
         
-        if(bookedMatch.playedMatch().id() != 0) {
+        if(bookedMatch.playedMatch().id() != null) {
             deleteMatch(bookedMatch.playedMatch().id());
         }
         

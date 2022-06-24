@@ -2,10 +2,10 @@ package hu.kits.tennis.domain.utr;
 
 import java.time.LocalDate;
 
-public record Match(int id, String tournamentId, Integer tournamentBoardNumber, Integer tournamentMatchNumber, LocalDate date, Player player1, Player player2, MatchResult result) {
+public record Match(Integer id, String tournamentId, Integer tournamentBoardNumber, Integer tournamentMatchNumber, LocalDate date, Player player1, Player player2, MatchResult result) {
 
     public static Match createNew(String tournamentId, Integer tournamentBoardNumber, Integer tournamentMatchNumber, LocalDate date, Player player1, Player player2) {
-        return new Match(0, tournamentId, tournamentBoardNumber, tournamentMatchNumber, date, player1, player2, null);
+        return new Match(null, tournamentId, tournamentBoardNumber, tournamentMatchNumber, date, player1, player2, null);
     }
     
     public boolean hasPlayer(Player player) {

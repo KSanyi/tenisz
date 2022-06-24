@@ -40,9 +40,9 @@ public class UTRCalculator {
     }
     
     private static double calculatWeightedAverage(List<Pair<Double, Integer>> valuesWithWeights) {
-        int weightSum = valuesWithWeights.stream().mapToInt(e -> e.getSecond()).sum();
+        int weightSum = valuesWithWeights.stream().mapToInt(e -> e.second()).sum();
         
-        double sumProduct = valuesWithWeights.stream().mapToDouble(e -> e.getFirst() * e.getSecond()).sum();
+        double sumProduct = valuesWithWeights.stream().mapToDouble(e -> e.first() * e.second()).sum();
         
         return sumProduct / weightSum;
     }

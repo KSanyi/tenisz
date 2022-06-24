@@ -144,14 +144,14 @@ class ScoreFields extends HorizontalLayout {
             addSet();
         }
         
-        scoreFields.get(0).getFirst().focus();
+        scoreFields.get(0).first().focus();
     }
     
     void setMatchResult(MatchResult result) {
         for(int i=0;i<result.setResults().size();i++) {
             SetResult setResult = result.setResults().get(i);
-            scoreFields.get(i).getFirst().setValue(String.valueOf(setResult.player1Games()));
-            scoreFields.get(i).getSecond().setValue(String.valueOf(setResult.player2Games()));
+            scoreFields.get(i).first().setValue(String.valueOf(setResult.player1Games()));
+            scoreFields.get(i).second().setValue(String.valueOf(setResult.player2Games()));
         }
     }
 
@@ -166,11 +166,11 @@ class ScoreFields extends HorizontalLayout {
     
     private SetResult getSetResult(int setNumber) {
         var fields = scoreFields.get(setNumber);
-        return new SetResult(getScore(fields.getFirst()), getScore(fields.getSecond()));
+        return new SetResult(getScore(fields.first()), getScore(fields.second()));
     }
 
     boolean hasValidScore() {
-        return scoreFields.stream().allMatch(fields -> hasValidGameNumber(fields.getFirst()) && hasValidGameNumber(fields.getSecond()) && getScore(fields.getFirst()) != getScore(fields.getSecond()));
+        return scoreFields.stream().allMatch(fields -> hasValidGameNumber(fields.first()) && hasValidGameNumber(fields.second()) && getScore(fields.first()) != getScore(fields.second()));
     }
     
     private static boolean hasValidGameNumber(TextField textField) {
@@ -205,7 +205,7 @@ class ScoreFields extends HorizontalLayout {
         int player2Sets = 0;
         boolean hasNotFilledField = false;
         for(int setNumber=0;setNumber<scoreFields.size();setNumber++) {
-            if(hasValidGameNumber(scoreFields.get(setNumber).getFirst()) && hasValidGameNumber(scoreFields.get(setNumber).getSecond())) {
+            if(hasValidGameNumber(scoreFields.get(setNumber).first()) && hasValidGameNumber(scoreFields.get(setNumber).second())) {
                 SetResult setResult = getSetResult(setNumber);
                 if(setResult.isPlayer1Winner()) {
                     player1Sets++;
@@ -229,7 +229,7 @@ class ScoreFields extends HorizontalLayout {
         }
         if(!hasNotFilledField) {
             addSet();
-            scoreFields.get(scoreFields.size() - 1).getFirst().focus();
+            scoreFields.get(scoreFields.size() - 1).first().focus();
         }
     }
 
@@ -238,7 +238,7 @@ class ScoreFields extends HorizontalLayout {
         TextField scoreField2 = createScoreField();
         
         if(!scoreFields.isEmpty()) {
-            scoreFields.get(scoreFields.size() - 1).getSecond().addValueChangeListener(e -> scoreField1.focus());
+            scoreFields.get(scoreFields.size() - 1).second().addValueChangeListener(e -> scoreField1.focus());
         }
         scoreField1.addValueChangeListener(e -> scoreField2.focus());
         
