@@ -14,74 +14,74 @@ import hu.kits.tennis.infrastructure.ui.vaadin.components.FlexBoxLayout;
 @CssImport("./styles/components/view-frame.css")
 public class SplitViewFrame extends Composite<Div> implements HasStyle {
 
-	private String CLASS_NAME = "view-frame";
+    private String CLASS_NAME = "view-frame";
 
-	private Div header;
+    private Div header;
 
-	private FlexBoxLayout wrapper;
-	private Div content;
-	private Div details;
+    private FlexBoxLayout wrapper;
+    private Div content;
+    private Div details;
 
-	private Div footer;
+    private Div footer;
 
-	public enum Position {
-		RIGHT, BOTTOM
-	}
+    public enum Position {
+        RIGHT, BOTTOM
+    }
 
-	public SplitViewFrame() {
-		setClassName(CLASS_NAME);
+    public SplitViewFrame() {
+        setClassName(CLASS_NAME);
 
-		header = new Div();
-		header.setClassName(CLASS_NAME + "__header");
+        header = new Div();
+        header.setClassName(CLASS_NAME + "__header");
 
-		wrapper = new FlexBoxLayout();
-		wrapper.setClassName(CLASS_NAME + "__wrapper");
+        wrapper = new FlexBoxLayout();
+        wrapper.setClassName(CLASS_NAME + "__wrapper");
 
-		content = new Div();
-		content.setClassName(CLASS_NAME + "__content");
+        content = new Div();
+        content.setClassName(CLASS_NAME + "__content");
 
-		details = new Div();
-		details.setClassName(CLASS_NAME + "__details");
+        details = new Div();
+        details.setClassName(CLASS_NAME + "__details");
 
-		footer = new Div();
-		footer.setClassName(CLASS_NAME + "__footer");
+        footer = new Div();
+        footer.setClassName(CLASS_NAME + "__footer");
 
-		wrapper.add(content, details);
-		getContent().add(header, wrapper, footer);
-	}
+        wrapper.add(content, details);
+        getContent().add(header, wrapper, footer);
+    }
 
-	public void setViewHeader(Component... components) {
-		header.removeAll();
-		header.add(components);
-	}
+    public void setViewHeader(Component... components) {
+        header.removeAll();
+        header.add(components);
+    }
 
-	public void setViewContent(Component... components) {
-		content.removeAll();
-		content.add(components);
-	}
+    public void setViewContent(Component... components) {
+        content.removeAll();
+        content.add(components);
+    }
 
-	public void setViewDetails(Component... components) {
-		details.removeAll();
-		details.add(components);
-	}
+    public void setViewDetails(Component... components) {
+        details.removeAll();
+        details.add(components);
+    }
 
-	public void setViewDetailsPosition(Position position) {
-		if (position.equals(Position.RIGHT)) {
-			wrapper.setFlexDirection(FlexLayout.FlexDirection.ROW);
+    public void setViewDetailsPosition(Position position) {
+        if (position.equals(Position.RIGHT)) {
+            wrapper.setFlexDirection(FlexLayout.FlexDirection.ROW);
 
-		} else if (position.equals(Position.BOTTOM)) {
-			wrapper.setFlexDirection(FlexLayout.FlexDirection.COLUMN);
-		}
-	}
+        } else if (position.equals(Position.BOTTOM)) {
+            wrapper.setFlexDirection(FlexLayout.FlexDirection.COLUMN);
+        }
+    }
 
-	public void setViewFooter(Component... components) {
-		footer.removeAll();
-		footer.add(components);
-	}
+    public void setViewFooter(Component... components) {
+        footer.removeAll();
+        footer.add(components);
+    }
 
-	@Override
-	protected void onAttach(AttachEvent attachEvent) {
-		super.onAttach(attachEvent);
-		MainLayout.get().getAppBar().reset();
-	}
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+        MainLayout.get().getAppBar().reset();
+    }
 }

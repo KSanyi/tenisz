@@ -54,138 +54,138 @@ import hu.kits.tennis.infrastructure.web.CookieUtil;
 public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavigationObserver, BeforeEnterObserver  {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-	private static final String CLASS_NAME = "root";
+    private static final String CLASS_NAME = "root";
 
-	private FlexBoxLayout row;
-	private NaviDrawer naviDrawer;
-	private FlexBoxLayout column;
+    private FlexBoxLayout row;
+    private NaviDrawer naviDrawer;
+    private FlexBoxLayout column;
 
-	private Div appHeaderInner;
-	private Main viewContainer;
+    private Div appHeaderInner;
+    private Main viewContainer;
 
-	private AppBar appBar;
+    private AppBar appBar;
 
-	private View currentView;
-	
-	public MainLayout() {
-		VaadinSession.getCurrent()
-				.setErrorHandler((ErrorHandler) errorEvent -> {
-				    logger.error("Uncaught UI exception", errorEvent.getThrowable());
-					Notification.show("We are sorry, but an internal error occurred");
-				});
+    private View currentView;
+    
+    public MainLayout() {
+        VaadinSession.getCurrent()
+                .setErrorHandler((ErrorHandler) errorEvent -> {
+                    logger.error("Uncaught UI exception", errorEvent.getThrowable());
+                    Notification.show("We are sorry, but an internal error occurred");
+                });
 
-		addClassName(CLASS_NAME);
-		setFlexDirection(FlexDirection.COLUMN);
-		setSizeFull();
+        addClassName(CLASS_NAME);
+        setFlexDirection(FlexDirection.COLUMN);
+        setSizeFull();
 
-		// Initialise the UI building blocks
-		initStructure();
-		// Populate the navigation drawer
+        // Initialise the UI building blocks
+        initStructure();
+        // Populate the navigation drawer
         initNaviItems();
-	}
+    }
 
-	/**
-	 * Initialise the required components and containers.
-	 */
-	private void initStructure() {
-		naviDrawer = new NaviDrawer();
+    /**
+     * Initialise the required components and containers.
+     */
+    private void initStructure() {
+        naviDrawer = new NaviDrawer();
 
-		viewContainer = new Main();
-		viewContainer.addClassName(CLASS_NAME + "__view-container");
-		UIUtils.setDisplay(Display.FLEX, viewContainer);
-		UIUtils.setFlexGrow(1, viewContainer);
-		UIUtils.setOverflow(Overflow.HIDDEN, viewContainer);
+        viewContainer = new Main();
+        viewContainer.addClassName(CLASS_NAME + "__view-container");
+        UIUtils.setDisplay(Display.FLEX, viewContainer);
+        UIUtils.setFlexGrow(1, viewContainer);
+        UIUtils.setOverflow(Overflow.HIDDEN, viewContainer);
 
-		column = new FlexBoxLayout(viewContainer);
-		column.addClassName(CLASS_NAME + "__column");
-		column.setFlexDirection(FlexDirection.COLUMN);
-		column.setFlexGrow(1, viewContainer);
-		column.setOverflow(Overflow.HIDDEN);
+        column = new FlexBoxLayout(viewContainer);
+        column.addClassName(CLASS_NAME + "__column");
+        column.setFlexDirection(FlexDirection.COLUMN);
+        column.setFlexGrow(1, viewContainer);
+        column.setOverflow(Overflow.HIDDEN);
 
-		row = new FlexBoxLayout(naviDrawer, column);
-		row.addClassName(CLASS_NAME + "__row");
-		row.setFlexGrow(1, column);
-		row.setOverflow(Overflow.HIDDEN);
-		add(row);
-		setFlexGrow(1, row);
-	}
+        row = new FlexBoxLayout(naviDrawer, column);
+        row.addClassName(CLASS_NAME + "__row");
+        row.setFlexGrow(1, column);
+        row.setOverflow(Overflow.HIDDEN);
+        add(row);
+        setFlexGrow(1, row);
+    }
 
-	/**
-	 * Initialise the navigation items.
-	 */
-	private void initNaviItems() {
-		NaviMenu menu = naviDrawer.getMenu();
-		
-	    menu.addNaviItem(VaadinIcon.USERS, "Felhasználók", UsersView.class);
+    /**
+     * Initialise the navigation items.
+     */
+    private void initNaviItems() {
+        NaviMenu menu = naviDrawer.getMenu();
         
-	    menu.addNaviItem(VaadinIcon.TROPHY, "Versenyek", TournamentsView.class);
-	    
-	    /*
+        menu.addNaviItem(VaadinIcon.USERS, "Felhasználók", UsersView.class);
+        
+        menu.addNaviItem(VaadinIcon.TROPHY, "Versenyek", TournamentsView.class);
+        
+        /*
         NaviItem utrMenu = menu.addNaviItem(VaadinIcon.AUTOMATION, "UTR", null);
         menu.addNaviItem(utrMenu, "Meccsek", MatchesView.class);
         menu.addNaviItem(utrMenu, "UTR ranking", UTRRankingView.class);
         menu.addNaviItem(utrMenu, "Versenyek", TournamentsView.class);
         */
-	}
+    }
 
-	/**
-	 * Configure the app's inner and outer headers and footers.
-	 */
-	private void initHeadersAndFooters() {
-		appBar = new AppBar();
-		
-		UIUtils.setTheme(Lumo.DARK, appBar);
+    /**
+     * Configure the app's inner and outer headers and footers.
+     */
+    private void initHeadersAndFooters() {
+        appBar = new AppBar();
+        
+        UIUtils.setTheme(Lumo.DARK, appBar);
         setAppHeaderInner(appBar);
-	}
+    }
 
-	private void setAppHeaderInner(Component... components) {
-		if (appHeaderInner == null) {
-			appHeaderInner = new Div();
-			appHeaderInner.addClassName("app-header-inner");
-			column.getElement().insertChild(0, appHeaderInner.getElement());
-		}
-		appHeaderInner.removeAll();
-		appHeaderInner.add(components);
-	}
+    private void setAppHeaderInner(Component... components) {
+        if (appHeaderInner == null) {
+            appHeaderInner = new Div();
+            appHeaderInner.addClassName("app-header-inner");
+            column.getElement().insertChild(0, appHeaderInner.getElement());
+        }
+        appHeaderInner.removeAll();
+        appHeaderInner.add(components);
+    }
 
-	@Override
-	public void showRouterLayoutContent(HasElement content) {
-		this.viewContainer.getElement().appendChild(content.getElement());
-		currentView = (View)content;
-	}
+    @Override
+    public void showRouterLayoutContent(HasElement content) {
+        this.viewContainer.getElement().appendChild(content.getElement());
+        currentView = (View)content;
+    }
 
-	public NaviDrawer getNaviDrawer() {
-		return naviDrawer;
-	}
+    public NaviDrawer getNaviDrawer() {
+        return naviDrawer;
+    }
 
-	public static MainLayout get() {
-		return (MainLayout) UI.getCurrent().getChildren()
-				.filter(component -> component.getClass() == MainLayout.class)
-				.findFirst().get();
-	}
+    public static MainLayout get() {
+        return (MainLayout) UI.getCurrent().getChildren()
+                .filter(component -> component.getClass() == MainLayout.class)
+                .findFirst().get();
+    }
 
-	public AppBar getAppBar() {
-		return appBar;
-	}
+    public AppBar getAppBar() {
+        return appBar;
+    }
 
-	@Override
-	public void afterNavigation(AfterNavigationEvent event) {
-	    NaviItem active = getActiveItem(event);
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        NaviItem active = getActiveItem(event);
         if (active != null) {
             if(!getAppBar().hasTitle()) {
                 getAppBar().setTitle(active.getText());                
             }
         }
-	}
+    }
 
-	private NaviItem getActiveItem(AfterNavigationEvent e) {
-		for (NaviItem item : naviDrawer.getMenu().getNaviItems()) {
-			if (item.isHighlighted(e)) {
-				return item;
-			}
-		}
-		return null;
-	}
+    private NaviItem getActiveItem(AfterNavigationEvent e) {
+        for (NaviItem item : naviDrawer.getMenu().getNaviItems()) {
+            if (item.isHighlighted(e)) {
+                return item;
+            }
+        }
+        return null;
+    }
 
     public void userLoggedIn(UserData user) {
         VaadinUtil.setUser(user);
