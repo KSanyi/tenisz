@@ -19,10 +19,6 @@ public class TournamentMatches {
         return new TournamentMatches(Map.of());
     }
 
-    public Match get(int boardNumber, int matchNumber) {
-        return matches.getOrDefault(boardNumber, Map.of()).get(matchNumber);
-    }
-
     public Map<Integer, Match> matchesInBoard(int boardNumber) {
         return matches.getOrDefault(boardNumber, Map.of()).values().stream()
                 .collect(toMap(Match::tournamentMatchNumber, Function.identity()));

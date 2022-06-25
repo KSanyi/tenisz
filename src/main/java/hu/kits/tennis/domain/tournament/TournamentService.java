@@ -204,6 +204,7 @@ public class TournamentService {
         return tournamentRepository.findTournament(tournamentId).get();
     }
 
+    // TODO test
     public void deleteMatch(Match match) {
         
         if(match.tournamentId() != null) {
@@ -211,10 +212,10 @@ public class TournamentService {
             Match followUpMatch = tournament.followUpMatch(match);
             Player winner = match.winner();
             if(followUpMatch != null && followUpMatch.hasPlayer(winner)) {
-                if(followUpMatch.arePlayersSet()) {
+                if(!followUpMatch.arePlayersSet()) {
                     deleteMatch(followUpMatch);
                 } else {
-                    if(match.winner().equals(followUpMatch.player1())) {
+                    if(winner.equals(followUpMatch.player1())) {
                         matchRepository.setPlayer1(followUpMatch.id(), null);
                     } else {
                         matchRepository.setPlayer2(followUpMatch.id(), null);

@@ -4,6 +4,10 @@ import static hu.kits.tennis.TestUtil.player1;
 import static hu.kits.tennis.TestUtil.player2;
 import static hu.kits.tennis.TestUtil.player3;
 import static hu.kits.tennis.TestUtil.player4;
+import static hu.kits.tennis.TestUtil.player5;
+import static hu.kits.tennis.TestUtil.player6;
+import static hu.kits.tennis.TestUtil.player7;
+import static hu.kits.tennis.TestUtil.player8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -23,6 +27,7 @@ import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.MatchResultInfo;
+import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerRepository;
 import hu.kits.tennis.testutil.InMemoryDataSourceFactory;
 import hu.kits.tennis.testutil.SpyEmailSender;
@@ -48,6 +53,10 @@ public class TournamentApplicationTest {
         playerRepositosy.saveNewPlayer(player2);
         playerRepositosy.saveNewPlayer(player3);
         playerRepositosy.saveNewPlayer(player4);
+        playerRepositosy.saveNewPlayer(player5);
+        playerRepositosy.saveNewPlayer(player6);
+        playerRepositosy.saveNewPlayer(player7);
+        playerRepositosy.saveNewPlayer(player8);
     }
     
     @Test
@@ -156,6 +165,67 @@ public class TournamentApplicationTest {
         tournamentService.setTournamentMatchResult(new MatchResultInfo(theFinal, LocalDate.of(2022,1,1), new MatchResult(6, 0)));
         matches = tournamentService.findTournament(tournament.id()).get().mainBoard().matches();
         assertEquals(3, matches.size());
+    }
+    
+    @Test
+    void tournamentWith6PlayersAnd3RoundsGenerateSemifinals() {
+        
+        Tournament tournament = tournamentService.createTournament("BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.SIMPLE_BOARD, 3);
+        
+        tournamentService.updateContestants(tournament, List.of(player1, Player.BYE, player2, player3, player4, player5, Player.BYE, player6));
+        tournamentService.createMatches(tournament.id(), DrawMode.SIMPLE);
+        tournament = tournamentService.findTournament(tournament.id()).get();
+        
+        assertEquals(List.of(
+                new Contestant(player1, 1),
+                new Contestant(player2, 3),
+                new Contestant(player3, 4),
+                new Contestant(player4, 5),
+                new Contestant(player5, 6),
+                new Contestant(player6, 8)), tournament.contestants());
+        
+        var matches = tournament.mainBoard().matches();
+        assertEquals(6, matches.size());
+        
+        assertEquals(Player.BYE, matches.get(1).player2());
+        assertEquals(Player.BYE, matches.get(4).player1());
+        
+        Match semiFinal1 = matches.get(5);
+        assertEquals(player1, semiFinal1.player1());
+        assertNull(semiFinal1.player2());
+
+        Match semiFinal2 = matches.get(6);
+        assertNull(semiFinal2.player1());
+        assertEquals(player6, semiFinal2.player2());
+    }
+    
+    @Test
+    void tournamentWith3RoundsAndConsolation() {
+        
+        Tournament tournament = tournamentService.createTournament("BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.BOARD_AND_CONSOLATION, 3);
+        
+        tournamentService.updateContestants(tournament, List.of(player1, player2, player3, player4, player5, player6, player7, player8));
+        tournamentService.createMatches(tournament.id(), DrawMode.SIMPLE);
+        var mainBoardMatches = tournamentService.findTournament(tournament.id()).get().mainBoard().matches();
+        
+        Match quarterFinal1 = mainBoardMatches.get(1);
+        tournamentService.setTournamentMatchResult(new MatchResultInfo(quarterFinal1, LocalDate.of(2022,1,1), new MatchResult(6, 4)));
+        
+        var consolationMatches = tournamentService.findTournament(tournament.id()).get().consolationBoard().matches();
+        assertEquals(1, consolationMatches.size());
+        
+        assertEquals(player2, consolationMatches.get(1).player1());
+        assertNull(consolationMatches.get(1).player2());
+        
+        Match quarterFinal2 = mainBoardMatches.get(2);
+        tournamentService.setTournamentMatchResult(new MatchResultInfo(quarterFinal2, LocalDate.of(2022,1,1), new MatchResult(0, 6)));
+        
+        consolationMatches = tournamentService.findTournament(tournament.id()).get().consolationBoard().matches();
+        assertEquals(1, consolationMatches.size());
+        
+        assertEquals(player2, consolationMatches.get(1).player1());
+        assertEquals(player3, consolationMatches.get(1).player2());
+        
     }
     
 }
