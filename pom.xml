@@ -84,13 +84,11 @@
             <artifactId>vaadin</artifactId>
         </dependency>
 
-        <!--  throws: java.lang.NoSuchMethodError: 'void com.vaadin.flow.component.datepicker.GeneratedVaadinDatePicker.<init>(java.lang.Object, java.lang.Object, java.lang.Class, com.vaadin.flow.function.SerializableFunction, com.vaadin.flow.function.SerializableFunction)'
-	    <dependency>
-	        <groupId>com.vaadin.componentfactory</groupId>
-	        <artifactId>enhanced-date-picker</artifactId>
-	        <version>1.4.0</version>
-		</dependency>
-		 -->
+		<dependency>
+            <groupId>io.javalin</groupId>
+            <artifactId>javalin</artifactId>
+            <version>4.6.1</version>
+        </dependency>
 		
 		<dependency>
             <groupId>org.apache.commons</groupId>

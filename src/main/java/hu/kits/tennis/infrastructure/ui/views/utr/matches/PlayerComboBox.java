@@ -38,7 +38,7 @@ public class PlayerComboBox extends ComboBox<Player> {
         if(!players.containsPlayerWithName(newPlayerName)) {
             
             Runnable yesAction = () -> {
-                Player player = playerRepository.saveNewPlayer(new Player(0, newPlayerName, 0));
+                Player player = playerRepository.saveNewPlayer(Player.createNew(newPlayerName));
                 players = players.add(player);
                 setItems(players.entries());
                 setValue(player);

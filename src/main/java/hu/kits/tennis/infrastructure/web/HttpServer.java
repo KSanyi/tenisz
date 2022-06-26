@@ -1,80 +1,97 @@
 package hu.kits.tennis.infrastructure.web;
 
+import static io.javalin.apibuilder.ApiBuilder.get;
+import static io.javalin.apibuilder.ApiBuilder.post;
+import static io.javalin.apibuilder.ApiBuilder.path;
+
 import java.lang.invoke.MethodHandles;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.time.LocalDate;
 
-import javax.servlet.ServletException;
-import javax.websocket.server.ServerContainer;
-
-import org.eclipse.jetty.annotations.AnnotationConfiguration;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.webapp.Configuration;
-import org.eclipse.jetty.webapp.MetaInfConfiguration;
-import org.eclipse.jetty.webapp.WebAppContext;
-import org.eclipse.jetty.webapp.WebInfConfiguration;
-import org.eclipse.jetty.webapp.WebXmlConfiguration;
-import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.flow.server.startup.ServletContextListeners;
+import io.javalin.Javalin;
+import io.javalin.core.util.RouteOverviewPlugin;
+import io.javalin.core.validation.JavalinValidation;
+import io.javalin.http.Context;
 
-import hu.kits.tennis.Main;
-
-public class HttpServer extends Server {
+public class HttpServer {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
+    private final Javalin javalin;
+    private final int port;
+    
     public HttpServer(int port) {
-        super(port);
-        setHandler(createHandler());
+        
+        this.port = port;
+        
+        RestHandlers restHandlers = new RestHandlers();
+        
+        javalin = Javalin.create(config -> {
+            config.server(() -> new VaadinJettyServer("/ui/", port));
+            config.registerPlugin(new RouteOverviewPlugin("/routes")); 
+            config.defaultContentType = "application/json";
+            //config.addStaticFiles("/public");
+            config.enableCorsForAllOrigins();
+            config.requestLogger(this::log);
+            config.jsonMapper(new TeniszJsonMapper());
+        }).routes(() -> {
+            //path("api/docs", () -> {
+            //    get(apiDocHandler::createTestCasesList);
+            //    get("{testCase}", apiDocHandler::createTestCaseDoc);
+            //});
+            path("api/players", () -> {
+                get(restHandlers::listAllPlayers);
+                post(restHandlers::createPlayer);
+            });
+            path("", () -> {
+                get(restHandlers::redirectToVaadin);
+            });
+            path("tournaments", () -> {
+                get(restHandlers::redirectToVaadin);
+            });
+        }).exception(BadRequestException.class, this::handleException);
+        
+        JavalinValidation.register(LocalDate.class, LocalDate::parse);
+        
         logger.info("Server initialized on port {}", port);
     }
     
-    private static Handler createHandler() {
-        
-        WebAppContext context = new WebAppContext();
-        context.setBaseResource(createBaseResource());
-        context.setContextPath("/");
-        context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*");
-        context.setConfigurationDiscovered(true);
-        context.setConfigurations(new Configuration[]{
-          new AnnotationConfiguration(),
-          new WebInfConfiguration(),
-          new WebXmlConfiguration(),
-          new MetaInfConfiguration()
-        });
-        context.getServletContext().setExtendedListenerTypes(true);
-        context.addEventListener(new ServletContextListeners());
-        
-        handleStupidJsr356Exception(context);
-        
-        return context;
+    public void start() throws Exception {
+        javalin.start(port);
+        logger.info("Tenisz server started");
     }
     
-    @SuppressWarnings("deprecation")
-    private static void handleStupidJsr356Exception(WebAppContext context) {
-        try {
-            // to suppress this: java.lang.IllegalStateException: Unable to configure jsr356 at that stage. ServerContainer is null 
-            context.getServletContext().setAttribute(ServerContainer.class.getName(), WebSocketServerContainerInitializer.configureContext(context));
-        } catch(ServletException ex) {
-            logger.error(ex.getMessage());
-        }
+    public void stop() throws Exception {
+        javalin.stop();
+        logger.info("Tenisz server stopped");
     }
     
-    private static Resource createBaseResource() {
-        URL webRootLocation = Main.class.getResource("/webapp/");
-        try {
-            URI webRootUri = webRootLocation.toURI();
-            return Resource.newResource(webRootUri);
-        } catch (URISyntaxException | MalformedURLException ex) {
-            throw new RuntimeException(ex);
+    private void log(Context ctx, Float executionTimeMs) {
+        String body = ctx.body().isBlank() ? "" : "body: " + ctx.body().replaceAll("\n", "").replaceAll("\\s+", " ");
+        logger.trace("{} {} {} Status: {} from {} ({}) headers: {} agent: {}", ctx.method(), ctx.path(), body, ctx.status(), ctx.ip(), ctx.host(), ctx.headerMap(), ctx.userAgent());
+        logger.info("{} {} {} Status: {}", ctx.method(), ctx.path(), body, ctx.status());
+    }
+    
+    public static class BadRequestException extends RuntimeException {
+        
+        public BadRequestException(String message) {
+            super(message);
         }
+        
+    }
+    
+    private void handleException(BadRequestException ex, Context context) {
+        handleException(context, 400, ex.getMessage());
+    }
+    
+    private static void handleException(Context context, int status, String message) {
+        context.status(status);
+        if(message != null) {
+            context.result(message);            
+        }
+        logger.error("Status: {}, message: {}", context.status(), message);
     }
     
 }
