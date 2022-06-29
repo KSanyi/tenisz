@@ -3,13 +3,19 @@ package hu.kits.tennis.domain.utr;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
+import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.common.Clock;
 
 public class UTRService {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     private final MatchRepository matchRepository;
     private final PlayerRepository playerRepository;
 
@@ -36,6 +42,9 @@ public class UTRService {
     }
     
     public List<PlayerWithUTR> calculateUTRRanking() {
+        
+        logger.info("Calculating UTR ranking");
+        
         List<Player> players = playerRepository.loadAllPlayers().entries();
         List<BookedMatch> allBookedMatches = matchRepository.loadAllBookedMatches();
         
@@ -57,9 +66,13 @@ public class UTRService {
         }
         */
         
-        return ranking.stream()
+        List<PlayerWithUTR> result = ranking.stream()
                 .map(playerWithUTR -> new PlayerWithUTR(playerWithUTR.player(), ranking.indexOf(playerWithUTR)+1, playerWithUTR.utr()))
                 .collect(toList());
+        
+        logger.info("UTR ranking calculated with {} entries", result.size());
+        
+        return result;
     }
 
     private static BookedMatch swapIfNeeed(BookedMatch match, Player player) {
@@ -72,11 +85,17 @@ public class UTRService {
     
     public void recalculateAllUTRs() {
         
+        logger.info("Recalculating and saving all UTRs");
+        
         List<BookedMatch> bookedMatches = matchRepository.loadAllBookedMatches();
         
         List<BookedMatch> recalculatedBookedMatches = UTRCalculator.recalculateAllUTRs(bookedMatches);
         
+        logger.info("Saving recalculated UTRs");
+        
         matchRepository.replaceAllBookedMatches(recalculatedBookedMatches);
+        
+        logger.info("Recalculated UTRs saved");
     }
 
     public List<BookedMatch> loadBookedMatches() {

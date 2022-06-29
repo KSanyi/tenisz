@@ -3,16 +3,22 @@ package hu.kits.tennis.domain.utr;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
+import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.utr.MatchResult.SetResult;
 
 public class UTRCalculator {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     private static final int RELEVANT_MATCH_COUNT = 14;
     private static final UTR DEFAULT_UTR = new UTR(7.0);
     
@@ -77,6 +83,8 @@ public class UTRCalculator {
 
     public static List<BookedMatch> recalculateAllUTRs(List<BookedMatch> bookedMatches) {
         
+        logger.info("Recalculating all UTRs");
+        
         List<BookedMatch> recalculatedBookedMatches = new ArrayList<>();
         
         List<Match> allPlayedMatches = bookedMatches.stream()
@@ -88,6 +96,8 @@ public class UTRCalculator {
             BookedMatch recalculatedBookedMatch = createBookedMatch(playedMatch, recalculatedBookedMatches);
             recalculatedBookedMatches.add(recalculatedBookedMatch);
         }
+        
+        logger.info("All UTRs recalculated successfully from {} matches", allPlayedMatches.size());
         
         return recalculatedBookedMatches;
     }
