@@ -1,5 +1,10 @@
 package hu.kits.tennis.infrastructure.ui.views.utr.ranking;
 
+import java.lang.invoke.MethodHandles;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
@@ -13,6 +18,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import hu.kits.tennis.domain.user.Role;
+import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.util.AllowedRoles;
@@ -29,6 +35,8 @@ import hu.kits.tennis.infrastructure.ui.views.View;
 @AllowedRoles({Role.ADMIN})
 public class UTRRankingView extends SplitViewFrame implements View {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     private final TextField filter = new TextField();
     private final UTRRankingGrid utrRankingGrid = new UTRRankingGrid();
     private final PlayerMatchesGrid playerMatchesGrid = new PlayerMatchesGrid();
@@ -47,7 +55,9 @@ public class UTRRankingView extends SplitViewFrame implements View {
     
     private void playerSelected(SelectionEvent<Grid<PlayerWithUTR>, PlayerWithUTR> event) {
         if(event.getFirstSelectedItem().isPresent()) {
-            playerMatchesGrid.setPlayer(event.getFirstSelectedItem().get().player());
+            Player player = event.getFirstSelectedItem().get().player();
+            logger.debug("Looking for {}'s matches", player.name());
+            playerMatchesGrid.setPlayer(player);
         }
     }
     
