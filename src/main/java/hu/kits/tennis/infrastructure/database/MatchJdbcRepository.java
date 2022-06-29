@@ -56,7 +56,7 @@ public class MatchJdbcRepository implements MatchRepository  {
 
     @Override
     public List<BookedMatch> loadAllPlayedMatches(Player player) {
-        String sql = String.format("SELECT * FROM %s WHERE %s = :playerId OR %s = :playerId ORDER BY %s", TABLE_TENNIS_MATCH, COLUMN_PLAYER1_ID, COLUMN_PLAYER2_ID, COLUMN_DATETIME);
+        String sql = String.format("SELECT * FROM %s WHERE (%s = :playerId OR %s = :playerId) AND %s IS NOT NULL ORDER BY %s", TABLE_TENNIS_MATCH, COLUMN_PLAYER1_ID, COLUMN_PLAYER2_ID, COLUMN_RESULT, COLUMN_DATETIME);
         
         Players players = playerRepository.loadAllPlayers();
         

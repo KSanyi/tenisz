@@ -68,7 +68,7 @@ class MatchesGrid extends Grid<BookedMatch> {
         
         
         addColumn(TemplateRenderer.<BookedMatch>of("<b>[[item.result]]</b>")
-                .withProperty("result", match -> match.playedMatch().result().toString()))
+                .withProperty("result", match -> match.playedMatch().result() != null ? match.playedMatch().result().toString() : ""))
             .setHeader("Eredmény")
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(1);

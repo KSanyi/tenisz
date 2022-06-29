@@ -19,7 +19,6 @@ import hu.kits.tennis.infrastructure.ui.util.AllowedRoles;
 import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.FlexBoxLayout;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
-import hu.kits.tennis.infrastructure.ui.vaadin.util.css.AlignItems;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.css.BoxSizing;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.layout.size.Horizontal;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.layout.size.Top;
