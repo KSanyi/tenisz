@@ -174,12 +174,14 @@ public class MatchJdbcRepository implements MatchRepository  {
         valuesMap.put(COLUMN_PLAYER1_ID, bookedMatch.playedMatch().player1() != null ? bookedMatch.playedMatch().player1().id() : null);
         valuesMap.put(COLUMN_PLAYER2_ID, bookedMatch.playedMatch().player2() != null ? bookedMatch.playedMatch().player2().id() : null);
         valuesMap.put(COLUMN_RESULT, bookedMatch.playedMatch().result() != null ? bookedMatch.playedMatch().result().serialize() : null);
-        /*
-        valuesMap.put(COLUMN_PLAYER1_UTR, bookedMatch.player1UTR().value());
-        valuesMap.put(COLUMN_PLAYER2_UTR, bookedMatch.player2UTR().value());
-        valuesMap.put(COLUMN_MATCH_UTR_FOR_PLAYER1, bookedMatch.matchUTRForPlayer1().value());
-        valuesMap.put(COLUMN_MATCH_UTR_FOR_PLAYER2, bookedMatch.matchUTRForPlayer2().value());
-        */
+        
+        if(bookedMatch.player1UTR() != null && bookedMatch.player2UTR() != null && bookedMatch.matchUTRForPlayer1() != null && bookedMatch.matchUTRForPlayer2() != null) {
+            valuesMap.put(COLUMN_PLAYER1_UTR, bookedMatch.player1UTR().value());
+            valuesMap.put(COLUMN_PLAYER2_UTR, bookedMatch.player2UTR().value());
+            valuesMap.put(COLUMN_MATCH_UTR_FOR_PLAYER1, bookedMatch.matchUTRForPlayer1().value());
+            valuesMap.put(COLUMN_MATCH_UTR_FOR_PLAYER2, bookedMatch.matchUTRForPlayer2().value());
+        }
+        
         return valuesMap;
     }
     
