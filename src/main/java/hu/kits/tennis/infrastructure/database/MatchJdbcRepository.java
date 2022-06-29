@@ -68,7 +68,7 @@ public class MatchJdbcRepository implements MatchRepository  {
 
     @Override
     public List<BookedMatch> loadAllBookedMatches() {
-        String sql = String.format("SELECT * FROM %s ORDER BY %s", TABLE_TENNIS_MATCH, COLUMN_DATETIME);
+        String sql = String.format("SELECT * FROM %s WHERE %s IS NOT NULL ORDER BY %s", TABLE_TENNIS_MATCH, COLUMN_RESULT, COLUMN_DATETIME);
         
         Players players = playerRepository.loadAllPlayers();
         
