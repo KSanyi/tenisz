@@ -10,6 +10,7 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.Player;
 import io.javalin.plugin.json.JsonMapper;
 
@@ -32,8 +33,10 @@ public class TeniszJsonMapper implements JsonMapper {
                     e -> TeniszJsonMapper.mapToJson(e.getValue()),
                     (a, b) -> a, LinkedHashMap::new));
             return new JSONObject(jsonEntriesMap);
-        } else if(object instanceof Player) {
-            return mapPlayerToJson((Player)object);    
+        } else if(object instanceof Player player) {
+            return mapPlayerToJson(player);    
+        }else if(object instanceof BookedMatch bookedMatch) {
+            return mapPlayerToJson(bookedMatch);    
         } else {
             return object;
         }
@@ -45,6 +48,18 @@ public class TeniszJsonMapper implements JsonMapper {
                 .put("id", player.id())
                 .put("name", player.name())
                 .put("utrGroup", player.utrGroup());
+    }
+    
+    private static JSONObject mapPlayerToJson(BookedMatch bookedMatch) {
+        
+        return new JSONObject()
+                .put("id", bookedMatch.playedMatch().id())
+                .put("date", bookedMatch.playedMatch().date())
+                .put("player1", bookedMatch.playedMatch().player1().name())
+                .put("player2", bookedMatch.playedMatch().player2().name())
+                .put("result", bookedMatch.playedMatch().result().toString())
+                .put("matchUTRForPlayer1", bookedMatch.matchUTRForPlayer1().value())
+                .put("matchUTRForPlayer2", bookedMatch.matchUTRForPlayer2().value());
     }
     
 }

@@ -45,6 +45,9 @@ public class HttpServer {
                 get(restHandlers::listAllPlayers);
                 post(restHandlers::createPlayer);
             });
+            path("api/matches", () -> {
+                get(restHandlers::listAllMatches);
+            });
             path("", () -> {
                 get(restHandlers::redirectToVaadin);
             });
@@ -70,8 +73,8 @@ public class HttpServer {
     
     private void log(Context ctx, Float executionTimeMs) {
         String body = ctx.body().isBlank() ? "" : "body: " + ctx.body().replaceAll("\n", "").replaceAll("\\s+", " ");
-        logger.trace("{} {} {} Status: {} from {} ({}) headers: {} agent: {}", ctx.method(), ctx.path(), body, ctx.status(), ctx.ip(), ctx.host(), ctx.headerMap(), ctx.userAgent());
-        logger.info("{} {} {} Status: {}", ctx.method(), ctx.path(), body, ctx.status());
+        //logger.trace("{} {} {} Status: {} from {} ({}) headers: {} agent: {}", ctx.method(), ctx.path(), body, ctx.status(), ctx.ip(), ctx.host(), ctx.headerMap(), ctx.userAgent());
+        logger.info("{} {} {} Status: {} in {} millis", ctx.method(), ctx.path(), body, ctx.status(), executionTimeMs);
     }
     
     public static class BadRequestException extends RuntimeException {
