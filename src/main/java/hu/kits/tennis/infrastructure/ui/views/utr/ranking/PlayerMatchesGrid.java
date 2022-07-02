@@ -46,7 +46,7 @@ public class PlayerMatchesGrid extends Grid<MatchInfo> {
             .setHeader("Verseny")
             .setAutoWidth(true)
             .setTextAlign(ColumnTextAlign.CENTER)
-            .setFlexGrow(2);
+            .setFlexGrow(1);
         
         addColumn(TemplateRenderer.<MatchInfo>of("[[item.name1]] <small>([[item.utr1]])</small>")
                 .withProperty("name1", match -> match.player1().name())
@@ -88,9 +88,9 @@ public class PlayerMatchesGrid extends Grid<MatchInfo> {
             .setAutoWidth(true)
             .setFlexGrow(0);
         
-        sort(List.of(new GridSortOrder<>(getColumnByKey("date"), SortDirection.DESCENDING)));
+        setHeightFull();
         
-        setAllRowsVisible(true);
+        sort(List.of(new GridSortOrder<>(getColumnByKey("date"), SortDirection.DESCENDING)));
     }
     
     void setPlayer(Player player) {

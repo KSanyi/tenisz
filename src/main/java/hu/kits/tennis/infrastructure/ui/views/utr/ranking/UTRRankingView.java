@@ -70,9 +70,9 @@ public class UTRRankingView extends SplitViewFrame implements View {
         
         VerticalLayout column1 = new VerticalLayout(filter, utrRankingGrid);
         column1.setPadding(false);
-        column1.setMargin(false);
         column1.setSpacing(false);
         column1.setSizeUndefined();
+        column1.setHeightFull();
         column1.setHorizontalComponentAlignment(Alignment.CENTER, filter);
         
         filter.addValueChangeListener(v -> utrRankingGrid.filter(v.getValue()));
@@ -80,11 +80,10 @@ public class UTRRankingView extends SplitViewFrame implements View {
         
         FlexBoxLayout content = new FlexBoxLayout(column1, playerMatchesGrid);
         content.setBoxSizing(BoxSizing.BORDER_BOX);
-        content.setWidthFull();
+        content.setSizeFull();
         content.setPadding(Horizontal.RESPONSIVE_X, Top.RESPONSIVE_X);
         content.setFlexDirection(FlexLayout.FlexDirection.ROW);
         content.setSpacing(Horizontal.M);
-        
         return content;
     }
     

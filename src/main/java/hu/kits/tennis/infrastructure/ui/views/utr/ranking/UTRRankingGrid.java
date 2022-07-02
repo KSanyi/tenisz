@@ -42,9 +42,9 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
             .setAutoWidth(true)
             .setFlexGrow(0);
         
-        setWidth("500px");
+        setWidth("400px");
         
-        setHeight("800px");
+        setHeightFull();
         
         refresh();
     }
