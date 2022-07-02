@@ -1,5 +1,6 @@
 package hu.kits.tennis.infrastructure.database;
 
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 
 import java.sql.Date;
@@ -88,7 +89,7 @@ public class MatchJdbcRepository implements MatchRepository  {
             .bind("tournamentId", tournamentId)
             .map((rs, ctx) -> mapToMatch(rs,players)).list());
         
-        Map<Integer, List<Match>> matchesByBoard = matchesList.stream().collect(Collectors.groupingBy(Match::tournamentBoardNumber));
+        Map<Integer, List<Match>> matchesByBoard = matchesList.stream().collect(groupingBy(Match::tournamentBoardNumber));
         
         Map<Integer, Map<Integer, Match>> matchesByBoardAndNumber = CollectionsUtil.mapValues(matchesByBoard, matches -> matches.stream().collect(toMap(Match::tournamentMatchNumber, Function.identity())));
         

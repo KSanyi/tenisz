@@ -1,7 +1,5 @@
 package hu.kits.tennis.domain.utr;
 
-import hu.kits.tennis.common.StringUtil;
-
 public record BookedMatch(Match playedMatch, UTR player1UTR, UTR player2UTR, UTR matchUTRForPlayer1, UTR matchUTRForPlayer2) {
 
     public UTR utrOfMatchFor(Player player) {
@@ -14,12 +12,6 @@ public record BookedMatch(Match playedMatch, UTR player1UTR, UTR player2UTR, UTR
 
     public boolean hasPlayed(Player player) {
         return playedMatch.hasPlayer(player);
-    }
-
-    public boolean matches(String filterPart) {
-        return StringUtil.cleanNameString(playedMatch.player1().name()).contains(filterPart) ||
-               StringUtil.cleanNameString(playedMatch.player2().name()).contains(filterPart) || 
-               playedMatch.date().toString().contains(filterPart);
     }
 
     public BookedMatch swap() {

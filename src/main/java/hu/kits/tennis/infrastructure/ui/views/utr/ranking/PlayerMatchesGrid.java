@@ -17,24 +17,24 @@ import com.vaadin.flow.data.renderer.TemplateRenderer;
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.common.StringUtil;
-import hu.kits.tennis.domain.utr.BookedMatch;
+import hu.kits.tennis.domain.utr.MatchInfo;
+import hu.kits.tennis.domain.utr.MatchService;
 import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.UTRService;
 
 @CssImport(themeFor = "vaadin-grid", value = "./styles/match-grid.css")
-public class PlayerMatchesGrid extends Grid<BookedMatch> {
+public class PlayerMatchesGrid extends Grid<MatchInfo> {
     
-    private final UTRService utrService;
+    private final MatchService matchService;
     
-    private ListDataProvider<BookedMatch> dataProvider;
+    private ListDataProvider<MatchInfo> dataProvider;
     
     private Player player;
     
     public PlayerMatchesGrid() {
         
-        utrService = Main.resourceFactory.getUTRService();
+        matchService = Main.resourceFactory.getMatchService();
         
-        addColumn(match -> Formatters.formatDate(match.playedMatch().date()))
+        addColumn(match -> Formatters.formatDate(match.date()))
             .setKey("date")
             .setHeader("Dátum")
             .setSortable(true)
@@ -42,10 +42,16 @@ public class PlayerMatchesGrid extends Grid<BookedMatch> {
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(1);
         
-        addColumn(TemplateRenderer.<BookedMatch>of("[[item.name1]] <small>([[item.utr1]])</small>")
-                .withProperty("name1", match -> match.playedMatch().player1().name())
+        addColumn(match -> match.tournamentInfo().name())
+            .setHeader("Verseny")
+            .setAutoWidth(true)
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setFlexGrow(2);
+        
+        addColumn(TemplateRenderer.<MatchInfo>of("[[item.name1]] <small>([[item.utr1]])</small>")
+                .withProperty("name1", match -> match.player1().name())
                 .withProperty("utr1", match -> match.player1UTR().toString()))
-            .setClassNameGenerator(match -> match.playedMatch().result().isPlayer1Winner() ? "bold" : "")
+            .setClassNameGenerator(match -> match.result().isPlayer1Winner() ? "bold" : "")
             .setKey("player1")
             .setHeader("")
             .setAutoWidth(true)
@@ -53,10 +59,10 @@ public class PlayerMatchesGrid extends Grid<BookedMatch> {
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(3);
         
-        addColumn(TemplateRenderer.<BookedMatch>of("[[item.name2]] ([[item.utr2]])")
-                .withProperty("name2", match -> match.playedMatch().player2().name())
+        addColumn(TemplateRenderer.<MatchInfo>of("[[item.name2]] ([[item.utr2]])")
+                .withProperty("name2", match -> match.player2().name())
                 .withProperty("utr2", match -> match.player2UTR().toString()))
-            .setClassNameGenerator(match -> match.playedMatch().result().isPlayer2Winner() ? "bold" : "")
+            .setClassNameGenerator(match -> match.result().isPlayer2Winner() ? "bold" : "")
             .setKey("player2")
             .setHeader("")
             .setAutoWidth(true)
@@ -64,7 +70,7 @@ public class PlayerMatchesGrid extends Grid<BookedMatch> {
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(3);
         
-        addColumn(match -> match.playedMatch().result())
+        addColumn(match -> match.result())
             .setClassNameGenerator(match -> "bold")
             .setHeader("Eredmény")
             .setTextAlign(ColumnTextAlign.CENTER)
@@ -93,8 +99,8 @@ public class PlayerMatchesGrid extends Grid<BookedMatch> {
     }
     
     void refresh() {
-        List<BookedMatch> entries = utrService.loadMathesForPlayer(player).stream()
-                .sorted(comparing((BookedMatch bookedMatch) -> bookedMatch.playedMatch().date()).reversed())
+        List<MatchInfo> entries = matchService.loadMatchesForPlayer(player).stream()
+                .sorted(comparing((MatchInfo matchInfo) -> matchInfo.date()).reversed())
                 .collect(toList());
         dataProvider = new ListDataProvider<>(entries);
         setItems(dataProvider);

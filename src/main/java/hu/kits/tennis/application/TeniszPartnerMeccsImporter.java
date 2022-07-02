@@ -15,11 +15,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
+
+import hu.kits.tennis.common.Formatters;
+import hu.kits.tennis.domain.tournament.Organizer;
+import hu.kits.tennis.domain.tournament.Tournament;
+import hu.kits.tennis.domain.tournament.Tournament.Type;
+import hu.kits.tennis.domain.tournament.TournamentInfo;
+import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.BookedMatch;
+import hu.kits.tennis.domain.utr.Match;
+import hu.kits.tennis.domain.utr.MatchInfo;
 import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.MatchResult.SetResult;
-import hu.kits.tennis.domain.utr.Match;
+import hu.kits.tennis.domain.utr.MatchService;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerRepository;
 import hu.kits.tennis.domain.utr.Players;
@@ -29,15 +41,49 @@ public class TeniszPartnerMeccsImporter {
 
     private final PlayerRepository playerRepository;
     private final UTRService utrService;
+    private final TournamentService tournamentService;
+    private final MatchService matchService;
     
     public TeniszPartnerMeccsImporter(ResourceFactory resourceFactory) {
         playerRepository = resourceFactory.getPlayerRepository();
         utrService = resourceFactory.getUTRService();
+        tournamentService = resourceFactory.getTournamentService();
+        matchService = resourceFactory.getMatchService();
     }
     
-    private Player findOrCreatePlayer(Players players, String playerName) {
-        return players.findPlayer(playerName)
-                .orElseGet(() -> playerRepository.saveNewPlayer(new Player(0, playerName, 0)));
+    public void importTournaments() throws Exception {
+        String id = "763 Bikasdomb_Open____________";
+        String page = loadTournamentPage(id);
+        Files.write(Paths.get("c:\\Users\\kocso\\Desktop\\Tenisz\\TeniszPartner\\tournament_" + id + ".html"), page.getBytes());
+    }
+    
+    public void importPlayers() throws Exception {
+        String page = loadHistoryPage();
+        page = afterFirst(page, "aktivitását");
+        page = afterFirst(page, "</option>");
+        HtmlFragment pageHtml = new HtmlFragment(page);
+        String block = pageHtml.nextBlock("<option value=", "</option>");
+        
+        List<String> rows = new ArrayList<>();
+        
+        do {
+            try {
+                int id = Integer.parseInt(StringUtils.substringsBetween(block, "\"", "\"")[0]);
+                String name = block.substring(block.indexOf(">") + 1);
+                if(name.contains("<")) {
+                    name = name.substring(0, name.indexOf("<"));
+                }
+                if(name.contains("(")) {
+                    name = name.substring(0, name.indexOf("("));
+                }
+                rows.add(id + ";" + name.trim());
+            } catch(Exception ex) {
+                System.out.println(ex);
+            }
+            block = pageHtml.nextBlock("<option value=", "</option>");
+        } while(!block.isBlank());
+        
+        Files.write(Paths.get("c:\\Users\\kocso\\Desktop\\Tenisz\\TeniszPartner\\players.csv"), rows);
     }
     
     public void importMatches() throws Exception {
@@ -57,7 +103,7 @@ public class TeniszPartnerMeccsImporter {
         
         List<Match> matches = new ArrayList<>();
         
-        String page = loadPage(playerId);
+        String page = loadPlayersMatchesPage(playerId);
         
         //String page = new String(Files.readAllBytes(Paths.get("c:\\Users\\Sanyi\\Desktop\\alex.html")));
         
@@ -115,6 +161,11 @@ public class TeniszPartnerMeccsImporter {
         return setResult.map(setRes ->  new Match(0, null, null, null, date, player1, player2, new MatchResult(List.of(setRes))));
     }
     
+    private Player findOrCreatePlayer(Players players, String playerName) {
+        return players.findPlayer(playerName)
+                .orElseGet(() -> playerRepository.saveNewPlayer(new Player(0, playerName, 0)));
+    }
+    
     private static Optional<SetResult> parseSetResult(String resultString) {
         String parts[] = resultString.split(":");
         int player1Games = Integer.valueOf(parts[0].trim());
@@ -132,11 +183,33 @@ public class TeniszPartnerMeccsImporter {
         return index > -1 ? name.substring(0, index) : name;
     }
     
-    private static String loadPage(int playerId) throws Exception {
+    private static String loadPlayersMatchesPage(int playerId) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI("https://www.teniszpartner.hu/?site=competitions&task=jatekos_aktivitas"))
                 .headers("Content-Type", "application/x-www-form-urlencoded")
                 .POST(HttpRequest.BodyPublishers.ofString("player_id=" + playerId))
+                .build();
+        
+        HttpClient client = HttpClient.newHttpClient();
+        return client.send(request, BodyHandlers.ofString()).body();
+    }
+    
+    private static String loadTournamentPage(String tournamentId) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI("https://www.teniszpartner.hu/embed_verseny.php?site=competitions&task=korverseny_lista"))
+                .headers("Content-Type", "application/x-www-form-urlencoded")
+                .POST(HttpRequest.BodyPublishers.ofString("station_id=" + tournamentId))
+                .build();
+        
+        HttpClient client = HttpClient.newHttpClient();
+        return client.send(request, BodyHandlers.ofString()).body();
+    }
+    
+    private static String loadHistoryPage()  throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI("https://www.teniszpartner.hu/?site=competitions&task=tortenelem"))
+                .headers("Content-Type", "application/x-www-form-urlencoded")
+                .GET()
                 .build();
         
         HttpClient client = HttpClient.newHttpClient();
@@ -189,7 +262,25 @@ public class TeniszPartnerMeccsImporter {
             }
             
         }
+    }
+    
+    public void createTournaments() {
         
+        Map<LocalDate, List<MatchInfo>> matchesByDate = matchService.loadAllMatches().stream()
+                .filter(match -> match.tournamentInfo().equals(TournamentInfo.UNKNOWN))
+                .collect(Collectors.groupingBy(match -> match.date()));
+        
+        for(LocalDate date : matchesByDate.keySet()) {
+            
+            List<MatchInfo> matches = matchesByDate.get(date);
+            Tournament tournament = tournamentService.createTournament(Organizer.TENISZPARTNER, "Teniszpartner verseny " + Formatters.formatDate(date), "Bikás Park", date, Type.NA, 1);
+            List<Player> players = findPlayers(matches);
+            tournamentService.updateContestants(tournament, players);
+        }
+    }
+
+    private static List<Player> findPlayers(List<MatchInfo> matches) {
+        return matches.stream().flatMap(m -> Stream.of(m.player1(), m.player2())).distinct().toList();
     }
 
 }

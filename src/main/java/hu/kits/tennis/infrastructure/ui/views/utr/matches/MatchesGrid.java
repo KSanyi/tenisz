@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
@@ -110,7 +109,7 @@ class MatchesGrid extends Grid<BookedMatch> {
     void filter(String filterText) {
         dataProvider.clearFilters();
         String[] filterParts = StringUtil.cleanNameString(filterText).split(" ");
-        Stream.of(filterParts).forEach(filterPart -> dataProvider.addFilter(match -> match.matches(filterPart)));
+        //Stream.of(filterParts).forEach(filterPart -> dataProvider.addFilter(match -> match.matches(filterPart)));
     }
     
 }

@@ -3,11 +3,13 @@ package hu.kits.tennis.application;
 import javax.sql.DataSource;
 
 import hu.kits.tennis.domain.email.EmailSender;
+import hu.kits.tennis.domain.tournament.TournamentRepository;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.user.UserRepository;
 import hu.kits.tennis.domain.user.UserService;
 import hu.kits.tennis.domain.user.password.DummyPasswordHasher;
 import hu.kits.tennis.domain.utr.MatchRepository;
+import hu.kits.tennis.domain.utr.MatchService;
 import hu.kits.tennis.domain.utr.PlayerRepository;
 import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.database.MatchJdbcRepository;
@@ -21,6 +23,7 @@ public class ResourceFactory {
     private final PlayerRepository playerRepository;
     private final TournamentService tournamentService;
     private final UTRService utrService;
+    private final MatchService matchService;
     
     public ResourceFactory(DataSource dataSource, EmailSender emailSender) {
         
@@ -30,9 +33,12 @@ public class ResourceFactory {
         playerRepository = new PlayerJdbcRepository(dataSource);
         
         MatchRepository matchRepository = new MatchJdbcRepository(dataSource, playerRepository);
-        tournamentService = new TournamentService(new TournamentJdbcRepository(dataSource, playerRepository, matchRepository), matchRepository);
+        TournamentRepository tournamentRepository = new TournamentJdbcRepository(dataSource, playerRepository, matchRepository);
+        tournamentService = new TournamentService(tournamentRepository, matchRepository);
         
         utrService = new UTRService(matchRepository, playerRepository);
+        
+        matchService = new MatchService(matchRepository, tournamentRepository);
     }
     
     public UserService getUserService() {
@@ -49,6 +55,10 @@ public class ResourceFactory {
 
     public TournamentService getTournamentService() {
         return tournamentService;
+    }
+    
+    public MatchService getMatchService() {
+        return matchService;
     }
 
 }

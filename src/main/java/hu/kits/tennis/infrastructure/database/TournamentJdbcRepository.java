@@ -15,6 +15,7 @@ import org.jdbi.v3.core.Jdbi;
 
 import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.tournament.Contestant;
+import hu.kits.tennis.domain.tournament.Organizer;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Board;
 import hu.kits.tennis.domain.tournament.Tournament.Status;
@@ -29,6 +30,7 @@ public class TournamentJdbcRepository implements TournamentRepository {
 
     private static final String TABLE_TOURNAMENT = "TOURNAMENT";
     private static final String COLUMN_ID = "ID";
+    private static final String COLUMN_ORGANIZER = "ORGANIZER";
     private static final String COLUMN_DATE = "DATE";
     private static final String COLUMN_NAME = "NAME";
     private static final String COLUMN_VENUE = "VENUE";
@@ -53,7 +55,8 @@ public class TournamentJdbcRepository implements TournamentRepository {
         
         Players players = playerRepository.loadAllPlayers();
         Map<String, List<Contestant>> contestantsByTournament = contestantDBTable.loadAllContestantsByTournament(players);
-        
+
+        //TODO
         String sql = String.format("SELECT * FROM %s", TABLE_TOURNAMENT);
         
         return jdbi.withHandle(handle -> 
@@ -81,6 +84,7 @@ public class TournamentJdbcRepository implements TournamentRepository {
         
         return new Tournament(
                 tournamentId,
+                Organizer.valueOf(rs.getString(COLUMN_ORGANIZER)),
                 rs.getDate(COLUMN_DATE).toLocalDate(),
                 rs.getString(COLUMN_NAME),
                 rs.getString(COLUMN_VENUE),
@@ -102,6 +106,7 @@ public class TournamentJdbcRepository implements TournamentRepository {
         Map<String, Object> valuesMap = new HashMap<>();
         valuesMap.put(COLUMN_ID, tournament.id());
         valuesMap.put(COLUMN_DATE, tournament.date());
+        valuesMap.put(COLUMN_ORGANIZER, tournament.organizer());
         valuesMap.put(COLUMN_NAME, tournament.name());
         valuesMap.put(COLUMN_VENUE, tournament.venue());
         valuesMap.put(COLUMN_TYPE, tournament.type());

@@ -13,7 +13,8 @@ import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.Player;
 
-public record Tournament(String id, 
+public record Tournament(String id,
+        Organizer organizer,
         LocalDate date, 
         String name,
         String venue,
@@ -23,15 +24,16 @@ public record Tournament(String id,
         Status status, 
         List<Board> boards) {
     
-    public static Tournament createNew(String name, String venue, LocalDate date, Tournament.Type type, int bestOfNSets) {
+    public static Tournament createNew(Organizer organizer, String name, String venue, LocalDate date, Tournament.Type type, int bestOfNSets) {
         String id = UUID.randomUUID().toString().substring(0, 8);
-        return new Tournament(id, date, name, venue, type, bestOfNSets, List.of(), Status.DRAFT, List.of());
+        return new Tournament(id, organizer, date, name, venue, type, bestOfNSets, List.of(), Status.DRAFT, List.of());
     }
     
     public static enum Type {
         SIMPLE_BOARD,
         BOARD_AND_CONSOLATION,
-        FULL_BOARD;
+        FULL_BOARD,
+        NA;
     }
     
     public static enum Status {
@@ -141,6 +143,10 @@ public record Tournament(String id,
     public Match followUpMatch(Match match) {
         int nextRoundMatchNumber = nextRoundMatchNumber(match);
         return getMatch(match.tournamentBoardNumber(), nextRoundMatchNumber);
+    }
+
+    public TournamentInfo tournamentInfo() {
+        return new TournamentInfo(organizer, date, name, venue, bestOfNSets, contestants.size());
     }
     
 }

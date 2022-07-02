@@ -16,9 +16,11 @@ import com.vaadin.flow.router.RouteParameters;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.Formatters;
+import hu.kits.tennis.domain.tournament.Organizer;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
+import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.Badge;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.FlexBoxLayout;
@@ -73,7 +75,13 @@ public class TournamentsView extends SplitViewFrame implements View {
     }
     
     private void loadTournaments() {
-        tournamentsGrid.setItems(tournamentService.loadAllTournaments());
+        
+        List<Tournament> tournaments = tournamentService.loadAllTournaments();
+        if(!VaadinUtil.isUserLoggedIn()) {
+            tournaments = tournaments.stream().filter(t -> t.organizer() == Organizer.BVSC).toList();
+        }
+        
+        tournamentsGrid.setItems(tournaments);
     }
 
 }
@@ -91,15 +99,20 @@ class TournamentsGrid extends Grid<Tournament> {
             .setHeader("Név")
             .setSortable(true)
             .setFlexGrow(4);
+        
+        addColumn(tournament -> tournament.organizer().name)
+            .setHeader("Szervező")
+            .setSortable(true)
+            .setFlexGrow(2);
     
         addColumn(t -> Formatters.formatDateLong(t.date()))
             .setHeader("Dátum")
             .setFlexGrow(4)
-            .setTextAlign(ColumnTextAlign.CENTER)
             .setKey("date");
         
         addColumn(t -> t.contestants().size())
             .setHeader("Indulók")
+            .setSortable(true)
             .setFlexGrow(1)
             .setTextAlign(ColumnTextAlign.CENTER);
         
@@ -108,7 +121,7 @@ class TournamentsGrid extends Grid<Tournament> {
             .setFlexGrow(1)
             .setTextAlign(ColumnTextAlign.CENTER);
         
-        setAllRowsVisible(true);
+        setHeightFull();
         
         UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleColumns(e.getBodyClientWidth()));
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleColumns(e.getWidth()));

@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.DrawMode;
+import hu.kits.tennis.domain.tournament.Organizer;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Board;
 import hu.kits.tennis.domain.tournament.TournamentService;
@@ -64,7 +65,7 @@ public class TournamentApplicationTest {
         List<Tournament> tournaments = tournamentService.loadAllTournaments();
         assertEquals(0, tournaments.size());
         
-        tournamentService.createTournament("BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.SIMPLE_BOARD, 3);
+        tournamentService.createTournament(Organizer.BVSC, "BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.SIMPLE_BOARD, 3);
         
         tournaments = tournamentService.loadAllTournaments();
         assertEquals(1, tournaments.size());
@@ -80,7 +81,7 @@ public class TournamentApplicationTest {
     @Test
     void updateTournament() {
         
-        Tournament tournament = tournamentService.createTournament("BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.SIMPLE_BOARD, 3);
+        Tournament tournament = tournamentService.createTournament(Organizer.BVSC, "BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.SIMPLE_BOARD, 3);
         
         tournamentService.updateTournamentName(tournament, "BVSC Tatai út Nyári tour 2022");
         tournament = tournamentService.loadAllTournaments().get(0);
@@ -102,7 +103,7 @@ public class TournamentApplicationTest {
     @Test
     void deleteTournament() {
         
-        Tournament tournament = tournamentService.createTournament("BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.SIMPLE_BOARD, 3);
+        Tournament tournament = tournamentService.createTournament(Organizer.BVSC, "BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.SIMPLE_BOARD, 3);
         
         tournamentService.deleteTournament(tournament);
         List<Tournament> tournaments = tournamentService.loadAllTournaments();
@@ -112,7 +113,7 @@ public class TournamentApplicationTest {
     @Test
     void createAndPlay2RoundsTournament() {
         
-        Tournament tournament = tournamentService.createTournament("BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.SIMPLE_BOARD, 2);
+        Tournament tournament = tournamentService.createTournament(Organizer.BVSC, "BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.SIMPLE_BOARD, 2);
         
         tournamentService.updateContestants(tournament, List.of(player1, player2, player3, player4));
         tournamentService.createMatches(tournament.id(), DrawMode.SIMPLE);
@@ -170,7 +171,7 @@ public class TournamentApplicationTest {
     @Test
     void tournamentWith6PlayersAnd3RoundsGenerateSemifinals() {
         
-        Tournament tournament = tournamentService.createTournament("BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.SIMPLE_BOARD, 3);
+        Tournament tournament = tournamentService.createTournament(Organizer.BVSC, "BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.SIMPLE_BOARD, 3);
         
         tournamentService.updateContestants(tournament, List.of(player1, Player.BYE, player2, player3, player4, player5, Player.BYE, player6));
         tournamentService.createMatches(tournament.id(), DrawMode.SIMPLE);
@@ -202,7 +203,7 @@ public class TournamentApplicationTest {
     @Test
     void tournamentWith3RoundsAndConsolation() {
         
-        Tournament tournament = tournamentService.createTournament("BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.BOARD_AND_CONSOLATION, 3);
+        Tournament tournament = tournamentService.createTournament(Organizer.BVSC, "BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.BOARD_AND_CONSOLATION, 3);
         
         tournamentService.updateContestants(tournament, List.of(player1, player2, player3, player4, player5, player6, player7, player8));
         tournamentService.createMatches(tournament.id(), DrawMode.SIMPLE);

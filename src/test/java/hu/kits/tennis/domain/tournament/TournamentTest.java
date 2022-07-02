@@ -34,7 +34,7 @@ public class TournamentTest {
                 new Contestant(player3, 3),
                 new Contestant(player4, 4));
         
-        Tournament tournament = new Tournament(TOURNAMENT_ID, DATE, "BVSC Tour", "BVSC",  Type.SIMPLE_BOARD, 1, contestants, Status.DRAFT, List.of(new Tournament.Board(2, Map.of())));
+        Tournament tournament = new Tournament(TOURNAMENT_ID, Organizer.BVSC, DATE, "BVSC Tour", "BVSC", Type.SIMPLE_BOARD, 1, contestants, Status.DRAFT, List.of(new Tournament.Board(2, Map.of())));
         
         List<Player> lineup = tournament.playersLineup();
         
@@ -52,7 +52,7 @@ public class TournamentTest {
                 new Contestant(player5, 6),
                 new Contestant(player6, 7));
         
-        Tournament tournament = new Tournament(TOURNAMENT_ID, DATE, "BVSC Tour", "BVSC",  Type.SIMPLE_BOARD, 1, contestants, Status.DRAFT, List.of(new Tournament.Board(3, Map.of())));
+        Tournament tournament = new Tournament(TOURNAMENT_ID, Organizer.BVSC, DATE, "BVSC Tour", "BVSC", Type.SIMPLE_BOARD, 1, contestants, Status.DRAFT, List.of(new Tournament.Board(3, Map.of())));
         
         List<Player> lineup = tournament.playersLineup();
         

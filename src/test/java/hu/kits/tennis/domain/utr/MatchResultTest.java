@@ -2,14 +2,13 @@ package hu.kits.tennis.domain.utr;
 
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings("static-method")
 public class MatchResultTest {
     
-    //@Test
+    @Test
     void test() {
         
-        UTR player1UTR = new UTR(7.5);
-        UTR player2UTR = new UTR(7.7);
+        UTR player1UTR = new UTR(7.0);
+        UTR player2UTR = new UTR(8.0);
         
         MatchResult result;
         UTR matchUTRForPlayer1;
@@ -44,8 +43,8 @@ public class MatchResultTest {
     @Test
     void test2() {
         
-        UTR player1UTR = new UTR(7.5);
-        UTR player2UTR = new UTR(7.7);
+        UTR player1UTR = new UTR(8.0);
+        UTR player2UTR = new UTR(7.0);
         
         MatchResult result;
         UTR matchUTRForPlayer1;

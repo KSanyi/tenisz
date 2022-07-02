@@ -37,11 +37,14 @@ public class Main {
         
         resourceFactory = new ResourceFactory(dataSource, emailSender);
         
-        //new MATKMeccsImporter(resourceFactory).importMatches();
+        //new MATKMeccsImporter(resourceFactory);
         
         //new TeniszPartnerMeccsImporter(resourceFactory).importMatches();
+        //new TeniszPartnerMeccsImporter(resourceFactory).createTournaments();
         //new TeniszPartnerMeccsImporter(resourceFactory).cleanupDuplicates();
         
+        //new TeniszPartnerMeccsImporter(resourceFactory).importPlayers();
+        //new TeniszPartnerMeccsImporter(resourceFactory).importTournaments();
         
         new HttpServer(port).start();
     }
