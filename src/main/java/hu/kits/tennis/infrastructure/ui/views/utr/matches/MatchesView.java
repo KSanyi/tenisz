@@ -15,11 +15,9 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import hu.kits.tennis.Main;
-import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
-import hu.kits.tennis.infrastructure.ui.util.AllowedRoles;
 import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.FlexBoxLayout;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
@@ -28,9 +26,9 @@ import hu.kits.tennis.infrastructure.ui.vaadin.util.layout.size.Horizontal;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.layout.size.Top;
 import hu.kits.tennis.infrastructure.ui.views.View;
 
-@Route(value = "macthes", layout = MainLayout.class)
+@Route(value = "matches", layout = MainLayout.class)
 @PageTitle("Meccsek")
-@AllowedRoles({Role.ADMIN})
+//@AllowedRoles({Role.ADMIN})
 public class MatchesView extends SplitViewFrame implements View {
 
     private final UTRService utrService = Main.resourceFactory.getUTRService();
@@ -38,13 +36,12 @@ public class MatchesView extends SplitViewFrame implements View {
     private final Button recalculateButton = createRecalculateButton();
     private final Button addMatchButton = createAddMatchButton();
     private final TextField filterField = new TextField();
-    private final MatchesGrid reservationsGrid = new MatchesGrid();
+    private final AllMatchesGrid matchesGrid = new AllMatchesGrid();
     
     public MatchesView() {
         filterField.setValueChangeMode(ValueChangeMode.TIMEOUT);
-        filterField.addValueChangeListener(e -> reservationsGrid.filter(e.getValue()));
+        filterField.addValueChangeListener(e -> matchesGrid.filter(e.getValue()));
         filterField.setPlaceholder("Szűrő");
-        filterField.getElement().setAttribute("title", "pl. 2021.11 berletes");
     }
     
     @Override
@@ -61,12 +58,13 @@ public class MatchesView extends SplitViewFrame implements View {
     
     private Component createContent() {
         HorizontalLayout buttonsLayout = new HorizontalLayout(addMatchButton, recalculateButton);
+        recalculateButton.setVisible(false);
         recalculateButton.getStyle().set("margin-left", "auto");
         buttonsLayout.setWidthFull();
-        FlexBoxLayout content = new FlexBoxLayout(buttonsLayout, filterField, reservationsGrid);
+        FlexBoxLayout content = new FlexBoxLayout(buttonsLayout, filterField, matchesGrid);
         filterField.setWidth("250px");
         content.setBoxSizing(BoxSizing.BORDER_BOX);
-        content.setWidthFull();
+        content.setSizeFull();
         content.setPadding(Horizontal.RESPONSIVE_X, Top.RESPONSIVE_X);
         content.setFlexDirection(FlexLayout.FlexDirection.COLUMN);
         content.setAlignSelf(Alignment.CENTER, filterField);
@@ -99,7 +97,7 @@ public class MatchesView extends SplitViewFrame implements View {
     }
 
     public void refresh() {
-        reservationsGrid.refresh();
+        matchesGrid.refresh();
     }
     
 }

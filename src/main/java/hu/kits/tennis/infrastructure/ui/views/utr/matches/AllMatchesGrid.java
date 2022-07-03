@@ -1,50 +1,38 @@
-package hu.kits.tennis.infrastructure.ui.views.utr.ranking;
-
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
+package hu.kits.tennis.infrastructure.ui.views.utr.matches;
 
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.data.provider.ListDataProvider;
-import com.vaadin.flow.data.provider.SortDirection;
-import com.vaadin.flow.data.renderer.TemplateRenderer;
+import com.vaadin.flow.data.selection.SelectionEvent;
 
 import hu.kits.tennis.Main;
-import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.common.StringUtil;
 import hu.kits.tennis.domain.utr.MatchInfo;
 import hu.kits.tennis.domain.utr.MatchService;
-import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.infrastructure.ui.views.utr.MatchesGrid;
 
-@CssImport(themeFor = "vaadin-grid", value = "./styles/match-grid.css")
-public class PlayerMatchesGrid extends MatchesGrid {
+class AllMatchesGrid extends MatchesGrid {
     
     private final MatchService matchService;
     
     private ListDataProvider<MatchInfo> dataProvider;
     
-    private Player player;
-    
-    public PlayerMatchesGrid() {
+    AllMatchesGrid() {
         
         matchService = Main.resourceFactory.getMatchService();
-    }
-    
-    void setPlayer(Player player) {
-        this.player = player;
+        addSelectionListener(AllMatchesGrid::matchSelected);
+        
         refresh();
     }
     
+    private static void matchSelected(SelectionEvent<Grid<MatchInfo>, MatchInfo> e) {
+        //e.getFirstSelectedItem().ifPresent(match -> new MatchDialog(new MatchDataBean(match.playedMatch())).open());
+    }
+
     void refresh() {
-        List<MatchInfo> entries = matchService.loadMatchesForPlayer(player).stream()
-                .sorted(comparing((MatchInfo matchInfo) -> matchInfo.date()).reversed())
-                .collect(toList());
+        List<MatchInfo> entries = matchService.loadAllMatches();
         dataProvider = new ListDataProvider<>(entries);
         setItems(dataProvider);
     }
@@ -56,3 +44,4 @@ public class PlayerMatchesGrid extends MatchesGrid {
     }
     
 }
+
