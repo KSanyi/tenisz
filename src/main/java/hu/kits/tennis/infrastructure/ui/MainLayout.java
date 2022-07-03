@@ -118,14 +118,8 @@ public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavi
         NaviMenu menu = naviDrawer.getMenu();
         
         menu.addNaviItem(VaadinIcon.USERS, "Felhasználók", UsersView.class);
-        
         menu.addNaviItem(VaadinIcon.TROPHY, "Versenyek", TournamentsView.class);
         
-        if(VaadinUtil.isUserLoggedIn()) {
-            NaviItem utrMenu = menu.addNaviItem(VaadinIcon.AUTOMATION, "UTR", null);
-            menu.addNaviItem(utrMenu, "Meccsek", MatchesView.class);
-            menu.addNaviItem(utrMenu, "UTR ranking", UTRRankingView.class);
-        }
         
     }
 
@@ -194,6 +188,12 @@ public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavi
         appBar.userLoggedIn();
         naviDrawer.refresh();
         currentView.refresh();
+        
+        NaviMenu menu = naviDrawer.getMenu();
+        NaviItem utrMenu = menu.addNaviItem(VaadinIcon.AUTOMATION, "UTR", null);
+        menu.addNaviItem(utrMenu, "Meccsek", MatchesView.class);
+        menu.addNaviItem(utrMenu, "UTR ranking", UTRRankingView.class);
+        
         UI.getCurrent().getSession().getSession().setMaxInactiveInterval(60 * 60 * 24);
     }
 
