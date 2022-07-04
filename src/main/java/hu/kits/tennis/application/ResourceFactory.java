@@ -21,6 +21,7 @@ public class ResourceFactory {
 
     private final UserService userService;
     private final PlayerRepository playerRepository;
+    private final MatchRepository matchRepository;
     private final TournamentService tournamentService;
     private final UTRService utrService;
     private final MatchService matchService;
@@ -32,7 +33,7 @@ public class ResourceFactory {
         
         playerRepository = new PlayerJdbcRepository(dataSource);
         
-        MatchRepository matchRepository = new MatchJdbcRepository(dataSource, playerRepository);
+        matchRepository = new MatchJdbcRepository(dataSource, playerRepository);
         TournamentRepository tournamentRepository = new TournamentJdbcRepository(dataSource, playerRepository, matchRepository);
         tournamentService = new TournamentService(tournamentRepository, matchRepository);
         
@@ -59,6 +60,10 @@ public class ResourceFactory {
     
     public MatchService getMatchService() {
         return matchService;
+    }
+
+    public MatchRepository getMatchRepository() {
+        return matchRepository;
     }
 
 }

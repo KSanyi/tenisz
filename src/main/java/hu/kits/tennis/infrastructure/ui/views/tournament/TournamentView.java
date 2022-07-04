@@ -27,6 +27,7 @@ import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Status;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.utr.MatchService;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
@@ -35,6 +36,7 @@ import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 import hu.kits.tennis.infrastructure.ui.views.View;
+import hu.kits.tennis.infrastructure.ui.views.utr.MatchesGrid;
 
 @Route(value = "tournament/:tournamentId", layout = MainLayout.class)
 @PageTitle("Tournament")
@@ -43,11 +45,13 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
+    private final MatchService matchService = Main.resourceFactory.getMatchService();
     
     private final ContestantsTable contestantsTable = new ContestantsTable(this);
     private TournamentBoard mainBoard;
     private TournamentBoard consolationBoard;
     private VerticalLayout tableWithButton;
+    private MatchesGrid matchesGrid;
     
     private Tournament tournament;
     
@@ -65,29 +69,43 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         Label title = UIUtils.createH2Label(tournament.name());
         //Label date = UIUtils.createH3Label(Formatters.formatDateLong(tournament.date()));
         
-        Runnable matchChangeCallback = () -> refresh();
-        
-        mainBoard = new TournamentBoard(tournament, tournament.mainBoard(), matchChangeCallback);
-        
-        Button fillBoardButton = UIUtils.createButton("Táblára", VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
-        fillBoardButton.setVisible(VaadinUtil.isUserLoggedIn());
-        fillBoardButton.addClickListener(click -> fillMainBoard());
-        
-        tableWithButton = new VerticalLayout(contestantsTable, fillBoardButton);
-        tableWithButton.setPadding(false);
-        tableWithButton.setSizeUndefined();
-        tableWithButton.setAlignItems(Alignment.CENTER);
-        
-        HorizontalLayout horizontalLayout = new HorizontalLayout(mainBoard, tableWithButton);
-        horizontalLayout.setWidthFull();
-        horizontalLayout.setFlexGrow(1, mainBoard);
-        
-        layout.add(title, horizontalLayout);
-        
-        if(tournament.type() == Type.BOARD_AND_CONSOLATION) {
-            consolationBoard = new TournamentBoard(tournament, tournament.consolationBoard(), matchChangeCallback);
-            layout.add(UIUtils.createH2Label("Vigaszág"), consolationBoard);
+        if(tournament.type() == Type.NA) {
+            matchesGrid = new MatchesGrid();
+            matchesGrid.getColumnByKey("date").setVisible(false);
+            matchesGrid.getColumnByKey("tournament").setVisible(false);
+            
+            HorizontalLayout horizontalLayout = new HorizontalLayout(matchesGrid, contestantsTable);
+            horizontalLayout.setSizeFull();
+            horizontalLayout.setFlexGrow(1, matchesGrid);
+            layout.add(title, horizontalLayout);
+        } else if(tournament.type() == Type.BOARD_AND_CONSOLATION || tournament.type() == Type.SIMPLE_BOARD) {
+
+            Runnable matchChangeCallback = () -> refresh();
+            
+            mainBoard = new TournamentBoard(tournament, tournament.mainBoard(), matchChangeCallback);
+            
+            Button fillBoardButton = UIUtils.createButton("Táblára", VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
+            fillBoardButton.setVisible(VaadinUtil.isUserLoggedIn());
+            fillBoardButton.addClickListener(click -> fillMainBoard());
+            
+            tableWithButton = new VerticalLayout(contestantsTable, fillBoardButton);
+            tableWithButton.setPadding(false);
+            tableWithButton.setSizeUndefined();
+            tableWithButton.setAlignItems(Alignment.CENTER);
+            
+            HorizontalLayout horizontalLayout = new HorizontalLayout(mainBoard, tableWithButton);
+            horizontalLayout.setWidthFull();
+            horizontalLayout.setFlexGrow(1, mainBoard);
+            
+            layout.add(title, horizontalLayout);
+            
+            if(tournament.type() == Type.BOARD_AND_CONSOLATION) {
+                consolationBoard = new TournamentBoard(tournament, tournament.consolationBoard(), matchChangeCallback);
+                layout.add(UIUtils.createH2Label("Vigaszág"), consolationBoard);
+            }
         }
+        
+        layout.setSizeFull();
         
         return layout;
     }
@@ -109,10 +127,16 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     
     private void loadData() {
         contestantsTable.setPlayers(tournament.playersLineup());
-        tableWithButton.setVisible(tournament.status() == Status.DRAFT);
-        mainBoard.setBoard(tournament, tournament.mainBoard());
-        if(tournament.type() == Type.BOARD_AND_CONSOLATION) {
-            consolationBoard.setBoard(tournament, tournament.consolationBoard());    
+        
+        if(tournament.type() == Type.NA) {
+            matchesGrid.setItems(matchService.loadMatchesOfTournament(tournament.id()));
+            
+        } else if(tournament.type() == Type.BOARD_AND_CONSOLATION || tournament.type() == Type.SIMPLE_BOARD) {
+            tableWithButton.setVisible(tournament.status() == Status.DRAFT);
+            mainBoard.setBoard(tournament, tournament.mainBoard());
+            if(tournament.type() == Type.BOARD_AND_CONSOLATION) {
+                consolationBoard.setBoard(tournament, tournament.consolationBoard());    
+            }
         }
     }
 

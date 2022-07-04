@@ -24,6 +24,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setFlexGrow(1);
         
         addColumn(match -> match.tournamentInfo().name())
+            .setKey("tournament")
             .setHeader("Verseny")
             .setAutoWidth(true)
             .setTextAlign(ColumnTextAlign.CENTER)

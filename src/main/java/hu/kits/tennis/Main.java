@@ -37,7 +37,8 @@ public class Main {
         
         resourceFactory = new ResourceFactory(dataSource, emailSender);
         
-        //new MATKMeccsImporter(resourceFactory);
+        //new MATKMeccsImporter(resourceFactory).importMatches();
+        //new MATKMeccsImporter(resourceFactory).createTournaments();
         
         //new TeniszPartnerMeccsImporter(resourceFactory).importMatches();
         //new TeniszPartnerMeccsImporter(resourceFactory).createTournaments();

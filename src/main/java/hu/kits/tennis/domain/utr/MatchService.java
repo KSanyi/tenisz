@@ -66,4 +66,26 @@ public class MatchService {
         return matchInfos;
     }
     
+    public void deleteMatch(int id) {
+        matchRepository.deleteMatch(id);
+    }
+    
+    public void saveMatch(Match match) {
+        BookedMatch bookedMatch = new BookedMatch(match, null, null, null, null);
+        matchRepository.save(bookedMatch);
+    }
+
+    public List<MatchInfo> loadMatchesOfTournament(String tournementId) {
+        List<BookedMatch> matches = matchRepository.loadAllBookedMatchesForTournament(tournementId);
+        
+        Map<String, Tournament> tournamenMap = tournamentRepository.loadAllTournaments().stream()
+                .collect(toMap(Tournament::id, Function.identity()));
+        
+        List<MatchInfo> matchInfos = matches.stream()
+                .map(bookedMatch -> toMatchInfo(bookedMatch, tournamenMap))
+                .collect(toList());
+        
+        return matchInfos;
+    }
+
 }

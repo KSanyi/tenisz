@@ -15,9 +15,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import hu.kits.tennis.Main;
+import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
+import hu.kits.tennis.infrastructure.ui.util.AllowedRoles;
 import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.FlexBoxLayout;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
@@ -28,7 +30,7 @@ import hu.kits.tennis.infrastructure.ui.views.View;
 
 @Route(value = "matches", layout = MainLayout.class)
 @PageTitle("Meccsek")
-//@AllowedRoles({Role.ADMIN})
+@AllowedRoles({Role.ADMIN})
 public class MatchesView extends SplitViewFrame implements View {
 
     private final UTRService utrService = Main.resourceFactory.getUTRService();

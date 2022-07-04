@@ -79,6 +79,18 @@ public class MatchJdbcRepository implements MatchRepository  {
     }
     
     @Override
+    public List<BookedMatch> loadAllBookedMatchesForTournament(String tournamentId) {
+        String sql = String.format("SELECT * FROM %s WHERE %s = :tournamentId AND %s IS NOT NULL ORDER BY %s", TABLE_TENNIS_MATCH, COLUMN_TOURNAMENT_ID, COLUMN_RESULT, COLUMN_DATETIME);
+        
+        Players players = playerRepository.loadAllPlayers();
+        
+        return jdbi.withHandle(handle -> 
+            handle.createQuery(sql)
+            .bind("tournamentId", tournamentId)
+            .map((rs, ctx) -> mapToBookedMatch(rs, players)).list());
+    }
+    
+    @Override
     public TournamentMatches loadMatchesForTournament(String tournamentId) {
         String sql = String.format("SELECT * FROM %s WHERE %s = :tournamentId ORDER BY %s", TABLE_TENNIS_MATCH, COLUMN_TOURNAMENT_ID, COLUMN_TOURNAMENT_MATCH_NUMBER);
         
@@ -232,6 +244,14 @@ public class MatchJdbcRepository implements MatchRepository  {
     @Override
     public void deleteMatchesForTournament(String tournamentId) {
         jdbi.withHandle(handle -> handle.execute(String.format("DELETE FROM %s WHERE %s = ?", TABLE_TENNIS_MATCH, COLUMN_TOURNAMENT_ID), tournamentId));
+    }
+
+    @Override
+    public void updateTournament(int matchId, String tournamentId, int boardNumber, int tournamentMatchNumber) {
+        jdbi.useHandle(handle -> JdbiUtil.executeUpdate(jdbi, TABLE_TENNIS_MATCH, Map.of(),
+                Map.of(COLUMN_TOURNAMENT_ID, tournamentId,
+                       COLUMN_TOURNAMENT_BOARD_NUMBER, boardNumber,
+                       COLUMN_TOURNAMENT_MATCH_NUMBER, tournamentMatchNumber), COLUMN_ID, String.valueOf(matchId)));
     }
 
 }

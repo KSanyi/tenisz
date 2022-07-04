@@ -8,6 +8,8 @@ public interface MatchRepository {
 
     List<BookedMatch> loadAllPlayedMatches(Player player);
     
+    List<BookedMatch> loadAllBookedMatchesForTournament(String tournamentId);
+    
     List<BookedMatch> loadAllBookedMatches();
     
     BookedMatch save(BookedMatch bookedMatch);
@@ -25,4 +27,6 @@ public interface MatchRepository {
     void setPlayer1(int matchId, Player player);
     
     void setPlayer2(int matchId, Player player);
+    
+    void updateTournament(int matchId, String tournamentId, int boardNumber, int tournamentMatchNumber);
 }
