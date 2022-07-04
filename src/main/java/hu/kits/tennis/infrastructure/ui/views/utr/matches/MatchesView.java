@@ -20,6 +20,7 @@ import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.util.AllowedRoles;
+import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.FlexBoxLayout;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
@@ -60,7 +61,7 @@ public class MatchesView extends SplitViewFrame implements View {
     
     private Component createContent() {
         HorizontalLayout buttonsLayout = new HorizontalLayout(addMatchButton, recalculateButton);
-        recalculateButton.setVisible(false);
+        recalculateButton.setVisible(VaadinUtil.getUser().userId().equals("ksanyi"));
         recalculateButton.getStyle().set("margin-left", "auto");
         buttonsLayout.setWidthFull();
         FlexBoxLayout content = new FlexBoxLayout(buttonsLayout, filterField, matchesGrid);
