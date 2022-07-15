@@ -11,6 +11,7 @@ import hu.kits.tennis.domain.user.password.DummyPasswordHasher;
 import hu.kits.tennis.domain.utr.MatchRepository;
 import hu.kits.tennis.domain.utr.MatchService;
 import hu.kits.tennis.domain.utr.PlayerRepository;
+import hu.kits.tennis.domain.utr.PlayersService;
 import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.database.MatchJdbcRepository;
 import hu.kits.tennis.infrastructure.database.PlayerJdbcRepository;
@@ -21,6 +22,7 @@ public class ResourceFactory {
 
     private final UserService userService;
     private final PlayerRepository playerRepository;
+    private final PlayersService playersService;
     private final MatchRepository matchRepository;
     private final TournamentService tournamentService;
     private final UTRService utrService;
@@ -32,9 +34,9 @@ public class ResourceFactory {
         userService = new UserService(userRepository, emailSender, new DummyPasswordHasher());
         
         playerRepository = new PlayerJdbcRepository(dataSource);
-        
         matchRepository = new MatchJdbcRepository(dataSource, playerRepository);
         TournamentRepository tournamentRepository = new TournamentJdbcRepository(dataSource, playerRepository, matchRepository);
+        playersService = new PlayersService(playerRepository, matchRepository);
         tournamentService = new TournamentService(tournamentRepository, matchRepository);
         
         utrService = new UTRService(matchRepository, playerRepository);
@@ -64,6 +66,10 @@ public class ResourceFactory {
 
     public MatchRepository getMatchRepository() {
         return matchRepository;
+    }
+    
+    public PlayersService getPlayersService() {
+        return playersService;
     }
 
 }

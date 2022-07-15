@@ -93,7 +93,7 @@ public class PlayerJdbcRepository implements PlayerRepository {
     @Override
     public void deletePlayer(Player player) {
         
-        jdbi.withHandle(handle -> handle.execute(String.format("DELETE FROM %s WHERE %s = ?", TABLE_PLAYER, COLUMN_ID, player.id())));
+        jdbi.withHandle(handle -> handle.execute(String.format("DELETE FROM %s WHERE %s = ?", TABLE_PLAYER, COLUMN_ID), player.id()));
     }
 
 }

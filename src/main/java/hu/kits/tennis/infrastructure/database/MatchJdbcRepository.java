@@ -198,6 +198,20 @@ public class MatchJdbcRepository implements MatchRepository  {
         return valuesMap;
     }
     
+    private static Map<String, Object> createMap(Match playedMatch) {
+        
+        Map<String, Object> valuesMap = new HashMap<>();
+        valuesMap.put(COLUMN_ID, playedMatch.id());
+        valuesMap.put(COLUMN_TOURNAMENT_ID, playedMatch.tournamentId());
+        valuesMap.put(COLUMN_TOURNAMENT_BOARD_NUMBER, playedMatch.tournamentBoardNumber());
+        valuesMap.put(COLUMN_TOURNAMENT_MATCH_NUMBER, playedMatch.tournamentMatchNumber());
+        valuesMap.put(COLUMN_DATETIME, playedMatch.date());
+        valuesMap.put(COLUMN_PLAYER1_ID, playedMatch.player1() != null ? playedMatch.player1().id() : null);
+        valuesMap.put(COLUMN_PLAYER2_ID, playedMatch.player2() != null ? playedMatch.player2().id() : null);
+        valuesMap.put(COLUMN_RESULT, playedMatch.result() != null ? playedMatch.result().serialize() : null);
+        return valuesMap;
+    }
+    
     @Override
     public void setResult(MatchResultInfo matchResultInfo) {
         int matchId = matchResultInfo.match().id();
@@ -252,6 +266,16 @@ public class MatchJdbcRepository implements MatchRepository  {
                 Map.of(COLUMN_TOURNAMENT_ID, tournamentId,
                        COLUMN_TOURNAMENT_BOARD_NUMBER, boardNumber,
                        COLUMN_TOURNAMENT_MATCH_NUMBER, tournamentMatchNumber), COLUMN_ID, String.valueOf(matchId)));
+    }
+
+    @Override
+    public void save(List<Match> playedMatches) {
+        List<Map<String, Object>> values = playedMatches.stream()
+                .map(bookedMatch -> createMap(bookedMatch))
+                .collect(Collectors.toList());
+        
+        Set<String> columns = values.get(0).keySet();
+        jdbi.withHandle(handle -> JdbiUtil.createBatchInsertStatement(handle, TABLE_TENNIS_MATCH, columns, values).execute());
     }
 
 }

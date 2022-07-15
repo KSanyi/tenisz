@@ -6,9 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,6 +44,8 @@ public class MATKMeccsImporter {
     private final MatchRepository matchRepository;
     private final TournamentService tournamentService;
     
+    private Players players;
+    
     public MATKMeccsImporter(ResourceFactory resourceFactory) {
         playerRepository = resourceFactory.getPlayerRepository();
         matchService = resourceFactory.getMatchService();
@@ -53,14 +57,24 @@ public class MATKMeccsImporter {
         
         List<String> lines = Files.readAllLines(Paths.get("c:\\Users\\kocso\\Desktop\\Tenisz\\MATK\\meccsek.txt"));
         
+        players = playerRepository.loadAllPlayers();
+        logger.info("{} players loaded", players.entries().size());
+        
+        List<Match> matches = new ArrayList<>();
         for(int i=1;i<lines.size();i++) {
             String line = lines.get(i);
-            processMatchLine(i+1, line);
+            Match match = processMatchLine(i+1, line);
+            logger.info("Match created: {}", i);
+            if(match != null) {
+                matches.add(match);
+            }
         }
-
+        logger.info("Saving matches");
+        matchRepository.save(matches);
+        logger.info("Matches saved");
     }
 
-    private void processMatchLine(int rowNum, String line) {
+    private Match processMatchLine(int rowNum, String line) {
         try {
             String[] parts = line.split("\t");
             LocalDate date = LocalDate.parse(parts[0], DATE_FORMAT);
@@ -72,26 +86,30 @@ public class MATKMeccsImporter {
             String type = parts[10];
             
             if("NAPI Meccs".equals(type)) {
+                Player player1 = findOrCreatePlayer(playerOne);
+                Player player2 = findOrCreatePlayer(playerTwo);
                 
-                Players players = playerRepository.loadAllPlayers();
-                
-                Player player1 = findOrCreatePlayer(players, playerOne);
-                Player player2 = findOrCreatePlayer(players, playerTwo);
-                
-                Match playedMatch = new Match(0, null, null, null, date, player1, player2, new MatchResult(List.of(new SetResult(score1, score2))));
-                
-                matchService.saveMatch(playedMatch);
-                
-                //System.out.println(date + " " + playerOne + " " + playerTwo + " " + score1 + " " + score2 + " " + type);                
+                return new Match(0, null, null, null, date, player1, player2, new MatchResult(List.of(new SetResult(score1, score2))));
+            } else {
+                return null;
             }
         } catch(Exception ex) {
             logger.error("Error parsing line " + rowNum + ": " + line + ": " + ex);
+            return null;
         }
     }
     
-    private Player findOrCreatePlayer(Players players, String playerName) {
-        return players.findPlayer(playerName)
-                .orElseGet(() -> playerRepository.saveNewPlayer(Player.createNew(playerName)));
+    private Player findOrCreatePlayer(String playerName) {
+        Optional<Player> player = players.findPlayer(playerName);
+        if(player.isPresent()) {
+            return player.get();
+        } else {
+            logger.info("Saving new player: {}", playerName);
+            Player newPlayer = playerRepository.saveNewPlayer(Player.createNew(playerName));
+            logger.info("New player saved: {}", newPlayer);
+            players = players.add(newPlayer);
+            return newPlayer;
+        }
     }
     
     public void importPlayers() throws IOException {

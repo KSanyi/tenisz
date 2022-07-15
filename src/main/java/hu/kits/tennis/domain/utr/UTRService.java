@@ -35,7 +35,7 @@ public class UTRService {
         return matchRepository.save(bookedMatch);
     }
     
-    public List<BookedMatch> loadMathesForPlayer(Player player) {
+    public List<BookedMatch> loadMatchesForPlayer(Player player) {
         List<BookedMatch> matches = matchRepository.loadAllPlayedMatches(player);
         
         return matches.stream().map(match -> swapIfNeeed(match, player)).collect(toList());

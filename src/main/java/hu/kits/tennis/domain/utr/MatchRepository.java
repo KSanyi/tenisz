@@ -14,6 +14,8 @@ public interface MatchRepository {
     
     BookedMatch save(BookedMatch bookedMatch);
     
+    void save(List<Match> playedMatches);
+    
     void deleteMatch(int matchId);
 
     void replaceAllBookedMatches(List<BookedMatch> recalculatedBookedMatches);

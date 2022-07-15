@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 
+import hu.kits.tennis.application.MATKMeccsImporter;
 import hu.kits.tennis.application.ResourceFactory;
 import hu.kits.tennis.common.Environment;
 import hu.kits.tennis.domain.email.EmailSender;

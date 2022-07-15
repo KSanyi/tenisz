@@ -47,6 +47,7 @@ public class Players {
 
     public List<Player> entries() {
         return playersMap.values().stream()
+                .filter(player -> player.id() != 0)
                 .sorted(comparing((Player player) -> StringUtil.cleanNameString(player.name())))
                 .toList();
     }
