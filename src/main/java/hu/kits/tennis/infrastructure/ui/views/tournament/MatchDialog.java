@@ -22,6 +22,7 @@ import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.value.ValueChangeMode;
 
 import hu.kits.tennis.Main;
+import hu.kits.tennis.common.Clock;
 import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.Match;
@@ -54,9 +55,8 @@ class MatchDialog extends Dialog {
         if(match.result() != null) {
             scoreFields.setMatchResult(match.result());
         }
-        if(match.date() != null) {
-            datePicker.setValue(match.date());
-        }
+
+        datePicker.setValue(match.date() != null ? match.date() : Clock.today());
 
         setDraggable(true);
         setResizable(true);

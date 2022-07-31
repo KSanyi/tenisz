@@ -5,6 +5,7 @@ import java.util.List;
 
 import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.MatchResult.SetResult;
+import hu.kits.tennis.common.Clock;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.Player;
 
@@ -27,7 +28,8 @@ public class MatchDataBean {
     }
 
     public MatchDataBean() {
-        id = 0; 
+        id = 0;
+        date = Clock.today();
     }
 
     public LocalDate getDate() {
