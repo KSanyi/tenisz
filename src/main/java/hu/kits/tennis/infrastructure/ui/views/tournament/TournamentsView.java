@@ -1,5 +1,7 @@
 package hu.kits.tennis.infrastructure.ui.views.tournament;
 
+import static java.util.Comparator.comparing;
+
 import java.util.List;
 
 import com.vaadin.flow.component.AttachEvent;
@@ -109,6 +111,7 @@ class TournamentsGrid extends Grid<Tournament> {
         addColumn(new LocalDateRenderer<>(Tournament::date, Formatters.DATE_FORMAT))
             .setHeader("Dátum")
             .setFlexGrow(4)
+            .setComparator(comparing(Tournament::date))
             .setKey("date");
         
         addColumn(t -> t.contestants().size())
