@@ -9,6 +9,7 @@ import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -105,7 +106,7 @@ class TournamentsGrid extends Grid<Tournament> {
             .setSortable(true)
             .setFlexGrow(2);
     
-        addColumn(t -> Formatters.formatDateLong(t.date()))
+        addColumn(new LocalDateRenderer<>(Tournament::date, Formatters.DATE_FORMAT))
             .setHeader("Dátum")
             .setFlexGrow(4)
             .setKey("date");
