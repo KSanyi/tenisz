@@ -38,7 +38,8 @@ public record Tournament(String id,
     
     public static enum Status {
         DRAFT,
-        LIVE;
+        LIVE,
+        COMPLETED;
     }
     
     public static record Board(int numberOfRounds, Map<Integer, Match> matches) {
