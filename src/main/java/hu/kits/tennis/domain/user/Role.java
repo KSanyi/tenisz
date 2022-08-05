@@ -5,9 +5,8 @@ import java.util.Set;
 public enum Role {
 
     ADMIN("Admin"), 
-    TRAINER("Edző"),
-    MEMBER("Bérletes"),
-    OUTSIDER("Óradíjas"),
+    MEMBER("Klubtag"),
+    VISITOR("Látogató"),
     ANONYMUS("ANONYMUS");
     
     private final String label;
@@ -21,11 +20,7 @@ public enum Role {
     }
     
     public static Set<Role> all() {
-        return Set.of(ADMIN, TRAINER, MEMBER, OUTSIDER);
+        return Set.of(ADMIN, MEMBER, VISITOR);
     }
 
-    public boolean needsToPay() {
-        return this != ADMIN && this != MEMBER;
-    }
-    
 }

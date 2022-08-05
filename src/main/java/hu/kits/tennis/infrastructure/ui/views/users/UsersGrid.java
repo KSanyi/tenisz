@@ -75,8 +75,7 @@ class UsersGrid extends Grid<UserData> {
         BadgeColor badgeColor = switch(role) {
             case ADMIN -> BadgeColor.ERROR_PRIMARY;
             case MEMBER -> BadgeColor.NORMAL;
-            case OUTSIDER -> BadgeColor.SUCCESS_PRIMARY;
-            case TRAINER -> BadgeColor.NORMAL_PRIMARY;
+            case VISITOR -> BadgeColor.SUCCESS_PRIMARY;
             case ANONYMUS -> BadgeColor.CONTRAST_PRIMARY;
         };
         Badge badge = new Badge(role.label(), badgeColor, BadgeSize.M, BadgeShape.PILL);

@@ -146,13 +146,13 @@ public class UserApplicationTest {
     @Test
     void updateUser() {
         
-        userService.updateUser("csányika", new UserDataUpdateRequest(new UserData("csányika", "Csányi Zsolti", Role.OUTSIDER, "", "nomail", Status.ACTIVE)));
+        userService.updateUser("csányika", new UserDataUpdateRequest(new UserData("csányika", "Csányi Zsolti", Role.VISITOR, "", "nomail", Status.ACTIVE)));
         
         UserData user = userService.findUser("csányika");
         assertEquals("Csányi Zsolti", user.name());
         assertEquals("nomail", user.email());
         assertEquals("", user.phone());
-        assertEquals(Role.OUTSIDER, user.role());
+        assertEquals(Role.VISITOR, user.role());
         assertEquals(Status.ACTIVE, user.status());
     }
     
