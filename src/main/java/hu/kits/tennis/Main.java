@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 
+import hu.kits.tennis.application.KVTKMeccsImporter;
 import hu.kits.tennis.application.MATKMeccsImporter;
 import hu.kits.tennis.application.ResourceFactory;
 import hu.kits.tennis.common.Environment;
@@ -37,6 +38,9 @@ public class Main {
         EmailSender emailSender = createEmailSender(environment);
         
         resourceFactory = new ResourceFactory(dataSource, emailSender);
+        
+        //new KVTKMeccsImporter(resourceFactory).importMatches();
+        //new KVTKMeccsImporter(resourceFactory).setupTournaments();
         
         //new MATKMeccsImporter(resourceFactory).importMatches();
         //new MATKMeccsImporter(resourceFactory).createTournaments();

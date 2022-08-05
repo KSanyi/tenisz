@@ -1,5 +1,8 @@
 package hu.kits.tennis.application;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
@@ -11,7 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -21,8 +24,8 @@ import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.tournament.Organizer;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
-import hu.kits.tennis.domain.tournament.TournamentInfo;
 import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchInfo;
 import hu.kits.tennis.domain.utr.MatchRepository;
@@ -33,11 +36,11 @@ import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerRepository;
 import hu.kits.tennis.domain.utr.Players;
 
-public class MATKMeccsImporter {
+public class KVTKMeccsImporter {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("MMM d, yyyy", new Locale("HU"));
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd", new Locale("HU"));
     
     private final PlayerRepository playerRepository;
     private final MatchService matchService;
@@ -45,8 +48,9 @@ public class MATKMeccsImporter {
     private final TournamentService tournamentService;
     
     private Players players;
+    private Map<String, Tournament> tournaments;
     
-    public MATKMeccsImporter(ResourceFactory resourceFactory) {
+    public KVTKMeccsImporter(ResourceFactory resourceFactory) {
         playerRepository = resourceFactory.getPlayerRepository();
         matchService = resourceFactory.getMatchService();
         tournamentService = resourceFactory.getTournamentService();
@@ -55,23 +59,48 @@ public class MATKMeccsImporter {
     
     public void importMatches() throws IOException {
         
-        List<String> lines = Files.readAllLines(Paths.get("c:\\Users\\kocso\\Desktop\\Tenisz\\MATK\\meccsek.txt"));
+        List<String> lines = Files.readAllLines(Paths.get("c:\\Users\\kocso\\Desktop\\Tenisz\\KVTK\\meccsek.txt"));
         
         players = playerRepository.loadAllPlayers();
         logger.info("{} players loaded", players.entries().size());
+        
+        tournaments = tournamentService.loadAllTournaments().stream()
+                .filter(tournament -> tournament.organizer() == Organizer.KVTK)
+                .collect(toMap(Tournament::name, Function.identity()));
+        
+        List<BookedMatch> allMatches = matchRepository.loadAllBookedMatches();
         
         List<Match> matches = new ArrayList<>();
         for(int i=1;i<lines.size();i++) {
             String line = lines.get(i);
             Match match = processMatchLine(i+1, line);
-            logger.info("Match created: {}", i);
+            logger.info("Match {} parsed: {}", i, match);
             if(match != null) {
-                matches.add(match);
+                if(isDuplicate(allMatches, match)) {
+                    logger.info("Match is duplicate");
+                } else {
+                    matches.add(match);                        
+                }
             }
         }
-        logger.info("Saving matches");
-        matchRepository.save(matches);
-        logger.info("Matches saved");
+        
+        if(matches.isEmpty()) {
+            logger.info("No matches to save");
+        } else {
+            logger.info("Saving matches");
+            matchRepository.save(matches);
+            logger.info("{} matches saved", matches.size());    
+        }
+    }
+
+    private static boolean isDuplicate(List<BookedMatch> allMatches, Match match) {
+        return allMatches.stream().anyMatch(m -> isTheSameMatch(match, m.playedMatch()));
+    }
+    
+    private static boolean isTheSameMatch(Match match1, Match match2) {
+        return match1.date().equals(match2.date()) && match1.tournamentId().equals(match2.tournamentId()) 
+                && match1.player1().equals(match2.player1())
+                && match1.player2().equals(match2.player2()) && match1.result().equals(match2.result());
     }
 
     private Match processMatchLine(int rowNum, String line) {
@@ -80,25 +109,33 @@ public class MATKMeccsImporter {
             LocalDate date = LocalDate.parse(parts[0], DATE_FORMAT);
             
             String playerOne = parts[1];
-            String playerTwo = parts[3];
-            int score1 = Integer.parseInt(parts[4]);
-            int score2 = Integer.parseInt(parts[5]);
-            String type = parts[10];
+            String playerTwo = parts[2];
+            int score1 = Integer.parseInt(parts[3]);
+            int score2 = Integer.parseInt(parts[4]);
+            String level = parts[11];
             
-            if("NAPI Meccs".equals(type)) {
-                Player player1 = findOrCreatePlayer(playerOne);
-                Player player2 = findOrCreatePlayer(playerTwo);
+            Tournament tournament = findOrCreateTournament(date, level);
+            
+            Player player1 = findOrCreatePlayer(playerOne);
+            Player player2 = findOrCreatePlayer(playerTwo);
                 
-                return new Match(0, null, null, null, date, player1, player2, new MatchResult(List.of(new SetResult(score1, score2))));
-            } else {
-                return null;
-            }
+            return new Match(0, tournament.id(), null, null, date, player1, player2, new MatchResult(List.of(new SetResult(score1, score2))));
         } catch(Exception ex) {
             logger.error("Error parsing line " + rowNum + ": " + line + ": " + ex);
             return null;
         }
     }
     
+    private Tournament findOrCreateTournament(LocalDate date, String level) {
+        String tournamentName = "KVTK Napi " + level + " verseny " + Formatters.formatDate(date);
+        Tournament tournament = tournaments.get(tournamentName);
+        if(tournament == null) {
+            tournament = tournamentService.createTournament(Organizer.KVTK, tournamentName, "", date, Type.NA, 1);
+            tournaments.put(tournamentName, tournament);
+        }
+        return tournament;
+    }
+
     private Player findOrCreatePlayer(String playerName) {
         Optional<Player> player = players.findPlayer(playerName);
         if(player.isPresent()) {
@@ -112,40 +149,15 @@ public class MATKMeccsImporter {
         }
     }
     
-    public void importPlayers() throws IOException {
+    public void setupTournaments() {
         
-        List<String> lines = Files.readAllLines(Paths.get("c:\\Users\\Sanyi\\Desktop\\utr-groups.txt"));
+        List<Tournament> tournamentsNotSetup = tournamentService.loadAllTournaments().stream()
+                .filter(tournament -> tournament.organizer() == Organizer.KVTK)
+                .filter(tournament -> tournament.contestants().isEmpty())
+                .collect(toList());
         
-        for(int i=1;i<lines.size();i++) {
-            String line = lines.get(i);
-            processPlayerLine(i+1, line);
-        }
-
-    }
-
-    private void processPlayerLine(int rowNum, String line) {
-        try {
-            String[] parts = line.split("\t");
-            
-            String playerName = parts[1];
-            int utrGroup = Integer.parseInt(parts[2]);
-            
-            playerRepository.saveNewPlayer(new Player(0, playerName, utrGroup));
-        } catch(Exception ex) {
-            System.err.println("Error parsing line " + rowNum + ": " + line);
-        }
-    }
-    
-    public void createTournaments() {
-        
-        Map<LocalDate, List<MatchInfo>> matchesByDate = matchService.loadAllMatches().stream()
-                .filter(match -> match.tournamentInfo().equals(TournamentInfo.UNKNOWN))
-                .collect(Collectors.groupingBy(match -> match.date()));
-        
-        for(LocalDate date : matchesByDate.keySet()) {
-            
-            List<MatchInfo> matches = matchesByDate.get(date);
-            Tournament tournament = tournamentService.createTournament(Organizer.MATK, "MATK Napi verseny " + Formatters.formatDate(date), "", date, Type.NA, 1);
+        for(Tournament tournament : tournamentsNotSetup) {
+            List<MatchInfo> matches = matchService.loadMatchesOfTournament(tournament.id());
             List<Player> players = findPlayers(matches);
             for(MatchInfo match : matches) {
                 matchRepository.updateTournament(match.id(), tournament.id(), 1, matches.indexOf(match) + 1);
