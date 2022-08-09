@@ -1,6 +1,7 @@
 package hu.kits.tennis.infrastructure.database;
 
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.sql.Date;
@@ -239,7 +240,9 @@ public class MatchJdbcRepository implements MatchRepository  {
 
     @Override
     public void replaceAllBookedMatches(List<BookedMatch> recalculatedBookedMatches) {
-        deleteAllMatches();
+        List<Integer> matchIds = recalculatedBookedMatches.stream().map(m -> m.playedMatch().id()).collect(toList());
+        // TODO do it wit updates
+        deleteMatches(matchIds);
         
         if(! recalculatedBookedMatches.isEmpty()) {
             List<Map<String, Object>> values = recalculatedBookedMatches.stream()
@@ -251,8 +254,10 @@ public class MatchJdbcRepository implements MatchRepository  {
         }
     }
 
-    private void deleteAllMatches() {
-        jdbi.withHandle(handle -> handle.execute(String.format("DELETE FROM %s", TABLE_TENNIS_MATCH)));
+    private void deleteMatches(List<Integer> matchIds) {
+        jdbi.withHandle(handle -> handle.createUpdate(String.format("DELETE FROM %s WHERE %s IN (<matchIds>)", TABLE_TENNIS_MATCH, COLUMN_ID))
+                .bindList("matchIds", matchIds)
+                .execute());
     }
 
     @Override
