@@ -83,6 +83,12 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.vaadin.olli</groupId>
+            <artifactId>clipboardhelper</artifactId>
+            <version>1.2.0</version>
+        </dependency>
 
 		<dependency>
             <groupId>io.javalin</groupId>

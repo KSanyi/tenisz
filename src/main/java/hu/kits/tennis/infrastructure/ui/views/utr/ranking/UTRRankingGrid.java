@@ -1,6 +1,7 @@
 package hu.kits.tennis.infrastructure.ui.views.utr.ranking;
 
 import static hu.kits.tennis.common.StringUtil.cleanNameString;
+import static java.util.stream.Collectors.joining;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
 import hu.kits.tennis.Main;
+import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import hu.kits.tennis.domain.utr.UTRService;
 
@@ -45,8 +47,6 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
         setWidth("400px");
         
         setHeightFull();
-        
-        refresh();
     }
     
     void refresh() {
@@ -58,6 +58,12 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
     void filter(String playerNamePart) {
         dataProvider.clearFilters();
         dataProvider.addFilter(playerWithUtr -> cleanNameString(playerWithUtr.player().name()).contains(cleanNameString(playerNamePart)));
+    }
+    
+    String createTableInCopyableFormat() {
+        return dataProvider.getItems().stream()
+                .map(e -> String.format(Formatters.HU_LOCALE, "%s\t%,.2f", e.player().name(), e.utr().value()))
+                .collect(joining("\n"));
     }
 
 }
