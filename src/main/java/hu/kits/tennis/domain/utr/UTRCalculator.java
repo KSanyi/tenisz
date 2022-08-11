@@ -6,7 +6,6 @@ import static java.util.stream.Collectors.toList;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -89,7 +88,7 @@ public class UTRCalculator {
         
         List<Match> allPlayedMatches = bookedMatches.stream()
                 .map(BookedMatch::playedMatch)
-                .sorted(Comparator.comparing(Match::date))
+                .sorted(comparing(Match::date))
                 .collect(toList());
         
         for(Match playedMatch : allPlayedMatches) {
