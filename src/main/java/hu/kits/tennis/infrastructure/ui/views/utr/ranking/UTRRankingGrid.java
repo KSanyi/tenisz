@@ -45,6 +45,23 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
             .setFlexGrow(0);
         
         setWidth("400px");
+        /*
+        addColumn(playerWithUTR -> playerWithUTR.player().utrGroup())
+            .setHeader("UTR csop")
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setSortable(true)
+            .setAutoWidth(true)
+            .setFlexGrow(0);
+        
+        addColumn(playerWithUTR -> String.format("%.1f", playerWithUTR.utr().value() - playerWithUTR.player().utrGroup()))
+            .setHeader("UTR diff")
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setSortable(true)
+            .setAutoWidth(true)
+            .setFlexGrow(0);
+            
+        setWidth("600px");
+        */
         
         setHeightFull();
     }
