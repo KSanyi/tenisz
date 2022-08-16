@@ -33,7 +33,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
     
     private final TextField idField = new TextField("Azonosító");
     private final TextField nameField = new TextField("Név");
-    private final ComboBox<Integer> utrGroupCombo = new ComboBox<>("UTR csoport", List.of(5,6,7,8,9,10));
+    private final ComboBox<Integer> utrGroupCombo = new ComboBox<>("UTR csoport", List.of(4,5,6,7,8,9,10));
     private final Binder<PlayerDataBean> binder = new Binder<>(PlayerDataBean.class);
 
     private final Button saveButton = UIUtils.createPrimaryButton("Mentés");
