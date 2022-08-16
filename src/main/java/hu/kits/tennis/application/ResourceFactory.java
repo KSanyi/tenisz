@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import hu.kits.tennis.domain.email.EmailSender;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
 import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.user.ReconciliationService;
 import hu.kits.tennis.domain.user.UserRepository;
 import hu.kits.tennis.domain.user.UserService;
 import hu.kits.tennis.domain.user.password.DummyPasswordHasher;
@@ -27,6 +28,7 @@ public class ResourceFactory {
     private final TournamentService tournamentService;
     private final UTRService utrService;
     private final MatchService matchService;
+    private final ReconciliationService reconciliationService;
     
     public ResourceFactory(DataSource dataSource, EmailSender emailSender) {
         
@@ -38,6 +40,7 @@ public class ResourceFactory {
         TournamentRepository tournamentRepository = new TournamentJdbcRepository(dataSource, playerRepository, matchRepository);
         playersService = new PlayersService(playerRepository, matchRepository);
         tournamentService = new TournamentService(tournamentRepository, matchRepository);
+        reconciliationService = new ReconciliationService(playerRepository, matchRepository, tournamentRepository);
         
         utrService = new UTRService(matchRepository, playerRepository, tournamentRepository);
         
@@ -70,6 +73,10 @@ public class ResourceFactory {
     
     public PlayersService getPlayersService() {
         return playersService;
+    }
+    
+    public ReconciliationService getReconciliationService() {
+        return reconciliationService;
     }
 
 }

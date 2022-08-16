@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 
 import org.jdbi.v3.core.Jdbi;
 
+import hu.kits.tennis.common.CollectionsUtil;
 import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.Organizer;
@@ -23,6 +24,7 @@ import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentMatches;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
 import hu.kits.tennis.domain.utr.MatchRepository;
+import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerRepository;
 import hu.kits.tennis.domain.utr.Players;
 
@@ -62,6 +64,23 @@ public class TournamentJdbcRepository implements TournamentRepository {
         return jdbi.withHandle(handle -> 
             handle.createQuery(sql)
             .map((rs, ctx) -> mapToTournament(rs, contestantsByTournament, Map.of())).list());
+    }
+    
+    @Override
+    public List<Tournament> loadAllTournaments(Player player) {
+        
+        Players players = playerRepository.loadAllPlayers();
+        Map<String, List<Contestant>> contestantsByTournament = contestantDBTable.loadAllContestantsByTournament(players);
+
+        Map<String, List<Contestant>> contestantsByTournamentForPlayer = CollectionsUtil.filterByValue(contestantsByTournament, 
+                contestants -> contestants.stream().anyMatch(c -> c.player().id().equals(player.id())));
+        
+        String sql = String.format("SELECT * FROM %s WHERE %s IN(<tournamentIds>)", TABLE_TOURNAMENT, COLUMN_ID);
+        
+        return jdbi.withHandle(handle -> 
+            handle.createQuery(sql)
+            .bindList("tournamentIds", contestantsByTournamentForPlayer.keySet())
+            .map((rs, ctx) -> mapToTournament(rs, contestantsByTournamentForPlayer, Map.of())).list());
     }
     
     private static Tournament mapToTournament(ResultSet rs, Map<String, List<Contestant>> contestantsByTournament, Map<String, TournamentMatches> matchesByTournament) throws SQLException {

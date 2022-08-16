@@ -69,17 +69,6 @@ public class UTRService {
                 .sorted(comparing(PlayerWithUTR::utr).reversed())
                 .collect(toList());
         
-        /*
-        String rankingString = ranking.stream().map(playerWithRanking -> playerWithRanking.player().id() + "\t" + playerWithRanking.player().name() + "\t" + playerWithRanking.utr().value()).collect(Collectors.joining("\n"));
-        
-        try {
-            Files.write(Paths.get("c:\\Users\\Sanyi\\Desktop\\partner-utr-groups.txt"), rankingString.getBytes());
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        */
-        
         List<PlayerWithUTR> result = ranking.stream()
                 .map(playerWithUTR -> new PlayerWithUTR(playerWithUTR.player(), ranking.indexOf(playerWithUTR)+1, playerWithUTR.utr()))
                 .collect(toList());
@@ -108,9 +97,18 @@ public class UTRService {
             .toList();
     }
     
-    public void recalculateAllUTRs() {
+    public void recalculateAllUTRs(boolean resetUTRGroupsBefore) {
         
         logger.info("Recalculating and saving all UTRs (now only for KVTK)");
+        
+        if(resetUTRGroupsBefore) {
+            List<PlayerWithUTR> utrRanking = calculateUTRRanking();
+            for(PlayerWithUTR playerWithUTR : utrRanking) {
+                Player player = playerWithUTR.player();
+                Player updatedPlayer = new Player(player.id(), player.name(), (int)Math.round(playerWithUTR.utr().value()));
+                playerRepository.updatePlayer(updatedPlayer);
+            }
+        }
         
         List<BookedMatch> allKVTKBookedMatches = getAllKVTKMatches();
         

@@ -30,6 +30,6 @@ public class MathUtil {
         round--;
         int matchNumberInRound = matchNumber - (pow2(numberOfRounds) - pow2(numberOfRounds - round + 1));
         
-        return new Pair<>(round, matchNumberInRound);
+        return Pair.of(round, matchNumberInRound);
     }
 }

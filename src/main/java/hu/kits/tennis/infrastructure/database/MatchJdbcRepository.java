@@ -255,9 +255,11 @@ public class MatchJdbcRepository implements MatchRepository  {
     }
 
     private void deleteMatches(List<Integer> matchIds) {
-        jdbi.withHandle(handle -> handle.createUpdate(String.format("DELETE FROM %s WHERE %s IN (<matchIds>)", TABLE_TENNIS_MATCH, COLUMN_ID))
-                .bindList("matchIds", matchIds)
-                .execute());
+        if(!matchIds.isEmpty()) {
+            jdbi.withHandle(handle -> handle.createUpdate(String.format("DELETE FROM %s WHERE %s IN (<matchIds>)", TABLE_TENNIS_MATCH, COLUMN_ID))
+                    .bindList("matchIds", matchIds)
+                    .execute());
+        }
     }
 
     @Override

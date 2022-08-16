@@ -19,6 +19,7 @@ public class UTRCalculator {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     private static final int RELEVANT_MATCH_COUNT = 14;
+    private static final int DUMMY_MATCH_COUNT = 1;
     private static final UTR DEFAULT_UTR = new UTR(7.0);
     
     public static UTR calculatePlayersUTR(Player player, List<BookedMatch> allBookedMatches, LocalDate date) {
@@ -35,7 +36,7 @@ public class UTRCalculator {
             addDummyMatches(player, lastRelevantMatchesFoPlayer) : lastRelevantMatchesFoPlayer;
         
         List<Pair<Double, Integer>> utrWithWeights = effectiveMatches.stream()
-                .map(match -> new Pair<>(match.utrOfMatchFor(player).value(),
+                .map(match -> Pair.of(match.utrOfMatchFor(player).value(),
                                         calculateMatchWeight(effectiveMatches.indexOf(match), match)))
                 .collect(toList());
         
@@ -54,9 +55,8 @@ public class UTRCalculator {
 
     private static List<BookedMatch> addDummyMatches(Player player, List<BookedMatch> matches) {
         UTR utr = player.utrGroup() != null && player.utrGroup() > 0 ? new UTR((double)player.utrGroup()) : DEFAULT_UTR;
-        int matchesToAdd = 1;
         List<BookedMatch> extendedMatches = new ArrayList<>(matches);
-        for(int i=0;i<matchesToAdd;i++) {
+        for(int i=0;i<DUMMY_MATCH_COUNT;i++) {
             extendedMatches.add(new BookedMatch(new Match(0, null, null, null, LocalDate.MIN, player, null, new MatchResult(List.of(new SetResult(6,0)))), 
                     UTR.UNDEFINED, UTR.UNDEFINED, utr, UTR.UNDEFINED));
         }

@@ -58,7 +58,7 @@ class ContestantDBTable {
         
         Player player = players.get(rs.getInt(COLUMN_PLAYER_ID));
         
-        return new Pair<>(rs.getString(COLUMN_TOURNAMENT_ID), 
+        return Pair.of(rs.getString(COLUMN_TOURNAMENT_ID), 
                 new Contestant(player, rs.getInt(COLUMN_RANK_NUMBER)));
     }
 

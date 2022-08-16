@@ -85,7 +85,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
                     Player newPlayer = playerDataBean.toPlayer();
                     VaadinUtil.logUserAction(logger, "saving new player: {}", newPlayer);
                     playersService.saveNewPlayer(newPlayer);
-                    KITSNotification.showInfo("Játékos létrehozva.");
+                    KITSNotification.showInfo("Játékos létrehozva");
                 }
                 hide();
                 playersView.refresh();

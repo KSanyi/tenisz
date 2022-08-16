@@ -31,4 +31,5 @@ public interface MatchRepository {
     void setPlayer2(int matchId, Player player);
     
     void updateTournament(int matchId, String tournamentId, int boardNumber, int tournamentMatchNumber);
+
 }

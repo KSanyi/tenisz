@@ -94,7 +94,9 @@ public class MatchesView extends SplitViewFrame implements View {
     }
     
     private void recalculateUTRs() {
-        utrService.recalculateAllUTRs();
+        // TODO
+        boolean resetUTRGroupsBefore = false;
+        utrService.recalculateAllUTRs(resetUTRGroupsBefore);
         refresh();
         KITSNotification.showInfo("Az összes meccs UTR újrakalkulálva");
     }

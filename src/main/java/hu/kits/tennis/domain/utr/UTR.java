@@ -30,5 +30,9 @@ public record UTR(Double value) implements Comparable<UTR> {
             return otherUTR == UNDEFINED ? 1 : Double.compare(value, otherUTR.value());
         }
     }
+    
+    public static UTR of(double value) {
+        return new UTR(value);
+    }
 
 }

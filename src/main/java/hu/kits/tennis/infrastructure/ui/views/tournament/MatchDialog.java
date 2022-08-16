@@ -242,7 +242,7 @@ class ScoreFields extends HorizontalLayout {
         }
         scoreField1.addValueChangeListener(e -> scoreField2.focus());
         
-        scoreFields.add(new Pair<>(scoreField1, scoreField2));
+        scoreFields.add(Pair.of(scoreField1, scoreField2));
         VerticalLayout verticalLayout = new VerticalLayout(scoreField1, scoreField2);
         verticalLayout.setPadding(false);
         verticalLayout.setSpacing(false);

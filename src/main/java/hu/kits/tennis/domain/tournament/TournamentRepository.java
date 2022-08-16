@@ -6,10 +6,13 @@ import java.util.Optional;
 
 import hu.kits.tennis.domain.tournament.Tournament.Status;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
+import hu.kits.tennis.domain.utr.Player;
 
 public interface TournamentRepository {
 
     List<Tournament> loadAllTournaments();
+    
+    List<Tournament> loadAllTournaments(Player player);
     
     Optional<Tournament> findTournament(String tournamentId);
     

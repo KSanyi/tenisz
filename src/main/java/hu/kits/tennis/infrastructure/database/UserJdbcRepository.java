@@ -55,7 +55,7 @@ public class UserJdbcRepository implements UserRepository {
         return jdbi.withHandle(handle -> 
             handle.createQuery(sql)
             .bind("userIdOrEmail", userIdOrEmail)
-            .map((rs, ctx) -> new Pair<>(mapToUser(rs), rs.getString(COLUMN_PASSWORD_HASH))).findOne());
+            .map((rs, ctx) -> Pair.of(mapToUser(rs), rs.getString(COLUMN_PASSWORD_HASH))).findOne());
     }
     
     @Override

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class CollectionsUtil {
 
@@ -22,6 +23,12 @@ public class CollectionsUtil {
     public static <K, V, W> Map<K, W> mapValues(Map<K, V> map, Function<V, W> mappingFunction) {
         return map.entrySet().stream()
                 .collect(toMap(Entry::getKey, e -> mappingFunction.apply(e.getValue())));
+    }
+    
+    public static <K, V> Map<K, V> filterByValue(Map<K, V> map, Predicate<V> predicate) {
+        return map.entrySet().stream()
+                .filter(e -> predicate.test(e.getValue()))
+                .collect(toMap(Entry::getKey, Entry::getValue));
     }
     
 }
