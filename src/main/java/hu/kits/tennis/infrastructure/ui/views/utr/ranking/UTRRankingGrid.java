@@ -79,7 +79,7 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
     
     String createTableInCopyableFormat() {
         return dataProvider.getItems().stream()
-                .map(e -> String.format(Formatters.HU_LOCALE, "%s\t%,.2f", e.player().name(), e.utr().value()))
+                .map(e -> String.format(Formatters.HU_LOCALE, "%s\t%s\t%,.2f", e.player().id(), e.player().name(), e.utr().value()))
                 .collect(joining("\n"));
     }
 
