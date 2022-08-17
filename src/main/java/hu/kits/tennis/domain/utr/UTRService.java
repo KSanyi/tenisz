@@ -60,11 +60,11 @@ public class UTRService {
         List<BookedMatch> allMatches = matchRepository.loadAllBookedMatches();
         
         Set<Player> playersOnKVTKTournaments = allKVTKBookedMatches.stream()
-                .flatMap(b -> Stream.of(b.playedMatch().player1(), b.playedMatch().player1()))
+                .flatMap(b -> Stream.of(b.playedMatch().player1(), b.playedMatch().player2()))
                 .collect(toSet());
         
         Set<Player> playersWithMatches = allMatches.stream()
-                .flatMap(b -> Stream.of(b.playedMatch().player1(), b.playedMatch().player1()))
+                .flatMap(b -> Stream.of(b.playedMatch().player1(), b.playedMatch().player2()))
                 .collect(toSet());
         
         Set<Player> playersWithoutMatches = allPlayers.stream()
