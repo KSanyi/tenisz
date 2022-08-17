@@ -8,7 +8,6 @@ import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,11 +59,11 @@ public class UTRService {
         List<BookedMatch> allMatches = matchRepository.loadAllBookedMatches();
         
         Set<Player> playersOnKVTKTournaments = allKVTKBookedMatches.stream()
-                .flatMap(b -> Stream.of(b.playedMatch().player1(), b.playedMatch().player2()))
+                .flatMap(b -> b.playedMatch().players())
                 .collect(toSet());
         
         Set<Player> playersWithMatches = allMatches.stream()
-                .flatMap(b -> Stream.of(b.playedMatch().player1(), b.playedMatch().player2()))
+                .flatMap(b -> b.playedMatch().players())
                 .collect(toSet());
         
         Set<Player> playersWithoutMatches = allPlayers.stream()

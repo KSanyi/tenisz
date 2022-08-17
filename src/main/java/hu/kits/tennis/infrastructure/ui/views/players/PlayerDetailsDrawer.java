@@ -37,6 +37,8 @@ class PlayerDetailsDrawer extends DetailsDrawer {
     private final NumberField startingUTRField = new NumberField("Induló UTR");
     private final Binder<PlayerDataBean> binder = new Binder<>(PlayerDataBean.class);
 
+    private final Button reconcileButton = UIUtils.createPrimaryButton("Összevon");
+    
     private final Button saveButton = UIUtils.createPrimaryButton("Mentés");
     private final Button deleteButton = UIUtils.createErrorButton(VaadinIcon.TRASH);
     
@@ -44,11 +46,11 @@ class PlayerDetailsDrawer extends DetailsDrawer {
     
     private Player player;
     
-    PlayerDetailsDrawer(PlayersService playersService, DetailsDrawer.Position position, PlayersView usersView) {
+    PlayerDetailsDrawer(PlayersService playersService, DetailsDrawer.Position position, PlayersView playersView) {
         super(position);
         
         this.playersService = playersService;
-        this.playersView = usersView;
+        this.playersView = playersView;
         
         setHeader(createHeader());
         setContent(createContent());
@@ -59,10 +61,15 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         binder.addValueChangeListener(e -> saveButton.setVisible(binder.hasChanges()));
         saveButton.addClickListener(click -> save());
         deleteButton.addClickListener(click -> delete());
+        reconcileButton.addClickListener(click -> openReconciliationWindow());
         
         idField.setReadOnly(true);
     }
     
+    private void openReconciliationWindow() {
+        new ReconciliationWindow(player, () -> playersView.refresh()).open();
+    }
+
     private void bind() {
         binder.bind(idField, "playerId");
         binder.forField(nameField)
@@ -125,7 +132,8 @@ class PlayerDetailsDrawer extends DetailsDrawer {
                 nameField, 
                 startingUTRField,
                 new Hr(),
-                deleteButton);
+                deleteButton,
+                reconcileButton);
         fieldsLayout.setSpacing(false);
         fieldsLayout.setAlignSelf(Alignment.END, deleteButton);
         

@@ -1,6 +1,7 @@
 package hu.kits.tennis.domain.utr;
 
 import java.time.LocalDate;
+import java.util.stream.Stream;
 
 public record Match(Integer id, String tournamentId, Integer tournamentBoardNumber, Integer tournamentMatchNumber, LocalDate date, Player player1, Player player2, MatchResult result) {
 
@@ -22,6 +23,10 @@ public record Match(Integer id, String tournamentId, Integer tournamentBoardNumb
 
     public Player winner() {
         return result.isPlayer1Winner() ? player1 : player2;
+    }
+    
+    public Stream<Player> players(){
+        return Stream.of(player1, player2);
     }
     
     @Override

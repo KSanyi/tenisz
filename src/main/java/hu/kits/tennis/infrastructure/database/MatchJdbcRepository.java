@@ -224,7 +224,7 @@ public class MatchJdbcRepository implements MatchRepository  {
     
     @Override
     public void setPlayer1(int matchId, Player player) {
-        jdbi.useHandle(handle -> JdbiUtil.executeSimpleUpdate(jdbi, TABLE_TENNIS_MATCH, COLUMN_PLAYER1_ID, player.id(), COLUMN_ID, matchId));
+        jdbi.useHandle(handle -> JdbiUtil.executeSimpleUpdate(jdbi, TABLE_TENNIS_MATCH, COLUMN_PLAYER1_ID, player != null ? player.id() : null, COLUMN_ID, matchId));
     }
 
     @Override
@@ -241,7 +241,7 @@ public class MatchJdbcRepository implements MatchRepository  {
     @Override
     public void replaceAllBookedMatches(List<BookedMatch> recalculatedBookedMatches) {
         List<Integer> matchIds = recalculatedBookedMatches.stream().map(m -> m.playedMatch().id()).collect(toList());
-        // TODO do it wit updates
+        // TODO do it with updates
         deleteMatches(matchIds);
         
         if(! recalculatedBookedMatches.isEmpty()) {

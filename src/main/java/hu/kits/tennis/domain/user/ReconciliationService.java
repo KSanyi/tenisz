@@ -29,7 +29,7 @@ public class ReconciliationService {
         List<BookedMatch> updatableMatches = matchRepository.loadAllPlayedMatches(duplicate);
         
         for(BookedMatch match : updatableMatches) {
-            if(match.playedMatch().player1().id() == duplicate.id()) {
+            if(match.playedMatch().player1().id().equals(duplicate.id())) {
                 matchRepository.setPlayer1(match.playedMatch().id(), player);
             } else {
                 matchRepository.setPlayer2(match.playedMatch().id(), player);
