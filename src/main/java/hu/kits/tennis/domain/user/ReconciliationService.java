@@ -26,6 +26,10 @@ public class ReconciliationService {
 
     public void reconcilePlayers(Player player, Player duplicate) {
 
+        if(player.id().equals(duplicate.id())) {
+            throw new IllegalArgumentException("Can reconcile a player with itself");
+        }
+        
         List<BookedMatch> updatableMatches = matchRepository.loadAllPlayedMatches(duplicate);
         
         for(BookedMatch match : updatableMatches) {
