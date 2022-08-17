@@ -1,23 +1,24 @@
 package hu.kits.tennis.infrastructure.ui.views.players;
 
 import java.lang.invoke.MethodHandles;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.validator.DoubleRangeValidator;
 
 import hu.kits.tennis.common.KITSException;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayersService;
+import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
@@ -33,7 +34,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
     
     private final TextField idField = new TextField("Azonosító");
     private final TextField nameField = new TextField("Név");
-    private final ComboBox<Integer> utrGroupCombo = new ComboBox<>("UTR csoport", List.of(4,5,6,7,8,9,10));
+    private final NumberField startingUTRField = new NumberField("Induló UTR");
     private final Binder<PlayerDataBean> binder = new Binder<>(PlayerDataBean.class);
 
     private final Button saveButton = UIUtils.createPrimaryButton("Mentés");
@@ -67,7 +68,10 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         binder.forField(nameField)
             .asRequired("Kötelező mező")
             .bind("name");
-        binder.bind(utrGroupCombo, "utrGroup");
+        
+        binder.forField(startingUTRField)
+            .withValidator(new DoubleRangeValidator("1 es 16 között", 1., 16.))
+            .bind("startingUTR");
     }
 
     private void save() {
@@ -119,7 +123,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
     private Component createContent() {
         VerticalLayout fieldsLayout = new VerticalLayout(idField, 
                 nameField, 
-                utrGroupCombo,
+                startingUTRField,
                 new Hr(),
                 deleteButton);
         fieldsLayout.setSpacing(false);
@@ -127,7 +131,12 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         
         idField.setWidth("300px");
         nameField.setWidth("300px");
-        utrGroupCombo.setWidth("100px");
+        startingUTRField.setWidth("120px");
+        
+        startingUTRField.setMin(1);
+        startingUTRField.setMax(16);
+        startingUTRField.setStep(0.01);
+        startingUTRField.setHasControls(true);
         
         return fieldsLayout;
     }
@@ -159,16 +168,16 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         
         private String playerId;
         private String name;
-        private Integer utrGroup;
+        private Double startingUTR;
         
         public PlayerDataBean(Player player) {
             this.playerId = player.id().toString();
             this.name = player.name();
-            this.utrGroup = player.utrGroup();
+            this.startingUTR = player.startingUTR().value();
         }
         
         public Player toPlayer() {
-            return new Player(!playerId.isEmpty() ? Integer.parseInt(playerId) : null, name, utrGroup);
+            return new Player(!playerId.isEmpty() ? Integer.parseInt(playerId) : null, name, UTR.of(startingUTR));
         }
 
         public PlayerDataBean() {
@@ -194,12 +203,12 @@ class PlayerDetailsDrawer extends DetailsDrawer {
             this.name = name;
         }
         
-        public Integer getUtrGroup() {
-            return utrGroup;
+        public Double getStartingUTR() {
+            return startingUTR;
         }
         
-        public void setUtrGroup(Integer utrGroup) {
-            this.utrGroup = utrGroup;
+        public void setStartingUTR(Double startingUTR) {
+            this.startingUTR = startingUTR;
         }
         
     }

@@ -15,6 +15,7 @@ import hu.kits.tennis.common.KITSException;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerRepository;
 import hu.kits.tennis.domain.utr.Players;
+import hu.kits.tennis.domain.utr.UTR;
 
 public class PlayerJdbcRepository implements PlayerRepository {
 
@@ -45,7 +46,7 @@ public class PlayerJdbcRepository implements PlayerRepository {
         return new Player(
                 rs.getInt(COLUMN_ID),
                 rs.getString(COLUMN_NAME),
-                rs.getInt(COLUMN_UTR_GROUP));
+                JdbiUtil.mapToOptionalDouble(rs, COLUMN_UTR_GROUP).map(UTR::of).orElse(UTR.UNDEFINED));
     }
 
     @Override
@@ -53,7 +54,7 @@ public class PlayerJdbcRepository implements PlayerRepository {
         
         Map<String, Object> map = createMap(player);
         int playerId = jdbi.withHandle(handle -> JdbiUtil.createInsertStatement(handle, TABLE_PLAYER, map).executeAndReturnGeneratedKeys(COLUMN_ID).mapTo(Integer.class).one());
-        return new Player(playerId, player.name(), player.utrGroup());
+        return new Player(playerId, player.name(), player.startingUTR());
     }
     
     private static Map<String, Object> createMap(Player player) {
@@ -61,7 +62,7 @@ public class PlayerJdbcRepository implements PlayerRepository {
         Map<String, Object> valuesMap = new HashMap<>();
         valuesMap.put(COLUMN_ID, player.id());
         valuesMap.put(COLUMN_NAME, player.name());
-        valuesMap.put(COLUMN_UTR_GROUP, player.utrGroup());
+        valuesMap.put(COLUMN_UTR_GROUP, player.startingUTR().value());
         
         return valuesMap;
     }

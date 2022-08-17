@@ -31,8 +31,12 @@ public record UTR(Double value) implements Comparable<UTR> {
         }
     }
     
-    public static UTR of(double value) {
-        return new UTR(value);
+    public static UTR of(Double value) {
+        return value != null ? new UTR(value) : UTR.UNDEFINED;
+    }
+
+    public int utrGroup() {
+        return value != null ? (int)Math.round(value) : 0;
     }
 
 }

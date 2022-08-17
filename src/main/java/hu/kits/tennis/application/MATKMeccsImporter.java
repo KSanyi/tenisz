@@ -32,6 +32,7 @@ import hu.kits.tennis.domain.utr.MatchService;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerRepository;
 import hu.kits.tennis.domain.utr.Players;
+import hu.kits.tennis.domain.utr.UTR;
 
 public class MATKMeccsImporter {
 
@@ -128,9 +129,9 @@ public class MATKMeccsImporter {
             String[] parts = line.split("\t");
             
             String playerName = parts[1];
-            int utrGroup = Integer.parseInt(parts[2]);
+            double utrGroup = Double.parseDouble(parts[2]);
             
-            playerRepository.saveNewPlayer(new Player(0, playerName, utrGroup));
+            playerRepository.saveNewPlayer(new Player(0, playerName, UTR.of(utrGroup)));
         } catch(Exception ex) {
             System.err.println("Error parsing line " + rowNum + ": " + line);
         }

@@ -116,7 +116,7 @@ public class UTRService {
             List<PlayerWithUTR> utrRanking = calculateUTRRanking();
             for(PlayerWithUTR playerWithUTR : utrRanking) {
                 Player player = playerWithUTR.player();
-                Player updatedPlayer = new Player(player.id(), player.name(), (int)Math.round(playerWithUTR.utr().value()));
+                Player updatedPlayer = new Player(player.id(), player.name(), playerWithUTR.utr());
                 playerRepository.updatePlayer(updatedPlayer);
             }
         }

@@ -35,6 +35,7 @@ import hu.kits.tennis.domain.utr.MatchService;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerRepository;
 import hu.kits.tennis.domain.utr.Players;
+import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.domain.utr.UTRService;
 
 public class TeniszPartnerMeccsImporter {
@@ -163,7 +164,7 @@ public class TeniszPartnerMeccsImporter {
     
     private Player findOrCreatePlayer(Players players, String playerName) {
         return players.findPlayer(playerName)
-                .orElseGet(() -> playerRepository.saveNewPlayer(new Player(0, playerName, 0)));
+                .orElseGet(() -> playerRepository.saveNewPlayer(new Player(0, playerName, UTR.UNDEFINED)));
     }
     
     private static Optional<SetResult> parseSetResult(String resultString) {

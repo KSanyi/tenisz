@@ -119,4 +119,9 @@ public class JdbiUtil {
         return rs.wasNull() ? Optional.empty() : Optional.of(value);
     }
     
+    public static Optional<Double> mapToOptionalDouble(ResultSet rs, String column) throws SQLException {
+        double value = rs.getDouble(column);
+        return rs.wasNull() ? Optional.empty() : Optional.of(value);
+    }
+    
 }

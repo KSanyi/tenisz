@@ -1,11 +1,11 @@
 package hu.kits.tennis.domain.utr;
 
-public record Player(Integer id, String name, Integer utrGroup) {
+public record Player(Integer id, String name, UTR startingUTR) {
 
-    public static Player BYE = new Player(0, "Bye", 0);
+    public static Player BYE = new Player(0, "Bye", UTR.UNDEFINED);
 
     public static Player createNew(String name) {
-        return new Player(null, name, 0);
+        return new Player(null, name, UTR.UNDEFINED);
     }
     
 }

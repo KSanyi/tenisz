@@ -13,6 +13,7 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import hu.kits.tennis.common.StringUtil;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayersService;
+import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.Badge;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.FlexBoxLayout;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.FontSize;
@@ -53,8 +54,8 @@ class PlayersGrid extends Grid<Player> {
             .setSortable(true)
             .setFlexGrow(3);
         
-        addColumn(Player::utrGroup)
-            .setHeader("UTR csoport")
+        addColumn(Player::startingUTR)
+            .setHeader("Induló UTR")
             .setSortable(true)
             .setFlexGrow(1);
         
@@ -64,9 +65,9 @@ class PlayersGrid extends Grid<Player> {
         refresh();
     }
     
-    private static Badge createUTRGroupBadge(Integer utrGroup) {
+    private static Badge createUTRGroupBadge(UTR startingUTR) {
         
-        BadgeColor badgeColor = switch(utrGroup) {
+        BadgeColor badgeColor = switch(startingUTR.utrGroup()) {
             case 10 -> BadgeColor.ERROR_PRIMARY;
             case 9 -> BadgeColor.ERROR;
             case 8 -> BadgeColor.SUCCESS_PRIMARY;
@@ -74,7 +75,7 @@ class PlayersGrid extends Grid<Player> {
             case 6 -> BadgeColor.CONTRAST_PRIMARY;
             default -> BadgeColor.CONTRAST;
         };
-        Badge badge = new Badge(utrGroup != null ? utrGroup.toString() : "", badgeColor, BadgeSize.M, BadgeShape.PILL);
+        Badge badge = new Badge(startingUTR != null ? startingUTR.toString() : "", badgeColor, BadgeSize.M, BadgeShape.PILL);
         badge.setWidth("80px");
         return badge;
     }
@@ -127,11 +128,7 @@ class PlayersGrid extends Grid<Player> {
             UIUtils.setOverflow(Overflow.HIDDEN, owner);
             UIUtils.setTextOverflow(TextOverflow.ELLIPSIS, owner);
 
-            if(player.utrGroup() == null) {
-                System.out.println("NO UTR GROUP " + player);
-            }
-            
-            Badge utrBadge = createUTRGroupBadge(player.utrGroup());
+            Badge utrBadge = createUTRGroupBadge(player.startingUTR());
             
             FlexBoxLayout wrapper = new FlexBoxLayout(owner, utrBadge);
             wrapper.setAlignItems(Alignment.CENTER);
