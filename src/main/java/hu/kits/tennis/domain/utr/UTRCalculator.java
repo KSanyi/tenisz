@@ -20,7 +20,6 @@ public class UTRCalculator {
     
     private static final int RELEVANT_MATCH_COUNT = 14;
     private static final int DUMMY_MATCH_COUNT = 1;
-    private static final UTR FALLBACK_UTR =UTR.UNDEFINED;
     
     public static UTR calculatePlayersUTR(Player player, List<BookedMatch> allBookedMatches, LocalDate date) {
         
@@ -59,7 +58,11 @@ public class UTRCalculator {
 
     private static List<BookedMatch> addDummyMatches(Player player, List<BookedMatch> matches) {
         
-        UTR utr = player.startingUTR() != UTR.UNDEFINED ? player.startingUTR() : FALLBACK_UTR;
+        if(player.startingUTR() == UTR.UNDEFINED) {
+            return matches;
+        }
+        
+        UTR utr = player.startingUTR();
         List<BookedMatch> extendedMatches = new ArrayList<>(matches);
         for(int i=0;i<DUMMY_MATCH_COUNT;i++) {
             extendedMatches.add(new BookedMatch(new Match(0, null, null, null, LocalDate.MIN, player, null, new MatchResult(List.of(new SetResult(6,0)))), 
