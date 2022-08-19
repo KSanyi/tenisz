@@ -82,21 +82,41 @@ public class MATKMeccsImporter {
             
             String playerOne = parts[1];
             String playerTwo = parts[3];
-            int score1 = Integer.parseInt(parts[4]);
-            int score2 = Integer.parseInt(parts[5]);
+            Integer score1_1 = parseGames(parts[4]);
+            Integer score2_1 = parseGames(parts[5]);
+            Integer score1_2 = parseGames(parts[6]);
+            Integer score2_2 = parseGames(parts[7]);
+            Integer score1_3 = parseGames(parts[8]);
+            Integer score2_3 = parseGames(parts[9]);
             String type = parts[10];
             
-            if("NAPI Meccs".equals(type)) {
+            if(List.of("TOUR Meccs", "NAPI Meccs").contains(type)) {
                 Player player1 = findOrCreatePlayer(playerOne);
                 Player player2 = findOrCreatePlayer(playerTwo);
-                
-                return new Match(0, null, null, null, date, player1, player2, new MatchResult(List.of(new SetResult(score1, score2))));
+                List<SetResult> setResults = new ArrayList<>();
+                setResults.add(new SetResult(score1_1, score2_1));
+                if(score1_2 != null) {
+                    setResults.add(new SetResult(score1_2, score2_2));    
+                }
+                if(score1_3 != null) {
+                    setResults.add(new SetResult(score1_3, score2_3));
+                }
+                MatchResult result = new MatchResult(setResults);
+                return new Match(0, null, null, null, date, player1, player2, result);
             } else {
                 return null;
             }
         } catch(Exception ex) {
             logger.error("Error parsing line " + rowNum + ": " + line + ": " + ex);
             return null;
+        }
+    }
+    
+    private static Integer parseGames(String games) {
+        if(games.isEmpty()) {
+            return null;
+        } else {
+            return Integer.parseInt(games);
         }
     }
     

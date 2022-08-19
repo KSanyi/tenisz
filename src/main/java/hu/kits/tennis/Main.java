@@ -39,6 +39,7 @@ public class Main {
         
         resourceFactory = new ResourceFactory(dataSource, emailSender);
         
+        //new KVTKMeccsImporter(resourceFactory).importPlayers();
         //new KVTKMeccsImporter(resourceFactory).importMatches();
         //new KVTKMeccsImporter(resourceFactory).setupTournaments();
         

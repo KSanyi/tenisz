@@ -35,6 +35,7 @@ import hu.kits.tennis.domain.utr.MatchService;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerRepository;
 import hu.kits.tennis.domain.utr.Players;
+import hu.kits.tennis.domain.utr.UTR;
 
 public class KVTKMeccsImporter {
 
@@ -68,7 +69,7 @@ public class KVTKMeccsImporter {
                 .filter(tournament -> tournament.organizer() == Organizer.KVTK)
                 .collect(toMap(Tournament::name, Function.identity()));
         
-        List<BookedMatch> allMatches = matchRepository.loadAllBookedMatches();
+        //List<BookedMatch> allMatches = matchRepository.loadAllBookedMatches();
         
         List<Match> matches = new ArrayList<>();
         for(int i=1;i<lines.size();i++) {
@@ -76,11 +77,11 @@ public class KVTKMeccsImporter {
             Match match = processMatchLine(i+1, line);
             logger.info("Match {} parsed: {}", i, match);
             if(match != null) {
-                if(isDuplicate(allMatches, match)) {
-                    logger.info("Match is duplicate");
-                } else {
+                //if(isDuplicate(allMatches, match)) {
+                //    logger.info("Match is duplicate");
+                //} else {
                     matches.add(match);                        
-                }
+                //}
             }
         }
         
@@ -108,16 +109,16 @@ public class KVTKMeccsImporter {
             String[] parts = line.split("\t");
             LocalDate date = LocalDate.parse(parts[0], DATE_FORMAT);
             
-            String playerOne = parts[1];
-            String playerTwo = parts[2];
-            int score1 = Integer.parseInt(parts[3]);
-            int score2 = Integer.parseInt(parts[4]);
+            int playerOneId = Integer.parseInt(parts[2]);
+            int playerTwoId = Integer.parseInt(parts[4]);
+            int score1 = Integer.parseInt(parts[5]);
+            int score2 = Integer.parseInt(parts[6]);
             String level = parts[11];
             
             Tournament tournament = findOrCreateTournament(date, level);
             
-            Player player1 = findOrCreatePlayer(playerOne);
-            Player player2 = findOrCreatePlayer(playerTwo);
+            Player player1 = new Player(playerOneId, "", null);//findOrCreatePlayer(playerOne);
+            Player player2 = new Player(playerTwoId, "", null);//
                 
             return new Match(0, tournament.id(), null, null, date, player1, player2, new MatchResult(List.of(new SetResult(score1, score2))));
         } catch(Exception ex) {
@@ -169,6 +170,16 @@ public class KVTKMeccsImporter {
     
     private static List<Player> findPlayers(List<MatchInfo> matches) {
         return matches.stream().flatMap(m -> Stream.of(m.player1(), m.player2())).distinct().toList();
+    }
+
+    public void importPlayers() throws IOException {
+        List<String> lines = Files.readAllLines(Paths.get("c:\\Users\\kocso\\Desktop\\Tenisz\\KVTK\\jatekosok.txt"));
+        
+        for(String line : lines) {
+            playerRepository.saveNewPlayer(new Player(null, line, UTR.UNDEFINED));    
+        }
+        
+        
     }
 
 }
