@@ -1,7 +1,5 @@
 package hu.kits.tennis.infrastructure.ui.views.players;
 
-import static hu.kits.tennis.common.StringUtil.cleanNameString;
-
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -143,8 +141,8 @@ class PlayersGrid extends Grid<Player> {
     public void filter(String value) {
         dataProvider.clearFilters();
         String[] filterParts = StringUtil.cleanNameString(value).split(" ");
-        Stream.of(filterParts).forEach(filterPart -> dataProvider.addFilter(player -> cleanNameString(player.name()).contains(cleanNameString(filterPart)))
-);
+        Stream.of(filterParts)
+            .forEach(filterPart -> dataProvider.addFilter(player -> player.matches(filterPart)));
     }
 
 }
