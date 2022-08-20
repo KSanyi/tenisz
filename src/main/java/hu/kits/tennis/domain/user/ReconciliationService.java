@@ -7,7 +7,7 @@ import java.util.Optional;
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
-import hu.kits.tennis.domain.utr.BookedMatch;
+import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchRepository;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerRepository;
@@ -30,13 +30,13 @@ public class ReconciliationService {
             throw new IllegalArgumentException("Can reconcile a player with itself");
         }
         
-        List<BookedMatch> updatableMatches = matchRepository.loadAllPlayedMatches(duplicate);
+        List<Match> updatableMatches = matchRepository.loadAllMatches(duplicate);
         
-        for(BookedMatch match : updatableMatches) {
-            if(match.playedMatch().player1().id().equals(duplicate.id())) {
-                matchRepository.setPlayer1(match.playedMatch().id(), player);
+        for(Match match : updatableMatches) {
+            if(match.player1().id().equals(duplicate.id())) {
+                matchRepository.setPlayer1(match.id(), player);
             } else {
-                matchRepository.setPlayer2(match.playedMatch().id(), player);
+                matchRepository.setPlayer2(match.id(), player);
             }
         }
         

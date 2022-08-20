@@ -67,6 +67,18 @@ public class MatchJdbcRepository implements MatchRepository  {
             .bind("playerId", player.id())
             .map((rs, ctx) -> mapToBookedMatch(rs, players)).list());
     }
+    
+    @Override
+    public List<Match> loadAllMatches(Player player) {
+        String sql = String.format("SELECT * FROM %s WHERE (%s = :playerId OR %s = :playerId) ORDER BY %s", TABLE_TENNIS_MATCH, COLUMN_PLAYER1_ID, COLUMN_PLAYER2_ID, COLUMN_DATETIME);
+        
+        Players players = playerRepository.loadAllPlayers();
+        
+        return jdbi.withHandle(handle -> 
+            handle.createQuery(sql)
+            .bind("playerId", player.id())
+            .map((rs, ctx) -> mapToMatch(rs, players)).list());
+    }
 
     @Override
     public List<BookedMatch> loadAllBookedMatches() {

@@ -8,6 +8,8 @@ public interface MatchRepository {
 
     List<BookedMatch> loadAllPlayedMatches(Player player);
     
+    List<Match> loadAllMatches(Player player);
+    
     List<BookedMatch> loadAllBookedMatchesForTournament(String tournamentId);
     
     List<BookedMatch> loadAllBookedMatches();
