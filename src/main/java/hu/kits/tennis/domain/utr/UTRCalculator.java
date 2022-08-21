@@ -72,7 +72,8 @@ public class UTRCalculator {
     }
     
     private static int calculateMatchWeight(int matchIndex, BookedMatch match) {
-        return (RELEVANT_MATCH_COUNT - matchIndex) + 5;
+        int multiplier = match.playedMatch().result().setResults().size() > 1 ? 2 : 1;
+        return multiplier * ((RELEVANT_MATCH_COUNT - matchIndex) + 5);
     }
 
     public static BookedMatch createBookedMatch(Match playedMatch, List<BookedMatch> allPlayedMatches) {
