@@ -37,8 +37,8 @@ public record Tournament(String id,
     }
     
     public static enum Status {
-        DRAFT,
         LIVE,
+        DRAFT,
         COMPLETED;
     }
     

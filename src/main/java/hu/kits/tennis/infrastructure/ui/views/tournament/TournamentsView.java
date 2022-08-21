@@ -123,14 +123,15 @@ class TournamentsGrid extends Grid<Tournament> {
         addComponentColumn(t -> new Badge(t.status().name(), BadgeColor.SUCCESS, BadgeSize.M, BadgeShape.PILL))
             .setHeader("Státusz")
             .setFlexGrow(1)
-            .setTextAlign(ColumnTextAlign.CENTER);
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setKey("state");
         
         setHeightFull();
         
         UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleColumns(e.getBodyClientWidth()));
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleColumns(e.getWidth()));
         
-        sort(GridSortOrder.desc(getColumnByKey("date")).build());
+        sort(GridSortOrder.asc(getColumnByKey("state")).thenDesc(getColumnByKey("date")).build());
         
         addSelectionListener(this::rowSelected);
     }
