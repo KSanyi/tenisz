@@ -110,6 +110,7 @@ class TournamentsGrid extends Grid<Tournament> {
     
         addColumn(new LocalDateRenderer<>(Tournament::date, Formatters.DATE_FORMAT))
             .setHeader("Dátum")
+            .setSortable(true)
             .setFlexGrow(4)
             .setComparator(comparing(Tournament::date))
             .setKey("date");
@@ -122,6 +123,8 @@ class TournamentsGrid extends Grid<Tournament> {
         
         addComponentColumn(t -> new Badge(t.status().name(), BadgeColor.SUCCESS, BadgeSize.M, BadgeShape.PILL))
             .setHeader("Státusz")
+            .setSortable(true)
+            .setComparator(comparing(Tournament::status))
             .setFlexGrow(1)
             .setTextAlign(ColumnTextAlign.CENTER)
             .setKey("state");
@@ -131,7 +134,9 @@ class TournamentsGrid extends Grid<Tournament> {
         UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleColumns(e.getBodyClientWidth()));
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleColumns(e.getWidth()));
         
-        sort(GridSortOrder.asc(getColumnByKey("state")).thenDesc(getColumnByKey("date")).build());
+        sort(GridSortOrder.asc(getColumnByKey("state"))
+                .thenDesc(getColumnByKey("date"))
+                .build());
         
         addSelectionListener(this::rowSelected);
     }
