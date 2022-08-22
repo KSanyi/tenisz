@@ -111,27 +111,46 @@ public class KVTKMeccsImporter {
             
             int playerOneId = Integer.parseInt(parts[2]);
             int playerTwoId = Integer.parseInt(parts[4]);
-            int score1 = Integer.parseInt(parts[5]);
-            int score2 = Integer.parseInt(parts[6]);
-            String level = parts[11];
+            Integer score1_1 = parseGames(parts[5]);
+            Integer score2_1 = parseGames(parts[6]);
+            Integer score1_2 = parseGames(parts[7]);
+            Integer score2_2 = parseGames(parts[8]);
+            Integer score1_3 = parseGames(parts[9]);
+            Integer score2_3 = parseGames(parts[10]);
+            String name = parts[12] + " " + parts[13];
             
-            Tournament tournament = findOrCreateTournament(date, level);
+            Tournament tournament = findOrCreateTournament(date, name);
             
             Player player1 = new Player(playerOneId, "", null);//findOrCreatePlayer(playerOne);
             Player player2 = new Player(playerTwoId, "", null);//
                 
-            return new Match(0, tournament.id(), null, null, date, player1, player2, new MatchResult(List.of(new SetResult(score1, score2))));
+            List<SetResult> setResults = new ArrayList<>();
+            setResults.add(new SetResult(score1_1, score2_1));
+            if(score1_2 != null) {
+                setResults.add(new SetResult(score1_2, score2_2));    
+            }
+            if(score1_3 != null) {
+                setResults.add(new SetResult(score1_3, score2_3));
+            }
+            MatchResult result = new MatchResult(setResults);
+            
+            return new Match(0, tournament.id(), null, null, date, player1, player2, result);
         } catch(Exception ex) {
             logger.error("Error parsing line " + rowNum + ": " + line + ": " + ex);
             return null;
         }
     }
     
-    private Tournament findOrCreateTournament(LocalDate date, String level) {
-        String tournamentName = "KVTK Napi " + level + " verseny " + Formatters.formatDate(date);
+    private static Integer parseGames(String games) {
+        return games.isEmpty() ? null :Integer.parseInt(games);
+    }
+    
+    private Tournament findOrCreateTournament(LocalDate date, String name) {
+        String tournamentName = "KVTK " + name + " " + Formatters.formatDate(date);
         Tournament tournament = tournaments.get(tournamentName);
         if(tournament == null) {
             tournament = tournamentService.createTournament(Organizer.KVTK, tournamentName, "", date, Type.NA, 1);
+            logger.info("Saving tournament " + tournament);
             tournaments.put(tournamentName, tournament);
         }
         return tournament;

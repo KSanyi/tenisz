@@ -4,15 +4,47 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
 import com.vaadin.flow.component.grid.dnd.GridDropLocation;
 import com.vaadin.flow.component.grid.dnd.GridDropMode;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.infrastructure.ui.component.PlayerSelectorDialog;
+import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
-class ContestantsTable extends Grid<hu.kits.tennis.infrastructure.ui.views.tournament.ContestantsTable.GridItem> {
+class ContestantsTable extends VerticalLayout {
+    
+    private final ContestantsGrid grid;
+    
+    private final Button addButton = UIUtils.createPrimaryButton("Hozzáad", VaadinIcon.PLUS);
+
+    public ContestantsTable(TournamentView tournamentView) {
+        this.grid = new ContestantsGrid(tournamentView);
+        
+        setPadding(false);
+        
+        add(grid, addButton);
+        setHorizontalComponentAlignment(Alignment.CENTER, addButton);
+        
+        addButton.addClickListener(click -> openPlayerSelector());
+    }
+
+    private void openPlayerSelector() {
+        new PlayerSelectorDialog(grid::addPlayer).open();
+    }
+
+    void setPlayers(List<Player> playersLineup) {
+        grid.setPlayers(playersLineup);
+    }
+    
+}
+
+class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tournament.ContestantsGrid.GridItem> {
 
     private GridListDataView<GridItem> dataView;
     
@@ -22,7 +54,7 @@ class ContestantsTable extends Grid<hu.kits.tennis.infrastructure.ui.views.tourn
     
     private final TournamentView tournamentView;
     
-    ContestantsTable(TournamentView tournamentView) {
+    ContestantsGrid(TournamentView tournamentView) {
         
         this.tournamentView = tournamentView;
         
@@ -63,8 +95,7 @@ class ContestantsTable extends Grid<hu.kits.tennis.infrastructure.ui.views.tourn
                     dataView.addItemBefore(draggedItem, targetPlayer);
                 }
                 items = dataView.getItems().collect(toList());
-                List<Player> players = items.stream().map(gridItem -> gridItem.player).collect(toList());
-                tournamentView.updateContestants(players);
+                update();
             }
         });
     }
@@ -74,13 +105,23 @@ class ContestantsTable extends Grid<hu.kits.tennis.infrastructure.ui.views.tourn
         dataView = this.setItems(items);
     }
     
+    void addPlayer(Player player) {
+        List<Player> players = items.stream().map(gridItem -> gridItem.player).collect(toList());
+        players.add(player);
+        setPlayers(players);
+    }
+    
+    private void update() {
+        List<Player> players = items.stream().map(gridItem -> gridItem.player).collect(toList());
+        tournamentView.updateContestants(players);
+    }
+    
     static class GridItem {
         final Player player;
 
         public GridItem(Player player) {
             this.player = player;
         }
-        
     }
     
 }

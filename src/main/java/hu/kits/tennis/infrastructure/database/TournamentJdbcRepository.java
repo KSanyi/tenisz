@@ -75,6 +75,10 @@ public class TournamentJdbcRepository implements TournamentRepository {
         Map<String, List<Contestant>> contestantsByTournamentForPlayer = CollectionsUtil.filterByValue(contestantsByTournament, 
                 contestants -> contestants.stream().anyMatch(c -> c.player() != null && c.player().id().equals(player.id())));
         
+        if(contestantsByTournamentForPlayer.isEmpty()) {
+            return List.of();
+        }
+        
         String sql = String.format("SELECT * FROM %s WHERE %s IN(<tournamentIds>)", TABLE_TOURNAMENT, COLUMN_ID);
         
         return jdbi.withHandle(handle -> 
