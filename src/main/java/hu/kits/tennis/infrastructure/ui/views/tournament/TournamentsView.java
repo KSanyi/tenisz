@@ -133,6 +133,12 @@ class TournamentsGrid extends Grid<Tournament> {
             .setSortable(true)
             .setFlexGrow(1)
             .setTextAlign(ColumnTextAlign.CENTER);
+        /*
+        addColumn(t -> t.matches().size())
+            .setHeader("Lejátszott meccsek")
+            .setSortable(true)
+            .setFlexGrow(1);
+            */
         
         addComponentColumn(t -> new Badge(t.status().name(), BadgeColor.SUCCESS, BadgeSize.M, BadgeShape.PILL))
             .setHeader("Státusz")

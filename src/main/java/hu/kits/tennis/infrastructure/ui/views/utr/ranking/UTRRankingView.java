@@ -47,7 +47,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
     private final Button copyButton = UIUtils.createSmallButton(VaadinIcon.COPY);
     private final ClipboardHelper clipboardHelper = new ClipboardHelper("", copyButton);
     private final UTRRankingGrid utrRankingGrid = new UTRRankingGrid();
-    private final PlayerMatchesGrid playerMatchesGrid = new PlayerMatchesGrid();
+    private final PlayerStatsView playerStatsView = new PlayerStatsView();
     
     public UTRRankingView() {
         
@@ -72,7 +72,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
         if(event.getFirstSelectedItem().isPresent()) {
             Player player = event.getFirstSelectedItem().get().player();
             logger.debug("Looking for {}'s matches", player.name());
-            playerMatchesGrid.setPlayer(player);
+            playerStatsView.setPlayer(player);
         }
     }
     
@@ -92,7 +92,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
         column1.setHeightFull();
         column1.setHorizontalComponentAlignment(Alignment.CENTER, header);
         
-        FlexBoxLayout content = new FlexBoxLayout(column1, playerMatchesGrid);
+        FlexBoxLayout content = new FlexBoxLayout(column1, playerStatsView);
         content.setBoxSizing(BoxSizing.BORDER_BOX);
         content.setSizeFull();
         content.setPadding(Horizontal.RESPONSIVE_X, Top.RESPONSIVE_X);

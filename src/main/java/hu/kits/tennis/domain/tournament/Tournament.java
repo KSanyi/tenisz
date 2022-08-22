@@ -149,5 +149,9 @@ public record Tournament(String id,
     public TournamentInfo tournamentInfo() {
         return new TournamentInfo(organizer, date, name, venue, bestOfNSets, contestants.size());
     }
+
+    public List<Match> matches() {
+        return boards.stream().flatMap(b -> b.matches().values().stream()).toList();
+    }
     
 }

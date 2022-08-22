@@ -2,6 +2,7 @@ package hu.kits.tennis.infrastructure.ui.views.utr;
 
 import java.util.List;
 
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
@@ -11,6 +12,7 @@ import com.vaadin.flow.data.renderer.TemplateRenderer;
 import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.utr.MatchInfo;
 
+@CssImport(themeFor = "vaadin-grid", value = "./styles/match-grid.css")
 public class MatchesGrid extends Grid<MatchInfo> {
  
     public MatchesGrid() {
