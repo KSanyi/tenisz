@@ -7,10 +7,13 @@ import java.util.List;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.PageTitle;
@@ -49,13 +52,20 @@ import hu.kits.tennis.infrastructure.ui.views.View;
 public class TournamentsView extends SplitViewFrame implements View {
 
     private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
+
+    private final Button addButton = UIUtils.createPrimaryButton("Új verseny", VaadinIcon.PLUS);
     
     private final TournamentsGrid tournamentsGrid = new TournamentsGrid();
     
     public TournamentsView() {
+        addButton.addClickListener(click -> openNewTournamentDialog());
         loadTournaments();
     }
     
+    private void openNewTournamentDialog() {
+        new NewTournamentDialog(tournament -> loadTournaments()).open();
+    }
+
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
@@ -69,8 +79,11 @@ public class TournamentsView extends SplitViewFrame implements View {
     }
     
     private Component createContent() {
-        
-        return tournamentsGrid;
+        VerticalLayout layout = new VerticalLayout(addButton, tournamentsGrid);
+        layout.setPadding(false);
+        layout.setSpacing(false);
+        layout.setSizeFull();
+        return layout;
     }
     
     public void refresh() {

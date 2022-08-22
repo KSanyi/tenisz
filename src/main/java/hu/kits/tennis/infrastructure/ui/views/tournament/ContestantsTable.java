@@ -7,6 +7,7 @@ import java.util.List;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
 import com.vaadin.flow.component.grid.dnd.GridDropLocation;
 import com.vaadin.flow.component.grid.dnd.GridDropMode;
@@ -74,8 +75,16 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         this.setAllRowsVisible(true);
         
         configurDragAndDrop();
+        
+        addItemClickListener(e -> handleClick(e));
     }
     
+    private void handleClick(ItemClickEvent<GridItem> e) {
+        if(e.getClickCount() > 1) {
+            new PlayerSelectorDialog(player -> changePlayer(e.getItem(), player)).open(); 
+        }
+    }
+
     private void configurDragAndDrop() {
         setRowsDraggable(true);
         setDropMode(GridDropMode.BETWEEN);
@@ -100,6 +109,17 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         });
     }
     
+    // TODO refactor these methods
+    
+    private void changePlayer(GridItem item, Player player) {
+        int index = items.indexOf(item);
+        items.remove(index);
+        items.add(index, new GridItem(player));
+        List<Player> players = items.stream().map(gridItem -> gridItem.player).collect(toList());
+        setPlayers(players);
+        update();
+    }
+    
     void setPlayers(List<Player> players) {
         items = players.stream().map(GridItem::new).collect(toList());
         dataView = this.setItems(items);
@@ -109,6 +129,7 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         List<Player> players = items.stream().map(gridItem -> gridItem.player).collect(toList());
         players.add(player);
         setPlayers(players);
+        update();
     }
     
     private void update() {
