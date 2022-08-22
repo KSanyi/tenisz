@@ -44,6 +44,8 @@ public class PlayerSelector extends VerticalLayout {
         playersGrid.addItemClickListener(e -> clicked(e));
         
         setWidthFull();
+        
+        filter.focus();
     }
     
     private void clicked(ItemClickEvent<Player> e) {
