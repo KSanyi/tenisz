@@ -1,5 +1,7 @@
 package hu.kits.tennis.common;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +15,13 @@ public class Formatters {
     public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy.MM.dd");
     public static final DateTimeFormatter LONG_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy. MMMM d.", HU_LOCALE);
     public static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+    private static final DecimalFormat PERCENT_FORMAT;
+    
+    static {
+        DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.US);
+        decimalFormatSymbols.setGroupingSeparator(' ');
+        PERCENT_FORMAT = new DecimalFormat("0%", decimalFormatSymbols);
+    }
     
     public static String formatDate(LocalDate date) {
         return DATE_FORMAT.format(date);
@@ -36,6 +45,10 @@ public class Formatters {
 
     public static String formatDayOfWeek(LocalDate date) {
         return date.getDayOfWeek().getDisplayName(TextStyle.FULL, HU_LOCALE);
+    }
+    
+    public static String formatPercent(double value) {
+        return PERCENT_FORMAT.format(value);
     }
     
 }

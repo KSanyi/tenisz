@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -164,7 +165,7 @@ public class TeniszPartnerMeccsImporter {
     
     private Player findOrCreatePlayer(Players players, String playerName) {
         return players.findPlayer(playerName)
-                .orElseGet(() -> playerRepository.saveNewPlayer(new Player(0, playerName, UTR.UNDEFINED)));
+                .orElseGet(() -> playerRepository.saveNewPlayer(new Player(0, playerName, UTR.UNDEFINED, Set.of(Organizer.TENISZPARTNER))));
     }
     
     private static Optional<SetResult> parseSetResult(String resultString) {

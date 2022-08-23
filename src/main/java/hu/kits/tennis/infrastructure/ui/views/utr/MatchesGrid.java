@@ -77,4 +77,8 @@ public class MatchesGrid extends Grid<MatchInfo> {
         sort(List.of(new GridSortOrder<>(getColumnByKey("date"), SortDirection.DESCENDING)));
     }
     
+    public void setBestAndWorstMatch(MatchInfo bestMatch, MatchInfo worstMatch) {
+        setClassNameGenerator(match -> match.equals(bestMatch) ? "green" : (match.equals(worstMatch) ? "red" : null));
+    }
+    
 }

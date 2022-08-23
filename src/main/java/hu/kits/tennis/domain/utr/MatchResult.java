@@ -25,11 +25,11 @@ public record MatchResult(List<SetResult> setResults) {
         return - scoreOfPlayer1();
     }
     
-    private int sumPlayer1Games() {
+    public int sumPlayer1Games() {
         return setResults.stream().mapToInt(setResult -> setResult.player1Games).sum();
     }
     
-    private int sumPlayer2Games() {
+    public int sumPlayer2Games() {
         return setResults.stream().mapToInt(setResult -> setResult.player2Games).sum();
     }
     
@@ -115,5 +115,5 @@ public record MatchResult(List<SetResult> setResults) {
             throw new IllegalArgumentException("Can not parse match result: '" + stringValue + "'", ex);
         }
     }
-    
+
 }

@@ -1,5 +1,7 @@
 package hu.kits.tennis.infrastructure.ui.component;
 
+import static java.util.stream.Collectors.joining;
+
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -77,6 +79,11 @@ public class PlayerSelector extends VerticalLayout {
                 .setHeader("Induló UTR")
                 .setSortable(true)
                 .setFlexGrow(0);
+            
+            addColumn(player -> player.organisations().stream().map(org -> org.name).collect(joining(" ")))
+                .setHeader("Szervezetek")
+                .setSortable(true)
+                .setFlexGrow(1);
             
             dataProvider = new ListDataProvider<>(players);
             setItems(dataProvider);

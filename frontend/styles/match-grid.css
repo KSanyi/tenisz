@@ -1,3 +1,11 @@
 .bold {
   font-weight: bold
 }
+
+.green {
+  background-color: var(--lumo-success-color-10pct);
+}
+
+.red {
+  background-color: var(--lumo-error-color-10pct);
+}

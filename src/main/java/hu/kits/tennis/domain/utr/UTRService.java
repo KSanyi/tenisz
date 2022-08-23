@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toSet;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -22,12 +23,15 @@ public class UTRService {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
+    // TODO
+    private final MatchService matchService;
     private final MatchRepository matchRepository;
     private final PlayerRepository playerRepository;
     private final TournamentRepository tournamentRepository;
 
-    public UTRService(MatchRepository matchRepository, PlayerRepository playerRepository,
+    public UTRService(MatchService matchService, MatchRepository matchRepository, PlayerRepository playerRepository,
             TournamentRepository tournamentRepository) {
+        this.matchService = matchService;
         this.matchRepository = matchRepository;
         this.playerRepository = playerRepository;
         this.tournamentRepository = tournamentRepository;
@@ -44,11 +48,11 @@ public class UTRService {
         return matchRepository.save(bookedMatch);
     }
     
-    public List<BookedMatch> loadMatchesForPlayer(Player player) {
-        List<BookedMatch> matches = matchRepository.loadAllPlayedMatches(player);
-        
-        return matches.stream().map(match -> swapIfNeeed(match, player)).collect(toList());
-    }
+//    public List<BookedMatch> loadMatchesForPlayer(Player player) {
+//        List<BookedMatch> matches = matchRepository.loadAllPlayedMatches(player);
+//        
+//        return matches.stream().map(match -> swapIfNeeed(match, player)).collect(toList());
+//    }
     
     public List<PlayerWithUTR> calculateUTRRanking() {
         
@@ -88,14 +92,6 @@ public class UTRService {
         return result;
     }
 
-    private static BookedMatch swapIfNeeed(BookedMatch match, Player player) {
-        if(match.playedMatch().player1().equals(player)) {
-            return match;
-        } else {
-            return match.swap();            
-        }
-    }
-    
     private List<BookedMatch> getAllKVTKMatches() {
         Set<String> kvtkTournamentIds = tournamentRepository.loadAllTournaments().stream()
                 .filter(tournament -> tournament.organizer() == Organizer.KVTK)
@@ -115,7 +111,7 @@ public class UTRService {
             List<PlayerWithUTR> utrRanking = calculateUTRRanking();
             for(PlayerWithUTR playerWithUTR : utrRanking) {
                 Player player = playerWithUTR.player();
-                Player updatedPlayer = new Player(player.id(), player.name(), playerWithUTR.utr());
+                Player updatedPlayer = new Player(player.id(), player.name(), playerWithUTR.utr(), player.organisations());
                 playerRepository.updatePlayer(updatedPlayer);
             }
         }
@@ -137,6 +133,17 @@ public class UTRService {
 
     public void deleteMatch(int id) {
         matchRepository.deleteMatch(id);
+    }
+    
+    public PlayerStats loadPlayerStats(Player player) {
+        
+        UTR utr = calculatePlayersUTR(player);
+        
+        List<MatchInfo> matchInfos = matchService.loadMatchesForPlayer(player).stream()
+                .sorted(Comparator.comparing((MatchInfo matchInfo) -> matchInfo.date()).reversed())
+                .collect(toList());
+        
+        return PlayerStats.create(player, utr, matchInfos);
     }
     
 }

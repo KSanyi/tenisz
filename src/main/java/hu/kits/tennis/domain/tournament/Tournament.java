@@ -147,7 +147,7 @@ public record Tournament(String id,
     }
 
     public TournamentInfo tournamentInfo() {
-        return new TournamentInfo(organizer, date, name, venue, bestOfNSets, contestants.size());
+        return new TournamentInfo(id, organizer, date, name, venue, bestOfNSets, contestants.size());
     }
 
     public List<Match> matches() {

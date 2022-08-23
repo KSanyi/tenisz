@@ -12,6 +12,10 @@ public record UTR(Double value) implements Comparable<UTR> {
         return this == UNDEFINED;
     }
     
+    public boolean isDefinded() {
+        return !isUndefinded();
+    }
+    
     @Override
     public String toString() {
         return this == UNDEFINED ? "-" : String.format("%2.2f", value);

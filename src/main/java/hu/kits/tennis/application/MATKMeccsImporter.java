@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -151,7 +152,7 @@ public class MATKMeccsImporter {
             String playerName = parts[1];
             double utrGroup = Double.parseDouble(parts[2]);
             
-            playerRepository.saveNewPlayer(new Player(0, playerName, UTR.of(utrGroup)));
+            playerRepository.saveNewPlayer(new Player(0, playerName, UTR.of(utrGroup), Set.of(Organizer.MATK)));
         } catch(Exception ex) {
             System.err.println("Error parsing line " + rowNum + ": " + line);
         }

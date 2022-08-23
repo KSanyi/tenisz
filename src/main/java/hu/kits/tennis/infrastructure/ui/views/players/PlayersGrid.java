@@ -1,5 +1,7 @@
 package hu.kits.tennis.infrastructure.ui.views.players;
 
+import static java.util.stream.Collectors.joining;
+
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -57,6 +59,10 @@ class PlayersGrid extends Grid<Player> {
             .setSortable(true)
             .setFlexGrow(1);
         
+        addColumn(player -> player.organisations().stream().map(org -> org.name).collect(joining(" ")))
+            .setHeader("Szervezetek")
+            .setSortable(true)
+            .setFlexGrow(2);
         
         UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleColumns(e.getBodyClientWidth()));
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleColumns(e.getWidth()));

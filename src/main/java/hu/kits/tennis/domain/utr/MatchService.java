@@ -1,6 +1,5 @@
 package hu.kits.tennis.domain.utr;
 
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -88,14 +87,6 @@ public class MatchService {
                 .collect(toList());
         
         return matchInfos;
-    }
-
-    public PlayerStats loadPlayerStats(Player player) {
-        List<MatchInfo> matchInfos = loadMatchesForPlayer(player).stream()
-                .sorted(comparing((MatchInfo matchInfo) -> matchInfo.date()).reversed())
-                .collect(toList());
-        
-        return new PlayerStats(matchInfos);
     }
 
 }

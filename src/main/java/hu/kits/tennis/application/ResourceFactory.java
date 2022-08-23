@@ -42,9 +42,8 @@ public class ResourceFactory {
         tournamentService = new TournamentService(tournamentRepository, matchRepository);
         reconciliationService = new ReconciliationService(playerRepository, matchRepository, tournamentRepository);
         
-        utrService = new UTRService(matchRepository, playerRepository, tournamentRepository);
-        
         matchService = new MatchService(matchRepository, tournamentRepository);
+        utrService = new UTRService(matchService, matchRepository, playerRepository, tournamentRepository);
     }
     
     public UserService getUserService() {

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -121,8 +122,8 @@ public class KVTKMeccsImporter {
             
             Tournament tournament = findOrCreateTournament(date, name);
             
-            Player player1 = new Player(playerOneId, "", null);//findOrCreatePlayer(playerOne);
-            Player player2 = new Player(playerTwoId, "", null);//
+            Player player1 = new Player(playerOneId, "", null, Set.of());//findOrCreatePlayer(playerOne);
+            Player player2 = new Player(playerTwoId, "", null, Set.of());//
                 
             List<SetResult> setResults = new ArrayList<>();
             setResults.add(new SetResult(score1_1, score2_1));
@@ -195,7 +196,7 @@ public class KVTKMeccsImporter {
         List<String> lines = Files.readAllLines(Paths.get("c:\\Users\\kocso\\Desktop\\Tenisz\\KVTK\\jatekosok.txt"));
         
         for(String line : lines) {
-            playerRepository.saveNewPlayer(new Player(null, line, UTR.UNDEFINED));    
+            playerRepository.saveNewPlayer(new Player(null, line, UTR.UNDEFINED, Set.of(Organizer.KVTK)));    
         }
         
         
