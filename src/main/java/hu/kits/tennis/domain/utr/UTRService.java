@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.common.Clock;
-import hu.kits.tennis.common.CollectionsUtil;
 import hu.kits.tennis.domain.tournament.Organizer;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
@@ -58,27 +57,14 @@ public class UTRService {
         
         logger.info("Calculating UTR ranking");
         
-        List<Player> allPlayers = playerRepository.loadAllPlayers().entries();
+        List<Player> kvtkPlayers = playerRepository.loadAllPlayers().entries().stream()
+                .filter(player -> player.organisations().contains(Organizer.KVTK))
+                .toList();
         List<BookedMatch> allKVTKBookedMatches = getAllKVTKMatches();
-        List<BookedMatch> allMatches = matchRepository.loadAllBookedMatches();
-        
-        Set<Player> playersOnKVTKTournaments = allKVTKBookedMatches.stream()
-                .flatMap(b -> b.playedMatch().players())
-                .collect(toSet());
-        
-        Set<Player> playersWithMatches = allMatches.stream()
-                .flatMap(b -> b.playedMatch().players())
-                .collect(toSet());
-        
-        Set<Player> playersWithoutMatches = allPlayers.stream()
-                .filter(player -> !playersWithMatches.contains(player))
-                .collect(toSet());
-        
-        Set<Player> players = CollectionsUtil.union(playersOnKVTKTournaments, playersWithoutMatches);
         
         LocalDate tomorrow = Clock.today().plusDays(1); 
         
-        List<PlayerWithUTR> ranking = players.stream()
+        List<PlayerWithUTR> ranking = kvtkPlayers.stream()
                 .map(player -> new PlayerWithUTR(player, 0, UTRCalculator.calculatePlayersUTR(player, allKVTKBookedMatches, tomorrow)))
                 .sorted(comparing(PlayerWithUTR::utr).reversed())
                 .collect(toList());
