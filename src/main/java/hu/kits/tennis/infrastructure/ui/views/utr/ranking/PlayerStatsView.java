@@ -32,7 +32,6 @@ class PlayerStatsView extends VerticalLayout {
     
     void setPlayer(Player player) {
         PlayerStats playerStats = utrService.loadPlayerStats(player);
-        System.out.println(playerStats);
         setPlayerStats(playerStats);
     }
 
