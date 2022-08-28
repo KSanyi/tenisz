@@ -44,7 +44,7 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
             .setAutoWidth(true)
             .setFlexGrow(0);
         
-        setWidth("400px");
+        setWidthFull();
         /*
         addColumn(playerWithUTR -> playerWithUTR.player().utrGroup())
             .setHeader("UTR csop")
