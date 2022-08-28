@@ -150,8 +150,8 @@ class ScoreFields extends HorizontalLayout {
     void setMatchResult(MatchResult result) {
         for(int i=0;i<result.setResults().size();i++) {
             SetResult setResult = result.setResults().get(i);
-            scoreFields.get(i).first().setValue(String.valueOf(setResult.player1Games()));
-            scoreFields.get(i).second().setValue(String.valueOf(setResult.player2Games()));
+            scoreFields.get(i).first().setValue(String.valueOf(setResult.player1Score()));
+            scoreFields.get(i).second().setValue(String.valueOf(setResult.player2Score()));
         }
     }
 

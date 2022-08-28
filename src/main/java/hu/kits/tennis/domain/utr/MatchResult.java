@@ -26,11 +26,11 @@ public record MatchResult(List<SetResult> setResults) {
     }
     
     public int sumPlayer1Games() {
-        return setResults.stream().mapToInt(setResult -> setResult.player1Games).sum();
+        return setResults.stream().mapToInt(setResult -> setResult.player1Games()).sum();
     }
     
     public int sumPlayer2Games() {
-        return setResults.stream().mapToInt(setResult -> setResult.player2Games).sum();
+        return setResults.stream().mapToInt(setResult -> setResult.player2Games()).sum();
     }
     
     public UTR calculateUTRForPlayer1(UTR player2UTR) {
@@ -44,7 +44,7 @@ public record MatchResult(List<SetResult> setResults) {
     }
     
     public MatchResult swap() {
-        List<SetResult> reversedSetResults = setResults.stream().map(setResult -> new SetResult(setResult.player2Games, setResult.player1Games)).collect(toList());
+        List<SetResult> reversedSetResults = setResults.stream().map(setResult -> new SetResult(setResult.player2Score, setResult.player1Score)).collect(toList());
         return new MatchResult(reversedSetResults);
     }
     
@@ -63,15 +63,35 @@ public record MatchResult(List<SetResult> setResults) {
         return setResults.stream().map(SetResult::toString).collect(joining(" "));
     }
     
-    public static record SetResult(int player1Games, int player2Games) {
+    public static record SetResult(int player1Score, int player2Score) {
         
         public int sumGames() {
-            return player1Games + player2Games;
+            return player1Games() + player2Games();
         }
         
+        private int player1Games() {
+            if(isNormalSet()) {
+                return player1Score;
+            } else {
+                return isPlayer1Winner() ? 2 : 0;
+            }
+        }
+        
+        private int player2Games() {
+            if(isNormalSet()) {
+                return player2Score;
+            } else {
+                return isPlayer2Winner() ? 2 : 0;
+            }
+        }
+        
+        private boolean isNormalSet() {
+            return player1Score < 10 && player2Score < 10;
+        }
+
         @Override
         public String toString() {
-            return player1Games + ":" + player2Games;
+            return player1Score + ":" + player2Score;
         }
         
         public static SetResult parse(String stringValue) {
@@ -80,11 +100,11 @@ public record MatchResult(List<SetResult> setResults) {
         }
         
         public boolean isPlayer1Winner() {
-            return player1Games > player2Games;
+            return player1Score > player2Score;
         }
         
         public boolean isPlayer2Winner() {
-            return player1Games < player2Games;
+            return player1Score < player2Score;
         }
         
     }

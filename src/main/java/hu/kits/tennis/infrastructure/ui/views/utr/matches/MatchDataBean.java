@@ -23,8 +23,8 @@ public class MatchDataBean {
         date = match.date();
         player1 = match.player1();
         player2 = match.player2();
-        score1 = match.result().setResults().get(0).player1Games();
-        score2 = match.result().setResults().get(0).player2Games();
+        score1 = match.result().setResults().get(0).player1Score();
+        score2 = match.result().setResults().get(0).player2Score();
     }
 
     public MatchDataBean() {
