@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Label;
@@ -73,6 +74,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             matchesGrid = new MatchesGrid();
             matchesGrid.getColumnByKey("date").setVisible(false);
             matchesGrid.getColumnByKey("tournament").setVisible(false);
+            matchesGrid.setSizeFull();
             
             HorizontalLayout horizontalLayout = new HorizontalLayout(matchesGrid, contestantsTable);
             horizontalLayout.setSizeFull();
@@ -145,8 +147,8 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         
         loadData();
         
-        //UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleParts(e.getBodyClientWidth()));
-        //UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleParts(e.getWidth()));
+        UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleParts(e.getBodyClientWidth()));
+        UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleParts(e.getWidth()));
     }
 
     @Override
@@ -166,11 +168,12 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         tournamentService.updateContestants(tournament, players);
     }
 
-    /*
     private void updateVisibleParts(int width) {
-        boolean mobile = width < MOBILE_BREAKPOINT;
-        tableWithButton.setVisible(!mobile || tournament.status() == Status.DRAFT);
+        boolean mobile = width < VaadinUtil.MOBILE_BREAKPOINT;
+        if(tableWithButton != null) {
+            tableWithButton.setVisible(!mobile || tournament.status() == Status.DRAFT);    
+        }
+        contestantsTable.setVisible(!mobile || tournament.status() == Status.DRAFT);
     }
-    */
     
 }

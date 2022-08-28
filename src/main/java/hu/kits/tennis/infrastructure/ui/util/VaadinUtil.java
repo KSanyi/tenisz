@@ -24,6 +24,8 @@ public class VaadinUtil {
     
     private static final AtomicInteger ANONYMUS_USER_COUNT = new AtomicInteger(1);
     
+    public static final int MOBILE_BREAKPOINT = 1024;
+    
     private static final String USER_KEY = "USER_KEY";
     
     public static UserData getUser() {

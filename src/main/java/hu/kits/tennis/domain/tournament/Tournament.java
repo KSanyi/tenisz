@@ -106,7 +106,9 @@ public record Tournament(String id,
         List<Player> lineup = new ArrayList<>();
         for(int i=1;i<=MathUtil.pow2(mainBoard().numberOfRounds);i++) {
             Player player = playersByRank.getOrDefault(i, Player.BYE);
-            lineup.add(player);
+            if(player != Player.BYE || status == Tournament.Status.DRAFT) {
+                lineup.add(player);    
+            }
         }
         
         return lineup;
