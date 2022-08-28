@@ -16,7 +16,6 @@ class PlayerStatsView extends VerticalLayout {
     private final UTRService utrService;
     
     private final Label nameLabel = UIUtils.createH2Label(null);
-    private final Label utrLabel = UIUtils.createH3Label(null);
     private final Label matchStatsLabel = new Label(null);
     private final Label gameStatsLabel = new Label(null);
     
@@ -25,9 +24,11 @@ class PlayerStatsView extends VerticalLayout {
     public PlayerStatsView() {
         utrService = Main.resourceFactory.getUTRService();
         matchesGrid = new MatchesGrid();
-        add(nameLabel, utrLabel, matchStatsLabel, gameStatsLabel, matchesGrid);
+        matchesGrid.setSizeFull();
+        add(nameLabel, matchStatsLabel, gameStatsLabel, matchesGrid);
         
         setPadding(false);
+        setSizeFull();
     }
     
     void setPlayer(Player player) {
@@ -37,8 +38,7 @@ class PlayerStatsView extends VerticalLayout {
 
     private void setPlayerStats(PlayerStats playerStats) {
         
-        nameLabel.setText(playerStats.player().name());
-        utrLabel.setText("UTR: " + playerStats.utr());
+        nameLabel.setText(playerStats.player().name() + " UTR: " + playerStats.utr());
         
         matchStatsLabel.setText(String.format("%d mérkőzés: %d győzelem (%s) %d vereség (%s)", playerStats.numberOfMatches(),
                 playerStats.numberOfWins(), Formatters.formatPercent(playerStats.winPercentage()),

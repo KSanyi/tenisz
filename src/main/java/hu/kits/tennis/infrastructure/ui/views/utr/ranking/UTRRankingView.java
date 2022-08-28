@@ -10,6 +10,7 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
@@ -71,9 +72,18 @@ public class UTRRankingView extends SplitViewFrame implements View {
     
     private void playerSelected(SelectionEvent<Grid<PlayerWithUTR>, PlayerWithUTR> event) {
         if(event.getFirstSelectedItem().isPresent()) {
+            
             Player player = event.getFirstSelectedItem().get().player();
             logger.debug("Looking for {}'s matches", player.name());
-            playerStatsView.setPlayer(player);
+            if(playerStatsView.isVisible()) {
+                playerStatsView.setPlayer(player);
+            } else {
+                PlayerStatsView playerStatsViewForDialog = new PlayerStatsView();
+                playerStatsViewForDialog.setPlayer(player);
+                Dialog dialog = new Dialog(playerStatsViewForDialog);
+                dialog.setSizeFull();
+                dialog.open();
+            }
         }
     }
     
