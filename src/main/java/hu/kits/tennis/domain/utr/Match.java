@@ -29,11 +29,29 @@ public record Match(Integer id, String tournamentId, Integer tournamentBoardNumb
         return Stream.of(player1, player2);
     }
     
+    public MatchType matchType() {
+        return result.matchType();
+    }
+    
     @Override
     public String toString() {
         String player1Name = player1 != null ? player1.name() : "?";
         String player2Name = player2 != null ? player2.name() : "?";
         return (date != null ? (date.toString() + " ") : "") +  player1Name + " VS " + player2Name + " " + (result != null ? result.toString() : "");
+    }
+    
+    public static enum MatchType {
+        
+        ONE_SET(1),
+        BEST_OF_THREE(2),
+        SUPER_TIE_BREAK(0),
+        OTHER(2);
+        
+        public final int multiplier;
+
+        private MatchType(int multiplier) {
+            this.multiplier = multiplier;
+        }
     }
 
 }
