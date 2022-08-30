@@ -27,7 +27,8 @@ public class UTRCalculator {
                 .filter(match -> match.playedMatch().date().isBefore(date))
                 .filter(match -> match.hasPlayed(player))
                 .filter(match -> ! match.utrOfMatchFor(player).isUndefinded())
-                .sorted(comparing((BookedMatch m) -> m.playedMatch().date()).reversed())
+                .sorted(comparing((BookedMatch m) -> m.playedMatch().date()).reversed()
+                        .thenComparing((BookedMatch m) -> m.playedMatch().id()).reversed())
                 .limit(RELEVANT_MATCH_COUNT)
                 .collect(toList());
         
