@@ -19,7 +19,6 @@ public class UTRCalculator {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     private static final int RELEVANT_MATCH_COUNT = 14;
-    private static final int DUMMY_MATCH_COUNT = 1;
     
     public static UTR calculatePlayersUTR(Player player, List<BookedMatch> allBookedMatches, LocalDate date) {
         
@@ -63,9 +62,11 @@ public class UTRCalculator {
             return matches;
         }
         
+        int dummyMatchCount = RELEVANT_MATCH_COUNT - matches.size() - 4;
+        
         UTR utr = player.startingUTR();
         List<BookedMatch> extendedMatches = new ArrayList<>(matches);
-        for(int i=0;i<DUMMY_MATCH_COUNT;i++) {
+        for(int i=0;i<dummyMatchCount;i++) {
             extendedMatches.add(new BookedMatch(new Match(0, null, null, null, LocalDate.MIN, player, null, new MatchResult(List.of(new SetResult(6,0)))), 
                     UTR.UNDEFINED, UTR.UNDEFINED, utr, UTR.UNDEFINED));
         }
