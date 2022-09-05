@@ -25,7 +25,7 @@ public class UTRCalculator {
         List<BookedMatch> lastRelevantMatchesFoPlayer = allBookedMatches.stream()
                 .filter(match -> match.playedMatch().date().isBefore(date))
                 .filter(match -> match.hasPlayed(player))
-                .filter(match -> ! match.utrOfMatchFor(player).isUndefinded())
+                .filter(match -> match.utrOfMatchFor(player).isDefinded())
                 .sorted(comparing((BookedMatch m) -> m.playedMatch().date()).reversed()
                         .thenComparing((BookedMatch m) -> m.playedMatch().id()).reversed())
                 .limit(RELEVANT_MATCH_COUNT)

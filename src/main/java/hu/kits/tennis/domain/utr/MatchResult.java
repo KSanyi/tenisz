@@ -36,7 +36,7 @@ public record MatchResult(List<SetResult> setResults) {
     }
     
     public UTR calculateUTRForPlayer1(UTR player2UTR) {
-        if(matchType() == Match.MatchType.SUPER_TIE_BREAK) {
+        if(matchType() == Match.MatchType.SUPER_TIE_BREAK || !isMatchLongEnough()) {
             return UTR.UNDEFINED;
         }
         double scoreOfPlayer1 = scoreOfPlayer1();
@@ -44,13 +44,17 @@ public record MatchResult(List<SetResult> setResults) {
     }
     
     public UTR calculateUTRForPlayer2(UTR player1UTR) {
-        if(matchType() == Match.MatchType.SUPER_TIE_BREAK) {
+        if(matchType() == Match.MatchType.SUPER_TIE_BREAK || !isMatchLongEnough()) {
             return UTR.UNDEFINED;
         }
         double scoreOfPlayer2 = scoreOfPlayer2();
         return player1UTR.calculateMatchUTR(scoreOfPlayer2);
     }
     
+    private boolean isMatchLongEnough() {
+        return !setResults.isEmpty() && (setResults.get(0).player1Games() >= 5 || setResults.get(0).player2Games() >= 5);
+    }
+
     public MatchResult swap() {
         List<SetResult> reversedSetResults = setResults.stream().map(setResult -> new SetResult(setResult.player2Score, setResult.player1Score)).collect(toList());
         return new MatchResult(reversedSetResults);

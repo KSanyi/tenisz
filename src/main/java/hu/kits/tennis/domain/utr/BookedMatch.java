@@ -21,5 +21,5 @@ public record BookedMatch(Match playedMatch, UTR player1UTR, UTR player2UTR, UTR
     public BookedMatch clearUTRs() {
         return new BookedMatch(playedMatch, UTR.UNDEFINED, UTR.UNDEFINED, UTR.UNDEFINED, UTR.UNDEFINED);
     }
-    
+
 }
