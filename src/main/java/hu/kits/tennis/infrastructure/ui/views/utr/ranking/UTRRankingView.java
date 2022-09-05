@@ -104,7 +104,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
         column1.setHorizontalComponentAlignment(Alignment.CENTER, header);
         
         HorizontalLayout content = new HorizontalLayout(column1, playerStatsView);
-        column1.setMaxWidth("400px");
+        column1.setMaxWidth("460px");
         content.setSizeFull();
         content.setPadding(true);
         

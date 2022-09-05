@@ -1,5 +1,7 @@
 package hu.kits.tennis.common;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -43,7 +45,14 @@ public class DateTimeUtils {
                 }
             }
         }
-        
+    }
+    
+    public static LocalDate lastMonday(LocalDate referenceDate) {
+        LocalDate date = referenceDate.minusDays(1);
+        while(date.getDayOfWeek() != DayOfWeek.MONDAY) {
+            date = date.minusDays(1);
+        }
+        return date;
     }
     
 }
