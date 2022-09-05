@@ -7,11 +7,13 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
 import hu.kits.tennis.Main;
@@ -19,6 +21,7 @@ import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.domain.utr.UTRService;
+import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 
 class UTRRankingGrid extends Grid<PlayerWithUTR> {
     
@@ -29,6 +32,9 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
     UTRRankingGrid() {
         
         utrService = Main.resourceFactory.getUTRService();
+        
+        addComponentColumn(this::createMobileComponent)
+            .setVisible(false);
         
         addColumn(playerWithUTR -> playerWithUTR.rank())
             .setHeader("Rank")
@@ -76,8 +82,24 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
         */
         
         setHeightFull();
+        
+        UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleColumns(e.getBodyClientWidth()));
+        UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleColumns(e.getWidth()));
     }
     
+    private void updateVisibleColumns(int width) {
+        boolean mobile = width < VaadinUtil.MOBILE_BREAKPOINT;
+        var columns = getColumns();
+
+        // "Mobile" column
+        columns.get(0).setVisible(mobile);
+        // "Desktop" columns
+        for (int i = 1; i < columns.size(); i++) {
+            columns.get(i).setVisible(!mobile);
+        }
+        
+    }
+
     private Component createUTRChangeComponent(PlayerWithUTR playerWithUTR) {
         UTR utrChange = playerWithUTR.utrChange();
         if(utrChange.isDefinded() && utrChange.value().doubleValue() != 0) {
@@ -117,6 +139,15 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
         return dataProvider.getItems().stream()
                 .map(e -> String.format(Formatters.HU_LOCALE, "%s\t%s\t%,.2f", e.player().id(), e.player().name(), e.utr().value()))
                 .collect(joining("\n"));
+    }
+    
+    private Component createMobileComponent(PlayerWithUTR playerWithUTR) {
+        Label rank = new Label(String.valueOf(playerWithUTR.rank()));
+        Label name = new Label(playerWithUTR.player().name());
+        Label utr = new Label(playerWithUTR.utr().toString());
+        HorizontalLayout layout = new HorizontalLayout(rank, name, createUTRChangeComponent(playerWithUTR), utr);
+        layout.expand(name);
+        return layout;
     }
 
 }
