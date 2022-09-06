@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.common.Clock;
-import hu.kits.tennis.common.DateTimeUtils;
 import hu.kits.tennis.domain.tournament.Organizer;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
@@ -64,12 +63,12 @@ public class UTRService {
         List<BookedMatch> allKVTKBookedMatches = getAllKVTKMatches();
         
         LocalDate tomorrow = Clock.today().plusDays(1); 
-        LocalDate lastMonday = DateTimeUtils.lastMonday(Clock.today());
+        LocalDate oneWeekAgo = Clock.today().minusWeeks(1).plusDays(1);
         
         List<PlayerWithUTR> ranking = kvtkPlayers.stream()
                 .map(player -> new PlayerWithUTR(player, 0, 
                         UTRCalculator.calculatePlayersUTR(player, allKVTKBookedMatches, tomorrow),
-                        UTRCalculator.calculatePlayersUTR(player, allKVTKBookedMatches, lastMonday)))
+                        UTRCalculator.calculatePlayersUTR(player, allKVTKBookedMatches, oneWeekAgo)))
                 .sorted(comparing(PlayerWithUTR::utr).reversed())
                 .collect(toList());
         
