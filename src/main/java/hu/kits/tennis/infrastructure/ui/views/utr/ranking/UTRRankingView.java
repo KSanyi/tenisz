@@ -53,7 +53,10 @@ public class UTRRankingView extends SplitViewFrame implements View {
         filter.setValueChangeMode(ValueChangeMode.EAGER);
         
         copyButton.getElement().setProperty("title", "UTR lista másolása");
-        copyButton.addClickListener(click -> KITSNotification.showInfo("A táblázat a vágólapra másolva"));
+        copyButton.addClickListener(click -> {
+            KITSNotification.showInfo("A táblázat a vágólapra másolva");
+            VaadinUtil.logUserAction(logger, "UTR list copied into clipboard");
+        });
     }
     
     @Override
