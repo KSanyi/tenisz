@@ -1,6 +1,7 @@
 package hu.kits.tennis.domain.utr;
 
 import static java.util.Comparator.comparing;
+import static java.util.Collections.reverseOrder;
 import static java.util.stream.Collectors.toList;
 
 import java.lang.invoke.MethodHandles;
@@ -27,7 +28,7 @@ public class UTRCalculator {
                 .filter(match -> match.hasPlayed(player))
                 .filter(match -> match.utrOfMatchFor(player).isDefinded())
                 .sorted(comparing((BookedMatch m) -> m.playedMatch().date()).reversed()
-                        .thenComparing((BookedMatch m) -> m.playedMatch().id()).reversed())
+                       .thenComparing(reverseOrder(comparing((BookedMatch m) -> m.playedMatch().id()))))
                 .limit(RELEVANT_MATCH_COUNT)
                 .collect(toList());
         
