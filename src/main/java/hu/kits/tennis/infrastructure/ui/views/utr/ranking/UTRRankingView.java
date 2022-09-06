@@ -74,7 +74,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
         if(event.getFirstSelectedItem().isPresent()) {
             
             Player player = event.getFirstSelectedItem().get().player();
-            logger.debug("Looking for {}'s matches", player.name());
+            VaadinUtil.logUserAction(logger, "Looking for {}'s stats", player.name());
             if(playerStatsView.isVisible()) {
                 playerStatsView.setPlayer(player);
             } else {
