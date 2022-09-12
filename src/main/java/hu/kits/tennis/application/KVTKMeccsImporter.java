@@ -68,6 +68,7 @@ public class KVTKMeccsImporter {
         
         tournaments = tournamentService.loadAllTournaments().stream()
                 .filter(tournament -> tournament.organizer() == Organizer.KVTK)
+                .filter(tournament -> tournament.organizer() != Organizer.KVTK)
                 .collect(toMap(Tournament::name, Function.identity()));
         
         //List<BookedMatch> allMatches = matchRepository.loadAllBookedMatches();

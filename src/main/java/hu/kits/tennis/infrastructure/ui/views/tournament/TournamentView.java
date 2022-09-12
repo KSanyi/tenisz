@@ -1,5 +1,7 @@
 package hu.kits.tennis.infrastructure.ui.views.tournament;
 
+import static java.util.stream.Collectors.toList;
+
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +15,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -28,8 +31,10 @@ import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Status;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.MatchService;
 import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.domain.utr.Players;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
@@ -38,6 +43,7 @@ import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 import hu.kits.tennis.infrastructure.ui.views.View;
 import hu.kits.tennis.infrastructure.ui.views.utr.MatchesGrid;
+import hu.kits.tennis.infrastructure.ui.views.utr.matches.SimpleMatchDialog;
 
 @Route(value = "tournament/:tournamentId", layout = MainLayout.class)
 @PageTitle("Tournament")
@@ -75,11 +81,14 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             matchesGrid.getColumnByKey("date").setVisible(false);
             matchesGrid.getColumnByKey("tournament").setVisible(false);
             matchesGrid.setSizeFull();
+
+            Button createAddMatchButton = createAddMatchButton();
             
             HorizontalLayout horizontalLayout = new HorizontalLayout(matchesGrid, contestantsTable);
             horizontalLayout.setSizeFull();
             horizontalLayout.setFlexGrow(1, matchesGrid);
-            layout.add(title, horizontalLayout);
+            layout.add(title, horizontalLayout, createAddMatchButton);
+            
         } else if(tournament.type() == Type.BOARD_AND_CONSOLATION || tournament.type() == Type.SIMPLE_BOARD) {
 
             Runnable matchChangeCallback = () -> refresh();
@@ -111,6 +120,21 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         
         return layout;
     }
+    
+    private Button createAddMatchButton() {
+        Button button = new Button("Új meccs");
+        button.setIcon(new Icon(VaadinIcon.PLUS));
+
+        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        Players players = new Players(tournament.contestants().stream().map(c -> c.player()).collect(toList()));
+        button.addClickListener(click -> new SimpleMatchDialog(
+                Match.createNew(tournament.id(), 1, tournament.matches().size()+1, tournament.date(), null, null),
+                players, 
+                tournament.bestOfNSets(), 
+                () -> refresh()).open());
+        
+        return button;
+    }
 
     private void fillMainBoard() {
         tournamentService.createMatches(tournament.id(), DrawMode.SIMPLE);
@@ -128,12 +152,12 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     }
     
     private void loadData() {
-        contestantsTable.setPlayers(tournament.playersLineup());
         
         if(tournament.type() == Type.NA) {
+            contestantsTable.setPlayers(tournament.simplePlayersLineup());
             matchesGrid.setItems(matchService.loadMatchesOfTournament(tournament.id()));
-            
         } else if(tournament.type() == Type.BOARD_AND_CONSOLATION || tournament.type() == Type.SIMPLE_BOARD) {
+            contestantsTable.setPlayers(tournament.playersLineup());
             tableWithButton.setVisible(tournament.status() == Status.DRAFT);
             mainBoard.setBoard(tournament, tournament.mainBoard());
             if(tournament.type() == Type.BOARD_AND_CONSOLATION) {

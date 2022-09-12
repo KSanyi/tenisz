@@ -7,6 +7,7 @@ import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.MatchResult.SetResult;
 import hu.kits.tennis.common.Clock;
 import hu.kits.tennis.domain.utr.Match;
+import hu.kits.tennis.domain.utr.MatchInfo;
 import hu.kits.tennis.domain.utr.Player;
 
 public class MatchDataBean {
@@ -25,6 +26,15 @@ public class MatchDataBean {
         player2 = match.player2();
         score1 = match.result().setResults().get(0).player1Score();
         score2 = match.result().setResults().get(0).player2Score();
+    }
+
+    public MatchDataBean(MatchInfo matchInfo) {
+        id = matchInfo.id();
+        date = matchInfo.date();
+        player1 = matchInfo.player1();
+        player2 = matchInfo.player2();
+        score1 = matchInfo.result().setResults().get(0).player1Score();
+        score2 = matchInfo.result().setResults().get(0).player2Score();
     }
 
     public MatchDataBean() {

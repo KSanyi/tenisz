@@ -34,7 +34,7 @@ import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
-class MatchDialog extends Dialog {
+class TournamentMatchDialog extends Dialog {
 
     private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
     
@@ -46,7 +46,7 @@ class MatchDialog extends Dialog {
     
     private final Runnable matchChangeCallback;
     
-    MatchDialog(String title, Match match, int bestOfNSets, Runnable matchChangeCallback) {
+    TournamentMatchDialog(String title, Match match, int bestOfNSets, Runnable matchChangeCallback) {
         
         this.match = match;
         this.matchChangeCallback = matchChangeCallback;

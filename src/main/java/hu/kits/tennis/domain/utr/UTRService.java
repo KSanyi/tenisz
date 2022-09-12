@@ -73,7 +73,7 @@ public class UTRService {
                 .collect(toList());
         
         List<PlayerWithUTR> result = ranking.stream()
-                .map(playerWithUTR -> new PlayerWithUTR(playerWithUTR.player(), ranking.indexOf(playerWithUTR)+1, playerWithUTR.utr(),playerWithUTR.lastMondayUtr()))
+                .map(playerWithUTR -> new PlayerWithUTR(playerWithUTR.player(), ranking.indexOf(playerWithUTR)+1, playerWithUTR.utr(),playerWithUTR.utrOneWeekAgo()))
                 .collect(toList());
         
         logger.info("UTR ranking calculated with {} entries", result.size());

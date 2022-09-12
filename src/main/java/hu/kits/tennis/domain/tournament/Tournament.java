@@ -1,5 +1,6 @@
 package hu.kits.tennis.domain.tournament;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.utr.Match;
@@ -112,6 +114,11 @@ public record Tournament(String id,
         }
         
         return lineup;
+    }
+    
+    public List<Player> simplePlayersLineup() {
+        
+        return contestants.stream().map(Contestant::player).collect(toList());
     }
     
     @Override

@@ -80,7 +80,7 @@ public class MatchesView extends SplitViewFrame implements View {
         button.setIcon(new Icon(VaadinIcon.PLUS));
 
         button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        button.addClickListener(click -> new MatchDialog(new MatchDataBean()).open());
+        //button.addClickListener(click -> new SimpleMatchDialog(Match.).open());
         return button;
     }
     

@@ -4,9 +4,9 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
@@ -77,6 +77,7 @@ public class PlayersView extends SplitViewFrame implements View {
         filter.setValueChangeMode(ValueChangeMode.EAGER);
         
         newUserButton.setWidth("160px");
+        
         FlexBoxLayout content = new FlexBoxLayout(newUserButton, tableWithFilter);
         content.setBoxSizing(BoxSizing.BORDER_BOX);
         content.setSizeFull();

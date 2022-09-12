@@ -257,7 +257,7 @@ public class TeniszPartnerMeccsImporter {
                     .findAny();
             
             if(duplicate.isPresent()) {
-                matchService.deleteMatch(duplicate.get().playedMatch().id());
+                matchService.deleteMatch(duplicate.get().playedMatch());
                 System.out.println("Match deletd: " + duplicate.get().playedMatch());
             } else {
                 //System.out.println("No duplicate found for: " + match);
