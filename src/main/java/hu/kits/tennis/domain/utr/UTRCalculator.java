@@ -1,17 +1,18 @@
 package hu.kits.tennis.domain.utr;
 
 import static java.util.Comparator.comparing;
-import static java.util.Collections.reverseOrder;
 import static java.util.stream.Collectors.toList;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.kits.tennis.common.Clock;
 import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.utr.MatchResult.SetResult;
 
@@ -23,25 +24,25 @@ public class UTRCalculator {
     
     public static UTR calculatePlayersUTR(Player player, List<BookedMatch> allBookedMatches, LocalDate date) {
         
-        List<BookedMatch> lastRelevantMatchesFoPlayer = allBookedMatches.stream()
+        List<BookedMatch> allRelevantMatchesForPlayer = allBookedMatches.stream()
                 .filter(match -> match.playedMatch().date().isBefore(date))
                 .filter(match -> match.hasPlayed(player))
                 .filter(match -> match.utrOfMatchFor(player).isDefinded())
-                .sorted(comparing((BookedMatch m) -> m.playedMatch().date()).reversed()
-                       .thenComparing(reverseOrder(comparing((BookedMatch m) -> m.playedMatch().id()))))
-                .limit(RELEVANT_MATCH_COUNT)
+                .sorted(comparing((BookedMatch m) -> m.playedMatch().date()).reversed())
                 .collect(toList());
         
-        if(lastRelevantMatchesFoPlayer.isEmpty()) {
+        if(allRelevantMatchesForPlayer.isEmpty()) {
             return player.startingUTR();
         }
         
-        List<BookedMatch> effectiveMatches = lastRelevantMatchesFoPlayer.size() < RELEVANT_MATCH_COUNT ?
-            addDummyMatches(player, lastRelevantMatchesFoPlayer) : lastRelevantMatchesFoPlayer;
+        List<BookedMatch> lastRelevantMatches = findLastRelevantMatches(allRelevantMatchesForPlayer);
+        
+        List<BookedMatch> effectiveMatches = lastRelevantMatches.size() < RELEVANT_MATCH_COUNT ?
+            addDummyMatches(player, lastRelevantMatches) : lastRelevantMatches;
         
         List<Pair<Double, Integer>> utrWithWeights = effectiveMatches.stream()
                 .map(match -> Pair.of(match.utrOfMatchFor(player).value(),
-                                        calculateMatchWeight(effectiveMatches.indexOf(match), match)))
+                                        calculateMatchWeight(match)))
                 .collect(toList());
         
         double weightedAverage = calculatWeightedAverage(utrWithWeights);
@@ -49,6 +50,14 @@ public class UTRCalculator {
         return new UTR(weightedAverage);
     }
     
+    private static List<BookedMatch> findLastRelevantMatches(List<BookedMatch> allRelevantMatchesForPlayer) {
+        
+        LocalDate cutoffDate = allRelevantMatchesForPlayer.size() >= RELEVANT_MATCH_COUNT ? 
+                allRelevantMatchesForPlayer.get(RELEVANT_MATCH_COUNT-1).playedMatch().date() : LocalDate.MIN;
+        
+        return allRelevantMatchesForPlayer.stream().filter(match -> !match.playedMatch().date().isBefore(cutoffDate)).toList();
+    }
+
     private static double calculatWeightedAverage(List<Pair<Double, Integer>> valuesWithWeights) {
         int weightSum = valuesWithWeights.stream().mapToInt(e -> e.second()).sum();
         
@@ -67,15 +76,33 @@ public class UTRCalculator {
         
         UTR utr = player.startingUTR();
         List<BookedMatch> extendedMatches = new ArrayList<>(matches);
+        LocalDate firstMatchDate = matches.get(matches.size()-1).playedMatch().date();
+        LocalDate dummyDate = firstMatchDate.minusMonths(1);
         for(int i=0;i<dummyMatchCount;i++) {
-            extendedMatches.add(new BookedMatch(new Match(0, null, null, null, LocalDate.MIN, player, null, new MatchResult(List.of(new SetResult(6,0)))), 
+            extendedMatches.add(new BookedMatch(new Match(0, null, null, null, dummyDate, player, null, new MatchResult(List.of(new SetResult(6,0)))), 
                     UTR.UNDEFINED, UTR.UNDEFINED, utr, UTR.UNDEFINED));
         }
         return extendedMatches;
     }
     
-    private static int calculateMatchWeight(int matchIndex, BookedMatch match) {
-        return match.playedMatch().matchType().multiplier * ((RELEVANT_MATCH_COUNT - matchIndex) + 5);
+    private static int calculateMatchWeight(BookedMatch match) {
+        int dateWeight = dateWeight(match.playedMatch().date());
+        
+        return match.playedMatch().matchType().multiplier * dateWeight;
+    }
+    
+    private static int dateWeight(LocalDate matchDate) {
+        int monthDiff = (int)ChronoUnit.MONTHS.between(matchDate, Clock.today());
+        return switch (monthDiff) {
+            case 0 -> 10;
+            case 1 -> 9;
+            case 2 -> 8;
+            case 3 -> 7;
+            case 4, 5, 6 -> 6;
+            case 7, 8, 9 -> 5;
+            case 10, 11, 12 -> 4;
+            default -> 3;
+        };
     }
 
     public static BookedMatch createBookedMatch(Match playedMatch, List<BookedMatch> allPlayedMatches) {
