@@ -114,7 +114,8 @@ class TournamentsGrid extends Grid<Tournament> {
         addColumn(Tournament::name)
             .setHeader("Név")
             .setSortable(true)
-            .setFlexGrow(4);
+            .setFlexGrow(4)
+            .setKey("name");
         
         addColumn(tournament -> tournament.organizer().name)
             .setHeader("Szervező")
@@ -152,6 +153,8 @@ class TournamentsGrid extends Grid<Tournament> {
         
         UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleColumns(e.getBodyClientWidth()));
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleColumns(e.getWidth()));
+        
+        this.setMultiSort(true);
         
         sort(GridSortOrder.asc(getColumnByKey("state"))
                 .thenDesc(getColumnByKey("date"))
