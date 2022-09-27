@@ -15,14 +15,14 @@ public class PlayerSelectorDialog extends Dialog {
         
         Consumer<Player> extendedCallback = player -> {
             callback.accept(player);
-            close();
+            //close();
         };
         
         PlayerSelector playerSelector = new PlayerSelector(extendedCallback);
         
         add(playerSelector);
         
-        setWidth("450px");
+        setWidth("550px");
     }
     
 }
