@@ -39,6 +39,10 @@ public record Match(Integer id, String tournamentId, Integer tournamentBoardNumb
         String player2Name = player2 != null ? player2.name() : "?";
         return (date != null ? (date.toString() + " ") : "") +  player1Name + " VS " + player2Name + " " + (result != null ? result.toString() : "");
     }
+
+    public boolean isPlayed() {
+        return result != null;
+    }
     
     public static enum MatchType {
         

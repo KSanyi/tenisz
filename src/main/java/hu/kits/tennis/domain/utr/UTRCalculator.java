@@ -25,6 +25,7 @@ public class UTRCalculator {
     public static UTR calculatePlayersUTR(Player player, List<BookedMatch> allBookedMatches, LocalDate date) {
         
         List<BookedMatch> allRelevantMatchesForPlayer = allBookedMatches.stream()
+                .filter(match -> match.playedMatch().isPlayed())
                 .filter(match -> match.playedMatch().date().isBefore(date))
                 .filter(match -> match.hasPlayed(player))
                 .filter(match -> match.utrOfMatchFor(player).isDefinded())
@@ -126,6 +127,7 @@ public class UTRCalculator {
         
         List<Match> allPlayedMatches = bookedMatches.stream()
                 .map(BookedMatch::playedMatch)
+                .filter(Match::isPlayed)
                 .sorted(comparing(Match::date))
                 .collect(toList());
         

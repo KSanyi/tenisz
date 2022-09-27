@@ -82,7 +82,7 @@ public class MatchJdbcRepository implements MatchRepository  {
 
     @Override
     public List<BookedMatch> loadAllBookedMatches() {
-        String sql = String.format("SELECT * FROM %s WHERE %s IS NOT NULL ORDER BY %s", TABLE_TENNIS_MATCH, COLUMN_RESULT, COLUMN_DATETIME);
+        String sql = String.format("SELECT * FROM %s ORDER BY %s", TABLE_TENNIS_MATCH, COLUMN_DATETIME);
         
         Players players = playerRepository.loadAllPlayers();
         
@@ -144,7 +144,7 @@ public class MatchJdbcRepository implements MatchRepository  {
                     rs.getString(COLUMN_TOURNAMENT_ID),
                     JdbiUtil.mapToOptionalInt(rs, COLUMN_TOURNAMENT_BOARD_NUMBER).orElse(null),
                     JdbiUtil.mapToOptionalInt(rs, COLUMN_TOURNAMENT_MATCH_NUMBER).orElse(null),
-                    rs.getDate(COLUMN_DATETIME).toLocalDate(),
+                    Optional.ofNullable(rs.getDate(COLUMN_DATETIME)).map(Date::toLocalDate).orElse(null),
                     players.get(rs.getInt(COLUMN_PLAYER1_ID)), 
                     players.get(rs.getInt(COLUMN_PLAYER2_ID)), 
                     MatchResult.parse(rs.getString(COLUMN_RESULT))),

@@ -17,7 +17,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
  
     public MatchesGrid() {
         
-        addColumn(match -> Formatters.formatDate(match.date()))
+        addColumn(match -> match.date() != null ? Formatters.formatDate(match.date()) : "?")
             .setKey("date")
             .setHeader("Dátum")
             .setSortable(true)
@@ -35,7 +35,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
         addColumn(TemplateRenderer.<MatchInfo>of("[[item.name1]] <small>([[item.utr1]])</small>")
                 .withProperty("name1", match -> match.player1().name())
                 .withProperty("utr1", match -> match.player1UTR().toString()))
-            .setClassNameGenerator(match -> match.result().isPlayer1Winner() ? "bold" : "")
+            .setClassNameGenerator(match -> match.result() != null && match.result().isPlayer1Winner() ? "bold" : "")
             .setKey("player1")
             .setHeader("")
             .setAutoWidth(true)
@@ -46,7 +46,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
         addColumn(TemplateRenderer.<MatchInfo>of("[[item.name2]] ([[item.utr2]])")
                 .withProperty("name2", match -> match.player2().name())
                 .withProperty("utr2", match -> match.player2UTR().toString()))
-            .setClassNameGenerator(match -> match.result().isPlayer2Winner() ? "bold" : "")
+            .setClassNameGenerator(match -> match.result() != null && match.result().isPlayer2Winner() ? "bold" : "")
             .setKey("player2")
             .setHeader("")
             .setAutoWidth(true)

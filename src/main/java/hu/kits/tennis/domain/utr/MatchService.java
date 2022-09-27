@@ -67,6 +67,7 @@ public class MatchService {
                 .collect(toMap(Tournament::id, Function.identity()));
         
         List<MatchInfo> matchInfos = matches.stream()
+                .filter(bookedMatch -> ! bookedMatch.hasPlayed(Player.BYE))
                 .map(bookedMatch -> toMatchInfo(bookedMatch, tournamenMap))
                 .collect(toList());
         
