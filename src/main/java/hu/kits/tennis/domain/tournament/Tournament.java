@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.utr.Match;

@@ -24,6 +24,7 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteParameters;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.domain.tournament.DrawMode;
@@ -54,6 +55,9 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
     private final MatchService matchService = Main.resourceFactory.getMatchService();
     
+    private final Button prevButton = UIUtils.createButton(VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
+    private final Button nextButton = UIUtils.createButton(VaadinIcon.ARROW_RIGHT, ButtonVariant.LUMO_PRIMARY);
+    
     private final ContestantsTable contestantsTable = new ContestantsTable(this);
     private TournamentBoard mainBoard;
     private TournamentBoard consolationBoard;
@@ -66,7 +70,6 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
         initAppBar();
-        createUI();
     }
     
     private Component createContent() {
@@ -74,7 +77,22 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         layout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         
         Label title = UIUtils.createH2Label(tournament.name());
+        HorizontalLayout header = new HorizontalLayout(prevButton, title, nextButton);
         //Label date = UIUtils.createH3Label(Formatters.formatDateLong(tournament.date()));
+        
+        Optional<String> prevTournamentId = tournamentService.prevTournamentId(tournament);
+        if(prevTournamentId.isPresent()) {
+            prevButton.addClickListener(click -> UI.getCurrent().navigate(TournamentView.class, new RouteParameters("tournamentId", prevTournamentId.get())));    
+        } else {
+            prevButton.setEnabled(false);
+        }
+        
+        Optional<String> nextTournamentId = tournamentService.nextTournamentId(tournament);
+        if(nextTournamentId.isPresent()) {
+            nextButton.addClickListener(click -> UI.getCurrent().navigate(TournamentView.class, new RouteParameters("tournamentId", nextTournamentId.get())));    
+        } else {
+            nextButton.setEnabled(false);
+        }
         
         if(tournament.type() == Type.NA) {
             matchesGrid = new MatchesGrid();
@@ -87,7 +105,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             HorizontalLayout horizontalLayout = new HorizontalLayout(matchesGrid, contestantsTable);
             horizontalLayout.setSizeFull();
             horizontalLayout.setFlexGrow(1, matchesGrid);
-            layout.add(title, horizontalLayout, createAddMatchButton);
+            layout.add(header, horizontalLayout, createAddMatchButton);
             
         } else if(tournament.type() == Type.BOARD_AND_CONSOLATION || tournament.type() == Type.SIMPLE_BOARD) {
 
@@ -108,7 +126,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             horizontalLayout.setWidthFull();
             horizontalLayout.setFlexGrow(1, mainBoard);
             
-            layout.add(title, horizontalLayout);
+            layout.add(header, horizontalLayout);
             
             if(tournament.type() == Type.BOARD_AND_CONSOLATION) {
                 consolationBoard = new TournamentBoard(tournament, tournament.consolationBoard(), matchChangeCallback);
@@ -185,6 +203,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         } else {
             this.tournament = tournament.get();
             VaadinUtil.logUserAction(logger, "views tournament {}", tournament.get().name());
+            createUI();
         }
     }
     

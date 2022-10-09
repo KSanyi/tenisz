@@ -5,8 +5,10 @@ import static java.util.stream.Collectors.toList;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
@@ -231,6 +233,28 @@ public class TournamentService {
         matchRepository.deleteMatch(match.id());
         
         logger.info("Match deleted: {}", match);
+    }
+
+    public Optional<String> prevTournamentId(Tournament tournament) {
+        return prevOrNextTournamentId(tournament, i -> i - 1);
+    }
+    
+    public Optional<String> nextTournamentId(Tournament tournament) {
+        return prevOrNextTournamentId(tournament, i -> i + 1);
+    }
+    
+    private Optional<String> prevOrNextTournamentId(Tournament tournament, UnaryOperator<Integer> function) {
+        List<Tournament> tournaments = loadAllTournaments().stream()
+                .sorted(Comparator.comparing(Tournament::date).reversed().thenComparing(Tournament::name))
+                .toList();
+        
+        int indexOfCurrentTournament = tournaments.indexOf(tournaments.stream().filter(t -> t.id().equals(tournament.id())).findFirst().get());
+        int index = function.apply(indexOfCurrentTournament);
+        if(0 <= index && index < tournaments.size()) {
+            return Optional.of(tournaments.get(index).id());
+        } else {
+            return Optional.empty();
+        }
     }
 
 }
