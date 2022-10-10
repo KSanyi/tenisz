@@ -117,7 +117,10 @@ public class UTRService {
     }
 
     public List<BookedMatch> loadBookedMatches() {
-        return matchRepository.loadAllBookedMatches();
+        return matchRepository.loadAllBookedMatches().stream()
+                .filter(match -> match.playedMatch().isPlayed())
+                .sorted(Comparator.comparing((BookedMatch match) -> match.playedMatch().date()).reversed())
+                .toList();
     }
 
     public void deleteMatch(int id) {
