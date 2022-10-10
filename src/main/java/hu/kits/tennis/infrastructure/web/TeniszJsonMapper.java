@@ -36,7 +36,7 @@ public class TeniszJsonMapper implements JsonMapper {
         } else if(object instanceof Player player) {
             return mapPlayerToJson(player);    
         }else if(object instanceof BookedMatch bookedMatch) {
-            return mapPlayerToJson(bookedMatch);    
+            return mapMatchToJson(bookedMatch);    
         } else {
             return object;
         }
@@ -50,9 +50,9 @@ public class TeniszJsonMapper implements JsonMapper {
                 .put("startingUTR", player.startingUTR());
     }
     
-    private static JSONObject mapPlayerToJson(BookedMatch bookedMatch) {
+    private static JSONObject mapMatchToJson(BookedMatch bookedMatch) {
         
-        return new JSONObject()
+        JSONObject jsonObject = new JSONObject()
                 .put("id", bookedMatch.playedMatch().id())
                 .put("date", bookedMatch.playedMatch().date())
                 .put("player1", bookedMatch.playedMatch().player1().name())
@@ -60,6 +60,18 @@ public class TeniszJsonMapper implements JsonMapper {
                 .put("result", bookedMatch.playedMatch().result().toString())
                 .put("matchUTRForPlayer1", bookedMatch.matchUTRForPlayer1().value())
                 .put("matchUTRForPlayer2", bookedMatch.matchUTRForPlayer2().value());
+        
+        if(bookedMatch.playedMatch().result() != null) {
+            jsonObject = jsonObject.put("result", bookedMatch.playedMatch().result().toString());
+            if(bookedMatch.matchUTRForPlayer1() != null) {
+                jsonObject = jsonObject
+                        .put("matchUTRForPlayer1", bookedMatch.matchUTRForPlayer1().value())
+                        .put("matchUTRForPlayer2", bookedMatch.matchUTRForPlayer2().value());
+                
+            }
+        }
+        
+        return jsonObject;
     }
     
 }
