@@ -56,10 +56,7 @@ public class TeniszJsonMapper implements JsonMapper {
                 .put("id", bookedMatch.playedMatch().id())
                 .put("date", bookedMatch.playedMatch().date())
                 .put("player1", bookedMatch.playedMatch().player1().name())
-                .put("player2", bookedMatch.playedMatch().player2().name())
-                .put("result", bookedMatch.playedMatch().result().toString())
-                .put("matchUTRForPlayer1", bookedMatch.matchUTRForPlayer1().value())
-                .put("matchUTRForPlayer2", bookedMatch.matchUTRForPlayer2().value());
+                .put("player2", bookedMatch.playedMatch().player2().name());
         
         if(bookedMatch.playedMatch().result() != null) {
             jsonObject = jsonObject.put("result", bookedMatch.playedMatch().result().toString());
@@ -67,7 +64,6 @@ public class TeniszJsonMapper implements JsonMapper {
                 jsonObject = jsonObject
                         .put("matchUTRForPlayer1", bookedMatch.matchUTRForPlayer1().value())
                         .put("matchUTRForPlayer2", bookedMatch.matchUTRForPlayer2().value());
-                
             }
         }
         
