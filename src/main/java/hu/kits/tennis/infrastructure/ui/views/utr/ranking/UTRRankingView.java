@@ -49,6 +49,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
     
     public UTRRankingView() {
         
+        filter.setPlaceholder("Játékos szűrő");
         filter.addValueChangeListener(v -> utrRankingGrid.filter(v.getValue()));
         filter.setValueChangeMode(ValueChangeMode.EAGER);
         
@@ -115,6 +116,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
     }
     
     public void refresh() {
+        copyButton.setVisible(VaadinUtil.getUser().role() == Role.ADMIN);
         utrRankingGrid.refresh();
         clipboardHelper.setContent(utrRankingGrid.createTableInCopyableFormat());
     }
