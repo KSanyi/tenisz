@@ -23,6 +23,7 @@ import com.vaadin.flow.server.ErrorHandler;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.Lumo;
 
+import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.domain.user.UserData;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.FlexBoxLayout;
@@ -125,7 +126,6 @@ public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavi
         menu.addNaviItem(utrMenu, "Játékosok", PlayersView.class);
         menu.addNaviItem(utrMenu, "Meccsek", MatchesView.class);
         menu.addNaviItem(utrMenu, "UTR ranking", UTRRankingView.class);
-        
     }
 
     /**
@@ -191,6 +191,7 @@ public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavi
         VaadinUtil.setUser(user);
         CookieUtil.createUserCookie(user.userId());
         appBar.userLoggedIn();
+        naviDrawer.setVisible(user.role() == Role.ADMIN);
         naviDrawer.refresh();
         currentView.refresh();
         UI.getCurrent().getSession().getSession().setMaxInactiveInterval(60 * 60 * 24);
@@ -205,6 +206,8 @@ public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavi
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
+        
+        naviDrawer.setVisible(VaadinUtil.getUser().role() == Role.ADMIN);
         
         naviDrawer.getMenu().refresh();
         

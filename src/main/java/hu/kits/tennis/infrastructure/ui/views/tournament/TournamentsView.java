@@ -25,7 +25,9 @@ import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.tournament.Organizer;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
+import hu.kits.tennis.infrastructure.ui.util.AllowedRoles;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.Badge;
@@ -48,7 +50,7 @@ import hu.kits.tennis.infrastructure.ui.views.View;
 
 @Route(value = "tournaments", layout = MainLayout.class)
 @PageTitle("Versenyek")
-//@AllowedRoles({Role.ADMIN})
+@AllowedRoles({Role.ADMIN})
 public class TournamentsView extends SplitViewFrame implements View {
 
     private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
