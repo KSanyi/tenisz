@@ -121,7 +121,7 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
         label.getStyle().set("font-size", "11px");
         Span span = new Span(icon, label);
         span.getStyle().set("color", color);
-        span.getElement().setProperty("title", "UTR változás múlt hétfő óta");
+        span.getElement().setProperty("title", "UTR változás az elmúlt hét napban");
         return span;
     }
     
