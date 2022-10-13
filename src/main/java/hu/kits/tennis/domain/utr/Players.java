@@ -1,7 +1,5 @@
 package hu.kits.tennis.domain.utr;
 
-import static java.util.Comparator.comparing;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -48,7 +46,7 @@ public class Players {
     public List<Player> entries() {
         return playersMap.values().stream()
                 .filter(player -> player.id() != 0)
-                .sorted(comparing((Player player) -> StringUtil.cleanNameString(player.name())))
+                .sorted((p1, p2) -> StringUtil.HUN_COLLATOR.compare(p1.name(), p2.name()))
                 .toList();
     }
 

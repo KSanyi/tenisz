@@ -1,10 +1,9 @@
 package hu.kits.tennis.infrastructure.web;
 
-import static java.util.Comparator.comparing;
-
 import java.util.List;
 
 import hu.kits.tennis.Main;
+import hu.kits.tennis.common.StringUtil;
 import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerRepository;
@@ -34,7 +33,9 @@ class RestHandlers {
     
     void listAllPlayersWithUtr(Context context) {
         List<PlayerWithUTR> playersWithUTR = utrService.calculateUTRRanking();
-        List<PlayerWithUTR> playersWithUTRSortedByName = playersWithUTR.stream().sorted(comparing(p -> p.player().name())).toList();
+        List<PlayerWithUTR> playersWithUTRSortedByName = playersWithUTR.stream()
+                .sorted((p1, p2) -> StringUtil.HUN_COLLATOR.compare(p1.player().name(), p2.player().name()))
+                .toList();
         context.json(playersWithUTRSortedByName);
     }
     
