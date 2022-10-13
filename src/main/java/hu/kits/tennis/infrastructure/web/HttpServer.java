@@ -46,6 +46,9 @@ public class HttpServer {
             path("api/utr", () -> {
                 get(restHandlers::listAllPlayersWithUtr);
             });
+            path("api/utr-csv", () -> {
+                get(restHandlers::listAllPlayersWithUtrInCSV);
+            });
             path("", () -> {
                 get(restHandlers::redirectToVaadin);
             });
