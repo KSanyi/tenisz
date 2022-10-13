@@ -45,6 +45,7 @@ class RestHandlers {
         List<PlayerWithUTR> playersWithUTR = utrService.calculateUTRRanking();
         
         String content = playersWithUTR.stream()
+                .sorted((p1, p2) -> StringUtil.HUN_COLLATOR.compare(p1.player().name(), p2.player().name()))
                 .map(p -> p.player().id() + ";" + p.player().name() + ";" + p.utr().toString())
                 .collect(Collectors.joining("\n"));
         
