@@ -11,7 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import hu.kits.tennis.domain.utr.BookedMatch;
-import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import io.javalin.plugin.json.JsonMapper;
 
 public class TeniszJsonMapper implements JsonMapper {
@@ -33,21 +33,21 @@ public class TeniszJsonMapper implements JsonMapper {
                     e -> TeniszJsonMapper.mapToJson(e.getValue()),
                     (a, b) -> a, LinkedHashMap::new));
             return new JSONObject(jsonEntriesMap);
-        } else if(object instanceof Player player) {
-            return mapPlayerToJson(player);    
-        }else if(object instanceof BookedMatch bookedMatch) {
+        } else if(object instanceof PlayerWithUTR playerWithUTR) {
+            return mapPlayerWithUTRToJson(playerWithUTR);    
+        } else if(object instanceof BookedMatch bookedMatch) {
             return mapMatchToJson(bookedMatch);    
         } else {
             return object;
         }
     }
     
-    private static JSONObject mapPlayerToJson(Player player) {
+    private static JSONObject mapPlayerWithUTRToJson(PlayerWithUTR playerWithUtr) {
         
         return new JSONObject()
-                .put("id", player.id())
-                .put("name", player.name())
-                .put("startingUTR", player.startingUTR());
+                .put("id", playerWithUtr.player().id())
+                .put("name", playerWithUtr.player().name())
+                .put("UTR", playerWithUtr.utr());
     }
     
     private static JSONObject mapMatchToJson(BookedMatch bookedMatch) {

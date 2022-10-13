@@ -1,7 +1,6 @@
 package hu.kits.tennis.infrastructure.web;
 
 import static io.javalin.apibuilder.ApiBuilder.get;
-import static io.javalin.apibuilder.ApiBuilder.post;
 import static io.javalin.apibuilder.ApiBuilder.path;
 
 import java.lang.invoke.MethodHandles;
@@ -41,12 +40,11 @@ public class HttpServer {
             //    get(apiDocHandler::createTestCasesList);
             //    get("{testCase}", apiDocHandler::createTestCaseDoc);
             //});
-            path("api/players", () -> {
-                get(restHandlers::listAllPlayers);
-                post(restHandlers::createPlayer);
-            });
             path("api/matches", () -> {
                 get(restHandlers::listAllMatches);
+            });
+            path("api/utr", () -> {
+                get(restHandlers::listAllPlayersWithUtr);
             });
             path("", () -> {
                 get(restHandlers::redirectToVaadin);
