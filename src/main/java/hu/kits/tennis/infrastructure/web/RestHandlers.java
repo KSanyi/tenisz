@@ -46,7 +46,7 @@ class RestHandlers {
         
         String content = playersWithUTR.stream()
                 .sorted((p1, p2) -> StringUtil.HUN_COLLATOR.compare(p1.player().name(), p2.player().name()))
-                .map(p -> p.player().id() + ";" + p.player().name() + ";" + p.utr().toString())
+                .map(p -> p.player().id() + ";" + p.player().name() + ";" + p.utr().toString().replace(".", ","))
                 .collect(Collectors.joining("\n"));
         
         context.result(content);
@@ -56,4 +56,5 @@ class RestHandlers {
     void redirectToVaadin(Context context) {
         context.redirect("/ui/");
     }
+    
 }
