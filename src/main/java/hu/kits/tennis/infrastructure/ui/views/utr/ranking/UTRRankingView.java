@@ -12,6 +12,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -53,7 +54,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
         filter.addValueChangeListener(v -> utrRankingGrid.filter(v.getValue()));
         filter.setValueChangeMode(ValueChangeMode.EAGER);
         
-        copyButton.getElement().setProperty("title", "UTR lista másolása");
+        UIUtils.setTooltip("UTR lista másolása", copyButton);
         copyButton.addClickListener(click -> {
             KITSNotification.showInfo("A táblázat a vágólapra másolva");
             VaadinUtil.logUserAction(logger, "UTR list copied into clipboard");
@@ -98,7 +99,10 @@ public class UTRRankingView extends SplitViewFrame implements View {
     
     private Component createContent() {
         
-        HorizontalLayout header = new HorizontalLayout(filter, clipboardHelper);
+        Icon helpIcon = new Icon("vaadin", "info-circle");
+        UIUtils.setTooltip("UTR infó", helpIcon);
+        helpIcon.addClickListener(click -> UTRInfoDialog.openDialog());
+        HorizontalLayout header = new HorizontalLayout(filter, helpIcon, clipboardHelper);
         
         VerticalLayout column1 = new VerticalLayout(header, utrRankingGrid);
         column1.setPadding(false);
