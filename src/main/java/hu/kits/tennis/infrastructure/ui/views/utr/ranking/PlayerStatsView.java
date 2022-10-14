@@ -38,7 +38,7 @@ class PlayerStatsView extends VerticalLayout {
 
     private void setPlayerStats(PlayerStats playerStats) {
         
-        nameLabel.setText(playerStats.player().name() + " UTR: " + playerStats.utr());
+        nameLabel.setText(playerStats.player().name() + " UTR: " + playerStats.utrDetails().utr());
         
         matchStatsLabel.setText(String.format("%d mérkőzés: %d győzelem (%s) %d vereség (%s)", playerStats.numberOfMatches(),
                 playerStats.numberOfWins(), Formatters.formatPercent(playerStats.winPercentage()),
@@ -49,7 +49,7 @@ class PlayerStatsView extends VerticalLayout {
                 playerStats.numberOfGamesLost(), Formatters.formatPercent(playerStats.gamesLossPercentage())));
         
         matchesGrid.setItems(playerStats.matches());
-        matchesGrid.setBestAndWorstMatch(playerStats.bestUTRMatch().orElse(null), playerStats.worstUTRMatch().orElse(null));
+        matchesGrid.setBestWorstAndUTRRelevantMatches(playerStats.bestUTRMatch().orElse(null), playerStats.worstUTRMatch().orElse(null), playerStats.utrDetails().relevantMatches());
     }
     
 }

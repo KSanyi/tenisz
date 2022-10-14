@@ -9,3 +9,7 @@
 .red {
   background-color: var(--lumo-error-color-10pct);
 }
+
+.grey {
+  background-color: var(--lumo-contrast-5pct);
+}

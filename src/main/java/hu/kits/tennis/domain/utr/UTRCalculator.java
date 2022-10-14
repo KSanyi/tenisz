@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ public class UTRCalculator {
     
     private static final int RELEVANT_MATCH_COUNT = 14;
     
-    public static UTR calculatePlayersUTR(Player player, List<BookedMatch> allBookedMatches, LocalDate date) {
+    public static UTRDetails calculatePlayersUTR(Player player, List<BookedMatch> allBookedMatches, LocalDate date) {
         
         List<BookedMatch> allRelevantMatchesForPlayer = allBookedMatches.stream()
                 .filter(match -> match.playedMatch().isPlayed())
@@ -33,7 +34,7 @@ public class UTRCalculator {
                 .collect(toList());
         
         if(allRelevantMatchesForPlayer.isEmpty()) {
-            return player.startingUTR();
+            return new UTRDetails(player.startingUTR(), Set.of());
         }
         
         List<BookedMatch> lastRelevantMatches = findLastRelevantMatches(allRelevantMatchesForPlayer);
@@ -48,7 +49,7 @@ public class UTRCalculator {
         
         double weightedAverage = calculatWeightedAverage(utrWithWeights);
         
-        return new UTR(weightedAverage);
+        return new UTRDetails(new UTR(weightedAverage), effectiveMatches);
     }
     
     private static List<BookedMatch> findLastRelevantMatches(List<BookedMatch> allRelevantMatchesForPlayer) {
@@ -108,8 +109,8 @@ public class UTRCalculator {
 
     public static BookedMatch createBookedMatch(Match playedMatch, List<BookedMatch> allPlayedMatches) {
         
-        UTR player1UTR = calculatePlayersUTR(playedMatch.player1(), allPlayedMatches, playedMatch.date());
-        UTR player2UTR = calculatePlayersUTR(playedMatch.player2(), allPlayedMatches, playedMatch.date());
+        UTR player1UTR = calculatePlayersUTR(playedMatch.player1(), allPlayedMatches, playedMatch.date()).utr();
+        UTR player2UTR = calculatePlayersUTR(playedMatch.player2(), allPlayedMatches, playedMatch.date()).utr();
         
         boolean arePlayersComparable = player1UTR.comparable(player2UTR);
         

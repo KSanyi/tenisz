@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public record PlayerStats(Player player,
         List<MatchInfo> matches,
-        UTR utr,
+        UTRDetails utrDetails,
         int numberOfTournaments,
         int numberOfMatches,
         int numberOfWins,
@@ -19,12 +19,10 @@ public record PlayerStats(Player player,
         int numberOfGamesLost,
         double gamesLossPercentage,
         Optional<MatchInfo> bestUTRMatch,
-        Optional<MatchInfo> worstUTRMatch,
-        UTR utrHigh,
-        UTR utrLow
+        Optional<MatchInfo> worstUTRMatch
         ) {
 
-    public static PlayerStats create(Player player, UTR utr, List<MatchInfo> matchInfos) {
+    public static PlayerStats create(Player player, UTRDetails utrDetails, List<MatchInfo> matchInfos) {
         
         int numberOfTournaments = (int)matchInfos.stream().map(match -> match.tournamentInfo().id()).distinct().count();
         int numberOfMatches = matchInfos.size();
@@ -50,7 +48,7 @@ public record PlayerStats(Player player,
         
         return new PlayerStats(player,
                 matchInfos,
-                utr,
+                utrDetails,
                 numberOfTournaments,
                 numberOfMatches,
                 numberOfWins,
@@ -62,9 +60,7 @@ public record PlayerStats(Player player,
                 gamesWinPercentage, 
                 numberOfGamesLost, 
                 gamesLossPercentage,
-                bestUTRMatch, worstUTRMatch,
-                utr,
-                utr);
+                bestUTRMatch, worstUTRMatch);
     }
 
 }

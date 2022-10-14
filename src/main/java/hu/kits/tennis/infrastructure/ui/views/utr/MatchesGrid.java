@@ -1,5 +1,6 @@
 package hu.kits.tennis.infrastructure.ui.views.utr;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.vaadin.flow.component.dependency.CssImport;
@@ -10,6 +11,7 @@ import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 
 import hu.kits.tennis.common.Formatters;
+import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.MatchInfo;
 
 @CssImport(themeFor = "vaadin-grid", value = "./styles/match-grid.css")
@@ -77,8 +79,18 @@ public class MatchesGrid extends Grid<MatchInfo> {
         sort(List.of(new GridSortOrder<>(getColumnByKey("date"), SortDirection.DESCENDING)));
     }
     
-    public void setBestAndWorstMatch(MatchInfo bestMatch, MatchInfo worstMatch) {
-        setClassNameGenerator(match -> match.equals(bestMatch) ? "green" : (match.equals(worstMatch) ? "red" : null));
+    public void setBestWorstAndUTRRelevantMatches(MatchInfo bestMatch, MatchInfo worstMatch, Collection<BookedMatch> utrRelevantMatches) {
+        setClassNameGenerator(match -> {
+            if(match.equals(bestMatch)) {
+                return "green";
+            } else if(match.equals(worstMatch)) {
+                return "red";
+            } else if(utrRelevantMatches.stream().noneMatch(relevantMatch -> relevantMatch.playedMatch().id().equals(match.id()))) {
+                return "grey";
+            } else {
+                return "";
+            }
+        });
     }
     
 }

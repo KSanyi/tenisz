@@ -36,7 +36,7 @@ public class UTRService {
         this.tournamentRepository = tournamentRepository;
     }
 
-    public UTR calculatePlayersUTR(Player player) {
+    public UTRDetails calculatePlayersUTR(Player player) {
         List<BookedMatch> matches = matchRepository.loadAllPlayedMatches(player);
         return UTRCalculator.calculatePlayersUTR(player, matches, Clock.today().plusDays(1));
     }
@@ -67,8 +67,8 @@ public class UTRService {
         
         List<PlayerWithUTR> ranking = kvtkPlayers.stream()
                 .map(player -> new PlayerWithUTR(player, 0, 
-                        UTRCalculator.calculatePlayersUTR(player, allKVTKBookedMatches, tomorrow),
-                        UTRCalculator.calculatePlayersUTR(player, allKVTKBookedMatches, oneWeekAgo)))
+                        UTRCalculator.calculatePlayersUTR(player, allKVTKBookedMatches, tomorrow).utr(),
+                        UTRCalculator.calculatePlayersUTR(player, allKVTKBookedMatches, oneWeekAgo).utr()))
                 .sorted(comparing(PlayerWithUTR::utr).reversed())
                 .collect(toList());
         
@@ -129,13 +129,13 @@ public class UTRService {
     
     public PlayerStats loadPlayerStats(Player player) {
         
-        UTR utr = calculatePlayersUTR(player);
+        UTRDetails utrDetails = calculatePlayersUTR(player);
         
         List<MatchInfo> matchInfos = matchService.loadMatchesForPlayer(player).stream()
                 .sorted(Comparator.comparing((MatchInfo matchInfo) -> matchInfo.date()).reversed())
                 .collect(toList());
         
-        return PlayerStats.create(player, utr, matchInfos);
+        return PlayerStats.create(player, utrDetails, matchInfos);
     }
     
 }
