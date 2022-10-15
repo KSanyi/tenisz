@@ -107,13 +107,14 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
         if(utrChange.isDefinded() && utrChange.value().doubleValue() != 0) {
             double diff = utrChange.value().doubleValue();
             if(Math.abs(diff) >= 0.03) {
-                return createChangeSpan(utrChange, "arrow-up", "var(--lumo-success-text-color)");
-            } else {
-                return createChangeSpan(utrChange, "arrow-down", "var(--lumo-error-text-color)");
+                if(diff > 0) {
+                    return createChangeSpan(utrChange, "arrow-up", "var(--lumo-success-text-color)");
+                } else {
+                    return createChangeSpan(utrChange, "arrow-down", "var(--lumo-error-text-color)");
+                }  
             }
-        } else {
-            return new Span();
         }
+        return new Span();
     }
     
     private static Component createChangeSpan(UTR utrChange, String arrow, String color) {
