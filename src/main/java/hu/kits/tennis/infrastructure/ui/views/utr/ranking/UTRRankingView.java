@@ -101,6 +101,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
         
         Icon helpIcon = new Icon("vaadin", "info-circle");
         UIUtils.setTooltip("UTR infó", helpIcon);
+        helpIcon.setColor("#0C6CE9");
         helpIcon.addClickListener(click -> UTRInfoDialog.openDialog());
         HorizontalLayout header = new HorizontalLayout(filter, helpIcon, clipboardHelper);
         
