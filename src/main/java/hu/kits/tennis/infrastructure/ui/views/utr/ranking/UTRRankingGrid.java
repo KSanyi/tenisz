@@ -106,7 +106,7 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
         UTR utrChange = playerWithUTR.utrChange();
         if(utrChange.isDefinded() && utrChange.value().doubleValue() != 0) {
             double diff = utrChange.value().doubleValue();
-            if(Math.abs(diff) >= 0.03) {
+            if(Math.abs(diff) >= 0.05) {
                 if(diff > 0) {
                     return createChangeSpan(utrChange, "arrow-up", "var(--lumo-success-text-color)");
                 } else {
