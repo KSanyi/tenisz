@@ -13,7 +13,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import hu.kits.tennis.common.Clock;
 import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.utr.MatchResult.SetResult;
 
@@ -23,11 +22,11 @@ public class UTRCalculator {
     
     private static final int RELEVANT_MATCH_COUNT = 14;
     
-    public static UTRDetails calculatePlayersUTR(Player player, List<BookedMatch> allBookedMatches, LocalDate date) {
+    public static UTRDetails calculatePlayersUTR(Player player, List<BookedMatch> allBookedMatches, LocalDate referenceDate) {
         
         List<BookedMatch> allRelevantMatchesForPlayer = allBookedMatches.stream()
                 .filter(match -> match.playedMatch().isPlayed())
-                .filter(match -> match.playedMatch().date().isBefore(date))
+                .filter(match -> match.playedMatch().date().isBefore(referenceDate))
                 .filter(match -> match.hasPlayed(player))
                 .filter(match -> match.utrOfMatchFor(player).isDefinded())
                 .sorted(comparing((BookedMatch m) -> m.playedMatch().date()).reversed())
@@ -44,7 +43,7 @@ public class UTRCalculator {
         
         List<Pair<Double, Integer>> utrWithWeights = effectiveMatches.stream()
                 .map(match -> Pair.of(match.utrOfMatchFor(player).value(),
-                                        calculateMatchWeight(match)))
+                                        calculateMatchWeight(match, referenceDate)))
                 .collect(toList());
         
         double weightedAverage = calculatWeightedAverage(utrWithWeights);
@@ -87,14 +86,14 @@ public class UTRCalculator {
         return extendedMatches;
     }
     
-    private static int calculateMatchWeight(BookedMatch match) {
-        int dateWeight = dateWeight(match.playedMatch().date());
+    private static int calculateMatchWeight(BookedMatch match, LocalDate referenceDate) {
+        int dateWeight = dateWeight(match.playedMatch().date(), referenceDate);
         
         return match.playedMatch().matchType().multiplier * dateWeight;
     }
     
-    private static int dateWeight(LocalDate matchDate) {
-        int monthDiff = (int)ChronoUnit.MONTHS.between(matchDate, Clock.today());
+    private static int dateWeight(LocalDate matchDate, LocalDate referenceDate) {
+        int monthDiff = (int)ChronoUnit.MONTHS.between(matchDate, referenceDate);
         return switch (monthDiff) {
             case 0 -> 10;
             case 1 -> 9;
