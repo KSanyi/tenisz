@@ -103,7 +103,7 @@ public class PlayerJdbcRepository implements PlayerRepository {
         }
     }
     
-    private Optional<Player> findPlayer(int playerId) {
+    public Optional<Player> findPlayer(int playerId) {
         String sql = String.format("SELECT * FROM %s WHERE %s = :id", TABLE_PLAYER, COLUMN_ID);
         
         return jdbi.withHandle(handle -> 

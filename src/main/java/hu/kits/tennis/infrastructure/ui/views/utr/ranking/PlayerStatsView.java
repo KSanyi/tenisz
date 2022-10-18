@@ -1,55 +1,64 @@
 package hu.kits.tennis.infrastructure.ui.views.utr.ranking;
 
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import java.lang.invoke.MethodHandles;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.HasDynamicTitle;
+import com.vaadin.flow.router.Route;
 
 import hu.kits.tennis.Main;
-import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.PlayerStats;
-import hu.kits.tennis.domain.utr.UTRService;
-import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
-import hu.kits.tennis.infrastructure.ui.views.utr.MatchesGrid;
+import hu.kits.tennis.domain.utr.PlayerRepository;
+import hu.kits.tennis.infrastructure.ui.MainLayout;
+import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
+import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
+import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
+import hu.kits.tennis.infrastructure.ui.views.View;
 
-class PlayerStatsView extends VerticalLayout {
+@Route(value = "player-stats/:playerId", layout = MainLayout.class)
+public class PlayerStatsView extends SplitViewFrame implements View, BeforeEnterObserver, HasDynamicTitle {
 
-    private final UTRService utrService;
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private final Label nameLabel = UIUtils.createH2Label(null);
-    private final Label matchStatsLabel = new Label(null);
-    private final Label gameStatsLabel = new Label(null);
+    private final PlayerStatsComponent playerStatsComponent = new PlayerStatsComponent();
     
-    private final MatchesGrid matchesGrid;
+    private final PlayerRepository playerRepository = Main.resourceFactory.getPlayerRepository();
+    private Player player;
     
-    public PlayerStatsView() {
-        utrService = Main.resourceFactory.getUTRService();
-        matchesGrid = new MatchesGrid();
-        matchesGrid.setSizeFull();
-        add(nameLabel, matchStatsLabel, gameStatsLabel, matchesGrid);
-        
-        setPadding(false);
-        setSizeFull();
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+        playerStatsComponent.setPadding(true);
+        setViewContent(playerStatsComponent);
     }
     
-    void setPlayer(Player player) {
-        PlayerStats playerStats = utrService.loadPlayerStats(player);
-        setPlayerStats(playerStats);
+    public void refresh() {
+        player = playerRepository.findPlayer(player.id()).get();
+        playerStatsComponent.setPlayer(player);
     }
 
-    private void setPlayerStats(PlayerStats playerStats) {
-        
-        nameLabel.setText(playerStats.player().name() + " UTR: " + playerStats.utrDetails().utr());
-        
-        matchStatsLabel.setText(String.format("%d mérkőzés: %d győzelem (%s) %d vereség (%s)", playerStats.numberOfMatches(),
-                playerStats.numberOfWins(), Formatters.formatPercent(playerStats.winPercentage()),
-                playerStats.numberOfLosses(), Formatters.formatPercent(playerStats.lossPercentage())));
-        
-        gameStatsLabel.setText(String.format("%d game: %d nyert (%s) %d elvesztett (%s)", playerStats.numberOfGames(),
-                playerStats.numberOfGamesWon(), Formatters.formatPercent(playerStats.gamesWinPercentage()),
-                playerStats.numberOfGamesLost(), Formatters.formatPercent(playerStats.gamesLossPercentage())));
-        
-        matchesGrid.setItems(playerStats.matches());
-        matchesGrid.setBestWorstAndUTRRelevantMatches(playerStats.bestUTRMatch().orElse(null), playerStats.worstUTRMatch().orElse(null), playerStats.utrDetails().relevantMatches());
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        try {
+            int playerId = event.getRouteParameters().get("playerId").map(Integer::parseInt).orElse(0);
+            Optional<Player> player = playerRepository.findPlayer(playerId);
+            this.player = player.get();
+            playerStatsComponent.setPlayer(player.get());
+            VaadinUtil.logUserAction(logger, "Looking for {}'s stats view", this.player.name());
+        } catch(Exception ex) {
+            KITSNotification.showError("Hibás azonosító az url-ben");
+        }
+    }
+
+    @Override
+    public String getPageTitle() {
+        return player.name() + " statisztikái";
     }
     
 }

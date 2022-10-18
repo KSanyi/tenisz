@@ -24,13 +24,14 @@ public class VaadinUtil {
     
     private static final AtomicInteger ANONYMUS_USER_COUNT = new AtomicInteger(1);
     
-    public static final int MOBILE_BREAKPOINT = 1024;
+    public static final int MOBILE_BREAKPOINT = 500;
+    public static final int SMALL_SCREEN_BREAKPOINT = 1200;
     
     private static final String USER_KEY = "USER_KEY";
     
     public static UserData getUser() {
-        VaadinSession vadinSession = VaadinSession.getCurrent();
-        if(vadinSession != null) {
+        VaadinSession vaadinSession = VaadinSession.getCurrent();
+        if(vaadinSession != null) {
             UserData user = (UserData)VaadinSession.getCurrent().getAttribute(USER_KEY);
             if(user != null) {
                 return user;

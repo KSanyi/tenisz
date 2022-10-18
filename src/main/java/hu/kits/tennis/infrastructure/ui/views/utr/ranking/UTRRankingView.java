@@ -10,7 +10,6 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -36,7 +35,7 @@ import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 import hu.kits.tennis.infrastructure.ui.views.View;
 
 @Route(value = "utr-ranking", layout = MainLayout.class)
-@PageTitle("Player UTR")
+@PageTitle("UTR Rangsor")
 @AllowedRoles({Role.ADMIN})
 public class UTRRankingView extends SplitViewFrame implements View {
 
@@ -46,7 +45,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
     private final Button copyButton = UIUtils.createSmallButton(VaadinIcon.COPY);
     private final ClipboardHelper clipboardHelper = new ClipboardHelper("", copyButton);
     private final UTRRankingGrid utrRankingGrid = new UTRRankingGrid();
-    private final PlayerStatsView playerStatsView = new PlayerStatsView();
+    private final PlayerStatsComponent playerStatsView = new PlayerStatsComponent();
     
     public UTRRankingView() {
         
@@ -82,12 +81,6 @@ public class UTRRankingView extends SplitViewFrame implements View {
             VaadinUtil.logUserAction(logger, "Looking for {}'s stats", player.name());
             if(playerStatsView.isVisible()) {
                 playerStatsView.setPlayer(player);
-            } else {
-                PlayerStatsView playerStatsViewForDialog = new PlayerStatsView();
-                playerStatsViewForDialog.setPlayer(player);
-                Dialog dialog = new Dialog(playerStatsViewForDialog);
-                dialog.setSizeFull();
-                dialog.open();
             }
         }
     }
@@ -109,11 +102,11 @@ public class UTRRankingView extends SplitViewFrame implements View {
         column1.setPadding(false);
         column1.setSpacing(false);
         column1.setSizeUndefined();
-        column1.setSizeFull();
         column1.setHorizontalComponentAlignment(Alignment.CENTER, header);
         
         HorizontalLayout content = new HorizontalLayout(column1, playerStatsView);
-        column1.setMaxWidth("460px");
+        content.setFlexGrow(1, column1);
+        content.setFlexGrow(2, playerStatsView);
         content.setSizeFull();
         content.setPadding(true);
         
@@ -127,8 +120,8 @@ public class UTRRankingView extends SplitViewFrame implements View {
     }
     
     private void updateVisibleParts(int width) {
-        boolean mobile = width < VaadinUtil.MOBILE_BREAKPOINT;
-        playerStatsView.setVisible(!mobile);
+        boolean smallScreen = width < VaadinUtil.SMALL_SCREEN_BREAKPOINT;
+        playerStatsView.setVisible(!smallScreen);
     }
     
 }

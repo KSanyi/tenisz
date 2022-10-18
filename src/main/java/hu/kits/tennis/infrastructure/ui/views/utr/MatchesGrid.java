@@ -17,6 +17,9 @@ import hu.kits.tennis.domain.utr.MatchInfo;
 @CssImport(themeFor = "vaadin-grid", value = "./styles/match-grid.css")
 public class MatchesGrid extends Grid<MatchInfo> {
  
+    private final Column<MatchInfo> player1UtrColumn;
+    private final Column<MatchInfo> player2UtrColumn;
+    
     public MatchesGrid() {
         
         addColumn(match -> match.date() != null ? Formatters.formatDate(match.date()) : "?")
@@ -62,13 +65,13 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(1);
         
-        addColumn(match -> match.matchUTRForPlayer1())
+        player1UtrColumn = addColumn(match -> match.matchUTRForPlayer1())
             .setHeader("Meccs UTR 1")
             .setTextAlign(ColumnTextAlign.CENTER)
             .setAutoWidth(true)
             .setFlexGrow(0);
         
-        addColumn(match -> match.matchUTRForPlayer2())
+        player2UtrColumn = addColumn(match -> match.matchUTRForPlayer2())
             .setHeader("Meccs UTR 2")
             .setTextAlign(ColumnTextAlign.CENTER)
             .setAutoWidth(true)
@@ -91,6 +94,11 @@ public class MatchesGrid extends Grid<MatchInfo> {
                 return "";
             }
         });
+    }
+    
+    public void setPlayer2UtrColumnVisible(boolean visible) {
+        player2UtrColumn.setVisible(visible);
+        player1UtrColumn.setHeader("Meccs UTR" + (visible ? " 1" :""));
     }
     
 }
