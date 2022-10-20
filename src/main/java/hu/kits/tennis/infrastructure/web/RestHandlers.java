@@ -1,5 +1,6 @@
 package hu.kits.tennis.infrastructure.web;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,11 +47,23 @@ class RestHandlers {
         
         String content = playersWithUTR.stream()
                 .sorted((p1, p2) -> StringUtil.HUN_COLLATOR.compare(p1.player().name(), p2.player().name()))
-                .map(p -> p.player().id() + ";" + p.player().name() + ";" + p.utr().toString().replace(".", ","))
+                .map(playerWithUtr -> crateCsvRow(playerWithUtr))
                 .collect(Collectors.joining("\n"));
         
         context.result(content);
         context.contentType(ContentType.TEXT_CSV);
+    }
+    
+    private static String crateCsvRow(PlayerWithUTR playerWithUtr) {
+        return createCsvRow(String.valueOf(playerWithUtr.player().id()), 
+                playerWithUtr.player().name(), 
+                playerWithUtr.utr().toString().replace(".", ","), 
+                playerWithUtr.player().contact().email(), 
+                playerWithUtr.player().contact().phone());
+    }
+    
+    private static String createCsvRow(String ... values) {
+        return Arrays.stream(values).collect(Collectors.joining(";"));
     }
     
     void redirectToVaadin(Context context) {

@@ -13,14 +13,19 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.DoubleRangeValidator;
+import com.vaadin.flow.data.validator.EmailValidator;
+import com.vaadin.flow.data.validator.RegexpValidator;
 
 import hu.kits.tennis.common.KITSException;
 import hu.kits.tennis.domain.tournament.Organizer;
 import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.domain.utr.Player.Contact;
 import hu.kits.tennis.domain.utr.PlayersService;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
@@ -38,6 +43,9 @@ class PlayerDetailsDrawer extends DetailsDrawer {
     
     private final TextField idField = new TextField("Azonosító");
     private final TextField nameField = new TextField("Név");
+    private final EmailField emailField = new EmailField ("Email");
+    private final TextField phoneField = new TextField("Telefonszám");
+    private final TextArea commentField = new TextArea("Megjegyzés");
     private final NumberField startingUTRField = new NumberField("Induló UTR");
     private final Checkbox kvtkCheckBox = new Checkbox("KVTK tag");
     private final Binder<PlayerDataBean> binder = new Binder<>(PlayerDataBean.class);
@@ -80,6 +88,18 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         binder.forField(nameField)
             .asRequired("Kötelező mező")
             .bind("name");
+        
+        binder.forField(emailField)
+            .withValidator(new EmailValidator("Hibás email cím", true))
+            .bind("email");
+        
+        binder.forField(phoneField)
+            .withValidator(new RegexpValidator("Hibás telefonszám: a helyes formátum: +36/70-123-1234, +39/12-1234-1234", 
+                    "\\+\\d{2}/\\d{2}\\-\\d{3,4}-\\d{4}"))
+            .bind("phone");
+        
+        binder.forField(commentField)
+            .bind("comment");
         
         binder.forField(startingUTRField)
             .withValidator(new DoubleRangeValidator("1 es 16 között", 1., 16.))
@@ -136,7 +156,10 @@ class PlayerDetailsDrawer extends DetailsDrawer {
     
     private Component createContent() {
         VerticalLayout fieldsLayout = new VerticalLayout(idField, 
-                nameField, 
+                nameField,
+                emailField,
+                phoneField,
+                commentField,
                 startingUTRField,
                 kvtkCheckBox,
                 new Hr(),
@@ -147,6 +170,8 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         
         idField.setWidth("300px");
         nameField.setWidth("300px");
+        emailField.setWidth("300px");
+        phoneField.setWidth("300px");
         startingUTRField.setWidth("120px");
         
         startingUTRField.setMin(1);
@@ -184,18 +209,24 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         
         private String playerId;
         private String name;
+        private String email;
+        private String phone;
+        private String comment;
         private Double startingUTR;
         private Set<Organizer> organisations;
         
         public PlayerDataBean(Player player) {
             this.playerId = player.id().toString();
             this.name = player.name();
+            this.email = player.contact().email();
+            this.phone = player.contact().phone();
+            this.comment = player.contact().comment();
             this.startingUTR = player.startingUTR().value();
             this.organisations = new HashSet<>(player.organisations());
         }
         
         public Player toPlayer() {
-            return new Player(!playerId.isEmpty() ? Integer.parseInt(playerId) : null, name, UTR.of(startingUTR), organisations);
+            return new Player(!playerId.isEmpty() ? Integer.parseInt(playerId) : null, name, new Contact(email, phone, comment), UTR.of(startingUTR), organisations);
         }
 
         public PlayerDataBean() {
@@ -222,6 +253,30 @@ class PlayerDetailsDrawer extends DetailsDrawer {
             this.name = name;
         }
         
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
+        public String getComment() {
+            return comment;
+        }
+
+        public void setComment(String comment) {
+            this.comment = comment;
+        }
+
         public Double getStartingUTR() {
             return startingUTR;
         }

@@ -34,6 +34,7 @@ import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.MatchResult.SetResult;
 import hu.kits.tennis.domain.utr.MatchService;
 import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.domain.utr.Player.Contact;
 import hu.kits.tennis.domain.utr.PlayerRepository;
 import hu.kits.tennis.domain.utr.Players;
 import hu.kits.tennis.domain.utr.UTR;
@@ -123,8 +124,8 @@ public class KVTKMeccsImporter {
             
             Tournament tournament = findOrCreateTournament(date, name);
             
-            Player player1 = new Player(playerOneId, "", null, Set.of());//findOrCreatePlayer(playerOne);
-            Player player2 = new Player(playerTwoId, "", null, Set.of());//
+            Player player1 = new Player(playerOneId, "", null, null, Set.of());//findOrCreatePlayer(playerOne);
+            Player player2 = new Player(playerTwoId, "", null, null, Set.of());//
                 
             List<SetResult> setResults = new ArrayList<>();
             setResults.add(new SetResult(score1_1, score2_1));
@@ -197,9 +198,31 @@ public class KVTKMeccsImporter {
         List<String> lines = Files.readAllLines(Paths.get("c:\\Users\\kocso\\Desktop\\Tenisz\\KVTK\\jatekosok.txt"));
         
         for(String line : lines) {
-            playerRepository.saveNewPlayer(new Player(null, line, UTR.UNDEFINED, Set.of(Organizer.KVTK)));    
+            playerRepository.saveNewPlayer(new Player(null, line, null, UTR.UNDEFINED, Set.of(Organizer.KVTK)));    
         }
         
+        
+    }
+
+    public void importContactData() throws IOException {
+        List<String> lines = Files.readAllLines(Paths.get("c:\\Users\\kocso\\Desktop\\Tenisz\\KVTK\\contact.txt"));
+        
+        for(String line : lines) {
+            String[] parts = line.split("\t");
+            if(parts.length == 3) {
+                int id = Integer.parseInt(parts[0]);
+                String phone = parts[1];
+                String email = parts[2];
+                Optional<Player> p = playerRepository.findPlayer(id);
+                if(p.isEmpty()) {
+                    System.err.println("Cant find player with id " + id);
+                } else {
+                    Player updatedPlayer = p.get();
+                    updatedPlayer = new Player(id, updatedPlayer.name(), new Contact(email, phone, ""), updatedPlayer.startingUTR(), updatedPlayer.organisations());
+                    playerRepository.updatePlayer(updatedPlayer);
+                }  
+            }
+        }
         
     }
 

@@ -19,6 +19,7 @@ import org.jdbi.v3.core.Jdbi;
 import hu.kits.tennis.common.KITSException;
 import hu.kits.tennis.domain.tournament.Organizer;
 import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.domain.utr.Player.Contact;
 import hu.kits.tennis.domain.utr.PlayerRepository;
 import hu.kits.tennis.domain.utr.Players;
 import hu.kits.tennis.domain.utr.UTR;
@@ -28,6 +29,9 @@ public class PlayerJdbcRepository implements PlayerRepository {
     private static final String TABLE_PLAYER = "PLAYER";
     private static final String COLUMN_ID = "ID";
     private static final String COLUMN_NAME = "NAME";
+    private static final String COLUMN_EMAIL = "EMAIL";
+    private static final String COLUMN_PHONE = "PHONE";
+    private static final String COLUMN_COMMENT = "COMMENT";
     private static final String COLUMN_UTR_GROUP = "UTR_GROUP";
     private static final String COLUMN_ORGS = "ORGS";
     
@@ -53,6 +57,7 @@ public class PlayerJdbcRepository implements PlayerRepository {
         return new Player(
                 rs.getInt(COLUMN_ID),
                 rs.getString(COLUMN_NAME),
+                new Contact(rs.getString(COLUMN_EMAIL), rs.getString(COLUMN_PHONE), rs.getString(COLUMN_COMMENT)),
                 JdbiUtil.mapToOptionalDouble(rs, COLUMN_UTR_GROUP).map(UTR::of).orElse(UTR.UNDEFINED),
                 mapToOrganisations(rs.getString(COLUMN_ORGS)));
     }
@@ -62,7 +67,7 @@ public class PlayerJdbcRepository implements PlayerRepository {
         
         Map<String, Object> map = createMap(player);
         int playerId = jdbi.withHandle(handle -> JdbiUtil.createInsertStatement(handle, TABLE_PLAYER, map).executeAndReturnGeneratedKeys(COLUMN_ID).mapTo(Integer.class).one());
-        return new Player(playerId, player.name(), player.startingUTR(), player.organisations());
+        return new Player(playerId, player.name(), player.contact(), player.startingUTR(), player.organisations());
     }
     
     private static Map<String, Object> createMap(Player player) {
@@ -70,6 +75,9 @@ public class PlayerJdbcRepository implements PlayerRepository {
         Map<String, Object> valuesMap = new HashMap<>();
         valuesMap.put(COLUMN_ID, player.id());
         valuesMap.put(COLUMN_NAME, player.name());
+        valuesMap.put(COLUMN_EMAIL, player.contact().email());
+        valuesMap.put(COLUMN_PHONE, player.contact().phone());
+        valuesMap.put(COLUMN_COMMENT, player.contact().comment());
         valuesMap.put(COLUMN_UTR_GROUP, player.startingUTR().value());
         valuesMap.put(COLUMN_ORGS, mapToOrganisationsString(player.organisations()));
         

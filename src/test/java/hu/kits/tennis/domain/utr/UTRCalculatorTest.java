@@ -8,12 +8,14 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import hu.kits.tennis.domain.utr.Player.Contact;
+
 public class UTRCalculatorTest {
 
     private static final double EPSILON = 0.006;
     
-    private final Player player1 = new Player(1, "Player1", UTR.of(8.), Set.of());
-    private final Player player2 = new Player(2, "Player2", UTR.of(8.), Set.of());
+    private final Player player1 = new Player(1, "Player1", Contact.EMPTY, UTR.of(8.), Set.of());
+    private final Player player2 = new Player(2, "Player2", Contact.EMPTY, UTR.of(8.), Set.of());
     private final LocalDate date = date("2022-01-01");
     
     

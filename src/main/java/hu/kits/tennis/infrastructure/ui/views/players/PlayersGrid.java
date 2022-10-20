@@ -54,6 +54,21 @@ class PlayersGrid extends Grid<Player> {
             .setSortable(true)
             .setFlexGrow(3);
         
+        addColumn(p -> p.contact().email())
+            .setHeader("Email")
+            .setSortable(true)
+            .setFlexGrow(2);
+        
+        addColumn(p -> p.contact().phone())
+            .setHeader("Telefonszám")
+            .setSortable(true)
+            .setFlexGrow(2);
+        
+        addColumn(p -> p.contact().comment())
+            .setHeader("Megjegyzés")
+            .setSortable(true)
+            .setFlexGrow(2);
+        
         addColumn(Player::startingUTR)
             .setHeader("Induló UTR")
             .setSortable(true)

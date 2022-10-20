@@ -29,6 +29,7 @@ import hu.kits.tennis.domain.utr.MatchInfo;
 import hu.kits.tennis.domain.utr.MatchRepository;
 import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.MatchResult.SetResult;
+import hu.kits.tennis.domain.utr.Player.Contact;
 import hu.kits.tennis.domain.utr.MatchService;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerRepository;
@@ -152,7 +153,7 @@ public class MATKMeccsImporter {
             String playerName = parts[1];
             double utrGroup = Double.parseDouble(parts[2]);
             
-            playerRepository.saveNewPlayer(new Player(0, playerName, UTR.of(utrGroup), Set.of(Organizer.MATK)));
+            playerRepository.saveNewPlayer(new Player(0, playerName, Contact.EMPTY, UTR.of(utrGroup), Set.of(Organizer.MATK)));
         } catch(Exception ex) {
             System.err.println("Error parsing line " + rowNum + ": " + line);
         }
