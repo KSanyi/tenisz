@@ -99,7 +99,6 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
     }
     
     private void updateVisibleColumns(int width) {
-        System.out.println("width: " + width);
         boolean mobile = width < VaadinUtil.MOBILE_BREAKPOINT;
         boolean smallScreen = width < VaadinUtil.SMALL_SCREEN_BREAKPOINT;
         var columns = getColumns();

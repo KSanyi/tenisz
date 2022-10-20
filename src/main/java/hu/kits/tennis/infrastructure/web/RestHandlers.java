@@ -55,11 +55,12 @@ class RestHandlers {
     }
     
     private static String crateCsvRow(PlayerWithUTR playerWithUtr) {
-        return createCsvRow(String.valueOf(playerWithUtr.player().id()), 
-                playerWithUtr.player().name(), 
-                playerWithUtr.utr().toString().replace(".", ","), 
+        return createCsvRow(
+                playerWithUtr.player().name(),
+                String.valueOf(playerWithUtr.player().id()),
+                playerWithUtr.player().contact().phone(),
                 playerWithUtr.player().contact().email(), 
-                playerWithUtr.player().contact().phone());
+                playerWithUtr.utr().toString().replace(".", ","));
     }
     
     private static String createCsvRow(String ... values) {
