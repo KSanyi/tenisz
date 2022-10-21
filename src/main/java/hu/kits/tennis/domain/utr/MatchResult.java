@@ -52,7 +52,7 @@ public record MatchResult(List<SetResult> setResults) {
     }
     
     private boolean isMatchLongEnough() {
-        return !setResults.isEmpty() && (setResults.get(0).player1Games() >= 5 || setResults.get(0).player2Games() >= 5);
+        return !setResults.isEmpty() && Math.max(setResults.get(0).player1Games(), setResults.get(0).player2Games())  >= 4;
     }
 
     public MatchResult swap() {
@@ -99,7 +99,14 @@ public record MatchResult(List<SetResult> setResults) {
 
     public MatchType matchType() {
         if(setResults.size() == 1) {
-            return setResults.get(0).isSuperTieBreak() ? MatchType.SUPER_TIE_BREAK : MatchType.ONE_SET;
+            SetResult setResult = setResults.get(0);
+            if(setResult.isSuperTieBreak()) {
+                return MatchType.SUPER_TIE_BREAK;
+            } else if(setResult.isFourGamesSet()) {
+                return MatchType.ONE_FOUR_GAMES_SET;
+            } else {
+                return MatchType.ONE_SET;
+            }
         } else if(setResults.size() == 2 || setResults.size() == 3) {
             return MatchType.BEST_OF_THREE;
         } else {
@@ -107,7 +114,6 @@ public record MatchResult(List<SetResult> setResults) {
         }
     }
 
-    
     @Override
     public String toString() {
         return setResults.stream().map(SetResult::toString).collect(joining(" "));
@@ -136,7 +142,11 @@ public record MatchResult(List<SetResult> setResults) {
         }
         
         public boolean isSuperTieBreak() {
-            return player1Score >= 10 || player2Score >= 10;
+            return Math.max(player1Score, player2Score) >= 10;
+        }
+        
+        public boolean isFourGamesSet() {
+            return Math.max(player1Score, player2Score) == 4;
         }
 
         @Override

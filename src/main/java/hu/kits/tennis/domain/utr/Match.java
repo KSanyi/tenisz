@@ -46,10 +46,11 @@ public record Match(Integer id, String tournamentId, Integer tournamentBoardNumb
     
     public static enum MatchType {
         
-        ONE_SET(1),
-        BEST_OF_THREE(2),
+        ONE_SET(3),
+        ONE_FOUR_GAMES_SET(2),
+        BEST_OF_THREE(6),
         SUPER_TIE_BREAK(0),
-        OTHER(2);
+        OTHER(6);
         
         public final int multiplier;
 
