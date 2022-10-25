@@ -4,15 +4,12 @@ import java.lang.invoke.MethodHandles;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vaadin.olli.ClipboardHelper;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -26,7 +23,6 @@ import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
-import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.util.AllowedRoles;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
@@ -42,8 +38,6 @@ public class UTRRankingView extends SplitViewFrame implements View {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     private final TextField filter = new TextField();
-    private final Button copyButton = UIUtils.createSmallButton(VaadinIcon.COPY);
-    private final ClipboardHelper clipboardHelper = new ClipboardHelper("", copyButton);
     private final UTRRankingGrid utrRankingGrid = new UTRRankingGrid();
     private final PlayerStatsComponent playerStatsView = new PlayerStatsComponent();
     
@@ -52,12 +46,6 @@ public class UTRRankingView extends SplitViewFrame implements View {
         filter.setPlaceholder("Játékos szűrő");
         filter.addValueChangeListener(v -> utrRankingGrid.filter(v.getValue()));
         filter.setValueChangeMode(ValueChangeMode.EAGER);
-        
-        UIUtils.setTooltip("UTR lista másolása", copyButton);
-        copyButton.addClickListener(click -> {
-            KITSNotification.showInfo("A táblázat a vágólapra másolva");
-            VaadinUtil.logUserAction(logger, "UTR list copied into clipboard");
-        });
     }
     
     @Override
@@ -96,7 +84,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
         UIUtils.setTooltip("UTR infó", helpIcon);
         helpIcon.setColor("#0C6CE9");
         helpIcon.addClickListener(click -> UTRInfoDialog.openDialog());
-        HorizontalLayout header = new HorizontalLayout(filter, helpIcon, clipboardHelper);
+        HorizontalLayout header = new HorizontalLayout(filter, helpIcon);
         
         VerticalLayout column1 = new VerticalLayout(header, utrRankingGrid);
         column1.setPadding(false);
@@ -114,9 +102,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
     }
     
     public void refresh() {
-        copyButton.setVisible(VaadinUtil.getUser().role() == Role.ADMIN);
         utrRankingGrid.refresh();
-        clipboardHelper.setContent(utrRankingGrid.createTableInCopyableFormat());
     }
     
     private void updateVisibleParts(int width) {
