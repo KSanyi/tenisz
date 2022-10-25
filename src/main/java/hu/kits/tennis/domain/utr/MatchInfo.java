@@ -21,8 +21,7 @@ public record MatchInfo(Integer id,
         return StringUtil.cleanNameString(player1().name()).contains(filterPart) ||
                StringUtil.cleanNameString(player2().name()).contains(filterPart) ||
                StringUtil.cleanNameString(tournamentInfo.name()).contains(filterPart) ||
-               StringUtil.cleanNameString(tournamentInfo.venue()).contains(filterPart) ||
-               date().toString().contains(filterPart);
+               StringUtil.cleanNameString(tournamentInfo.venue()).contains(filterPart);
     }
     
 }
