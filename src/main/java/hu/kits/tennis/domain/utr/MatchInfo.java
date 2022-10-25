@@ -14,7 +14,8 @@ public record MatchInfo(Integer id,
         UTR player2UTR,
         MatchResult result,
         UTR matchUTRForPlayer1,
-        UTR matchUTRForPlayer2) {
+        UTR matchUTRForPlayer2,
+        boolean isUpset) {
 
     public boolean matches(String filterPart) {
         return StringUtil.cleanNameString(player1().name()).contains(filterPart) ||
@@ -23,5 +24,5 @@ public record MatchInfo(Integer id,
                StringUtil.cleanNameString(tournamentInfo.venue()).contains(filterPart) ||
                date().toString().contains(filterPart);
     }
-
+    
 }

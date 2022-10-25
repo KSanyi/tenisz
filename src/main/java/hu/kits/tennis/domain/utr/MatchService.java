@@ -57,7 +57,8 @@ public class MatchService {
                 bookedMatch.player2UTR(), 
                 bookedMatch.playedMatch().result(), 
                 bookedMatch.matchUTRForPlayer1(), 
-                bookedMatch.matchUTRForPlayer2());
+                bookedMatch.matchUTRForPlayer2(),
+                bookedMatch.isUpset());
     }
 
     public List<MatchInfo> loadAllMatches() {

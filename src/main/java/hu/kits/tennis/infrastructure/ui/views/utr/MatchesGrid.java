@@ -3,16 +3,26 @@ package hu.kits.tennis.infrastructure.ui.views.utr;
 import java.util.Collection;
 import java.util.List;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 
 import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.MatchInfo;
+import hu.kits.tennis.domain.utr.MatchResult;
+import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
 @CssImport(themeFor = "vaadin-grid", value = "./styles/match-grid.css")
 public class MatchesGrid extends Grid<MatchInfo> {
@@ -59,7 +69,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(3);
         
-        addColumn(match -> match.result())
+        addComponentColumn(this::matchResult)
             .setClassNameGenerator(match -> "bold")
             .setHeader("Eredmény")
             .setTextAlign(ColumnTextAlign.CENTER)
@@ -94,6 +104,28 @@ public class MatchesGrid extends Grid<MatchInfo> {
                 return "";
             }
         });
+    }
+    
+    private Component matchResult(MatchInfo matchInfo) {
+        MatchResult result = matchInfo.result();
+        if(result == null) {
+            return new Span();
+        } else {
+            Label label = new Label(matchInfo.result().toString());
+            HorizontalLayout layout = new HorizontalLayout(label);
+            layout.setSpacing(false);
+            layout.setAlignItems(Alignment.CENTER);
+            layout.setJustifyContentMode(JustifyContentMode.CENTER);
+            layout.setWidthFull();
+            if(matchInfo.isUpset()) {
+                Icon icon = VaadinIcon.EXCLAMATION.create();
+                icon.setSize("15px");
+                UIUtils.setTooltip("Meglepetés", layout);
+                layout.add(icon);
+                label.setText(label.getText());
+            }
+            return layout;
+        }
     }
     
     public void setPlayer2UtrColumnVisible(boolean visible) {
