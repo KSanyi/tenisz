@@ -13,14 +13,16 @@ public class UserData {
     private final String phone;
     private final String email;
     private final Status status;
+    private final int playerId;
     
-    public UserData(String userId, String name, Role role, String phone, String email, Status status) {
+    public UserData(String userId, String name, Role role, String phone, String email, Status status, int playerId) {
         this.userId = userId;
         this.name = name;
         this.role = role;
         this.phone = phone;
         this.email = email;
         this.status = status;
+        this.playerId = playerId;
     }
 
     public boolean isNew() {
@@ -32,11 +34,11 @@ public class UserData {
     }
     
     public static UserData unknown(String userId) {
-        return new UserData(userId, userId, Role.MEMBER, "???", "???", Status.INACTIVE);
+        return new UserData(userId, userId, Role.MEMBER, "???", "???", Status.INACTIVE, 0);
     }
 
     public static UserData createNew() {
-        return new UserData("", "", Role.MEMBER, "", "", Status.ACTIVE);
+        return new UserData("", "", Role.MEMBER, "", "", Status.ACTIVE, 0);
     }
     
     public String userId() {
@@ -61,6 +63,10 @@ public class UserData {
 
     public Status status() {
         return status;
+    }
+    
+    public int playerId() {
+        return playerId;
     }
     
     public String initials() {
@@ -90,7 +96,7 @@ public class UserData {
         return name + "(" + userId + ")";
     }
     
-    public static final UserData ANONYMUS = new UserData("ANONYMUS", "ANONYMUS", Role.ANONYMUS, "", "", Status.ANONYMUS);
+    public static final UserData ANONYMUS = new UserData("ANONYMUS", "ANONYMUS", Role.ANONYMUS, "", "", Status.ANONYMUS, 0);
 
     public static enum Status {
         REGISTERED("Regisztrált", "Még az adminnak jóvá kell hagyni a regisztrációt!"),
@@ -116,7 +122,7 @@ public class UserData {
     }
 
     public static UserData createAnonymus(int id) {
-        return new UserData("ANONYMUS_" + id, "ANONYMUS_" + id, Role.ANONYMUS, "", "", Status.ANONYMUS);
+        return new UserData("ANONYMUS_" + id, "ANONYMUS_" + id, Role.ANONYMUS, "", "", Status.ANONYMUS, 0);
     }
 
 }

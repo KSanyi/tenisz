@@ -67,7 +67,9 @@ public record MatchResult(List<SetResult> setResults) {
     }
     
     public boolean isPlayer2Winner() {
-        return !isPlayer1Winner();
+        int numberOfSets = setResults.size();
+        int setsWon = (int)setResults.stream().filter(SetResult::isPlayer2Winner).count();
+        return setsWon > numberOfSets / 2;
     }
     
     public static MatchResult of(int ... gamesInSets) {

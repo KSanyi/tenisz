@@ -43,8 +43,8 @@ public class TournamentApplicationTest {
     @BeforeEach
     private void init() throws Exception {
         DataSource dataSource = InMemoryDataSourceFactory.createDataSource(
-                "INSERT INTO USER VALUES('ksanyi', 'PWD', 'Kócsó Sanyi', 'ADMIN', '06703699209', 'kocso.sandor.gabor@gmail.com', 'ACTIVE')",
-                "INSERT INTO USER VALUES('csányika', 'PWD', 'Csányi Zsolt', 'MEMBER', '', 'csanyika@xxx.hu', 'ACTIVE')");
+                "INSERT INTO USER VALUES('ksanyi', 'PWD', 'Kócsó Sanyi', 'ADMIN', '06703699209', 'kocso.sandor.gabor@gmail.com', 'ACTIVE', 0)",
+                "INSERT INTO USER VALUES('csányika', 'PWD', 'Csányi Zsolt', 'MEMBER', '', 'csanyika@xxx.hu', 'ACTIVE', 0)");
         
         ResourceFactory resourceFactory = new ResourceFactory(dataSource, spyEmailSender);
         tournamentService = resourceFactory.getTournamentService();

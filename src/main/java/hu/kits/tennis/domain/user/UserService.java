@@ -56,7 +56,8 @@ public class UserService {
                 Role.MEMBER, 
                 userRegistrationRequest.phone(), 
                 userRegistrationRequest.email(), 
-                Status.REGISTERED);
+                Status.REGISTERED,
+                0);
         
         logger.info("Registering new user: {}", userData);
         

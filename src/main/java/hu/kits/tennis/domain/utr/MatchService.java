@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toMap;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
@@ -96,6 +97,15 @@ public class MatchService {
                 .collect(toList());
         
         return matchInfos;
+    }
+
+    // TODO
+    public Optional<Match> findNextMatch(Player player) {
+        return matchRepository.loadAllMatches(player).stream()
+            .filter(m -> !m.isPlayed())
+            .filter(m -> m.arePlayersSet())
+            .filter(m -> !m.hasPlayer(Player.BYE))
+            .findAny();
     }
 
 }

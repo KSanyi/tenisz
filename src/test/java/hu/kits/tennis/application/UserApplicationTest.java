@@ -36,8 +36,8 @@ public class UserApplicationTest {
     @BeforeEach
     private void init() throws Exception {
         DataSource dataSource = InMemoryDataSourceFactory.createDataSource(
-                "INSERT INTO USER VALUES('ksanyi', 'PWD', 'Kócsó Sanyi', 'ADMIN', '06703699209', 'kocso.sandor.gabor@gmail.com', 'ACTIVE')",
-                "INSERT INTO USER VALUES('csányika', 'PWD', 'Csányi Zsolt', 'MEMBER', '', 'csanyika@xxx.hu', 'ACTIVE')");
+                "INSERT INTO USER VALUES('ksanyi', 'PWD', 'Kócsó Sanyi', 'ADMIN', '06703699209', 'kocso.sandor.gabor@gmail.com', 'ACTIVE', 1)",
+                "INSERT INTO USER VALUES('csányika', 'PWD', 'Csányi Zsolt', 'MEMBER', '', 'csanyika@xxx.hu', 'ACTIVE', 0)");
         
         ResourceFactory resourceFactory = new ResourceFactory(dataSource, spyEmailSender);
         userService = resourceFactory.getUserService();
@@ -55,6 +55,7 @@ public class UserApplicationTest {
         assertEquals("06703699209", user.phone());
         assertEquals(Role.ADMIN, user.role());
         assertEquals(Status.ACTIVE, user.status());
+        assertEquals(1, user.playerId());
     }
     
     @Test
@@ -146,7 +147,7 @@ public class UserApplicationTest {
     @Test
     void updateUser() {
         
-        userService.updateUser("csányika", new UserDataUpdateRequest(new UserData("csányika", "Csányi Zsolti", Role.VISITOR, "", "nomail", Status.ACTIVE)));
+        userService.updateUser("csányika", new UserDataUpdateRequest(new UserData("csányika", "Csányi Zsolti", Role.VISITOR, "", "nomail", Status.ACTIVE, 0)));
         
         UserData user = userService.findUser("csányika");
         assertEquals("Csányi Zsolti", user.name());

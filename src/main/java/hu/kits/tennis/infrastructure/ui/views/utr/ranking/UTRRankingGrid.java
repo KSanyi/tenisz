@@ -17,16 +17,12 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
-import hu.kits.tennis.Main;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import hu.kits.tennis.domain.utr.UTR;
-import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
 class UTRRankingGrid extends Grid<PlayerWithUTR> {
-    
-    private final UTRService utrService;
     
     private ListDataProvider<PlayerWithUTR> dataProvider;
     
@@ -34,8 +30,6 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
     private final Column<PlayerWithUTR> linkColumn;
     
     UTRRankingGrid() {
-        
-        utrService = Main.resourceFactory.getUTRService();
         
         mobileColumn = addComponentColumn(this::createMobileComponent);
         mobileColumn.setVisible(false);
@@ -149,8 +143,7 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
         return span;
     }
     
-    void refresh() {
-        List<PlayerWithUTR> entries = utrService.calculateUTRRanking();
+    void setUTRRankingList(List<PlayerWithUTR> entries) {
         dataProvider = new ListDataProvider<>(entries);
         setItems(dataProvider);
     }

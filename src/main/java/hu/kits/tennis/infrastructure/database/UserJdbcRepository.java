@@ -29,6 +29,7 @@ public class UserJdbcRepository implements UserRepository {
     private static final String COLUMN_PHONE = "PHONE";
     private static final String COLUMN_EMAIL = "EMAIL";
     private static final String COLUMN_STATUS = "STATUS";
+    private static final String COLUMN_PLAYER_ID = "PLAYER_ID";
     
     private final Jdbi jdbi;
     
@@ -71,7 +72,8 @@ public class UserJdbcRepository implements UserRepository {
                 Role.valueOf(rs.getString(COLUMN_ROLE)), 
                 rs.getString(COLUMN_PHONE),
                 rs.getString(COLUMN_EMAIL),
-                Status.valueOf(rs.getString(COLUMN_STATUS)));
+                Status.valueOf(rs.getString(COLUMN_STATUS)),
+                rs.getInt(COLUMN_PLAYER_ID));
     }
 
     @Override

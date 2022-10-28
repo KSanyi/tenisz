@@ -13,6 +13,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.kits.tennis.common.Clock;
 import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.utr.MatchResult.SetResult;
 
@@ -139,6 +140,16 @@ public class UTRCalculator {
         logger.info("All UTRs recalculated successfully from {} matches", allPlayedMatches.size());
         
         return recalculatedBookedMatches;
+    }
+    
+    public static UTRForecastResult forecast(PlayerWithUTR player1, PlayerWithUTR player2, List<BookedMatch> allMatches, MatchResult matchResult) {
+        List<BookedMatch> updatedMatches = new ArrayList<>(allMatches);
+        Match newMatch = new Match(0, "", 0, 0, Clock.today(), player1.player(), player2.player(), matchResult);
+        BookedMatch newBookedMatch = createBookedMatch(newMatch, allMatches);
+        updatedMatches.add(newBookedMatch);
+        UTR player1NewUTR = calculatePlayersUTR(player1.player(), updatedMatches, Clock.today().plusDays(1)).utr();
+        UTR player2NewUTR = calculatePlayersUTR(player2.player(), updatedMatches, Clock.today().plusDays(1)).utr();
+        return new UTRForecastResult(newBookedMatch, player1NewUTR, player2NewUTR);
     }
 
 }

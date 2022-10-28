@@ -233,7 +233,7 @@ class UserDetailsDrawer extends DetailsDrawer {
         }
         
         UserData toUserData() {
-            return new UserData(userId, name, role, phone, email, status);
+            return new UserData(userId, name, role, phone, email, status, 0);
         }
         
     }

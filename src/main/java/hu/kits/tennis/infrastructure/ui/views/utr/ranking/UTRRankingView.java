@@ -1,6 +1,7 @@
 package hu.kits.tennis.infrastructure.ui.views.utr.ranking;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
@@ -19,9 +22,11 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import hu.kits.tennis.Main;
 import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
+import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.util.AllowedRoles;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
@@ -29,6 +34,7 @@ import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 import hu.kits.tennis.infrastructure.ui.views.View;
+import hu.kits.tennis.infrastructure.ui.views.utr.forecast.UTRForecastWindow;
 
 @Route(value = "utr-ranking", layout = MainLayout.class)
 @PageTitle("UTR Rangsor")
@@ -37,15 +43,23 @@ public class UTRRankingView extends SplitViewFrame implements View {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
+    private final UTRService utrService = Main.resourceFactory.getUTRService();
+    
     private final TextField filter = new TextField();
     private final UTRRankingGrid utrRankingGrid = new UTRRankingGrid();
     private final PlayerStatsComponent playerStatsView = new PlayerStatsComponent();
+    
+    private final Button utrForecastButton = UIUtils.createButton("UTR előrejelzés", ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
+    
+    private List<PlayerWithUTR> utrRankingList;
     
     public UTRRankingView() {
         
         filter.setPlaceholder("Játékos szűrő");
         filter.addValueChangeListener(v -> utrRankingGrid.filter(v.getValue()));
         filter.setValueChangeMode(ValueChangeMode.EAGER);
+        
+        utrForecastButton.addClickListener(click -> UTRForecastWindow.open(utrRankingList));
     }
     
     @Override
@@ -84,7 +98,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
         UIUtils.setTooltip("UTR infó", helpIcon);
         helpIcon.setColor("#0C6CE9");
         helpIcon.addClickListener(click -> UTRInfoDialog.openDialog());
-        HorizontalLayout header = new HorizontalLayout(filter, helpIcon);
+        HorizontalLayout header = new HorizontalLayout(filter, helpIcon, utrForecastButton);
         
         VerticalLayout column1 = new VerticalLayout(header, utrRankingGrid);
         column1.setPadding(false);
@@ -102,7 +116,8 @@ public class UTRRankingView extends SplitViewFrame implements View {
     }
     
     public void refresh() {
-        utrRankingGrid.refresh();
+        utrRankingList = utrService.calculateUTRRanking();
+        utrRankingGrid.setUTRRankingList(utrRankingList);
     }
     
     private void updateVisibleParts(int width) {
