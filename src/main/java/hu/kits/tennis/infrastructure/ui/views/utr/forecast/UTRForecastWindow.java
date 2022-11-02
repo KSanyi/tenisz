@@ -113,7 +113,7 @@ public class UTRForecastWindow extends Dialog {
             if(nextMatch.isPresent()) {
                 Player player2 = nextMatch.get().player1().equals(player1.get().player()) ? nextMatch.get().player2() : nextMatch.get().player1();
                 PlayerWithUTR player2WithUtr = utrRankingList.stream().filter(p -> p.player().id().equals(player2.id())).findAny().get();
-                player1Combo.setValue(player2WithUtr);
+                player2Combo.setValue(player2WithUtr);
             }
         }
     }
