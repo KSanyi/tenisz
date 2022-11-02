@@ -18,6 +18,9 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationResult;
+import com.vaadin.flow.data.binder.Validator;
+import com.vaadin.flow.data.binder.ValueContext;
 import com.vaadin.flow.data.validator.DoubleRangeValidator;
 import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.data.validator.RegexpValidator;
@@ -94,8 +97,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
             .bind("email");
         
         binder.forField(phoneField)
-            .withValidator(new RegexpValidator("Hibás telefonszám: a helyes formátum: +36/70-123-1234, +39/12-1234-1234", 
-                    "\\+\\d{2}/\\d{2}\\-\\d{3,4}-\\d{4}"))
+            .withValidator(new PhoneValidator())
             .bind("phone");
         
         binder.forField(commentField)
@@ -297,6 +299,18 @@ class PlayerDetailsDrawer extends DetailsDrawer {
             }
         }
 
+    }
+    
+    private static class PhoneValidator implements Validator<String> {
+
+        private final RegexpValidator regexpValidator = new RegexpValidator("Hibás telefonszám: a helyes formátum: +36/70-123-1234, +39/12-1234-1234", 
+                "\\+\\d{2}/\\d{2}\\-\\d{3,4}-\\d{4}");
+        
+        @Override
+        public ValidationResult apply(String value, ValueContext context) {
+            return value.isEmpty() ? ValidationResult.ok() : regexpValidator.apply(value, context);
+        }
+        
     }
     
 }
