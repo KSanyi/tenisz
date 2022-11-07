@@ -43,9 +43,6 @@ public class Main {
         //new KVTKMeccsImporter(resourceFactory).importMatches();
         //new KVTKMeccsImporter(resourceFactory).setupTournaments();
         
-        //new MATKMeccsImporter(resourceFactory).importMatches();
-        //new MATKMeccsImporter(resourceFactory).createTournaments();
-        
         //new TeniszPartnerMeccsImporter(resourceFactory).importMatches();
         //new TeniszPartnerMeccsImporter(resourceFactory).createTournaments();
         //new TeniszPartnerMeccsImporter(resourceFactory).cleanupDuplicates();

@@ -18,8 +18,7 @@ public record MatchResult(List<SetResult> setResults) {
     private double scoreOfPlayer1() {
         int sumPlayer1Games = sumPlayer1Games();
         int sumPlayer2Games = sumPlayer2Games();
-        double closeness = (double)Math.min(sumPlayer1Games, sumPlayer2Games) / Math.max(sumPlayer1Games, sumPlayer2Games);
-        double absoluteScore = 1 - closeness;
+        double absoluteScore = 1 - (double)Math.min(sumPlayer1Games, sumPlayer2Games) / Math.max(sumPlayer1Games, sumPlayer2Games);
         return sumPlayer1Games > sumPlayer2Games ? absoluteScore : -absoluteScore;
     }
     
