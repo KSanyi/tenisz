@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 
+import hu.kits.tennis.application.KVTKMeccsImporter;
 import hu.kits.tennis.application.ResourceFactory;
 import hu.kits.tennis.common.Environment;
 import hu.kits.tennis.domain.email.EmailSender;
@@ -31,7 +32,6 @@ public class Main {
         
         int port = getPort();
         URI dbUri = getDatabaseUri();
-        //URI dbUri = new URI("mysql://bace8362c32290:cf1b3d55@eu-cdbr-west-02.cleardb.net/heroku_5a25f1ea8b513bf?useUnicode=yes&characterEncoding=UTF-8&reconnect=true");
         
         DataSource dataSource = createDataSource(dbUri);
         EmailSender emailSender = createEmailSender(environment);
