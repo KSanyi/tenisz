@@ -46,6 +46,13 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
             .setSortable(true)
             .setFlexGrow(1);
         
+        addColumn(playerWithUTR -> playerWithUTR.numberOfMatches())
+            .setHeader("Meccsek")
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setSortable(true)
+            .setAutoWidth(true)
+            .setFlexGrow(0);
+        
         addColumn(playerWithUTR -> playerWithUTR.utr())
             .setHeader("UTR")
             .setTextAlign(ColumnTextAlign.CENTER)
@@ -104,7 +111,7 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
         linkColumn.setVisible(smallScreen && !mobile);
         
         if(! mobile) {
-            setMinWidth("470px");
+            setMinWidth("560px");
         }
     }
 

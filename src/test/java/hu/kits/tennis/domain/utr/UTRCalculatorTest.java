@@ -105,7 +105,7 @@ public class UTRCalculatorTest {
     
     private void test(List<BookedMatch> matches, double expectedUTR) {
         
-        UTR utr = UTRCalculator.calculatePlayersUTR(player1, matches, date).utr();
+        UTR utr = UTRCalculator.calculatePlayersUTRDetails(player1, matches, date).utr();
         
         assertEquals(expectedUTR, utr.value(), EPSILON);
     }

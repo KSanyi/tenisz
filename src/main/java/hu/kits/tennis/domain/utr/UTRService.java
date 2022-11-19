@@ -38,7 +38,7 @@ public class UTRService {
 
     public UTRDetails calculatePlayersUTR(Player player) {
         List<BookedMatch> matches = matchRepository.loadAllPlayedMatches(player);
-        return UTRCalculator.calculatePlayersUTR(player, matches, Clock.today().plusDays(1));
+        return UTRCalculator.calculatePlayersUTRDetails(player, matches, Clock.today().plusDays(1));
     }
     
     public BookedMatch calculatUTRAndSaveMatch(Match playedMatch) {
@@ -62,18 +62,13 @@ public class UTRService {
                 .toList();
         List<BookedMatch> allKVTKBookedMatches = getAllKVTKMatches();
         
-        LocalDate tomorrow = Clock.today().plusDays(1); 
-        LocalDate oneWeekAgo = Clock.today().minusWeeks(1).plusDays(1);
-        
         List<PlayerWithUTR> ranking = kvtkPlayers.stream()
-                .map(player -> new PlayerWithUTR(player, 0, 
-                        UTRCalculator.calculatePlayersUTR(player, allKVTKBookedMatches, tomorrow).utr(),
-                        UTRCalculator.calculatePlayersUTR(player, allKVTKBookedMatches, oneWeekAgo).utr()))
+                .map(player -> cratePlayerWithUTR(player, allKVTKBookedMatches))
                 .sorted(comparing(PlayerWithUTR::utr).reversed())
                 .collect(toList());
         
         List<PlayerWithUTR> result = ranking.stream()
-                .map(playerWithUTR -> new PlayerWithUTR(playerWithUTR.player(), ranking.indexOf(playerWithUTR)+1, playerWithUTR.utr(),playerWithUTR.utrOneWeekAgo()))
+                .map(playerWithUTR -> new PlayerWithUTR(playerWithUTR.player(), ranking.indexOf(playerWithUTR)+1, playerWithUTR.utr(), playerWithUTR.utrOneWeekAgo(), playerWithUTR.numberOfMatches()))
                 .collect(toList());
         
         logger.info("UTR ranking calculated with {} entries", result.size());
@@ -90,6 +85,18 @@ public class UTRService {
         return matchRepository.loadAllBookedMatches().stream()
             .filter(b -> kvtkTournamentIds.contains(b.playedMatch().tournamentId()))
             .toList();
+    }
+    
+    private static PlayerWithUTR cratePlayerWithUTR(Player player, List<BookedMatch> allKVTKBookedMatches) {
+        
+        LocalDate tomorrow = Clock.today().plusDays(1); 
+        LocalDate oneWeekAgo = Clock.today().minusWeeks(1).plusDays(1);
+        
+        UTRDetails utrDetails = UTRCalculator.calculatePlayersUTRDetails(player, allKVTKBookedMatches, tomorrow);
+        UTRDetails utrDetailsOneWekAgo = UTRCalculator.calculatePlayersUTRDetails(player, allKVTKBookedMatches, oneWeekAgo);
+        
+        return new PlayerWithUTR(player, 0, utrDetails.utr(), utrDetailsOneWekAgo.utr(), utrDetails.numberOfMatches());
+        
     }
     
     public void recalculateAllUTRs(boolean resetUTRGroupsBefore) {

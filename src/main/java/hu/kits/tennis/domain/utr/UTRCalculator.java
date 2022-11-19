@@ -23,18 +23,21 @@ public class UTRCalculator {
     
     private static final int RELEVANT_MATCH_COUNT = 14;
     
-    public static UTRDetails calculatePlayersUTR(Player player, List<BookedMatch> allBookedMatches, LocalDate referenceDate) {
+    public static UTRDetails calculatePlayersUTRDetails(Player player, List<BookedMatch> allBookedMatches, LocalDate referenceDate) {
         
-        List<BookedMatch> allRelevantMatchesForPlayer = allBookedMatches.stream()
+        List<BookedMatch> allPlayedMatchesForPlayer = allBookedMatches.stream()
                 .filter(match -> match.playedMatch().isPlayed())
                 .filter(match -> match.playedMatch().date().isBefore(referenceDate))
                 .filter(match -> match.hasPlayed(player))
+                .collect(toList());
+        
+        List<BookedMatch> allRelevantMatchesForPlayer = allPlayedMatchesForPlayer.stream()
                 .filter(match -> match.utrOfMatchFor(player).isDefinded())
                 .sorted(comparing((BookedMatch m) -> m.playedMatch().date()).reversed())
                 .collect(toList());
         
         if(allRelevantMatchesForPlayer.isEmpty()) {
-            return new UTRDetails(player.startingUTR(), Set.of());
+            return new UTRDetails(player.startingUTR(), Set.of(), allPlayedMatchesForPlayer.size());
         }
         
         List<BookedMatch> lastRelevantMatches = findLastRelevantMatches(allRelevantMatchesForPlayer);
@@ -44,12 +47,12 @@ public class UTRCalculator {
         
         List<Pair<Double, Integer>> utrWithWeights = effectiveMatches.stream()
                 .map(match -> Pair.of(match.utrOfMatchFor(player).value(),
-                                        calculateMatchWeight(match, referenceDate)))
+                                      calculateMatchWeight(match, referenceDate)))
                 .collect(toList());
         
         double weightedAverage = calculatWeightedAverage(utrWithWeights);
         
-        return new UTRDetails(new UTR(weightedAverage), effectiveMatches);
+        return new UTRDetails(new UTR(weightedAverage), effectiveMatches, allPlayedMatchesForPlayer.size());
     }
     
     private static List<BookedMatch> findLastRelevantMatches(List<BookedMatch> allRelevantMatchesForPlayer) {
@@ -109,8 +112,8 @@ public class UTRCalculator {
 
     public static BookedMatch createBookedMatch(Match playedMatch, List<BookedMatch> allPlayedMatches) {
         
-        UTR player1UTR = calculatePlayersUTR(playedMatch.player1(), allPlayedMatches, playedMatch.date()).utr();
-        UTR player2UTR = calculatePlayersUTR(playedMatch.player2(), allPlayedMatches, playedMatch.date()).utr();
+        UTR player1UTR = calculatePlayersUTRDetails(playedMatch.player1(), allPlayedMatches, playedMatch.date()).utr();
+        UTR player2UTR = calculatePlayersUTRDetails(playedMatch.player2(), allPlayedMatches, playedMatch.date()).utr();
         
         boolean arePlayersComparable = player1UTR.comparable(player2UTR);
         
@@ -147,8 +150,8 @@ public class UTRCalculator {
         Match newMatch = new Match(0, "", 0, 0, Clock.today(), player1.player(), player2.player(), matchResult);
         BookedMatch newBookedMatch = createBookedMatch(newMatch, allMatches);
         updatedMatches.add(newBookedMatch);
-        UTR player1NewUTR = calculatePlayersUTR(player1.player(), updatedMatches, Clock.today().plusDays(1)).utr();
-        UTR player2NewUTR = calculatePlayersUTR(player2.player(), updatedMatches, Clock.today().plusDays(1)).utr();
+        UTR player1NewUTR = calculatePlayersUTRDetails(player1.player(), updatedMatches, Clock.today().plusDays(1)).utr();
+        UTR player2NewUTR = calculatePlayersUTRDetails(player2.player(), updatedMatches, Clock.today().plusDays(1)).utr();
         return new UTRForecastResult(newBookedMatch, player1NewUTR, player2NewUTR);
     }
 
