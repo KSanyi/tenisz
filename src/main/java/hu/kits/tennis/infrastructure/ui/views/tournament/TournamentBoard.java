@@ -141,7 +141,7 @@ class TournamentBoard extends Grid<Row> {
         Match finalMatch = board.finalMatch();
         
         if(finalMatch != null && finalMatch.result() != null) {
-            setPlayer(board.numberOfRounds(), 1, 1, new PlayerWithResult(finalMatch.winner(), finalMatch.result()));
+            setPlayer(board.numberOfRounds() + 1, 1, 1, new PlayerWithResult(finalMatch.winner(), finalMatch.result()));
         }
         
         setItems(rows);
