@@ -2,6 +2,7 @@ package hu.kits.tennis.domain.utr;
 
 import java.time.LocalDate;
 
+import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.common.StringUtil;
 import hu.kits.tennis.domain.tournament.TournamentInfo;
 
@@ -21,7 +22,8 @@ public record MatchInfo(Integer id,
         return StringUtil.cleanNameString(player1().name()).contains(filterPart) ||
                StringUtil.cleanNameString(player2().name()).contains(filterPart) ||
                StringUtil.cleanNameString(tournamentInfo.name()).contains(filterPart) ||
-               StringUtil.cleanNameString(tournamentInfo.venue()).contains(filterPart);
+               StringUtil.cleanNameString(tournamentInfo.venue()).contains(filterPart) ||
+               date != null && Formatters.formatDate(date).contains(filterPart);
     }
     
 }
