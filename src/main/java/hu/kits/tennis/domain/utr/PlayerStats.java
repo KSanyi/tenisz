@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import hu.kits.tennis.common.Clock;
+
 public record PlayerStats(Player player,
         List<MatchInfo> matches,
         UTRDetails utrDetails,
@@ -18,6 +20,7 @@ public record PlayerStats(Player player,
         double gamesWinPercentage,
         int numberOfGamesLost,
         double gamesLossPercentage,
+        Optional<UTRWithDate> utrHigh,
         Optional<MatchInfo> bestUTRMatch,
         Optional<MatchInfo> worstUTRMatch
         ) {
@@ -46,6 +49,8 @@ public record PlayerStats(Player player,
                 .filter(match -> match.matchUTRForPlayer1().isDefinded())
                 .min(Comparator.comparing(MatchInfo::matchUTRForPlayer1));
         
+        Optional<UTRWithDate> utrHigh = findUTRHeight(utrDetails.utr(), matchInfos);
+        
         return new PlayerStats(player,
                 matchInfos,
                 utrDetails,
@@ -60,7 +65,20 @@ public record PlayerStats(Player player,
                 gamesWinPercentage, 
                 numberOfGamesLost, 
                 gamesLossPercentage,
+                utrHigh,
                 bestUTRMatch, worstUTRMatch);
+    }
+    
+    private static Optional<UTRWithDate> findUTRHeight(UTR currentUTR, List<MatchInfo> matchInfos) {
+        
+        Optional<UTRWithDate> utrHeight = matchInfos.stream().max(Comparator.comparing(match -> match.player1UTR()))
+                .map(m -> new UTRWithDate(m.player1UTR(), m.date()));
+        
+        if(utrHeight.isPresent() && currentUTR.compareTo(utrHeight.get().utr()) > 0) {
+            return Optional.of(new UTRWithDate(currentUTR, Clock.today()));
+        } else {
+            return utrHeight;
+        }
     }
 
 }
