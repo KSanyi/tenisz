@@ -128,7 +128,7 @@ public class SimpleMatchDialog extends Dialog {
             KITSNotification.showError("Játékosok megadása kötelező");
         } else {
             MatchResult matchResult = matchScoreField.getMatchResult();
-            Match updatedMatch = new Match(null, match.tournamentId(), match.tournamentBoardNumber(), match.tournamentMatchNumber(), datePicker.getValue(), player1Combo.getValue(), player2Combo.getValue(), matchResult);
+            Match updatedMatch = new Match(match.id(), match.tournamentId(), match.tournamentBoardNumber(), match.tournamentMatchNumber(), datePicker.getValue(), player1Combo.getValue(), player2Combo.getValue(), matchResult);
             matchService.saveMatch(updatedMatch);
             matchChangeCallback.run();
             close();

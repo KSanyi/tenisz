@@ -33,6 +33,7 @@ import hu.kits.tennis.domain.tournament.Tournament.Status;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.Match;
+import hu.kits.tennis.domain.utr.MatchInfo;
 import hu.kits.tennis.domain.utr.MatchService;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.Players;
@@ -99,6 +100,8 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             matchesGrid.getColumnByKey("date").setVisible(false);
             matchesGrid.getColumnByKey("tournament").setVisible(false);
             matchesGrid.setSizeFull();
+            
+            matchesGrid.addItemClickListener(e -> openMatchEditor(e.getItem()));
 
             Button createAddMatchButton = createAddMatchButton();
             
@@ -139,6 +142,14 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         return layout;
     }
     
+    private void openMatchEditor(MatchInfo matchInfo) {
+        
+        Players players = new Players(tournament.contestants().stream().map(c -> c.player()).collect(toList()));
+        Match match = matchService.loadMatch(matchInfo.id());
+        
+        new SimpleMatchDialog(match, players, tournament.bestOfNSets(), () -> refresh()).open();
+    }
+
     private Button createAddMatchButton() {
         Button button = new Button("Új meccs");
         button.setIcon(new Icon(VaadinIcon.PLUS));

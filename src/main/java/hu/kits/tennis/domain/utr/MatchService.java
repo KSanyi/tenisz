@@ -107,5 +107,9 @@ public class MatchService {
             .filter(m -> !m.hasPlayer(Player.BYE))
             .findAny();
     }
+    
+    public Match loadMatch(int id) {
+        return matchRepository.loadMatch(id);
+    }
 
 }

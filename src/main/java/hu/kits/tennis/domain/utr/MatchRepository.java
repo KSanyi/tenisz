@@ -6,6 +6,8 @@ import hu.kits.tennis.domain.tournament.TournamentMatches;
 
 public interface MatchRepository {
 
+    Match loadMatch(int id);
+    
     List<BookedMatch> loadAllPlayedMatches(Player player);
     
     List<Match> loadAllMatches(Player player);
