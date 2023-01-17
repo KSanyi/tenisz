@@ -101,7 +101,11 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             matchesGrid.getColumnByKey("tournament").setVisible(false);
             matchesGrid.setSizeFull();
             
-            matchesGrid.addItemClickListener(e -> openMatchEditor(e.getItem()));
+            matchesGrid.addItemClickListener(e -> {
+                if(e.getClickCount() > 1) {
+                    openMatchEditor(e.getItem());
+                }
+            });
 
             Button createAddMatchButton = createAddMatchButton();
             
