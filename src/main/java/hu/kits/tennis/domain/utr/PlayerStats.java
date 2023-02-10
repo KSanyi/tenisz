@@ -22,10 +22,11 @@ public record PlayerStats(Player player,
         double gamesLossPercentage,
         Optional<UTRWithDate> utrHigh,
         Optional<MatchInfo> bestUTRMatch,
-        Optional<MatchInfo> worstUTRMatch
+        Optional<MatchInfo> worstUTRMatch,
+        UTRHistory utrHistory
         ) {
 
-    public static PlayerStats create(Player player, UTRDetails utrDetails, List<MatchInfo> matchInfos) {
+    public static PlayerStats create(Player player, UTRDetails utrDetails, List<MatchInfo> matchInfos, UTRHistory utrHistory) {
         
         int numberOfTournaments = (int)matchInfos.stream().map(match -> match.tournamentInfo().id()).distinct().count();
         int numberOfMatches = matchInfos.size();
@@ -66,7 +67,8 @@ public record PlayerStats(Player player,
                 numberOfGamesLost, 
                 gamesLossPercentage,
                 utrHigh,
-                bestUTRMatch, worstUTRMatch);
+                bestUTRMatch, worstUTRMatch,
+                utrHistory);
     }
     
     private static Optional<UTRWithDate> findUTRHeight(UTR currentUTR, List<MatchInfo> matchInfos) {

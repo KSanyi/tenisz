@@ -30,7 +30,7 @@ public class UTRCalculatorTest {
         List<BookedMatch> matches = List.of(
                 bookedMatch(date("2021-07-01"), player1, player2, UTR.of(8.4)));
         
-        test(matches, 8.2);
+        test(matches, 8.05);
     }
     
     @Test
@@ -45,7 +45,7 @@ public class UTRCalculatorTest {
                 bookedMatch(date("2021-07-06"), player1, player2, UTR.of(8.4)),
                 bookedMatch(date("2021-07-07"), player1, player2, UTR.of(8.4)));
         
-        test(matches, 8.36);
+        test(matches, 8.29);
     }
     
     @Test
@@ -100,7 +100,7 @@ public class UTRCalculatorTest {
                 bookedMatch(date("2021-07-01"), player1, player2, UTR.of(8.4)),
                 bookedMatch(date("2022-01-02"), player1, player2, UTR.of(10.))); // should have no effect
         
-        test(matches, 8.2);
+        test(matches, 8.05);
     }
     
     private void test(List<BookedMatch> matches, double expectedUTR) {

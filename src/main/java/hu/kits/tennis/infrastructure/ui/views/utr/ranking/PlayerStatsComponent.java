@@ -1,5 +1,6 @@
 package hu.kits.tennis.infrastructure.ui.views.utr.ranking;
 
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -21,6 +22,7 @@ class PlayerStatsComponent extends VerticalLayout {
     private final Label utrHighLabel = new Label();
     private final Label matchStatsLabel = new Label();
     private final Label gameStatsLabel = new Label();
+    private final Div utrHistoryChartHolder = new Div();
     
     private final MatchesGrid matchesGrid;
     
@@ -28,9 +30,15 @@ class PlayerStatsComponent extends VerticalLayout {
         utrService = Main.resourceFactory.getUTRService();
         matchesGrid = new MatchesGrid();
         matchesGrid.setSizeFull();
-        HorizontalLayout headerRow = new HorizontalLayout(nameLabel, utrHighLabel);
-        headerRow.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
-        add(headerRow, matchStatsLabel, gameStatsLabel, matchesGrid);
+        HorizontalLayout nameRow = new HorizontalLayout(nameLabel, utrHighLabel);
+        nameRow.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
+        
+        VerticalLayout leftColumn = new VerticalLayout(nameRow, matchStatsLabel, gameStatsLabel);
+        leftColumn.setSpacing(false);
+        leftColumn.setPadding(false);
+        
+        HorizontalLayout headerRow = new HorizontalLayout(leftColumn, utrHistoryChartHolder);
+        add(headerRow, matchesGrid);
         
         setPadding(false);
         setSpacing(false);
@@ -64,6 +72,9 @@ class PlayerStatsComponent extends VerticalLayout {
         matchesGrid.setItems(playerStats.matches());
         matchesGrid.setPlayer2UtrColumnVisible(false);
         matchesGrid.setBestWorstAndUTRRelevantMatches(playerStats.bestUTRMatch().orElse(null), playerStats.worstUTRMatch().orElse(null), playerStats.utrDetails().relevantMatches());
+        
+        utrHistoryChartHolder.removeAll();
+        utrHistoryChartHolder.add(new UTRHistoryChart(playerStats.utrHistory()));
     }
     
 }

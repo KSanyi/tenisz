@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toSet;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,7 @@ import hu.kits.tennis.common.Clock;
 import hu.kits.tennis.domain.tournament.Organizer;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
+import hu.kits.tennis.domain.utr.UTRHistory.UTRHistoryEntry;
 
 public class UTRService {
 
@@ -142,7 +144,25 @@ public class UTRService {
                 .sorted(Comparator.comparing((MatchInfo matchInfo) -> matchInfo.date()).reversed())
                 .collect(toList());
         
-        return PlayerStats.create(player, utrDetails, matchInfos);
+        if(matchInfos.isEmpty()) {
+            return PlayerStats.create(player, utrDetails, matchInfos, UTRHistory.EMPTY);
+        } else {
+            LocalDate firstMatchDate = matchInfos.get(matchInfos.size()-1).date();
+            UTRHistory utrHistory = calculateUTRHistory(player, firstMatchDate);
+            return PlayerStats.create(player, utrDetails, matchInfos, utrHistory);
+        }
+    }
+
+    private UTRHistory calculateUTRHistory(Player player, LocalDate startDate) {
+        
+        List<BookedMatch> matches = matchRepository.loadAllPlayedMatches(player);
+        List<UTRHistoryEntry> historyEntries = new ArrayList<>();
+        for(LocalDate date = startDate; !date.isAfter(Clock.today()); date = date.plusDays(1)) {
+            UTR utr = UTRCalculator.calculatePlayersUTRDetails(player, matches, date).utr();
+            historyEntries.add(new UTRHistoryEntry(date, utr));
+        }
+        
+        return new UTRHistory(historyEntries);
     }
     
 }

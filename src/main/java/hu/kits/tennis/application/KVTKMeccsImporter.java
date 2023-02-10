@@ -76,6 +76,7 @@ public class KVTKMeccsImporter {
         
         List<Match> matches = new ArrayList<>();
         for(int i=0;i<lines.size();i++) {
+
             String line = lines.get(i);
             Match match = processMatchLine(i+1, line);
             logger.info("Match {} parsed: {}", i, match);

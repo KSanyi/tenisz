@@ -49,7 +49,7 @@ public class NaviItem extends ListItem {
         expandCollapse = UIUtils.createButton(VaadinIcon.CARET_UP, ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_TERTIARY);
         
         if (navigationTarget != null) {
-            RouterLink routerLink = new RouterLink(null, navigationTarget);
+            RouterLink routerLink = new RouterLink(navigationTarget);
             routerLink.add(new Span(text));
             routerLink.setClassName(CLASS_NAME + "__link");
             routerLink.setHighlightCondition(HighlightConditions.sameLocation());

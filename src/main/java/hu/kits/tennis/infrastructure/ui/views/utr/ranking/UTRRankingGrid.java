@@ -164,8 +164,9 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
         Label rank = new Label(String.valueOf(playerWithUTR.rank()));
         Anchor name = createAnchor(playerWithUTR.player().id());
         name.setText(playerWithUTR.player().name());
+        Label numberOfMatches = new Label(String.valueOf(playerWithUTR.numberOfMatches()));
         Label utr = new Label(playerWithUTR.utr().toString());
-        HorizontalLayout layout = new HorizontalLayout(rank, name, createUTRChangeComponent(playerWithUTR), utr);
+        HorizontalLayout layout = new HorizontalLayout(rank, name, numberOfMatches, createUTRChangeComponent(playerWithUTR), utr);
         layout.expand(name);
         return layout;
     }
