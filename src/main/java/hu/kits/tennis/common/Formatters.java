@@ -13,6 +13,7 @@ public class Formatters {
     public static final Locale HU_LOCALE = new Locale("HU");
     
     public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+    public static final DateTimeFormatter SHORT_DATE_FORMAT = DateTimeFormatter.ofPattern("yy.MM.dd");
     public static final DateTimeFormatter LONG_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy. MMMM d.", HU_LOCALE);
     public static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
     private static final DecimalFormat PERCENT_FORMAT;
@@ -25,6 +26,10 @@ public class Formatters {
     
     public static String formatDate(LocalDate date) {
         return DATE_FORMAT.format(date);
+    }
+    
+    public static String formatDateShort(LocalDate date) {
+        return SHORT_DATE_FORMAT.format(date);
     }
     
     public static String formatDateLong(LocalDate date) {

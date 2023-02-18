@@ -1,5 +1,6 @@
 package hu.kits.tennis.infrastructure.ui.views.utr.ranking;
 
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -70,11 +71,22 @@ class PlayerStatsComponent extends VerticalLayout {
                 playerStats.numberOfGamesLost(), Formatters.formatPercent(playerStats.gamesLossPercentage())));
         
         matchesGrid.setItems(playerStats.matches());
-        matchesGrid.setPlayer2UtrColumnVisible(false);
+        matchesGrid.hidePlayer2UtrColumn();
         matchesGrid.setBestWorstAndUTRRelevantMatches(playerStats.bestUTRMatch().orElse(null), playerStats.worstUTRMatch().orElse(null), playerStats.utrDetails().relevantMatches());
         
         utrHistoryChartHolder.removeAll();
         utrHistoryChartHolder.add(new UTRHistoryChart(playerStats.utrHistory()));
+    }
+
+    public void setSmallScreen(boolean isSmallScreen) {
+        matchStatsLabel.setVisible(!isSmallScreen);
+        gameStatsLabel.setVisible(!isSmallScreen);
+        utrHighLabel.setVisible(!isSmallScreen);
+        utrHistoryChartHolder.setVisible(!isSmallScreen);
+        if(isSmallScreen) {
+            matchesGrid.hideTournamentInfoColumn();
+            matchesGrid.addThemeVariants(GridVariant.LUMO_COMPACT);
+        }
     }
     
 }

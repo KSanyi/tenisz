@@ -29,10 +29,11 @@ public class MatchesGrid extends Grid<MatchInfo> {
  
     private final Column<MatchInfo> player1UtrColumn;
     private final Column<MatchInfo> player2UtrColumn;
+    private final Column<MatchInfo> tournamentInfoColumn;
     
     public MatchesGrid() {
         
-        addColumn(match -> match.date() != null ? Formatters.formatDate(match.date()) : "?")
+        addColumn(match -> match.date() != null ? Formatters.formatDateShort(match.date()) : "?")
             .setKey("date")
             .setHeader("Dátum")
             .setSortable(true)
@@ -40,7 +41,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(1);
         
-        addColumn(match -> match.tournamentInfo().name())
+        tournamentInfoColumn = addColumn(match -> match.tournamentInfo().name())
             .setKey("tournament")
             .setHeader("Verseny")
             .setAutoWidth(true)
@@ -128,9 +129,14 @@ public class MatchesGrid extends Grid<MatchInfo> {
         }
     }
     
-    public void setPlayer2UtrColumnVisible(boolean visible) {
-        player2UtrColumn.setVisible(visible);
-        player1UtrColumn.setHeader("Meccs UTR" + (visible ? " 1" :""));
+    public void hidePlayer2UtrColumn() {
+        player2UtrColumn.setVisible(false);
+        player1UtrColumn.setHeader("Meccs UTR");
     }
+    
+    public void hideTournamentInfoColumn() {
+        tournamentInfoColumn.setVisible(false);
+    }
+    
     
 }

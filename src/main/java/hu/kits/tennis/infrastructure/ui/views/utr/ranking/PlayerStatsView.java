@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
@@ -36,6 +37,15 @@ public class PlayerStatsView extends SplitViewFrame implements View, BeforeEnter
         super.onAttach(attachEvent);
         playerStatsComponent.setPadding(true);
         setViewContent(playerStatsComponent);
+        
+        UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisiblePars(e.getBodyClientWidth()));
+        UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisiblePars(e.getWidth()));
+    }
+    
+    private void updateVisiblePars(int width) {
+        boolean smallScreen = width < VaadinUtil.SMALL_SCREEN_BREAKPOINT;
+
+        playerStatsComponent.setSmallScreen(smallScreen);
     }
     
     public void refresh() {
