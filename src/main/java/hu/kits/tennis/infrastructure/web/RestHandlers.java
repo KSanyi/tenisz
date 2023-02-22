@@ -1,8 +1,12 @@
 package hu.kits.tennis.infrastructure.web;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.StringUtil;
@@ -18,6 +22,8 @@ import io.javalin.http.HttpCode;
 
 class RestHandlers {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     private final PlayerRepository playerRepository = Main.resourceFactory.getPlayerRepository();
     private final UTRService utrService = Main.resourceFactory.getUTRService();
     
@@ -47,14 +53,20 @@ class RestHandlers {
         
         String content = playersWithUTR.stream()
                 .sorted((p1, p2) -> StringUtil.HUN_COLLATOR.compare(p1.player().name(), p2.player().name()))
-                .map(playerWithUtr -> crateCsvRow(playerWithUtr))
+                .map(playerWithUtr -> createCsvRow(playerWithUtr))
                 .collect(Collectors.joining("\n"));
         
         context.result(content);
         context.contentType(ContentType.TEXT_CSV);
+        
+        if(content.length() < 50) {
+            logger.info("UTR CSV: {}", content);    
+        } else {
+            logger.info("UTR CSV: {}", content.substring(0, 50) + " ... " + content.substring(content.length() - 10, content.length()));
+        }
     }
     
-    private static String crateCsvRow(PlayerWithUTR playerWithUtr) {
+    private static String createCsvRow(PlayerWithUTR playerWithUtr) {
         return createCsvRow(
                 playerWithUtr.player().name(),
                 String.valueOf(playerWithUtr.player().id()),
