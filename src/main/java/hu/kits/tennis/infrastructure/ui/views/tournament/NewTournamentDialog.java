@@ -13,8 +13,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
 import hu.kits.tennis.Main;
+import hu.kits.tennis.common.Clock;
 import hu.kits.tennis.domain.tournament.Organizer;
 import hu.kits.tennis.domain.tournament.Tournament;
+import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.infrastructure.ui.component.ComponentFactory;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
@@ -37,11 +39,19 @@ public class NewTournamentDialog extends Dialog {
     public NewTournamentDialog(Consumer<Tournament> callback) {
         this.callback = callback;
         
-        organizerCombo.setValue(Organizer.KVTK);
+        setDefaults();
         
         add(createContent());
         
         saveButon.addClickListener(click -> save());
+    }
+
+    private void setDefaults() {
+        organizerCombo.setValue(Organizer.KVTK);
+        nameField.setValue("TOUR");
+        dateField.setValue(Clock.today());
+        setsCombo.setValue(3);
+        typeCombo.setValue(Type.SIMPLE_BOARD);
     }
 
     private void save() {
