@@ -24,7 +24,11 @@ public record Player(Integer id,
     public static record Contact(String email, String phone, String comment) {
         
         public static Contact EMPTY = new Contact("", "", "");
-        
+    }
+    
+    @Override
+    public String toString() {
+        return name + "(" + id + ")";
     }
     
 }

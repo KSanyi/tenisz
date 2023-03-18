@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.common.Clock;
-import hu.kits.tennis.domain.tournament.Organizer;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
 import hu.kits.tennis.domain.utr.UTRHistory.UTRHistoryEntry;
@@ -45,27 +44,20 @@ public class UTRService {
     
     public BookedMatch calculatUTRAndSaveMatch(Match playedMatch) {
         List<BookedMatch> allBookedMatches = matchRepository.loadAllBookedMatches();
-        BookedMatch bookedMatch = UTRCalculator.createBookedMatch(playedMatch, allBookedMatches);
+        BookedMatch bookedMatch = UTRCalculator.bookUTRForMatch(playedMatch, allBookedMatches);
         return matchRepository.save(bookedMatch);
     }
-    
-//    public List<BookedMatch> loadMatchesForPlayer(Player player) {
-//        List<BookedMatch> matches = matchRepository.loadAllPlayedMatches(player);
-//        
-//        return matches.stream().map(match -> swapIfNeeed(match, player)).collect(toList());
-//    }
     
     public List<PlayerWithUTR> calculateUTRRanking() {
         
         logger.info("Calculating UTR ranking");
         
-        List<Player> kvtkPlayers = playerRepository.loadAllPlayers().entries().stream()
-                .filter(player -> player.organisations().contains(Organizer.KVTK))
+        List<Player> players = playerRepository.loadAllPlayers().entries().stream()
                 .toList();
-        List<BookedMatch> allKVTKBookedMatches = getAllKVTKMatches();
+        List<BookedMatch> allBookedMatches = getAllMatches();
         
-        List<PlayerWithUTR> ranking = kvtkPlayers.stream()
-                .map(player -> cratePlayerWithUTR(player, allKVTKBookedMatches))
+        List<PlayerWithUTR> ranking = players.stream()
+                .map(player -> cratePlayerWithUTR(player, allBookedMatches))
                 .sorted(comparing(PlayerWithUTR::utr).reversed())
                 .collect(toList());
         
@@ -78,9 +70,8 @@ public class UTRService {
         return result;
     }
 
-    private List<BookedMatch> getAllKVTKMatches() {
+    private List<BookedMatch> getAllMatches() {
         Set<String> kvtkTournamentIds = tournamentRepository.loadAllTournaments().stream()
-                .filter(tournament -> tournament.organizer() == Organizer.KVTK)
                 .map(Tournament::id)
                 .collect(toSet());
             
@@ -103,7 +94,7 @@ public class UTRService {
     
     public void recalculateAllUTRs(boolean resetUTRGroupsBefore) {
         
-        logger.info("Recalculating and saving all UTRs (now only for KVTK)");
+        logger.info("Recalculating and saving all UTRs");
         
         if(resetUTRGroupsBefore) {
             List<PlayerWithUTR> utrRanking = calculateUTRRanking();
@@ -114,9 +105,9 @@ public class UTRService {
             }
         }
         
-        List<BookedMatch> allKVTKBookedMatches = getAllKVTKMatches();
+        List<BookedMatch> allBookedMatches = getAllMatches();
         
-        List<BookedMatch> recalculatedBookedMatches = UTRCalculator.recalculateAllUTRs(allKVTKBookedMatches);
+        List<BookedMatch> recalculatedBookedMatches = UTRCalculator.recalculateAllUTRs(allBookedMatches);
         
         logger.info("Saving recalculated UTRs");
         
