@@ -57,10 +57,11 @@ class TournamentMatchDialog extends Dialog {
         setHeaderTitle(title);
         add(createForm());
         
-        Button deleteButton = UIUtils.createButton("Törlés", ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+        Button deleteButton = UIUtils.createButton("Eredmény törlése", ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         deleteButton.getStyle().set("margin-right", "auto");
-        deleteButton.addClickListener(click -> delete());
-        //getFooter().add(deleteButton);
+        deleteButton.addClickListener(click -> deleteResult());
+        getFooter().add(deleteButton);
+        deleteButton.setVisible(match.isPlayed());
         
         Button saveButton = UIUtils.createButton("Mentés", ButtonVariant.LUMO_PRIMARY);
         getFooter().add(saveButton);
@@ -104,7 +105,6 @@ class TournamentMatchDialog extends Dialog {
     }
 
     private void save() {
-        
         if(matchScoreField.hasValidScore()) {
             MatchResult matchResult = matchScoreField.getMatchResult();
             tournamentService.setTournamentMatchResult(new MatchResultInfo(match, datePicker.getValue(), matchResult));
@@ -115,9 +115,9 @@ class TournamentMatchDialog extends Dialog {
         }
     }
     
-    private void delete() {
-        new ConfirmationDialog("Biztos hogy törldöd a meccset?", () -> {
-            tournamentService.deleteMatch(match);
+    private void deleteResult() {
+        new ConfirmationDialog("Biztos hogy törlöd az eredményt?", () -> {
+            tournamentService.deleteMatchResult(match);
             matchChangeCallback.run();
             close();
         }).open();

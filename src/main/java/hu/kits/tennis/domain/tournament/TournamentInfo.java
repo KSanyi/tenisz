@@ -11,6 +11,6 @@ public record TournamentInfo(
         int bestOfNSets,
         int numberOfPlayers) {
 
-    public static final TournamentInfo UNKNOWN = new TournamentInfo("NA", Organizer.NA, LocalDate.of(1900,1,1), "NA", "NA", 0, 0);
+    public static final TournamentInfo UNKNOWN = new TournamentInfo("NA", Organizer.KVTK, LocalDate.of(1900,1,1), "NA", "NA", 0, 0);
 
 }

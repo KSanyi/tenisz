@@ -156,6 +156,7 @@ public class TournamentJdbcRepository implements TournamentRepository {
     @Override
     public void deleteTournament(String tournamentId) {
         jdbi.withHandle(handle -> handle.execute(String.format("DELETE FROM %s WHERE %s = ?", TABLE_TOURNAMENT, COLUMN_ID), tournamentId));
+        contestantDBTable.deleteContestants(tournamentId);
     }
     
     @Override

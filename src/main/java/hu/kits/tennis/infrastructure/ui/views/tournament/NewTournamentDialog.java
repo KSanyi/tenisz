@@ -37,13 +37,21 @@ public class NewTournamentDialog extends Dialog {
     public NewTournamentDialog(Consumer<Tournament> callback) {
         this.callback = callback;
         
+        organizerCombo.setValue(Organizer.KVTK);
+        
         add(createContent());
         
         saveButon.addClickListener(click -> save());
     }
 
     private void save() {
-        Tournament tournament = tournamentService.createTournament(organizerCombo.getValue(), nameField.getValue(), venueField.getValue(), dateField.getValue(), typeCombo.getValue(), setsCombo.getValue());
+        Tournament tournament = tournamentService.createTournament(
+                organizerCombo.getValue(),
+                nameField.getValue(),
+                venueField.getValue(),
+                dateField.getValue(),
+                typeCombo.getValue(),
+                setsCombo.getValue());
         
         close();
         callback.accept(tournament);

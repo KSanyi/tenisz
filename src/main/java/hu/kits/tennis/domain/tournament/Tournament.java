@@ -101,6 +101,10 @@ public record Tournament(String id,
     }
     
     public List<Player> playersLineup() {
+
+        if(contestants.isEmpty()) {
+            return List.of();
+        }
         
         var playersByRank = contestants.stream().collect(toMap(Contestant::rank, Contestant::player));
         

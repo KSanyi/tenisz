@@ -15,6 +15,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.component.PlayerSelectorDialog;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
@@ -81,7 +82,7 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
     
     private void handleClick(ItemClickEvent<GridItem> e) {
         if(e.getClickCount() > 1) {
-            new PlayerSelectorDialog(player -> changePlayer(e.getItem(), player)).open(); 
+            new PlayerSelectorDialog(player -> changePlayer(e.getItem().player, player)).open(); 
         }
     }
 
@@ -111,13 +112,18 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
     
     // TODO refactor these methods
     
-    private void changePlayer(GridItem item, Player player) {
-        int index = items.indexOf(item);
-        items.remove(index);
-        items.add(index, new GridItem(player));
+    private void changePlayer(Player playerToRemove, Player playerToAdd) {
         List<Player> players = items.stream().map(gridItem -> gridItem.player).collect(toList());
-        setPlayers(players);
-        update();
+        if(!players.contains(playerToAdd)) {
+            int index = players.indexOf(playerToRemove);
+            players.remove(index);
+            players.add(index, playerToAdd);
+            setPlayers(players);
+            update();
+            KITSNotification.showInfo(playerToAdd.name() + " hozzáadva a versenyhez " + playerToAdd.name() + " helyére");
+        } else {
+            KITSNotification.showError(playerToAdd.name() + " már hozzá van adva a versenyhez");
+        }
     }
     
     void setPlayers(List<Player> players) {
@@ -127,9 +133,15 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
     
     void addPlayer(Player player) {
         List<Player> players = items.stream().map(gridItem -> gridItem.player).collect(toList());
-        players.add(player);
-        setPlayers(players);
-        update();
+        if(!players.contains(player)) {
+            players.add(player);
+            setPlayers(players);
+            update();
+            KITSNotification.showInfo(player.name() + " hozzáadva a versenyhez");
+        } else {
+            KITSNotification.showError(player.name() + " már hozzá van adva a versenyhez");
+        }
+        
     }
     
     private void update() {

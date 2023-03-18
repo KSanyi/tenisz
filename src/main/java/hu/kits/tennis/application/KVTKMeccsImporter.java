@@ -149,8 +149,7 @@ public class KVTKMeccsImporter {
         return games.isEmpty() ? null :Integer.parseInt(games);
     }
     
-    private Tournament findOrCreateTournament(LocalDate date, String name) {
-        String tournamentName = "KVTK " + name + " " + Formatters.formatDate(date);
+    private Tournament findOrCreateTournament(LocalDate date, String tournamentName) {
         Tournament tournament = tournaments.get(tournamentName);
         if(tournament == null) {
             tournament = tournamentService.createTournament(Organizer.KVTK, tournamentName, "", date, Type.NA, 1);

@@ -22,7 +22,7 @@ public record Match(Integer id, String tournamentId, Integer tournamentBoardNumb
     }
 
     public Player winner() {
-        return result.isPlayer1Winner() ? player1 : player2;
+        return result != null && result.isPlayer1Winner() ? player1 : player2;
     }
     
     public Stream<Player> players(){

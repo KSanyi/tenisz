@@ -36,7 +36,25 @@ class TournamentBoard extends Grid<Row> {
         this.board = board;
         this.matchChangeCallback = matchChangeCallback;
         
+        setBoard(board);
+        
+        setAllRowsVisible(true);
+        
+        setSelectionMode(SelectionMode.NONE);
+        
+        addItemClickListener(e -> itemClicked(e));
+        
+        addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
+        addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
+        addThemeVariants(GridVariant.LUMO_COMPACT);
+    }
+    
+    private void setBoard(Board board) {
+        this.board = board;
         int rounds = board.numberOfRounds();
+        
+        this.removeAllColumns();
+        rows.clear();
         
         for(int i=1;i<=rounds+1;i++) {
             int round = i;
@@ -53,16 +71,6 @@ class TournamentBoard extends Grid<Row> {
         for(int i=1;i<=MathUtil.pow2(rounds+1)-1;i++) {
             rows.add(new Row(rounds, i));
         }
-        
-        setAllRowsVisible(true);
-        
-        setSelectionMode(SelectionMode.NONE);
-        
-        addItemClickListener(e -> itemClicked(e));
-        
-        addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
-        addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
-        addThemeVariants(GridVariant.LUMO_COMPACT);
     }
     
     private PlayerWithResult findPlayerWithResult(Match match, Player player) {
@@ -124,7 +132,7 @@ class TournamentBoard extends Grid<Row> {
     void setBoard(Tournament tournament, Board board) {
         
         this.tournament = tournament;
-        this.board = board;
+        setBoard(board);
         
         for(Match match : board.matches().values()) {
             Player player1 = match.player1();
@@ -176,12 +184,16 @@ class TournamentBoard extends Grid<Row> {
         final int rowNum;
         final List<PlayerWithResult> values;
         
-        public Row(int rounds, int rowNum) {
+        Row(int rounds, int rowNum) {
             this.rowNum = rowNum;
             values = new ArrayList<>();
             for(int i=0;i<=rounds;i++) {
                 values.add(null);
             }
+        }
+        
+        void clear() {
+            values.replaceAll(p -> null);
         }
 
     }
