@@ -1,5 +1,7 @@
 package hu.kits.tennis.domain.utr;
 
+import java.util.Objects;
+
 public record UTR(Double value) implements Comparable<UTR> {
 
     public static UTR UNDEFINED = new UTR(null);
@@ -35,6 +37,22 @@ public record UTR(Double value) implements Comparable<UTR> {
         }
     }
     
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        UTR other = (UTR) obj;
+        if(value == null && other.value != null) return false;
+        if(value != null && other.value == null) return false;
+        return Math.abs(value - other.value) < 0.01;
+    }
+
     public static UTR of(Double value) {
         return value != null ? new UTR(value) : UTR.UNDEFINED;
     }

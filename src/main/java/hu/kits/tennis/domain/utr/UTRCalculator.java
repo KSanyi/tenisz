@@ -137,7 +137,8 @@ public class UTRCalculator {
         for(BookedMatch match : allPlayedMatches) {
             BookedMatch recalculatedBookedMatch = bookUTRForMatch(match.playedMatch(), recalculatedBookedMatches);
             if(!recalculatedBookedMatch.equals(match)) {
-                recalculatedBookedMatches.add(recalculatedBookedMatch);    
+                recalculatedBookedMatches.add(recalculatedBookedMatch);
+                logger.debug("Change: {} -> {}", match, recalculatedBookedMatch);
             }
         }
         
