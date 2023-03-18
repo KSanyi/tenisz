@@ -44,7 +44,7 @@ public class UTRService {
     
     public BookedMatch calculatUTRAndSaveMatch(Match playedMatch) {
         List<BookedMatch> allBookedMatches = matchRepository.loadAllBookedMatches();
-        BookedMatch bookedMatch = UTRCalculator.bookUTRForMatch(playedMatch, allBookedMatches);
+        BookedMatch bookedMatch = UTRCalculator.createBookedMatch(playedMatch, allBookedMatches);
         return matchRepository.save(bookedMatch);
     }
     
