@@ -32,9 +32,9 @@ public class NewTournamentDialog extends Dialog {
     private final DatePicker dateField = ComponentFactory.createHungarianDatePicker("Dátum");
     private final TextField venueField = new TextField("Helyszín");
     private final ComboBox<Integer> setsCombo = ComponentFactory.createComboBox("Szettek", i -> i.toString(), List.of(1, 3, 5));
-    private final ComboBox<Tournament.Type> typeCombo = ComponentFactory.createComboBox("Típus", o -> o.name(), Tournament.Type.values());
+    private final ComboBox<Tournament.Type> typeCombo = ComponentFactory.createComboBox("Típus", o -> o.label, Tournament.Type.values());
     
-    private final Button saveButon = UIUtils.createPrimaryButton("Mentés");
+    private final Button saveButton = UIUtils.createPrimaryButton("Mentés");
 
     public NewTournamentDialog(Consumer<Tournament> callback) {
         this.callback = callback;
@@ -43,7 +43,7 @@ public class NewTournamentDialog extends Dialog {
         
         add(createContent());
         
-        saveButon.addClickListener(click -> save());
+        saveButton.addClickListener(click -> save());
     }
 
     private void setDefaults() {
@@ -69,12 +69,17 @@ public class NewTournamentDialog extends Dialog {
 
     private Component createContent() {
         
-        organizationCombo.setWidth("300px");
-        nameField.setWidth("300px");
-        typeCombo.setWidth("300px");
+        organizationCombo.setWidth("200px");
+        nameField.setWidth("200px");
+        dateField.setWidth("150px");
+        setsCombo.setWidth("80px");
+        typeCombo.setWidth("200px");
         
-        VerticalLayout layout = new VerticalLayout(organizationCombo, nameField, dateField, setsCombo, typeCombo, saveButon);
-        layout.setAlignSelf(Alignment.CENTER, saveButon);
+        VerticalLayout layout = new VerticalLayout(organizationCombo, nameField, dateField, setsCombo, typeCombo);
+        layout.setSpacing(false);
+        layout.setPadding(false);
+        layout.setAlignSelf(Alignment.CENTER, saveButton);
+        getFooter().add(saveButton);
         return layout;
     }
     

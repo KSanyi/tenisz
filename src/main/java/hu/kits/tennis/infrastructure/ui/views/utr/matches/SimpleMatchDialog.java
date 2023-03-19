@@ -24,6 +24,7 @@ import hu.kits.tennis.domain.utr.MatchService;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.Players;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
+import hu.kits.tennis.infrastructure.ui.component.HungarianDatePicker;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.component.MatchScoreField;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
@@ -32,7 +33,7 @@ public class SimpleMatchDialog extends Dialog {
 
     private final MatchService matchService = Main.resourceFactory.getMatchService();
     
-    private final DatePicker datePicker = new DatePicker("Dátum");
+    private final DatePicker datePicker = new HungarianDatePicker("Dátum");
     private final ComboBox<Player> player1Combo;
     private final ComboBox<Player> player2Combo;
     
@@ -61,12 +62,12 @@ public class SimpleMatchDialog extends Dialog {
         setDraggable(true);
         setResizable(true);
         
-        setHeaderTitle("Meccs");
         add(createForm());
         
         Button deleteButton = UIUtils.createButton("Törlés", ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         deleteButton.getStyle().set("margin-right", "auto");
         deleteButton.addClickListener(click -> delete());
+        deleteButton.setVisible(match.id() != null);
         getFooter().add(deleteButton);
         
         Button saveButton = UIUtils.createButton("Mentés", ButtonVariant.LUMO_PRIMARY);
@@ -80,7 +81,7 @@ public class SimpleMatchDialog extends Dialog {
     
     private static ComboBox<Player> createPlayerCombo(List<Player> players, Player player) {
         ComboBox<Player> comboBox = new ComboBox<>();
-        comboBox.setWidth("220px");
+        comboBox.setWidth("200px");
         comboBox.setItemLabelGenerator(Player::name);
         comboBox.setItems(players);
         if(player != null) {
@@ -112,6 +113,7 @@ public class SimpleMatchDialog extends Dialog {
         Div spacer = new Div();
         spacer.setHeight("10px");
         Label matchIdLabel = UIUtils.createH6Label("Match id: " + match.id());
+        matchIdLabel.setVisible(match.id() != null);
         layout.add(matchIdLabel, datePicker, spacer, playersWithScoresLayout);
         layout.setAlignSelf(Alignment.START, matchIdLabel);
         

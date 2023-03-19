@@ -36,6 +36,7 @@ import hu.kits.tennis.domain.utr.MatchInfo;
 import hu.kits.tennis.domain.utr.MatchService;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.Players;
+import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
@@ -53,6 +54,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
+    private final UTRService utrService = Main.resourceFactory.getUTRService();
     private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
     private final MatchService matchService = Main.resourceFactory.getMatchService();
     
@@ -96,12 +98,16 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
                 }
             });
 
-            Button createAddMatchButton = createAddMatchButton();
+            Button addMatchButton = createAddMatchButton();
+            Button recalculateButton = createRecalculateButton();
             
-            HorizontalLayout horizontalLayout = new HorizontalLayout(matchesGrid, contestantsTable);
+            VerticalLayout leftColumn = new VerticalLayout(matchesGrid, new HorizontalLayout(addMatchButton, recalculateButton));
+            leftColumn.setPadding(false);
+            
+            HorizontalLayout horizontalLayout = new HorizontalLayout(leftColumn, contestantsTable);
             horizontalLayout.setSizeFull();
-            horizontalLayout.setFlexGrow(1, matchesGrid);
-            layout.add(header, horizontalLayout, createAddMatchButton, deleteButton);
+            horizontalLayout.setFlexGrow(1, leftColumn);
+            layout.add(header, horizontalLayout, deleteButton);
             layout.setHorizontalComponentAlignment(Alignment.END, deleteButton);
             
         } else if(tournament.type() == Type.BOARD_AND_CONSOLATION || tournament.type() == Type.SIMPLE_BOARD) {
@@ -137,6 +143,21 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         return layout;
     }
     
+    private Button createRecalculateButton() {
+        Button button = new Button("UTR számolás");
+        button.setIcon(new Icon(VaadinIcon.AUTOMATION));
+
+        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        button.addClickListener(click -> recalculateUTRs());
+        return button;
+    }
+    
+    private void recalculateUTRs() {
+        utrService.recalculateAllUTRs();
+        refresh();
+        KITSNotification.showInfo("UTR kiszámolva");
+    }
+    
     private void openMatchEditor(MatchInfo matchInfo) {
         
         Players players = new Players(tournament.contestants().stream().map(c -> c.player()).collect(toList()));
@@ -146,16 +167,19 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     }
 
     private Button createAddMatchButton() {
-        Button button = new Button("Új meccs");
+        Button button = new Button("Meccs");
         button.setIcon(new Icon(VaadinIcon.PLUS));
 
         button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        Players players = new Players(tournament.contestants().stream().map(c -> c.player()).collect(toList()));
-        button.addClickListener(click -> new SimpleMatchDialog(
+        button.addClickListener(click -> {
+            Tournament tournamentLatest = tournamentService.findTournament(tournament.id()).get();
+            Players players = new Players(tournamentLatest.contestants().stream().map(c -> c.player()).collect(toList()));
+            new SimpleMatchDialog(
                 Match.createNew(tournament.id(), 1, tournament.matches().size()+1, tournament.date(), null, null),
                 players, 
                 tournament.bestOfNSets(), 
-                () -> refresh()).open());
+                () -> refresh()).open();
+        });
         
         return button;
     }

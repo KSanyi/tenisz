@@ -24,8 +24,6 @@ public class HungarianDatePicker extends DatePicker  {
                 .setMonthNames(List.of("Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"))
                 .setWeekdays(List.of("Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"))
                 .setWeekdaysShort(List.of("V", "H", "K", "Sze", "Cs", "P", "Szo")));
-        
-        getElement().setAttribute("theme", "small");
     }
     
 }

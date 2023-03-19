@@ -23,7 +23,7 @@ class ContestantsTable extends VerticalLayout {
     
     private final ContestantsGrid grid;
     
-    private final Button addButton = UIUtils.createPrimaryButton("Hozzáad", VaadinIcon.PLUS);
+    private final Button addButton = UIUtils.createPrimaryButton("Versenyző", VaadinIcon.PLUS);
 
     public ContestantsTable(TournamentView tournamentView) {
         this.grid = new ContestantsGrid(tournamentView);
@@ -31,7 +31,6 @@ class ContestantsTable extends VerticalLayout {
         setPadding(false);
         
         add(grid, addButton);
-        setHorizontalComponentAlignment(Alignment.CENTER, addButton);
         
         addButton.addClickListener(click -> openPlayerSelector());
     }
@@ -120,7 +119,7 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
             players.add(index, playerToAdd);
             setPlayers(players);
             update();
-            KITSNotification.showInfo(playerToAdd.name() + " hozzáadva a versenyhez " + playerToAdd.name() + " helyére");
+            KITSNotification.showInfo(playerToAdd.name() + " hozzáadva a versenyhez " + playerToRemove.name() + " helyére");
         } else {
             KITSNotification.showError(playerToAdd.name() + " már hozzá van adva a versenyhez");
         }
@@ -141,7 +140,6 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         } else {
             KITSNotification.showError(player.name() + " már hozzá van adva a versenyhez");
         }
-        
     }
     
     private void update() {

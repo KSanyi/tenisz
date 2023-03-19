@@ -60,7 +60,7 @@ public class MatchesView extends SplitViewFrame implements View {
     
     private Component createContent() {
         HorizontalLayout buttonsLayout = new HorizontalLayout(recalculateButton);
-        recalculateButton.setVisible(VaadinUtil.getUser().userId().equals("ksanyi"));
+        recalculateButton.setVisible(VaadinUtil.getUser().role() == Role.ADMIN);
         recalculateButton.getStyle().set("margin-left", "auto");
         buttonsLayout.setWidthFull();
         FlexBoxLayout content = new FlexBoxLayout(buttonsLayout, filterField, matchesGrid);

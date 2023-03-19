@@ -31,10 +31,16 @@ public record Tournament(String id,
     }
     
     public static enum Type {
-        SIMPLE_BOARD,
-        BOARD_AND_CONSOLATION,
-        FULL_BOARD,
-        NA;
+        SIMPLE_BOARD("Főtábla"),
+        BOARD_AND_CONSOLATION("Főtábla és vigasztábla"),
+        NA("Csak meccsek");
+        
+        public final String label;
+
+        private Type(String label) {
+            this.label = label;
+        }
+        
     }
     
     public static enum Status {
