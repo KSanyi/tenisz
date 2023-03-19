@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 import org.jdbi.v3.core.Jdbi;
 
 import hu.kits.tennis.common.KITSException;
-import hu.kits.tennis.domain.tournament.Organizer;
+import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.Player.Contact;
 import hu.kits.tennis.domain.utr.PlayerRepository;
@@ -84,16 +84,16 @@ public class PlayerJdbcRepository implements PlayerRepository {
         return valuesMap;
     }
     
-    private static Set<Organizer> mapToOrganisations(String orgsString) {
+    private static Set<Organization> mapToOrganisations(String orgsString) {
         if(orgsString == null || orgsString.isBlank()) {
             return Set.of();
         } else {
-            return Stream.of(orgsString.split(",")).map(String::trim).map(Organizer::valueOf).collect(toSet());
+            return Stream.of(orgsString.split(",")).map(String::trim).map(Organization::valueOf).collect(toSet());
         }
     }
     
-    private static String mapToOrganisationsString(Set<Organizer> organisations) {
-        return organisations.stream().map(Organizer::name).collect(joining(", "));
+    private static String mapToOrganisationsString(Set<Organization> organisations) {
+        return organisations.stream().map(Organization::name).collect(joining(", "));
     }
 
     @Override

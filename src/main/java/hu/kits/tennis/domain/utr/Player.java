@@ -4,13 +4,13 @@ import java.util.Objects;
 import java.util.Set;
 
 import hu.kits.tennis.common.StringUtil;
-import hu.kits.tennis.domain.tournament.Organizer;
+import hu.kits.tennis.domain.tournament.Organization;
 
 public record Player(Integer id,
         String name,
         Contact contact,
         UTR startingUTR, 
-        Set<Organizer> organisations) {
+        Set<Organization> organisations) {
 
     public static Player BYE = new Player(0, "Bye", Contact.EMPTY, UTR.UNDEFINED, Set.of());
 

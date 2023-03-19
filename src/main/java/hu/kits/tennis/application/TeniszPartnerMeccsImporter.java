@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 
 import hu.kits.tennis.common.Formatters;
-import hu.kits.tennis.domain.tournament.Organizer;
+import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentInfo;
@@ -166,7 +166,7 @@ public class TeniszPartnerMeccsImporter {
     
     private Player findOrCreatePlayer(Players players, String playerName) {
         return players.findPlayer(playerName)
-                .orElseGet(() -> playerRepository.saveNewPlayer(new Player(0, playerName, Contact.EMPTY, UTR.UNDEFINED, Set.of(Organizer.KVTK))));
+                .orElseGet(() -> playerRepository.saveNewPlayer(new Player(0, playerName, Contact.EMPTY, UTR.UNDEFINED, Set.of(Organization.KVTK))));
     }
     
     private static Optional<SetResult> parseSetResult(String resultString) {
@@ -276,7 +276,7 @@ public class TeniszPartnerMeccsImporter {
         for(LocalDate date : matchesByDate.keySet()) {
             
             List<MatchInfo> matches = matchesByDate.get(date);
-            Tournament tournament = tournamentService.createTournament(Organizer.KVTK, "Teniszpartner verseny " + Formatters.formatDate(date), "Bikás Park", date, Type.NA, 1);
+            Tournament tournament = tournamentService.createTournament(Organization.KVTK, "Teniszpartner verseny " + Formatters.formatDate(date), "Bikás Park", date, Type.NA, 1);
             List<Player> players = findPlayers(matches);
             tournamentService.updateContestants(tournament, players);
         }

@@ -115,7 +115,7 @@ class TournamentsGrid extends Grid<Tournament> {
             .setFlexGrow(4)
             .setKey("name");
         
-        addColumn(tournament -> tournament.organizer().name)
+        addColumn(tournament -> tournament.organization().name)
             .setHeader("Szervező")
             .setSortable(true)
             .setFlexGrow(2);

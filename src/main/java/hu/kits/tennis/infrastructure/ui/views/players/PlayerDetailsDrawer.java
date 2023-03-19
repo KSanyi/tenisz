@@ -26,7 +26,7 @@ import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.data.validator.RegexpValidator;
 
 import hu.kits.tennis.common.KITSException;
-import hu.kits.tennis.domain.tournament.Organizer;
+import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.Player.Contact;
 import hu.kits.tennis.domain.utr.PlayersService;
@@ -107,7 +107,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
             .withValidator(new DoubleRangeValidator("1 es 16 között", 1., 16.))
             .bind("startingUTR");
         
-        binder.forField(kvtkCheckBox).bind(p -> p.getOrganisations().contains(Organizer.KVTK), (p, b) -> p.addKVTK(b));
+        binder.forField(kvtkCheckBox).bind(p -> p.getOrganisations().contains(Organization.KVTK), (p, b) -> p.addKVTK(b));
     }
 
     private void save() {
@@ -215,7 +215,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         private String phone;
         private String comment;
         private Double startingUTR;
-        private Set<Organizer> organisations;
+        private Set<Organization> organisations;
         
         public PlayerDataBean(Player player) {
             this.playerId = player.id().toString();
@@ -287,15 +287,15 @@ class PlayerDetailsDrawer extends DetailsDrawer {
             this.startingUTR = startingUTR;
         }
 
-        public Set<Organizer> getOrganisations() {
+        public Set<Organization> getOrganisations() {
             return organisations;
         }
         
         public void addKVTK(boolean containsKVTK) {
             if(containsKVTK) {
-                organisations.add(Organizer.KVTK);    
+                organisations.add(Organization.KVTK);    
             } else {
-                organisations.remove(Organizer.KVTK);
+                organisations.remove(Organization.KVTK);
             }
         }
 

@@ -1,12 +1,12 @@
 package hu.kits.tennis.domain.tournament;
 
-public enum Organizer {
+public enum Organization {
     
-    KVTK("KVTK");
+    KVTK("KVTK"), DEBRECEN("DEBRECEN");
     
     public final String name;
 
-    private Organizer(String name) {
+    private Organization(String name) {
         this.name = name;
     }
     

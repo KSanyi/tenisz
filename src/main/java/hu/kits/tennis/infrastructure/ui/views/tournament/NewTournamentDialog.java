@@ -14,7 +14,7 @@ import com.vaadin.flow.component.textfield.TextField;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.Clock;
-import hu.kits.tennis.domain.tournament.Organizer;
+import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
@@ -27,7 +27,7 @@ public class NewTournamentDialog extends Dialog {
     
     private final Consumer<Tournament> callback;
     
-    private final ComboBox<Organizer> organizerCombo = ComponentFactory.createComboBox("Szervező", o -> o.name, Organizer.values());
+    private final ComboBox<Organization> organizationCombo = ComponentFactory.createComboBox("Szervezet", o -> o.name, Organization.values());
     private final TextField nameField = new TextField("Név");
     private final DatePicker dateField = ComponentFactory.createHungarianDatePicker("Dátum");
     private final TextField venueField = new TextField("Helyszín");
@@ -47,7 +47,7 @@ public class NewTournamentDialog extends Dialog {
     }
 
     private void setDefaults() {
-        organizerCombo.setValue(Organizer.KVTK);
+        organizationCombo.setValue(Organization.KVTK);
         nameField.setValue("TOUR");
         dateField.setValue(Clock.today());
         setsCombo.setValue(3);
@@ -56,7 +56,7 @@ public class NewTournamentDialog extends Dialog {
 
     private void save() {
         Tournament tournament = tournamentService.createTournament(
-                organizerCombo.getValue(),
+                organizationCombo.getValue(),
                 nameField.getValue(),
                 venueField.getValue(),
                 dateField.getValue(),
@@ -69,11 +69,11 @@ public class NewTournamentDialog extends Dialog {
 
     private Component createContent() {
         
-        organizerCombo.setWidth("300px");
+        organizationCombo.setWidth("300px");
         nameField.setWidth("300px");
         typeCombo.setWidth("300px");
         
-        VerticalLayout layout = new VerticalLayout(organizerCombo, nameField, dateField, setsCombo, typeCombo, saveButon);
+        VerticalLayout layout = new VerticalLayout(organizationCombo, nameField, dateField, setsCombo, typeCombo, saveButon);
         layout.setAlignSelf(Alignment.CENTER, saveButon);
         return layout;
     }

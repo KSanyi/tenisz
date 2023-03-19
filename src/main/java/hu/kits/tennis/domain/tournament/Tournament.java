@@ -15,7 +15,7 @@ import hu.kits.tennis.domain.utr.Match;
 import hu.kits.tennis.domain.utr.Player;
 
 public record Tournament(String id,
-        Organizer organizer,
+        Organization organization,
         LocalDate date, 
         String name,
         String venue,
@@ -25,9 +25,9 @@ public record Tournament(String id,
         Status status, 
         List<Board> boards) {
     
-    public static Tournament createNew(Organizer organizer, String name, String venue, LocalDate date, Tournament.Type type, int bestOfNSets) {
+    public static Tournament createNew(Organization organization, String name, String venue, LocalDate date, Tournament.Type type, int bestOfNSets) {
         String id = UUID.randomUUID().toString().substring(0, 8);
-        return new Tournament(id, organizer, date, name, venue, type, bestOfNSets, List.of(), Status.DRAFT, List.of());
+        return new Tournament(id, organization, date, name, venue, type, bestOfNSets, List.of(), Status.DRAFT, List.of());
     }
     
     public static enum Type {
@@ -159,7 +159,7 @@ public record Tournament(String id,
     }
 
     public TournamentInfo tournamentInfo() {
-        return new TournamentInfo(id, organizer, date, name, venue, bestOfNSets, contestants.size());
+        return new TournamentInfo(id, organization, date, name, venue, bestOfNSets, contestants.size());
     }
 
     public List<Match> matches() {

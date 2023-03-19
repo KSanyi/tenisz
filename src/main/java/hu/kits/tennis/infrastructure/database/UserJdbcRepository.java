@@ -137,7 +137,9 @@ public class UserJdbcRepository implements UserRepository {
     @Override
     public void deleteUser(String userId) {
         
-        jdbi.withHandle(handle -> handle.execute(String.format("DELETE FROM %s WHERE %s = ? AND %s = ?", TABLE_USER, COLUMN_USERID, userId)));
+        jdbi.withHandle(handle -> handle.createUpdate(String.format("DELETE FROM %s WHERE %s = :userId", TABLE_USER, COLUMN_USERID, userId))
+                .bind("userId", userId)
+                .execute());
     }
 
 }

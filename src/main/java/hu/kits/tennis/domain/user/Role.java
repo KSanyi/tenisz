@@ -5,6 +5,7 @@ import java.util.Set;
 public enum Role {
 
     ADMIN("Admin"), 
+    PARTNER("Partner"),
     MEMBER("Klubtag"),
     VISITOR("Látogató"),
     ANONYMUS("ANONYMUS");

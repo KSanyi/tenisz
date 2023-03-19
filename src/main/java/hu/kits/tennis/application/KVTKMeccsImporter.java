@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import hu.kits.tennis.domain.tournament.Organizer;
+import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
@@ -67,8 +67,8 @@ class KVTKMeccsImporter {
         logger.info("{} players loaded", players.entries().size());
         
         tournaments = tournamentService.loadAllTournaments().stream()
-                .filter(tournament -> tournament.organizer() == Organizer.KVTK)
-                .filter(tournament -> tournament.organizer() != Organizer.KVTK)
+                .filter(tournament -> tournament.organization() == Organization.KVTK)
+                .filter(tournament -> tournament.organization() != Organization.KVTK)
                 .collect(toMap(Tournament::name, Function.identity()));
         
         //List<BookedMatch> allMatches = matchRepository.loadAllBookedMatches();
@@ -151,7 +151,7 @@ class KVTKMeccsImporter {
     private Tournament findOrCreateTournament(LocalDate date, String tournamentName) {
         Tournament tournament = tournaments.get(tournamentName);
         if(tournament == null) {
-            tournament = tournamentService.createTournament(Organizer.KVTK, tournamentName, "", date, Type.NA, 1);
+            tournament = tournamentService.createTournament(Organization.KVTK, tournamentName, "", date, Type.NA, 1);
             logger.info("Saving tournament " + tournament);
             tournaments.put(tournamentName, tournament);
         }
@@ -174,7 +174,7 @@ class KVTKMeccsImporter {
     public void setupTournaments() {
         
         List<Tournament> tournamentsNotSetup = tournamentService.loadAllTournaments().stream()
-                .filter(tournament -> tournament.organizer() == Organizer.KVTK)
+                .filter(tournament -> tournament.organization() == Organization.KVTK)
                 .filter(tournament -> tournament.contestants().isEmpty())
                 .collect(toList());
         
@@ -197,7 +197,7 @@ class KVTKMeccsImporter {
         List<String> lines = Files.readAllLines(Paths.get("c:\\Users\\kocso\\Desktop\\Tenisz\\KVTK\\jatekosok.txt"));
         
         for(String line : lines) {
-            playerRepository.saveNewPlayer(new Player(null, line, null, UTR.UNDEFINED, Set.of(Organizer.KVTK)));    
+            playerRepository.saveNewPlayer(new Player(null, line, null, UTR.UNDEFINED, Set.of(Organization.KVTK)));    
         }
         
         
