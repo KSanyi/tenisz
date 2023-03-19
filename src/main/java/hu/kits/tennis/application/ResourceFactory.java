@@ -39,11 +39,11 @@ public class ResourceFactory {
         matchRepository = new MatchJdbcRepository(dataSource, playerRepository);
         TournamentRepository tournamentRepository = new TournamentJdbcRepository(dataSource, playerRepository, matchRepository);
         playersService = new PlayersService(playerRepository, matchRepository);
-        tournamentService = new TournamentService(tournamentRepository, matchRepository);
         reconciliationService = new ReconciliationService(playerRepository, matchRepository, tournamentRepository);
         
         matchService = new MatchService(matchRepository, tournamentRepository);
-        utrService = new UTRService(matchService, matchRepository, playerRepository, tournamentRepository);
+        utrService = new UTRService(matchService, matchRepository, playerRepository);
+        tournamentService = new TournamentService(tournamentRepository, matchRepository, utrService);
     }
     
     public UserService getUserService() {

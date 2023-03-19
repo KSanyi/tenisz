@@ -1,13 +1,13 @@
 package hu.kits.tennis.application;
 
-import static hu.kits.tennis.TestUtil.player1;
-import static hu.kits.tennis.TestUtil.player2;
-import static hu.kits.tennis.TestUtil.player3;
-import static hu.kits.tennis.TestUtil.player4;
-import static hu.kits.tennis.TestUtil.player5;
-import static hu.kits.tennis.TestUtil.player6;
-import static hu.kits.tennis.TestUtil.player7;
-import static hu.kits.tennis.TestUtil.player8;
+import static hu.kits.tennis.testutil.TestUtil.player1;
+import static hu.kits.tennis.testutil.TestUtil.player2;
+import static hu.kits.tennis.testutil.TestUtil.player3;
+import static hu.kits.tennis.testutil.TestUtil.player4;
+import static hu.kits.tennis.testutil.TestUtil.player5;
+import static hu.kits.tennis.testutil.TestUtil.player6;
+import static hu.kits.tennis.testutil.TestUtil.player7;
+import static hu.kits.tennis.testutil.TestUtil.player8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 

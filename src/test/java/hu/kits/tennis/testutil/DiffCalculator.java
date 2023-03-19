@@ -1,4 +1,4 @@
-package hu.kits.tennis;
+package hu.kits.tennis.testutil;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

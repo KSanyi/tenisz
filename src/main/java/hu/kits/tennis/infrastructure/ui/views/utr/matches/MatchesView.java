@@ -37,7 +37,6 @@ public class MatchesView extends SplitViewFrame implements View {
     private final UTRService utrService = Main.resourceFactory.getUTRService();
     
     private final Button recalculateButton = createRecalculateButton();
-    private final Button addMatchButton = createAddMatchButton();
     private final TextField filterField = new TextField();
     private final AllMatchesGrid matchesGrid = new AllMatchesGrid();
     
@@ -60,7 +59,7 @@ public class MatchesView extends SplitViewFrame implements View {
     }
     
     private Component createContent() {
-        HorizontalLayout buttonsLayout = new HorizontalLayout(addMatchButton, recalculateButton);
+        HorizontalLayout buttonsLayout = new HorizontalLayout(recalculateButton);
         recalculateButton.setVisible(VaadinUtil.getUser().userId().equals("ksanyi"));
         recalculateButton.getStyle().set("margin-left", "auto");
         buttonsLayout.setWidthFull();
@@ -75,15 +74,6 @@ public class MatchesView extends SplitViewFrame implements View {
         return content;
     }
     
-    private static Button createAddMatchButton() {
-        Button button = new Button("Új meccs");
-        button.setIcon(new Icon(VaadinIcon.PLUS));
-
-        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        //button.addClickListener(click -> new SimpleMatchDialog(Match.).open());
-        return button;
-    }
-    
     private Button createRecalculateButton() {
         Button button = new Button("UTR újraszámolás");
         button.setIcon(new Icon(VaadinIcon.AUTOMATION));
@@ -94,9 +84,7 @@ public class MatchesView extends SplitViewFrame implements View {
     }
     
     private void recalculateUTRs() {
-        // TODO
-        boolean resetUTRGroupsBefore = false;
-        utrService.recalculateAllUTRs(resetUTRGroupsBefore);
+        utrService.recalculateAllUTRs();
         refresh();
         KITSNotification.showInfo("Az összes meccs UTR újrakalkulálva");
     }

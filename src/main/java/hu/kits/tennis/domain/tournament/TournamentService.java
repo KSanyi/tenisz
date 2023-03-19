@@ -20,6 +20,7 @@ import hu.kits.tennis.domain.utr.MatchRepository;
 import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.MatchResultInfo;
 import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.domain.utr.UTRService;
 
 public class TournamentService {
 
@@ -27,10 +28,12 @@ public class TournamentService {
     
     private final TournamentRepository tournamentRepository;
     private final MatchRepository matchRepository;
+    private final UTRService utrService;
 
-    public TournamentService(TournamentRepository tournamentRepository, MatchRepository matchRepository) {
+    public TournamentService(TournamentRepository tournamentRepository, MatchRepository matchRepository, UTRService utrService) {
         this.tournamentRepository = tournamentRepository;
         this.matchRepository = matchRepository;
+        this.utrService = utrService;
     }
 
     // TODO
@@ -200,6 +203,7 @@ public class TournamentService {
             }
         }
         
+        utrService.recalculateAllUTRs();
     }
     
     private Tournament loadTournament(String tournamentId) {

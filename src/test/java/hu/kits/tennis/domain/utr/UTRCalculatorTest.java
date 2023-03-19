@@ -1,27 +1,24 @@
 package hu.kits.tennis.domain.utr;
 
+import static hu.kits.tennis.testutil.TestUtil.date;
+import static hu.kits.tennis.testutil.TestUtil.player1;
+import static hu.kits.tennis.testutil.TestUtil.player2;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
-
-import hu.kits.tennis.domain.utr.Player.Contact;
 
 public class UTRCalculatorTest {
 
     private static final double EPSILON = 0.006;
     
-    private final Player player1 = new Player(1, "Player1", Contact.EMPTY, UTR.of(8.), Set.of());
-    private final Player player2 = new Player(2, "Player2", Contact.EMPTY, UTR.of(8.), Set.of());
     private final LocalDate date = date("2022-01-01");
-    
     
     @Test
     void calculatePlayersUTRNoMatches() {
-        test(List.of(), 8);
+        test(List.of(), 9);
     }
     
     @Test
@@ -30,7 +27,7 @@ public class UTRCalculatorTest {
         List<BookedMatch> matches = List.of(
                 bookedMatch(date("2021-07-01"), player1, player2, UTR.of(8.4)));
         
-        test(matches, 8.05);
+        test(matches, 8.93);
     }
     
     @Test
@@ -45,7 +42,7 @@ public class UTRCalculatorTest {
                 bookedMatch(date("2021-07-06"), player1, player2, UTR.of(8.4)),
                 bookedMatch(date("2021-07-07"), player1, player2, UTR.of(8.4)));
         
-        test(matches, 8.29);
+        test(matches, 8.56);
     }
     
     @Test
@@ -100,7 +97,7 @@ public class UTRCalculatorTest {
                 bookedMatch(date("2021-07-01"), player1, player2, UTR.of(8.4)),
                 bookedMatch(date("2022-01-02"), player1, player2, UTR.of(10.))); // should have no effect
         
-        test(matches, 8.05);
+        test(matches, 8.93);
     }
     
     private void test(List<BookedMatch> matches, double expectedUTR) {
@@ -115,10 +112,6 @@ public class UTRCalculatorTest {
         return new BookedMatch(
                 new Match(null, null, null, null, date, player1, player2, MatchResult.of(0, 0)), 
                 UTR.of(8.), UTR.of(8.), matchUTRForPlayer1, UTR.of(7.5));
-    }
-    
-    private static LocalDate date(String dateString) {
-        return LocalDate.parse(dateString);
     }
     
 }

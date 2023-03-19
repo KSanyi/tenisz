@@ -1,6 +1,6 @@
 package hu.kits.tennis.domain.tournament;
 
-import static hu.kits.tennis.TestUtil.*;
+import static hu.kits.tennis.testutil.TestUtil.*;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;

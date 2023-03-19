@@ -110,7 +110,7 @@ public class UTRCalculator {
         };
     }
 
-    public static BookedMatch createBookedMatch(Match playedMatch, List<BookedMatch> allPlayedMatches) {
+    public static BookedMatch bookUTRForMatch(Match playedMatch, List<BookedMatch> allPlayedMatches) {
         
         UTR player1UTR = calculatePlayersUTRDetails(playedMatch.player1(), allPlayedMatches, playedMatch.date()).utr();
         UTR player2UTR = calculatePlayersUTRDetails(playedMatch.player2(), allPlayedMatches, playedMatch.date()).utr();
@@ -127,28 +127,31 @@ public class UTRCalculator {
         
         logger.info("Recalculating all UTRs");
         
-        List<BookedMatch> recalculatedBookedMatches = new ArrayList<>();
-        
-        List<Match> allPlayedMatches = bookedMatches.stream()
-                .map(BookedMatch::playedMatch)
-                .filter(Match::isPlayed)
-                .sorted(comparing(Match::date))
+        List<BookedMatch> allPlayedMatches = bookedMatches.stream()
+                .filter(m -> m.playedMatch().isPlayed())
+                .sorted(comparing(m -> m.playedMatch().date()))
                 .collect(toList());
         
-        for(Match playedMatch : allPlayedMatches) {
-            BookedMatch recalculatedBookedMatch = createBookedMatch(playedMatch, recalculatedBookedMatches);
+        List<BookedMatch> recalculatedBookedMatches = new ArrayList<>();
+        List<BookedMatch> changedBookedMatches = new ArrayList<>();
+        for(BookedMatch match : allPlayedMatches) {
+            BookedMatch recalculatedBookedMatch = bookUTRForMatch(match.playedMatch(), recalculatedBookedMatches);
             recalculatedBookedMatches.add(recalculatedBookedMatch);
+            if(!recalculatedBookedMatch.equals(match)) {
+                changedBookedMatches.add(recalculatedBookedMatch);
+                logger.debug("Change: {} -> {}", match, recalculatedBookedMatch);
+            }
         }
         
-        logger.info("All UTRs recalculated successfully from {} matches", allPlayedMatches.size());
+        logger.info("All UTRs recalculated successfully from {} matches: {} matches changed", allPlayedMatches.size(), changedBookedMatches.size());
         
-        return recalculatedBookedMatches;
+        return changedBookedMatches;
     }
     
     public static UTRForecastResult forecast(PlayerWithUTR player1, PlayerWithUTR player2, List<BookedMatch> allMatches, MatchResult matchResult) {
         List<BookedMatch> updatedMatches = new ArrayList<>(allMatches);
         Match newMatch = new Match(0, "", 0, 0, Clock.today(), player1.player(), player2.player(), matchResult);
-        BookedMatch newBookedMatch = createBookedMatch(newMatch, allMatches);
+        BookedMatch newBookedMatch = bookUTRForMatch(newMatch, allMatches);
         updatedMatches.add(newBookedMatch);
         UTR player1NewUTR = calculatePlayersUTRDetails(player1.player(), updatedMatches, Clock.today().plusDays(1)).utr();
         UTR player2NewUTR = calculatePlayersUTRDetails(player2.player(), updatedMatches, Clock.today().plusDays(1)).utr();
