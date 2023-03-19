@@ -63,8 +63,8 @@ public class TournamentsView extends SplitViewFrame implements View {
         loadTournaments();
     }
     
-    private void openNewTournamentDialog() {
-        Consumer<Tournament> callback = t -> loadTournaments();
+    private static void openNewTournamentDialog() {
+        Consumer<Tournament> callback = tournament -> UI.getCurrent().navigate(TournamentView.class, new RouteParameters("tournamentId", tournament.id()));
         new NewTournamentDialog(callback).open();
     }
 

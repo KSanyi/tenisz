@@ -68,7 +68,11 @@ public class SimpleMatchDialog extends Dialog {
         deleteButton.getStyle().set("margin-right", "auto");
         deleteButton.addClickListener(click -> delete());
         deleteButton.setVisible(match.id() != null);
-        getFooter().add(deleteButton);
+        
+        Button cancelButton = UIUtils.createButton("Mégsem", ButtonVariant.LUMO_CONTRAST);
+        cancelButton.addClickListener(click -> close());
+        
+        getFooter().add(cancelButton, deleteButton);
         
         Button saveButton = UIUtils.createButton("Mentés", ButtonVariant.LUMO_PRIMARY);
         getFooter().add(saveButton);
@@ -76,12 +80,14 @@ public class SimpleMatchDialog extends Dialog {
         saveButton.addClickShortcut(Key.ENTER);
         
         //addThemeVariants(DialogVariant.LUMO_NO_PADDING);
-        setWidth("500px");
+        setWidth("400px");
+        this.setCloseOnOutsideClick(false);
     }
     
     private static ComboBox<Player> createPlayerCombo(List<Player> players, Player player) {
         ComboBox<Player> comboBox = new ComboBox<>();
-        comboBox.setWidth("200px");
+        comboBox.setMaxWidth("250px");
+        comboBox.setWidthFull();
         comboBox.setItemLabelGenerator(Player::name);
         comboBox.setItems(players);
         if(player != null) {

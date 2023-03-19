@@ -32,7 +32,7 @@ public class NewTournamentDialog extends Dialog {
     private final DatePicker dateField = ComponentFactory.createHungarianDatePicker("Dátum");
     private final TextField venueField = new TextField("Helyszín");
     private final ComboBox<Integer> setsCombo = ComponentFactory.createComboBox("Szettek", i -> i.toString(), List.of(1, 3, 5));
-    private final ComboBox<Tournament.Type> typeCombo = ComponentFactory.createComboBox("Típus", o -> o.label, Tournament.Type.values());
+    private final ComboBox<Tournament.Type> typeCombo = ComponentFactory.createComboBox("Típus", t -> t.label, Tournament.Type.values());
     
     private final Button saveButton = UIUtils.createPrimaryButton("Mentés");
 
@@ -42,13 +42,12 @@ public class NewTournamentDialog extends Dialog {
         setDefaults();
         
         add(createContent());
-        
+        nameField.focus();
         saveButton.addClickListener(click -> save());
     }
 
     private void setDefaults() {
         organizationCombo.setValue(Organization.KVTK);
-        nameField.setValue("TOUR");
         dateField.setValue(Clock.today());
         setsCombo.setValue(3);
         typeCombo.setValue(Type.SIMPLE_BOARD);

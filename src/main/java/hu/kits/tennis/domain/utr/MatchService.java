@@ -84,6 +84,12 @@ public class MatchService {
     public void saveMatch(Match match) {
         BookedMatch bookedMatch = new BookedMatch(match, null, null, null, null);
         matchRepository.save(bookedMatch);
+        if(match.id() == null) {
+            logger.info("Match saved: {}", match);    
+        } else {
+            logger.info("Match updated: {}", match);
+        }
+        
     }
 
     public List<MatchInfo> loadMatchesOfTournament(String tournementId) {

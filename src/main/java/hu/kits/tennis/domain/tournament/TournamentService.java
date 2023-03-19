@@ -44,6 +44,7 @@ public class TournamentService {
     public Tournament createTournament(Organization organization, String name, String venue, LocalDate date, Tournament.Type type, int bestOfNSets) {
         Tournament tournament = Tournament.createNew(organization, name, venue, date, type, bestOfNSets);
         tournamentRepository.createTournament(tournament);
+        logger.info("Tournament is created: {}", tournament);
         return tournament;
     }
     
