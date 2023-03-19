@@ -50,7 +50,7 @@ public class UTRService {
         List<BookedMatch> allBookedMatches = getAllMatches();
         
         List<PlayerWithUTR> ranking = players.stream()
-                .map(player -> cratePlayerWithUTR(player, allBookedMatches))
+                .map(player -> createPlayerWithUTR(player, allBookedMatches))
                 .sorted(comparing(PlayerWithUTR::utr).reversed())
                 .collect(toList());
         
@@ -73,7 +73,7 @@ public class UTRService {
             .toList();
     }
     
-    private static PlayerWithUTR cratePlayerWithUTR(Player player, List<BookedMatch> allKVTKBookedMatches) {
+    private static PlayerWithUTR createPlayerWithUTR(Player player, List<BookedMatch> allKVTKBookedMatches) {
         
         LocalDate tomorrow = Clock.today().plusDays(1); 
         LocalDate oneWeekAgo = Clock.today().minusWeeks(1).plusDays(1);

@@ -1,5 +1,6 @@
 package hu.kits.tennis.domain.utr;
 
+import java.util.Objects;
 import java.util.Set;
 
 import hu.kits.tennis.common.StringUtil;
@@ -21,6 +22,19 @@ public record Player(Integer id,
         return StringUtil.cleanNameString(name).contains(cleanedFilter) || String.valueOf(id).contains(filter);
     }
     
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        Player other = (Player) obj;
+        return Objects.equals(id, other.id);
+    }
+
     public static record Contact(String email, String phone, String comment) {
         
         public static Contact EMPTY = new Contact("", "", "");
