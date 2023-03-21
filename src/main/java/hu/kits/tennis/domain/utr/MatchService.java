@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -100,6 +101,7 @@ public class MatchService {
         
         List<MatchInfo> matchInfos = matches.stream()
                 .map(bookedMatch -> toMatchInfo(bookedMatch, tournamenMap))
+                .sorted(Comparator.comparing(MatchInfo::id))
                 .collect(toList());
         
         return matchInfos;
