@@ -247,6 +247,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             tableWithButton.setVisible(!mobile && tournament.status() == Status.DRAFT);    
         }
         contestantsTable.setVisible(!mobile && tournament.status() == Status.DRAFT);
+        deleteButton.setVisible(!mobile);
     }
     
     private void deleteTournament() {
