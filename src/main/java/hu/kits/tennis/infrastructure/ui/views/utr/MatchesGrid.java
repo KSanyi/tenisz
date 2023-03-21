@@ -22,6 +22,7 @@ import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.MatchInfo;
 import hu.kits.tennis.domain.utr.MatchResult;
+import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
 @CssImport(themeFor = "vaadin-grid", value = "./styles/match-grid.css")
@@ -48,9 +49,9 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(1);
         
-        addColumn(TemplateRenderer.<MatchInfo>of("[[item.name1]] <small>([[item.utr1]])</small>")
+        addColumn(TemplateRenderer.<MatchInfo>of("[[item.name1]] <small>[[item.utr1]]</small>")
                 .withProperty("name1", match -> match.player1().name())
-                .withProperty("utr1", match -> match.player1UTR().toString()))
+                .withProperty("utr1", match -> displayUTR(match.player1UTR())))
             .setClassNameGenerator(match -> match.result() != null && match.result().isPlayer1Winner() ? "bold" : "")
             .setKey("player1")
             .setHeader("")
@@ -59,9 +60,9 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(3);
         
-        addColumn(TemplateRenderer.<MatchInfo>of("[[item.name2]] ([[item.utr2]])")
+        addColumn(TemplateRenderer.<MatchInfo>of("[[item.name2]] [[item.utr2]]")
                 .withProperty("name2", match -> match.player2().name())
-                .withProperty("utr2", match -> match.player2UTR().toString()))
+                .withProperty("utr2", match -> displayUTR(match.player2UTR())))
             .setClassNameGenerator(match -> match.result() != null && match.result().isPlayer2Winner() ? "bold" : "")
             .setKey("player2")
             .setHeader("")
@@ -91,6 +92,10 @@ public class MatchesGrid extends Grid<MatchInfo> {
         setHeightFull();
         
         sort(List.of(new GridSortOrder<>(getColumnByKey("date"), SortDirection.DESCENDING)));
+    }
+    
+    private static String displayUTR(UTR utr) {
+        return utr.isDefinded() ? "(" + utr + ")" : "";
     }
     
     public void setBestWorstAndUTRRelevantMatches(MatchInfo bestMatch, MatchInfo worstMatch, Collection<BookedMatch> utrRelevantMatches) {
