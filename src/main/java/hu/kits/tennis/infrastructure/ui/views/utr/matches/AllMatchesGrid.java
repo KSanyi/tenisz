@@ -35,6 +35,9 @@ class AllMatchesGrid extends MatchesGrid {
         List<MatchInfo> entries = matchService.loadAllMatches();
         dataProvider = new ListDataProvider<>(entries);
         setItems(dataProvider);
+        
+        int indexOfFirstPlayedMatch = entries.stream().filter(m -> m.result() != null).findFirst().map(entries::indexOf).orElse(0);
+        scrollToIndex(indexOfFirstPlayedMatch);
     }
 
     void filter(String filterText) {

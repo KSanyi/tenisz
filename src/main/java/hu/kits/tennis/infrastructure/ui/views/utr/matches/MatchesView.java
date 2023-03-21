@@ -6,7 +6,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -59,17 +58,17 @@ public class MatchesView extends SplitViewFrame implements View {
     }
     
     private Component createContent() {
-        HorizontalLayout buttonsLayout = new HorizontalLayout(recalculateButton);
+        HorizontalLayout buttonsLayout = new HorizontalLayout(filterField, recalculateButton);
         recalculateButton.setVisible(VaadinUtil.getUser().role() == Role.ADMIN);
         recalculateButton.getStyle().set("margin-left", "auto");
+        filterField.getStyle().set("margin-left", "auto");
         buttonsLayout.setWidthFull();
-        FlexBoxLayout content = new FlexBoxLayout(buttonsLayout, filterField, matchesGrid);
+        FlexBoxLayout content = new FlexBoxLayout(buttonsLayout, matchesGrid);
         filterField.setWidth("250px");
         content.setBoxSizing(BoxSizing.BORDER_BOX);
         content.setSizeFull();
         content.setPadding(Horizontal.RESPONSIVE_X, Top.RESPONSIVE_X);
         content.setFlexDirection(FlexLayout.FlexDirection.COLUMN);
-        content.setAlignSelf(Alignment.CENTER, filterField);
         
         return content;
     }
