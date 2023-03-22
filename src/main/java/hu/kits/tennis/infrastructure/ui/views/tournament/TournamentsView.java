@@ -63,6 +63,12 @@ public class TournamentsView extends SplitViewFrame implements View {
     public TournamentsView() {
         addButton.addClickListener(click -> openNewTournamentDialog());
         loadTournaments();
+        
+        dailyTournamentsGrid.sort(GridSortOrder.desc(dailyTournamentsGrid.getColumnByKey("date"))
+                .build());
+        
+        tourTournamentsGrid.sort(GridSortOrder.desc(tourTournamentsGrid.getColumnByKey("name"))
+                .build());
     }
     
     private static void openNewTournamentDialog() {
@@ -164,10 +170,6 @@ class TournamentsGrid extends Grid<Tournament> {
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleColumns(e.getWidth()));
         
         this.setMultiSort(true);
-        
-        sort(GridSortOrder.asc(getColumnByKey("state"))
-                .thenDesc(getColumnByKey("date"))
-                .build());
         
         addSelectionListener(this::rowSelected);
     }
