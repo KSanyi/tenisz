@@ -15,6 +15,7 @@ import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.PageTitle;
@@ -56,7 +57,8 @@ public class TournamentsView extends SplitViewFrame implements View {
 
     private final Button addButton = UIUtils.createPrimaryButton("Új verseny", VaadinIcon.PLUS);
     
-    private final TournamentsGrid tournamentsGrid = new TournamentsGrid();
+    private final TournamentsGrid dailyTournamentsGrid = new TournamentsGrid();
+    private final TournamentsGrid tourTournamentsGrid = new TournamentsGrid();
     
     public TournamentsView() {
         addButton.addClickListener(click -> openNewTournamentDialog());
@@ -81,7 +83,13 @@ public class TournamentsView extends SplitViewFrame implements View {
     }
     
     private Component createContent() {
-        VerticalLayout layout = new VerticalLayout(addButton, tournamentsGrid);
+        
+        TabSheet tabsheet = new TabSheet();
+        tabsheet.setSizeFull();
+        tabsheet.add("Napi versenyek", dailyTournamentsGrid);
+        tabsheet.add("TOUR-ok", tourTournamentsGrid);
+        
+        VerticalLayout layout = new VerticalLayout(addButton, tabsheet);
         layout.setPadding(false);
         layout.setSpacing(false);
         layout.setSizeFull();
@@ -95,7 +103,10 @@ public class TournamentsView extends SplitViewFrame implements View {
     private void loadTournaments() {
         
         List<Tournament> tournaments = tournamentService.loadAllTournaments();
-        tournamentsGrid.setItems(tournaments);
+        List<Tournament> dailyTournaments = tournaments.stream().filter(t -> !t.name().contains("TOUR")).toList();
+        List<Tournament> tourTournaments = tournaments.stream().filter(t -> t.name().contains("TOUR")).toList();
+        dailyTournamentsGrid.setItems(dailyTournaments);
+        tourTournamentsGrid.setItems(tourTournaments);
     }
 
 }
