@@ -92,8 +92,8 @@ public class TournamentsView extends SplitViewFrame implements View {
         
         TabSheet tabsheet = new TabSheet();
         tabsheet.setSizeFull();
-        tabsheet.add("Napi versenyek", dailyTournamentsGrid);
         tabsheet.add("TOUR-ok", tourTournamentsGrid);
+        tabsheet.add("Napi versenyek", dailyTournamentsGrid);
         
         VerticalLayout layout = new VerticalLayout(addButton, tabsheet);
         layout.setPadding(false);
@@ -129,25 +129,29 @@ class TournamentsGrid extends Grid<Tournament> {
         addColumn(Tournament::name)
             .setHeader("Név")
             .setSortable(true)
-            .setFlexGrow(4)
             .setKey("name");
         
-        addColumn(tournament -> tournament.organization().name)
-            .setHeader("Szervező")
+        addComponentColumn(t -> new Badge(t.status().name(), BadgeColor.SUCCESS, BadgeSize.M, BadgeShape.PILL))
+            .setHeader("Státusz")
             .setSortable(true)
-            .setFlexGrow(2);
+            .setComparator(comparing(Tournament::status))
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setKey("state");
+        
+//        addColumn(tournament -> tournament.organization().name)
+//            .setHeader("Szervező")
+//            .setSortable(true)
+//            .setFlexGrow(2);
     
         addColumn(new LocalDateRenderer<>(Tournament::date, Formatters.DATE_FORMAT))
             .setHeader("Dátum")
             .setSortable(true)
-            .setFlexGrow(4)
             .setComparator(comparing(Tournament::date))
             .setKey("date");
         
         addColumn(t -> t.contestants().size())
             .setHeader("Indulók")
             .setSortable(true)
-            .setFlexGrow(1)
             .setTextAlign(ColumnTextAlign.CENTER);
         /*
         addColumn(t -> t.matches().size())
@@ -155,14 +159,6 @@ class TournamentsGrid extends Grid<Tournament> {
             .setSortable(true)
             .setFlexGrow(1);
             */
-        
-        addComponentColumn(t -> new Badge(t.status().name(), BadgeColor.SUCCESS, BadgeSize.M, BadgeShape.PILL))
-            .setHeader("Státusz")
-            .setSortable(true)
-            .setComparator(comparing(Tournament::status))
-            .setFlexGrow(1)
-            .setTextAlign(ColumnTextAlign.CENTER)
-            .setKey("state");
         
         setHeightFull();
         
