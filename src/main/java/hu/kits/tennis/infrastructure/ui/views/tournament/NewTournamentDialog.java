@@ -18,8 +18,11 @@ import hu.kits.tennis.Main;
 import hu.kits.tennis.common.Clock;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
-import hu.kits.tennis.domain.tournament.Tournament.Type;
+import hu.kits.tennis.domain.tournament.TournamentParams;
 import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.tournament.TournamentParams.Level;
+import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
+import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.infrastructure.ui.component.ComponentFactory;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
@@ -30,15 +33,17 @@ public class NewTournamentDialog extends Dialog {
     
     private final Consumer<Tournament> callback;
     
-    private final ComboBox<Organization> organizationCombo = ComponentFactory.createComboBox("Szervezet", o -> o.name, Organization.values());
+    private final ComboBox<Organization> organizationCombo = ComponentFactory.createComboBox("Szervező", o -> o.name, Organization.values());
+    private final ComboBox<Type> typeCombo = ComponentFactory.createComboBox("Típus", t -> t.label, Type.values());
+    private final ComboBox<Level> levelCombo = ComponentFactory.createComboBox("Szint", l -> String.valueOf(l.value), Level.values());
     private final TextField nameField = new TextField("Név");
     private final DatePicker dateField = ComponentFactory.createHungarianDatePicker("Dátum");
     private final ComboBox<Integer> setsCombo = ComponentFactory.createComboBox("Szettek", i -> i.toString(), List.of(1, 3, 5));
-    private final ComboBox<Tournament.Type> typeCombo = ComponentFactory.createComboBox("Típus", t -> t.label, Tournament.Type.values());
+    private final ComboBox<Structure> structureCombo = ComponentFactory.createComboBox("Lebonyolítás", t -> t.label, Structure.values());
     
     private final Button saveButton = UIUtils.createPrimaryButton("Mentés");
     
-    private final Binder<TournamentInfoBean> binder = new Binder<>(TournamentInfoBean.class);
+    private final Binder<TournamentParamsBean> binder = new Binder<>(TournamentParamsBean.class);
 
     public NewTournamentDialog(Consumer<Tournament> callback) {
         this.callback = callback;
@@ -53,32 +58,29 @@ public class NewTournamentDialog extends Dialog {
     private void bind() {
         
         binder.bind(organizationCombo, "organization");
+        binder.bind(typeCombo, "type");
+        binder.bind(levelCombo, "levelFrom");
         binder.forField(nameField)
             .asRequired("Kötelező mező")
             .bind("name");
         binder.bind(dateField, "date");
-        binder.bind(setsCombo, "numberOfSets");
-        binder.bind(typeCombo, "type");
+        binder.bind(setsCombo, "bestOfNSets");
+        binder.bind(structureCombo, "structure");
         
         organizationCombo.setValue(Organization.KVTK);
+        typeCombo.setValue(Type.DAILY);
+        levelCombo.setValue(Level.L500);
         dateField.setValue(Clock.today());
         setsCombo.setValue(3);
-        typeCombo.setValue(Type.SIMPLE_BOARD);
+        structureCombo.setValue(Structure.SIMPLE_BOARD);
     }
 
     private void save() {
         
-        TournamentInfoBean tournamentInfoBean = new TournamentInfoBean();
-        boolean valid = binder.writeBeanIfValid(tournamentInfoBean);
+        TournamentParamsBean tournamentParamsBean = new TournamentParamsBean();
+        boolean valid = binder.writeBeanIfValid(tournamentParamsBean);
         if(valid) {
-            Tournament tournament = tournamentService.createTournament(
-                    tournamentInfoBean.getOrganization(),
-                    tournamentInfoBean.getName(),
-                    "",
-                    tournamentInfoBean.getDate(),
-                    tournamentInfoBean.getType(),
-                    tournamentInfoBean.getNumberOfSets());
-            
+            Tournament tournament = tournamentService.createTournament(tournamentParamsBean.toTournamentParams());
             close();
             callback.accept(tournament);
         } else {
@@ -89,12 +91,14 @@ public class NewTournamentDialog extends Dialog {
     private Component createContent() {
         
         organizationCombo.setWidth("200px");
+        typeCombo.setWidth("150px");
+        levelCombo.setWidth("100px");
         nameField.setWidth("200px");
         dateField.setWidth("150px");
         setsCombo.setWidth("80px");
-        typeCombo.setWidth("200px");
+        structureCombo.setWidth("200px");
         
-        VerticalLayout layout = new VerticalLayout(organizationCombo, nameField, dateField, setsCombo, typeCombo);
+        VerticalLayout layout = new VerticalLayout(organizationCombo, typeCombo, levelCombo, nameField, dateField, setsCombo, structureCombo);
         layout.setSpacing(false);
         layout.setPadding(false);
         layout.setAlignSelf(Alignment.CENTER, saveButton);
@@ -102,42 +106,92 @@ public class NewTournamentDialog extends Dialog {
         return layout;
     }
     
-    public static class TournamentInfoBean {
+    public static class TournamentParamsBean {
         
-        private Organization organization;
-        private String name;
-        private LocalDate date;
-        private int numberOfSets;
-        private Tournament.Type type;
+        Organization organization;
+        Type type;
+        Level levelFrom;
+        Level levelTo;
+        LocalDate date; 
+        String name;
+        String venue = "";
+        Structure structure;
+        int bestOfNSets;
+        
+        public TournamentParams toTournamentParams() {
+            return new TournamentParams(organization, type, levelFrom, levelFrom, date, name, venue, structure, bestOfNSets);
+        }
+
         public Organization getOrganization() {
             return organization;
         }
+
         public void setOrganization(Organization organization) {
             this.organization = organization;
         }
-        public String getName() {
-            return name;
+
+        public Type getType() {
+            return type;
         }
-        public void setName(String name) {
-            this.name = name;
+
+        public void setType(Type type) {
+            this.type = type;
         }
+
+        public Level getLevelFrom() {
+            return levelFrom;
+        }
+
+        public void setLevelFrom(Level levelFrom) {
+            this.levelFrom = levelFrom;
+        }
+
+        public Level getLevelTo() {
+            return levelTo;
+        }
+
+        public void setLevelTo(Level levelTo) {
+            this.levelTo = levelTo;
+        }
+
         public LocalDate getDate() {
             return date;
         }
+
         public void setDate(LocalDate date) {
             this.date = date;
         }
-        public int getNumberOfSets() {
-            return numberOfSets;
+
+        public String getName() {
+            return name;
         }
-        public void setNumberOfSets(int numberOfSets) {
-            this.numberOfSets = numberOfSets;
+
+        public void setName(String name) {
+            this.name = name;
         }
-        public Tournament.Type getType() {
-            return type;
+
+        public String getVenue() {
+            return venue;
         }
-        public void setType(Tournament.Type type) {
-            this.type = type;
+
+        public void setVenue(String venue) {
+            this.venue = venue;
+        }
+
+        public Structure getStructure() {
+            return structure;
+        }
+
+        public void setStructure(Structure structure) {
+            this.structure = structure;
+        }
+
+        public int getBestOfNSets() {
+            return bestOfNSets;
+        }
+
+        public void setBestOfNSets(int bestOfNSets) {
+            this.bestOfNSets = bestOfNSets;
         }
     }
     

@@ -32,9 +32,9 @@ import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.domain.tournament.Tournament;
-import hu.kits.tennis.domain.tournament.Tournament.Status;
-import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.tournament.TournamentParams.Status;
+import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
 import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
@@ -61,8 +61,8 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     private final Button deleteButton = UIUtils.createButton("Verseny törlése", ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_SMALL);
     
     private final ContestantsTable contestantsTable = new ContestantsTable(this);
-    private TournamentBoard mainBoard;
-    private TournamentBoard consolationBoard;
+    private TournamentBoardComponent mainBoard;
+    private TournamentBoardComponent consolationBoard;
     private VerticalLayout tableWithButton;
     private MatchesGrid matchesGrid;
     
@@ -82,11 +82,11 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         VerticalLayout layout = new VerticalLayout();
         layout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         
-        Label title = UIUtils.createH2Label(tournament.name());
+        Label title = UIUtils.createH2Label(tournament.params().name());
         HorizontalLayout header = new HorizontalLayout(title);
         //Label date = UIUtils.createH3Label(Formatters.formatDateLong(tournament.date()));
         
-        if(tournament.type() == Type.NA) {
+        if(tournament.params().structure() == Structure.NA) {
             matchesGrid = new MatchesGrid();
             matchesGrid.getColumnByKey("date").setVisible(false);
             matchesGrid.getColumnByKey("tournament").setVisible(false);
@@ -110,11 +110,11 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             layout.add(header, horizontalLayout, deleteButton);
             layout.setHorizontalComponentAlignment(Alignment.END, deleteButton);
             
-        } else if(tournament.type() == Type.BOARD_AND_CONSOLATION || tournament.type() == Type.SIMPLE_BOARD) {
+        } else if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION || tournament.params().structure() == Structure.SIMPLE_BOARD) {
 
             Runnable matchChangeCallback = () -> refresh();
             
-            mainBoard = new TournamentBoard(tournament, tournament.mainBoard(), matchChangeCallback);
+            mainBoard = new TournamentBoardComponent(tournament, tournament.mainBoard(), matchChangeCallback);
             
             Button fillBoardButton = UIUtils.createButton("Táblára", VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
             fillBoardButton.setVisible(VaadinUtil.isUserLoggedIn());
@@ -132,8 +132,8 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             layout.add(header, horizontalLayout, deleteButton);
             layout.setHorizontalComponentAlignment(Alignment.END, deleteButton);
             
-            if(tournament.type() == Type.BOARD_AND_CONSOLATION) {
-                consolationBoard = new TournamentBoard(tournament, tournament.consolationBoard(), matchChangeCallback);
+            if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION) {
+                consolationBoard = new TournamentBoardComponent(tournament, tournament.consolationBoard(), matchChangeCallback);
                 layout.add(UIUtils.createH2Label("Vigaszág"), consolationBoard);
             }
         }
@@ -163,7 +163,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         Players players = new Players(tournament.contestants().stream().map(c -> c.player()).collect(toList()));
         Match match = matchService.loadMatch(matchInfo.id());
         
-        new SimpleMatchDialog(match, players, tournament.bestOfNSets(), () -> refresh()).open();
+        new SimpleMatchDialog(match, players, tournament.params().bestOfNSets(), () -> refresh()).open();
     }
 
     private Button createAddMatchButton() {
@@ -175,9 +175,9 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             Tournament tournamentLatest = tournamentService.findTournament(tournament.id()).get();
             Players players = new Players(tournamentLatest.contestants().stream().map(c -> c.player()).collect(toList()));
             new SimpleMatchDialog(
-                Match.createNew(tournament.id(), 1, tournament.matches().size()+1, tournament.date(), null, null),
+                Match.createNew(tournament.id(), 1, tournament.matches().size()+1, tournament.params().date(), null, null),
                 players, 
-                tournament.bestOfNSets(), 
+                tournament.params().bestOfNSets(), 
                 () -> refresh()).open();
         });
         
@@ -201,14 +201,14 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     
     private void loadData() {
         
-        if(tournament.type() == Type.NA) {
+        if(tournament.params().structure() == Structure.NA) {
             contestantsTable.setPlayers(tournament.simplePlayersLineup());
             matchesGrid.setItems(matchService.loadMatchesOfTournament(tournament.id()));
-        } else if(tournament.type() == Type.BOARD_AND_CONSOLATION || tournament.type() == Type.SIMPLE_BOARD) {
+        } else if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION || tournament.params().structure() == Structure.SIMPLE_BOARD) {
             contestantsTable.setPlayers(tournament.playersLineup());
             tableWithButton.setVisible(tournament.status() == Status.DRAFT);
             mainBoard.setBoard(tournament, tournament.mainBoard());
-            if(tournament.type() == Type.BOARD_AND_CONSOLATION) {
+            if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION) {
                 consolationBoard.setBoard(tournament, tournament.consolationBoard());    
             }
         }
@@ -232,7 +232,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             event.forwardTo(TournamentsView.class);
         } else {
             this.tournament = tournament.get();
-            VaadinUtil.logUserAction(logger, "views tournament {}", tournament.get().name());
+            VaadinUtil.logUserAction(logger, "views tournament {}", tournament.get().params().name());
             createUI();
         }
     }

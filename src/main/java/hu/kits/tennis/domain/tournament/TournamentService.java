@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
@@ -17,8 +18,8 @@ import hu.kits.tennis.domain.match.MatchRepository;
 import hu.kits.tennis.domain.match.MatchResult;
 import hu.kits.tennis.domain.match.MatchResultInfo;
 import hu.kits.tennis.domain.player.Player;
-import hu.kits.tennis.domain.tournament.Tournament.Status;
-import hu.kits.tennis.domain.tournament.Tournament.Type;
+import hu.kits.tennis.domain.tournament.TournamentParams.Status;
+import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
 import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.UTRService;
 
@@ -41,8 +42,14 @@ public class TournamentService {
         return tournamentRepository.loadAllTournaments();
     }
     
-    public Tournament createTournament(Organization organization, String name, String venue, LocalDate date, Tournament.Type type, int bestOfNSets) {
-        Tournament tournament = Tournament.createNew(organization, name, venue, date, type, bestOfNSets);
+    public Tournament createTournament(TournamentParams tournamentParams) {
+        String id = UUID.randomUUID().toString().substring(0, 8);
+        Tournament tournament = new Tournament(
+                id,
+                tournamentParams,
+                List.of(), 
+                Status.DRAFT, 
+                List.of());
         tournamentRepository.createTournament(tournament);
         logger.info("Tournament is created: {}", tournament);
         return tournament;
@@ -50,22 +57,22 @@ public class TournamentService {
     
     public void updateTournamentName(Tournament tournament, String updatedName) {
         tournamentRepository.updateTournamentName(tournament.id(), updatedName);
-        logger.info("Tournament name is updated: {} -> {}", tournament.name(), updatedName);
+        logger.info("Tournament name is updated: {} -> {}", tournament.params().name(), updatedName);
     }
     
     public void updateTournamentDate(Tournament tournament, LocalDate updatedDate) {
         tournamentRepository.updateTournamentDate(tournament.id(), updatedDate);
-        logger.info("Tournament date is updated: {} -> {}", tournament.date(), updatedDate);
+        logger.info("Tournament date is updated: {} -> {}", tournament.params().date(), updatedDate);
     }
     
     public void updateTournamentVenue(Tournament tournament, String venue) {
         tournamentRepository.updateTournamentVenue(tournament.id(), venue);
-        logger.info("Tournament venue is updated: {} -> {}", tournament.venue(), venue);
+        logger.info("Tournament venue is updated: {} -> {}", tournament.params().venue(), venue);
     }
     
-    public void updateTournamentType(Tournament tournament, Tournament.Type type) {
-        tournamentRepository.updateTournamentType(tournament.id(), type);
-        logger.info("Tournament type is updated: {} -> {}", tournament.type(), type);
+    public void updateTournamentType(Tournament tournament, Structure structure) {
+        tournamentRepository.updateTournamentType(tournament.id(), structure);
+        logger.info("Tournament type is updated: {} -> {}", tournament.params().structure(), structure);
     }
     
     public void updateContestants(Tournament tournament, List<Player> players) {
@@ -112,18 +119,18 @@ public class TournamentService {
                     int nextRoundMatchNumber = tournament.mainBoard().nextRoundMatchNumber(matchNumber);
                     Match nextRoundMatch;
                     if(matchNumber % 2 == 1) {
-                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.date(), player2, null);    
+                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.params().date(), player2, null);    
                     } else {
-                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.date(), null, player2);   
+                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.params().date(), null, player2);   
                     }
                     matchRepository.save(new BookedMatch(nextRoundMatch, null, null, null, null));
                 } else if(player2.equals(Player.BYE)) {
                     int nextRoundMatchNumber = tournament.mainBoard().nextRoundMatchNumber(matchNumber);
                     Match nextRoundMatch;
                     if(matchNumber % 2 == 1) {
-                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.date(), player1, null);    
+                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.params().date(), player1, null);    
                     } else {
-                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.date(), null, player1);   
+                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.params().date(), null, player1);   
                     }
                     matchRepository.save(new BookedMatch(nextRoundMatch, null, null, null, null));
                 }
@@ -179,7 +186,7 @@ public class TournamentService {
             logger.info("{} is set to next round match: {}", winner.name(), followUpMatch);
         }
         
-        if(tournament.type() == Type.BOARD_AND_CONSOLATION && match.tournamentBoardNumber() == 1 && tournament.mainBoard().roundNumber(match) == 1) {
+        if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION && match.tournamentBoardNumber() == 1 && tournament.mainBoard().roundNumber(match) == 1) {
             Player loser = matchResult.isPlayer1Winner() ? match.player2() : match.player1();
             
             int consolationMatchNumber = (match.tournamentMatchNumber() + 1) / 2;

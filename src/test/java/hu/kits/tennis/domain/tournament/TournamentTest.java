@@ -1,6 +1,11 @@
 package hu.kits.tennis.domain.tournament;
 
-import static hu.kits.tennis.testutil.TestUtil.*;
+import static hu.kits.tennis.testutil.TestUtil.player1;
+import static hu.kits.tennis.testutil.TestUtil.player2;
+import static hu.kits.tennis.testutil.TestUtil.player3;
+import static hu.kits.tennis.testutil.TestUtil.player4;
+import static hu.kits.tennis.testutil.TestUtil.player5;
+import static hu.kits.tennis.testutil.TestUtil.player6;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,15 +20,18 @@ import org.junit.jupiter.api.Test;
 
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.player.Player;
-import hu.kits.tennis.domain.tournament.Tournament.Board;
-import hu.kits.tennis.domain.tournament.Tournament.Status;
-import hu.kits.tennis.domain.tournament.Tournament.Type;
+import hu.kits.tennis.domain.tournament.TournamentParams.Level;
+import hu.kits.tennis.domain.tournament.TournamentParams.Status;
+import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
+import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 
 public class TournamentTest {
 
     private final String TOURNAMENT_ID = "58c4446c";
     
     private final LocalDate DATE = LocalDate.of(2022,1,11);
+    
+    private final TournamentParams tournamentParams = new TournamentParams(Organization.KVTK, Type.DAILY, Level.L250, Level.L250, LocalDate.of(2022, 1, 1), "Napi", "Mini Garros", Structure.SIMPLE_BOARD, 1);
     
     @Test
     void lineupTestWith4Players() {
@@ -34,7 +42,7 @@ public class TournamentTest {
                 new Contestant(player3, 3),
                 new Contestant(player4, 4));
         
-        Tournament tournament = new Tournament(TOURNAMENT_ID, Organization.KVTK, DATE, "BVSC Tour", "BVSC", Type.SIMPLE_BOARD, 1, contestants, Status.DRAFT, List.of(new Tournament.Board(2, Map.of())));
+        Tournament tournament = new Tournament(TOURNAMENT_ID, tournamentParams, contestants, Status.DRAFT, List.of(new TournamentBoard(2, Map.of())));
         
         List<Player> lineup = tournament.playersLineup();
         
@@ -52,7 +60,7 @@ public class TournamentTest {
                 new Contestant(player5, 6),
                 new Contestant(player6, 7));
         
-        Tournament tournament = new Tournament(TOURNAMENT_ID, Organization.KVTK, DATE, "BVSC Tour", "BVSC", Type.SIMPLE_BOARD, 1, contestants, Status.DRAFT, List.of(new Tournament.Board(3, Map.of())));
+        Tournament tournament = new Tournament(TOURNAMENT_ID, tournamentParams, contestants, Status.DRAFT, List.of(new TournamentBoard(3, Map.of())));
         
         List<Player> lineup = tournament.playersLineup();
         
@@ -76,7 +84,7 @@ public class TournamentTest {
         Map<Integer, Match> matches = Stream.of(quarterFinal1, quarterFinal2, quarterFinal3, quarterFinal4, semiFinal1, semiFinal2, theFinal)
                 .collect(toMap(Match::tournamentMatchNumber, identity()));
         
-        Board board = new Board(3, matches);
+        TournamentBoard board = new TournamentBoard(3, matches);
         
         assertEquals(quarterFinal1, board.getMatch(1, 1));
         assertEquals(quarterFinal2, board.getMatch(1, 2));

@@ -33,8 +33,11 @@ import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
-import hu.kits.tennis.domain.tournament.Tournament.Type;
+import hu.kits.tennis.domain.tournament.TournamentParams;
 import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.tournament.TournamentParams.Level;
+import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
+import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ResourceFactory;
 
@@ -67,9 +70,9 @@ public class KVTKMeccsImporter {
         logger.info("{} players loaded", players.entries().size());
         
         tournaments = tournamentService.loadAllTournaments().stream()
-                .filter(tournament -> tournament.organization() == Organization.KVTK)
-                .filter(tournament -> tournament.organization() != Organization.KVTK)
-                .collect(toMap(Tournament::name, Function.identity()));
+                .filter(tournament -> tournament.params().organization() == Organization.KVTK)
+                .filter(tournament -> tournament.params().organization() != Organization.KVTK)
+                .collect(toMap(tournament -> tournament.params().name(), Function.identity()));
         
         //List<BookedMatch> allMatches = matchRepository.loadAllBookedMatches();
         
@@ -141,7 +144,8 @@ public class KVTKMeccsImporter {
     private Tournament findOrCreateTournament(LocalDate date, String tournamentName) {
         Tournament tournament = tournaments.get(tournamentName);
         if(tournament == null) {
-            tournament = tournamentService.createTournament(Organization.KVTK, tournamentName, "", date, Type.NA, 1);
+            TournamentParams params = new TournamentParams(Organization.KVTK, Type.DAILY, Level.L90, Level.L1000, date, tournamentName, "Mini Garros", Structure.NA, 1);
+            tournament = tournamentService.createTournament(params);
             logger.info("Saving tournament " + tournament);
             tournaments.put(tournamentName, tournament);
         }
@@ -151,7 +155,7 @@ public class KVTKMeccsImporter {
     public void setupTournaments() {
         
         List<Tournament> tournamentsNotSetup = tournamentService.loadAllTournaments().stream()
-                .filter(tournament -> tournament.organization() == Organization.KVTK)
+                .filter(tournament -> tournament.params().organization() == Organization.KVTK)
                 .filter(tournament -> tournament.contestants().isEmpty())
                 .collect(toList());
         

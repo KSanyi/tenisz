@@ -15,22 +15,22 @@ import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchResult;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.Tournament;
-import hu.kits.tennis.domain.tournament.Tournament.Board;
+import hu.kits.tennis.domain.tournament.TournamentBoard;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
-import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentBoard.Row;
+import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentBoardComponent.Row;
 
 @CssImport(value = "./styles/tournament-board.css", themeFor = "vaadin-grid")
-class TournamentBoard extends Grid<Row> {
+class TournamentBoardComponent extends Grid<Row> {
 
     private Tournament tournament;
     
-    private Board board;
+    private TournamentBoard board;
     
     private final List<Row> rows = new ArrayList<>();
     
     private final Runnable matchChangeCallback;
     
-    TournamentBoard(Tournament tournament, Board board, Runnable matchChangeCallback) {
+    TournamentBoardComponent(Tournament tournament, TournamentBoard board, Runnable matchChangeCallback) {
         
         this.tournament = tournament;
         this.board = board;
@@ -49,7 +49,7 @@ class TournamentBoard extends Grid<Row> {
         addThemeVariants(GridVariant.LUMO_COMPACT);
     }
     
-    private void setBoard(Board board) {
+    private void setBoard(TournamentBoard board) {
         this.board = board;
         int rounds = board.numberOfRounds();
         
@@ -104,7 +104,7 @@ class TournamentBoard extends Grid<Row> {
                 Match match = board.getMatch(round, matchNumberInRound);
                 if(match != null) {
                     String title = createHeader(board.numberOfRounds(), round) + " meccs " + matchNumberInRound;
-                    new TournamentMatchDialog(title, match, tournament.bestOfNSets(), matchChangeCallback).open();
+                    new TournamentMatchDialog(title, match, tournament.params().bestOfNSets(), matchChangeCallback).open();
                 }
             } 
         }
@@ -129,7 +129,7 @@ class TournamentBoard extends Grid<Row> {
         }
     }
     
-    void setBoard(Tournament tournament, Board board) {
+    void setBoard(Tournament tournament, TournamentBoard board) {
         
         this.tournament = tournament;
         setBoard(board);

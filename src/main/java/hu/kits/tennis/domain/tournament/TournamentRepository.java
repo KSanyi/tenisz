@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import hu.kits.tennis.domain.player.Player;
-import hu.kits.tennis.domain.tournament.Tournament.Status;
-import hu.kits.tennis.domain.tournament.Tournament.Type;
+import hu.kits.tennis.domain.tournament.TournamentParams.Status;
+import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
 
 public interface TournamentRepository {
 
@@ -26,7 +26,7 @@ public interface TournamentRepository {
 
     void updateTournamentVenue(String id, String venue);
 
-    void updateTournamentType(String id, Type type);
+    void updateTournamentType(String id, Structure structure);
     
     void updateTournamentStatus(String tournamentId, Status status);
 

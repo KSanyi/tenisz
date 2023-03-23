@@ -22,11 +22,14 @@ import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
-import hu.kits.tennis.domain.tournament.Tournament.Board;
-import hu.kits.tennis.domain.tournament.Tournament.Status;
-import hu.kits.tennis.domain.tournament.Tournament.Type;
+import hu.kits.tennis.domain.tournament.TournamentBoard;
 import hu.kits.tennis.domain.tournament.TournamentMatches;
+import hu.kits.tennis.domain.tournament.TournamentParams;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
+import hu.kits.tennis.domain.tournament.TournamentParams.Level;
+import hu.kits.tennis.domain.tournament.TournamentParams.Status;
+import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
+import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 
 public class TournamentJdbcRepository implements TournamentRepository {
 
@@ -37,6 +40,9 @@ public class TournamentJdbcRepository implements TournamentRepository {
     private static final String COLUMN_NAME = "NAME";
     private static final String COLUMN_VENUE = "VENUE";
     private static final String COLUMN_TYPE = "TYPE";
+    private static final String COLUMN_STRUCTURE = "STRUCTURE";
+    private static final String COLUMN_LEVEL_FROM = "LEVEL_FROM";
+    private static final String COLUMN_LEVEL_TO = "LEVEL_TO";
     private static final String COLUMN_BEST_OF_N_SETS = "BEST_OF_N_SETS";
     private static final String COLUMN_STATUS = "STATUS";
     
@@ -93,26 +99,30 @@ public class TournamentJdbcRepository implements TournamentRepository {
         
         List<Contestant> contestants = contestantsByTournament.getOrDefault(tournamentId, List.of());
         
-        Tournament.Type type = Tournament.Type.valueOf(rs.getString(COLUMN_TYPE));
+        Structure structure = Structure.valueOf(rs.getString(COLUMN_STRUCTURE));
         
         TournamentMatches tournamentMatches = matchesByTournament.getOrDefault(tournamentId, TournamentMatches.empty());
         
-        List<Board> boards = new ArrayList<>();
+        List<TournamentBoard> boards = new ArrayList<>();
         
         int numberOfRounds = MathUtil.log2(contestants.size());
-        boards.add(new Board(numberOfRounds, tournamentMatches.matchesInBoard(1)));
-        if(type == Type.BOARD_AND_CONSOLATION) {
-            boards.add(new Board(numberOfRounds - 1, tournamentMatches.matchesInBoard(2)));
+        boards.add(new TournamentBoard(numberOfRounds, tournamentMatches.matchesInBoard(1)));
+        if(structure == Structure.BOARD_AND_CONSOLATION) {
+            boards.add(new TournamentBoard(numberOfRounds - 1, tournamentMatches.matchesInBoard(2)));
         }
         
         return new Tournament(
                 tournamentId,
-                Organization.valueOf(rs.getString(COLUMN_ORGANIZATION)),
-                rs.getDate(COLUMN_DATE).toLocalDate(),
-                rs.getString(COLUMN_NAME),
-                rs.getString(COLUMN_VENUE),
-                type,
-                rs.getInt(COLUMN_BEST_OF_N_SETS),
+                new TournamentParams(
+                        Organization.valueOf(rs.getString(COLUMN_ORGANIZATION)),
+                        Type.valueOf(rs.getString(COLUMN_TYPE)),
+                        Level.valueOf(rs.getString(COLUMN_LEVEL_FROM)),
+                        Level.valueOf(rs.getString(COLUMN_LEVEL_TO)),
+                        rs.getDate(COLUMN_DATE).toLocalDate(),
+                        rs.getString(COLUMN_NAME),
+                        rs.getString(COLUMN_VENUE),
+                        structure,
+                        rs.getInt(COLUMN_BEST_OF_N_SETS)),
                 contestants,
                 Status.valueOf(rs.getString(COLUMN_STATUS)),
                 boards);
@@ -126,15 +136,20 @@ public class TournamentJdbcRepository implements TournamentRepository {
 
     private static Map<String, Object> createMap(Tournament tournament) {
         
+        TournamentParams params = tournament.params();
+        
         Map<String, Object> valuesMap = new HashMap<>();
         valuesMap.put(COLUMN_ID, tournament.id());
-        valuesMap.put(COLUMN_DATE, tournament.date());
-        valuesMap.put(COLUMN_ORGANIZATION, tournament.organization());
-        valuesMap.put(COLUMN_NAME, tournament.name());
-        valuesMap.put(COLUMN_VENUE, tournament.venue());
-        valuesMap.put(COLUMN_TYPE, tournament.type());
+        valuesMap.put(COLUMN_ORGANIZATION, params.organization());
+        valuesMap.put(COLUMN_TYPE, params.type());
+        valuesMap.put(COLUMN_LEVEL_FROM, params.levelFrom());
+        valuesMap.put(COLUMN_LEVEL_TO, params.levelTo());
+        valuesMap.put(COLUMN_DATE, params.date());
+        valuesMap.put(COLUMN_NAME, params.name());
+        valuesMap.put(COLUMN_VENUE, params.venue());
+        valuesMap.put(COLUMN_STRUCTURE, params.structure());
+        valuesMap.put(COLUMN_BEST_OF_N_SETS, params.bestOfNSets());
         valuesMap.put(COLUMN_STATUS, tournament.status());
-        valuesMap.put(COLUMN_BEST_OF_N_SETS, tournament.bestOfNSets());
         return valuesMap;
     }
 
@@ -175,8 +190,8 @@ public class TournamentJdbcRepository implements TournamentRepository {
     }
     
     @Override
-    public void updateTournamentType(String tournamentId, Type type) {
-        jdbi.useHandle(handle -> JdbiUtil.executeSimpleUpdate(jdbi, TABLE_TOURNAMENT, COLUMN_TYPE, type, COLUMN_ID, tournamentId));
+    public void updateTournamentType(String tournamentId, Structure structure) {
+        jdbi.useHandle(handle -> JdbiUtil.executeSimpleUpdate(jdbi, TABLE_TOURNAMENT, COLUMN_TYPE, structure, COLUMN_ID, tournamentId));
     }
     
     @Override

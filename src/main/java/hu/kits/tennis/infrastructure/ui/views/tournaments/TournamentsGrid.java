@@ -40,7 +40,7 @@ class TournamentsGrid extends Grid<Tournament> {
         addComponentColumn(TournamentsMobileTemplate::new)
             .setVisible(false);
         
-        addColumn(Tournament::name)
+        addColumn(t -> t.params().name())
             .setHeader("Név")
             .setSortable(true)
             .setKey("name");
@@ -57,10 +57,10 @@ class TournamentsGrid extends Grid<Tournament> {
 //            .setSortable(true)
 //            .setFlexGrow(2);
     
-        addColumn(new LocalDateRenderer<>(Tournament::date, () -> Formatters.DATE_FORMAT))
+        addColumn(new LocalDateRenderer<>(t -> t.params().date(), () -> Formatters.DATE_FORMAT))
             .setHeader("Dátum")
             .setSortable(true)
-            .setComparator(comparing(Tournament::date))
+            .setComparator(comparing(t -> t.params().date()))
             .setKey("date");
         
         addColumn(t -> t.contestants().size())
@@ -128,7 +128,7 @@ class TournamentsGrid extends Grid<Tournament> {
         }
 
         private FlexBoxLayout getName() {
-            Label owner = UIUtils.createLabel(FontSize.M, TextColor.BODY, tournament.name());
+            Label owner = UIUtils.createLabel(FontSize.M, TextColor.BODY, tournament.params().name());
             UIUtils.setOverflow(Overflow.HIDDEN, owner);
             UIUtils.setTextOverflow(TextOverflow.ELLIPSIS, owner);
 
@@ -144,7 +144,7 @@ class TournamentsGrid extends Grid<Tournament> {
         }
 
         private Label getDate() {
-            Label account = UIUtils.createLabel(FontSize.S, TextColor.SECONDARY,  Formatters.formatDateLong(tournament.date()));
+            Label account = UIUtils.createLabel(FontSize.S, TextColor.SECONDARY,  Formatters.formatDateLong(tournament.params().date()));
             account.addClassNames(LumoStyles.Margin.Bottom.S);
             UIUtils.setOverflow(Overflow.HIDDEN, account);
             UIUtils.setTextOverflow(TextOverflow.ELLIPSIS, account);

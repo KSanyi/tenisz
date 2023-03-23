@@ -87,8 +87,8 @@ public class TournamentsView extends SplitViewFrame implements View {
     
     private void loadTournaments() {
         List<Tournament> tournaments = tournamentService.loadAllTournaments();
-        List<Tournament> dailyTournaments = tournaments.stream().filter(t -> !t.name().contains("TOUR")).toList();
-        List<Tournament> tourTournaments = tournaments.stream().filter(t -> t.name().contains("TOUR")).toList();
+        List<Tournament> dailyTournaments = tournaments.stream().filter(t -> !t.params().name().contains("TOUR")).toList();
+        List<Tournament> tourTournaments = tournaments.stream().filter(t -> t.params().name().contains("TOUR")).toList();
         dailyTournamentsGrid.setItems(dailyTournaments);
         tourTournamentsGrid.setItems(tourTournaments);
     }

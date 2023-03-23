@@ -3,108 +3,19 @@ package hu.kits.tennis.domain.tournament;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 
 public record Tournament(String id,
-        Organization organization,
-        LocalDate date, 
-        String name,
-        String venue,
-        Type type,
-        int bestOfNSets,
+        TournamentParams params,
         List<Contestant> contestants, 
         Status status, 
-        List<Board> boards) {
-    
-    public static Tournament createNew(Organization organization, String name, String venue, LocalDate date, Tournament.Type type, int bestOfNSets) {
-        String id = UUID.randomUUID().toString().substring(0, 8);
-        return new Tournament(id, organization, date, name, venue, type, bestOfNSets, List.of(), Status.DRAFT, List.of());
-    }
-    
-    public static enum Type {
-        SIMPLE_BOARD("Főtábla"),
-        BOARD_AND_CONSOLATION("Főtábla és vigasztábla"),
-        NA("Csak meccsek");
-        
-        public final String label;
-
-        private Type(String label) {
-            this.label = label;
-        }
-        
-    }
-    
-    public static enum Status {
-        LIVE,
-        DRAFT,
-        COMPLETED;
-    }
-    
-    public static record Board(int numberOfRounds, Map<Integer, Match> matches) {
-        
-        public Match getMatch(int round, int matchNumberInRound) {
-            return matches.get(matchNumber(round, matchNumberInRound));
-        }
-        
-        public Match getMatch(int matchNumber) {
-            return matches.get(matchNumber);
-        }
-        
-        private int matchNumber(int round, int matchNumberInRound) {
-            return MathUtil.pow2(numberOfRounds) - MathUtil.pow2(numberOfRounds - round + 1) + matchNumberInRound;
-        }
-        
-        public int nextRoundMatchNumber(Integer matchNumber) {
-            var roundAndMatchNumberInRound = MathUtil.roundAndMatchNumberInRound(matchNumber, numberOfRounds);
-            int round = roundAndMatchNumberInRound.first();
-            int matchNumberInRound = roundAndMatchNumberInRound.second();
-            
-            return matchNumber(round + 1, (matchNumberInRound + 1) / 2);
-        }
-        
-        public Optional<Match> findPrevMatch(Match match, Player player) {
-            var roundAndMatchNumberInRound = MathUtil.roundAndMatchNumberInRound(match.tournamentMatchNumber(), numberOfRounds);
-            int round = roundAndMatchNumberInRound.first();
-            int matchNumberInRound = roundAndMatchNumberInRound.second();
-            Match match1 = getMatch(round-1, matchNumberInRound * 2 - 1);
-            if(match1 != null && match1.hasPlayer(player)) {
-                if(match1.player2().equals(player)) {
-                    match1 = match1.swap();
-                }
-                return Optional.of(match1);
-            }
-            Match match2 = getMatch(round-1, matchNumberInRound * 2);
-            if(match2 != null && match2.hasPlayer(player)) {
-                if(match2.player2().equals(player)) {
-                    match2 = match2.swap();
-                }
-                return Optional.of(match2);
-            }
-            return Optional.empty();
-        }
-
-        public int roundNumber(Match match) {
-            return MathUtil.roundAndMatchNumberInRound(match.tournamentMatchNumber(), numberOfRounds).first();
-        }
-
-        public boolean isFinal(Match match) {
-            return roundNumber(match) == numberOfRounds;
-        }
-
-        public Match finalMatch() {
-            return matches.get(MathUtil.pow2(numberOfRounds)-1);
-        }
-        
-    }
+        List<TournamentBoard> boards) {
     
     public List<Player> playersLineup() {
 
@@ -115,9 +26,9 @@ public record Tournament(String id,
         var playersByRank = contestants.stream().collect(toMap(Contestant::rank, Contestant::player));
         
         List<Player> lineup = new ArrayList<>();
-        for(int i=1;i<=MathUtil.pow2(mainBoard().numberOfRounds);i++) {
+        for(int i=1;i<=MathUtil.pow2(mainBoard().numberOfRounds());i++) {
             Player player = playersByRank.getOrDefault(i, Player.BYE);
-            if(player != Player.BYE || status == Tournament.Status.DRAFT) {
+            if(player != Player.BYE || status == Status.DRAFT) {
                 lineup.add(player);    
             }
         }
@@ -132,7 +43,7 @@ public record Tournament(String id,
     
     @Override
     public String toString() {
-        return name + "(" + id + ")";
+        return params.name() + "(" + id + ")";
     }
 
     public Match getMatch(int boardNumber, int matchNumber) {
@@ -143,11 +54,11 @@ public record Tournament(String id,
         return boards.get(match.tournamentBoardNumber()-1).nextRoundMatchNumber(match.tournamentMatchNumber());
     }
 
-    public Board mainBoard() {
+    public TournamentBoard mainBoard() {
         return boards.get(0);
     }
 
-    public Board consolationBoard() {
+    public TournamentBoard consolationBoard() {
         return boards.get(1);
     }
 
@@ -155,7 +66,7 @@ public record Tournament(String id,
         return boards.get(match.tournamentBoardNumber() - 1).isFinal(match);
     }
 
-    private Board getBoard(Integer tournamentBoardNumber) {
+    private TournamentBoard getBoard(Integer tournamentBoardNumber) {
         return boards.get(tournamentBoardNumber - 1);
     }
 
@@ -165,7 +76,7 @@ public record Tournament(String id,
     }
 
     public BasicTournamentInfo tournamentInfo() {
-        return new BasicTournamentInfo(id, organization, name);
+        return new BasicTournamentInfo(id, params.organization(), params.name());
     }
 
     public List<Match> matches() {

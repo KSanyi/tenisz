@@ -21,20 +21,22 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
-import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.match.MatchResult;
-import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.match.MatchResult.SetResult;
+import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.Players;
-import hu.kits.tennis.domain.player.Player.Contact;
+import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
-import hu.kits.tennis.domain.tournament.Tournament.Type;
-import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
+import hu.kits.tennis.domain.tournament.TournamentParams;
+import hu.kits.tennis.domain.tournament.TournamentParams.Level;
+import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
+import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.UTR;
@@ -277,7 +279,8 @@ public class TeniszPartnerMeccsImporter {
         for(LocalDate date : matchesByDate.keySet()) {
             
             List<MatchInfo> matches = matchesByDate.get(date);
-            Tournament tournament = tournamentService.createTournament(Organization.KVTK, "Teniszpartner verseny " + Formatters.formatDate(date), "Bikás Park", date, Type.NA, 1);
+            TournamentParams params = new TournamentParams(Organization.KVTK, Type.DAILY, Level.L90, Level.L1000, date, "Teniszpartner verseny", "Bikás Park", Structure.NA, 1);
+            Tournament tournament = tournamentService.createTournament(params);
             List<Player> players = findPlayers(matches);
             tournamentService.updateContestants(tournament, players);
         }
