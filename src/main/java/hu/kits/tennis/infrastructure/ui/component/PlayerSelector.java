@@ -17,7 +17,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.StringUtil;
-import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.domain.player.Player;
 
 public class PlayerSelector extends VerticalLayout {
 

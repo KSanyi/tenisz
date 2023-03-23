@@ -1,4 +1,4 @@
-package hu.kits.tennis.domain.utr;
+package hu.kits.tennis.domain.match;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import hu.kits.tennis.domain.utr.Match.MatchType;
+import hu.kits.tennis.domain.match.Match.MatchType;
+import hu.kits.tennis.domain.utr.UTR;
 
 public record MatchResult(List<SetResult> setResults) {
 

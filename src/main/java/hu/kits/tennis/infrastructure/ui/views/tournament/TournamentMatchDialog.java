@@ -17,11 +17,11 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.Clock;
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.match.MatchResult;
+import hu.kits.tennis.domain.match.MatchResultInfo;
+import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.TournamentService;
-import hu.kits.tennis.domain.utr.Match;
-import hu.kits.tennis.domain.utr.MatchResult;
-import hu.kits.tennis.domain.utr.MatchResultInfo;
-import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.component.MatchScoreField;

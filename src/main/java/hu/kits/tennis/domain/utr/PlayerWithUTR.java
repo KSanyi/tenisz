@@ -1,5 +1,7 @@
 package hu.kits.tennis.domain.utr;
 
+import hu.kits.tennis.domain.player.Player;
+
 public record PlayerWithUTR(Player player, int rank, UTR utr, UTR utrOneWeekAgo, int numberOfMatches) {
     
     public UTR utrChange() {

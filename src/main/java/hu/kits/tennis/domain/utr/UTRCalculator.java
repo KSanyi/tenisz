@@ -15,7 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.common.Clock;
 import hu.kits.tennis.common.Pair;
-import hu.kits.tennis.domain.utr.MatchResult.SetResult;
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.match.MatchResult;
+import hu.kits.tennis.domain.match.MatchResult.SetResult;
+import hu.kits.tennis.domain.player.Player;
 
 public class UTRCalculator {
 

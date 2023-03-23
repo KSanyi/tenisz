@@ -15,6 +15,10 @@ import org.jdbi.v3.core.Jdbi;
 
 import hu.kits.tennis.common.CollectionsUtil;
 import hu.kits.tennis.common.MathUtil;
+import hu.kits.tennis.domain.match.MatchRepository;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayerRepository;
+import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
@@ -23,10 +27,6 @@ import hu.kits.tennis.domain.tournament.Tournament.Status;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentMatches;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
-import hu.kits.tennis.domain.utr.MatchRepository;
-import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.PlayerRepository;
-import hu.kits.tennis.domain.utr.Players;
 
 public class TournamentJdbcRepository implements TournamentRepository {
 

@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.Tournament.Status;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
-import hu.kits.tennis.domain.utr.Player;
 
 public interface TournamentRepository {
 

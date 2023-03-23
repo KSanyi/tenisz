@@ -16,9 +16,9 @@ import javax.sql.DataSource;
 import org.jdbi.v3.core.Jdbi;
 
 import hu.kits.tennis.common.Pair;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.domain.tournament.Contestant;
-import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.Players;
 
 class ContestantDBTable {
 

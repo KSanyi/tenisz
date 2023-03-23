@@ -21,21 +21,21 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.match.MatchInfo;
+import hu.kits.tennis.domain.match.MatchRepository;
+import hu.kits.tennis.domain.match.MatchResult;
+import hu.kits.tennis.domain.match.MatchService;
+import hu.kits.tennis.domain.match.MatchResult.SetResult;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayerRepository;
+import hu.kits.tennis.domain.player.Players;
+import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.BookedMatch;
-import hu.kits.tennis.domain.utr.Match;
-import hu.kits.tennis.domain.utr.MatchInfo;
-import hu.kits.tennis.domain.utr.MatchRepository;
-import hu.kits.tennis.domain.utr.MatchResult;
-import hu.kits.tennis.domain.utr.MatchResult.SetResult;
-import hu.kits.tennis.domain.utr.MatchService;
-import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.Player.Contact;
-import hu.kits.tennis.domain.utr.PlayerRepository;
-import hu.kits.tennis.domain.utr.Players;
 import hu.kits.tennis.domain.utr.UTR;
 
 class KVTKMeccsImporter {

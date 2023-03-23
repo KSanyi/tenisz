@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 import com.vaadin.flow.component.dialog.Dialog;
 
-import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.domain.player.Player;
 
 public class PlayerSelectorDialog extends Dialog {
 

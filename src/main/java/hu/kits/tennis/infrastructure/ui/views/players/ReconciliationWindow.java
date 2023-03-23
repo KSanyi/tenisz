@@ -7,9 +7,9 @@ import java.util.List;
 import com.vaadin.flow.component.dialog.Dialog;
 
 import hu.kits.tennis.Main;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayersService;
 import hu.kits.tennis.domain.user.ReconciliationService;
-import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.PlayersService;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.component.PlayerSelector;

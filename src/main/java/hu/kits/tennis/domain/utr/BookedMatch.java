@@ -1,5 +1,8 @@
 package hu.kits.tennis.domain.utr;
 
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.player.Player;
+
 public record BookedMatch(Match playedMatch, UTR player1UTR, UTR player2UTR, UTR matchUTRForPlayer1, UTR matchUTRForPlayer2) {
 
     public UTR utrOfMatchFor(Player player) {

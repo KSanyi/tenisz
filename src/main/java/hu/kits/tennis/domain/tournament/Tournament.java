@@ -11,8 +11,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import hu.kits.tennis.common.MathUtil;
-import hu.kits.tennis.domain.utr.Match;
-import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.player.Player;
 
 public record Tournament(String id,
         Organization organization,

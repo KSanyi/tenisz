@@ -19,17 +19,17 @@ import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.match.MatchResult;
+import hu.kits.tennis.domain.match.MatchResultInfo;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.DrawMode;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Board;
 import hu.kits.tennis.domain.tournament.TournamentService;
-import hu.kits.tennis.domain.utr.Match;
-import hu.kits.tennis.domain.utr.MatchResult;
-import hu.kits.tennis.domain.utr.MatchResultInfo;
-import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.PlayerRepository;
 import hu.kits.tennis.testutil.InMemoryDataSourceFactory;
 import hu.kits.tennis.testutil.SpyEmailSender;
 

@@ -9,8 +9,8 @@ import com.vaadin.flow.data.selection.SelectionEvent;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.StringUtil;
-import hu.kits.tennis.domain.utr.MatchInfo;
-import hu.kits.tennis.domain.utr.MatchService;
+import hu.kits.tennis.domain.match.MatchInfo;
+import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.infrastructure.ui.views.utr.MatchesGrid;
 
 class AllMatchesGrid extends MatchesGrid {

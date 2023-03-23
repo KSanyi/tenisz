@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.testutil.TestUtil;
 
 public class UTRCalculatorTest2 {

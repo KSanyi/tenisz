@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.mysql.cj.jdbc.MysqlDataSource;
 
 import hu.kits.tennis.common.Clock;
-import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.utr.UTRDetails;
 import hu.kits.tennis.domain.utr.UTRService;
 

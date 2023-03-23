@@ -1,7 +1,9 @@
-package hu.kits.tennis.domain.utr;
+package hu.kits.tennis.domain.match;
 
 import java.time.LocalDate;
 import java.util.stream.Stream;
+
+import hu.kits.tennis.domain.player.Player;
 
 public record Match(Integer id, String tournamentId, Integer tournamentBoardNumber, Integer tournamentMatchNumber, LocalDate date, Player player1, Player player2, MatchResult result) {
 

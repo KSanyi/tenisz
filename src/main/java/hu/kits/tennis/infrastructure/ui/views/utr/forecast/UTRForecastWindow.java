@@ -34,11 +34,11 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 
 import hu.kits.tennis.Main;
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.match.MatchResult;
+import hu.kits.tennis.domain.match.MatchService;
+import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.utr.BookedMatch;
-import hu.kits.tennis.domain.utr.Match;
-import hu.kits.tennis.domain.utr.MatchResult;
-import hu.kits.tennis.domain.utr.MatchService;
-import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.domain.utr.UTRCalculator;

@@ -1,10 +1,12 @@
-package hu.kits.tennis.domain.utr;
+package hu.kits.tennis.domain.match;
 
 import java.time.LocalDate;
 
 import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.common.StringUtil;
+import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.TournamentInfo;
+import hu.kits.tennis.domain.utr.UTR;
 
 public record MatchInfo(Integer id, 
         TournamentInfo tournamentInfo, 

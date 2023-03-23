@@ -1,8 +1,10 @@
-package hu.kits.tennis.domain.utr;
+package hu.kits.tennis.domain.match;
 
 import java.util.List;
 
+import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.TournamentMatches;
+import hu.kits.tennis.domain.utr.BookedMatch;
 
 public interface MatchRepository {
 

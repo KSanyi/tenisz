@@ -8,7 +8,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.Formatters;
-import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.utr.PlayerStats;
 import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.domain.utr.UTRWithDate;

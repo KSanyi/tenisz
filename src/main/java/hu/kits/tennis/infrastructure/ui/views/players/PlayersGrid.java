@@ -11,8 +11,8 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
 import hu.kits.tennis.common.StringUtil;
-import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.PlayersService;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayersService;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.Badge;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.FlexBoxLayout;

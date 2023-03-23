@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.match.MatchRepository;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
-import hu.kits.tennis.domain.utr.Match;
-import hu.kits.tennis.domain.utr.MatchRepository;
-import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.PlayerRepository;
 
 public class ReconciliationService {
 

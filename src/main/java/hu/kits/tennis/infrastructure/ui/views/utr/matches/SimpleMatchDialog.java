@@ -18,11 +18,11 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import hu.kits.tennis.Main;
-import hu.kits.tennis.domain.utr.Match;
-import hu.kits.tennis.domain.utr.MatchResult;
-import hu.kits.tennis.domain.utr.MatchService;
-import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.Players;
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.match.MatchResult;
+import hu.kits.tennis.domain.match.MatchService;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.HungarianDatePicker;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;

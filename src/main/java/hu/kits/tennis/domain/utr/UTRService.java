@@ -13,6 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.common.Clock;
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.match.MatchInfo;
+import hu.kits.tennis.domain.match.MatchRepository;
+import hu.kits.tennis.domain.match.MatchService;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.utr.UTRHistory.UTRHistoryEntry;
 
 public class UTRService {

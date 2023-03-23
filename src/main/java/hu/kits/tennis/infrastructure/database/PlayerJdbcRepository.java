@@ -17,11 +17,11 @@ import javax.sql.DataSource;
 import org.jdbi.v3.core.Jdbi;
 
 import hu.kits.tennis.common.KITSException;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayerRepository;
+import hu.kits.tennis.domain.player.Players;
+import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.tournament.Organization;
-import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.Player.Contact;
-import hu.kits.tennis.domain.utr.PlayerRepository;
-import hu.kits.tennis.domain.utr.Players;
 import hu.kits.tennis.domain.utr.UTR;
 
 public class PlayerJdbcRepository implements PlayerRepository {

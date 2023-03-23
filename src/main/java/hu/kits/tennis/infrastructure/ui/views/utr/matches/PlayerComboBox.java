@@ -2,9 +2,9 @@ package hu.kits.tennis.infrastructure.ui.views.utr.matches;
 
 import com.vaadin.flow.component.combobox.ComboBox;
 
-import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.PlayerRepository;
-import hu.kits.tennis.domain.utr.Players;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayerRepository;
+import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 
 public class PlayerComboBox extends ComboBox<Player> {

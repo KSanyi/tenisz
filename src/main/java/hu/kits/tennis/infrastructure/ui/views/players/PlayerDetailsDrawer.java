@@ -26,10 +26,10 @@ import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.data.validator.RegexpValidator;
 
 import hu.kits.tennis.common.KITSException;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayersService;
+import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.tournament.Organization;
-import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.Player.Contact;
-import hu.kits.tennis.domain.utr.PlayersService;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;

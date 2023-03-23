@@ -12,14 +12,14 @@ import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.match.MatchRepository;
+import hu.kits.tennis.domain.match.MatchResult;
+import hu.kits.tennis.domain.match.MatchResultInfo;
+import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.Tournament.Status;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.utr.BookedMatch;
-import hu.kits.tennis.domain.utr.Match;
-import hu.kits.tennis.domain.utr.MatchRepository;
-import hu.kits.tennis.domain.utr.MatchResult;
-import hu.kits.tennis.domain.utr.MatchResultInfo;
-import hu.kits.tennis.domain.utr.Player;
 import hu.kits.tennis.domain.utr.UTRService;
 
 public class TournamentService {

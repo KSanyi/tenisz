@@ -6,11 +6,11 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import hu.kits.tennis.domain.utr.Match;
-import hu.kits.tennis.domain.utr.MatchResult;
-import hu.kits.tennis.domain.utr.MatchResult.SetResult;
-import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.Player.Contact;
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.match.MatchResult;
+import hu.kits.tennis.domain.match.MatchResult.SetResult;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.utr.UTR;
 
 public class TestUtil {

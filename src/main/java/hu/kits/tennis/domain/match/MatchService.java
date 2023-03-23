@@ -1,4 +1,4 @@
-package hu.kits.tennis.domain.utr;
+package hu.kits.tennis.domain.match;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -13,9 +13,11 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentInfo;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
+import hu.kits.tennis.domain.utr.BookedMatch;
 
 public class MatchService {
 

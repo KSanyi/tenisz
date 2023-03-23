@@ -14,7 +14,7 @@ import com.vaadin.flow.component.grid.dnd.GridDropMode;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
-import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.component.PlayerSelectorDialog;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;

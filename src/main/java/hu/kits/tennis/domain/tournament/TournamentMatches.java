@@ -5,7 +5,7 @@ import static java.util.stream.Collectors.toMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import hu.kits.tennis.domain.utr.Match;
+import hu.kits.tennis.domain.match.Match;
 
 public class TournamentMatches {
 

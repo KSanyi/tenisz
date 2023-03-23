@@ -13,9 +13,9 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import hu.kits.tennis.Main;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayersService;
 import hu.kits.tennis.domain.user.Role;
-import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.PlayersService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.util.AllowedRoles;
 import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;

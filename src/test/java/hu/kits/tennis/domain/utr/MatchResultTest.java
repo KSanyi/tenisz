@@ -2,6 +2,8 @@ package hu.kits.tennis.domain.utr;
 
 import org.junit.jupiter.api.Test;
 
+import hu.kits.tennis.domain.match.MatchResult;
+
 public class MatchResultTest {
     
     @Test

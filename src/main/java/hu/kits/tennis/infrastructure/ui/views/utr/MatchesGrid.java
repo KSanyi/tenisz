@@ -19,9 +19,9 @@ import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 
 import hu.kits.tennis.common.Formatters;
+import hu.kits.tennis.domain.match.MatchInfo;
+import hu.kits.tennis.domain.match.MatchResult;
 import hu.kits.tennis.domain.utr.BookedMatch;
-import hu.kits.tennis.domain.utr.MatchInfo;
-import hu.kits.tennis.domain.utr.MatchResult;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 

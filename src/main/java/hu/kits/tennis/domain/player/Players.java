@@ -1,4 +1,4 @@
-package hu.kits.tennis.domain.utr;
+package hu.kits.tennis.domain.player;
 
 import java.util.ArrayList;
 import java.util.Collections;

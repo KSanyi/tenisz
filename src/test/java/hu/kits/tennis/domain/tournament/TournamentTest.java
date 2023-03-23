@@ -13,11 +13,11 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.Tournament.Board;
 import hu.kits.tennis.domain.tournament.Tournament.Status;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
-import hu.kits.tennis.domain.utr.Match;
-import hu.kits.tennis.domain.utr.Player;
 
 public class TournamentTest {
 

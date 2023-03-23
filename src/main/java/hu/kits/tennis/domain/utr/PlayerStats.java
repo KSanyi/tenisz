@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import hu.kits.tennis.common.Clock;
+import hu.kits.tennis.domain.match.MatchInfo;
+import hu.kits.tennis.domain.player.Player;
 
 public record PlayerStats(Player player,
         List<MatchInfo> matches,

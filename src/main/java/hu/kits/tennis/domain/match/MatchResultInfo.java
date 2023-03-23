@@ -1,4 +1,4 @@
-package hu.kits.tennis.domain.utr;
+package hu.kits.tennis.domain.match;
 
 import java.time.LocalDate;
 

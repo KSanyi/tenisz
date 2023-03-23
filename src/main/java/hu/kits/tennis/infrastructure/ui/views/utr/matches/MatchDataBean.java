@@ -3,12 +3,12 @@ package hu.kits.tennis.infrastructure.ui.views.utr.matches;
 import java.time.LocalDate;
 import java.util.List;
 
-import hu.kits.tennis.domain.utr.MatchResult;
-import hu.kits.tennis.domain.utr.MatchResult.SetResult;
 import hu.kits.tennis.common.Clock;
-import hu.kits.tennis.domain.utr.Match;
-import hu.kits.tennis.domain.utr.MatchInfo;
-import hu.kits.tennis.domain.utr.Player;
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.match.MatchInfo;
+import hu.kits.tennis.domain.match.MatchResult;
+import hu.kits.tennis.domain.match.MatchResult.SetResult;
+import hu.kits.tennis.domain.player.Player;
 
 public class MatchDataBean {
 

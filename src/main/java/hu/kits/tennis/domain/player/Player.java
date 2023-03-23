@@ -1,10 +1,11 @@
-package hu.kits.tennis.domain.utr;
+package hu.kits.tennis.domain.player;
 
 import java.util.Objects;
 import java.util.Set;
 
 import hu.kits.tennis.common.StringUtil;
 import hu.kits.tennis.domain.tournament.Organization;
+import hu.kits.tennis.domain.utr.UTR;
 
 public record Player(Integer id,
         String name,

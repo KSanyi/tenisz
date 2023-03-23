@@ -21,15 +21,15 @@ import javax.sql.DataSource;
 import org.jdbi.v3.core.Jdbi;
 
 import hu.kits.tennis.common.CollectionsUtil;
+import hu.kits.tennis.domain.match.Match;
+import hu.kits.tennis.domain.match.MatchRepository;
+import hu.kits.tennis.domain.match.MatchResult;
+import hu.kits.tennis.domain.match.MatchResultInfo;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayerRepository;
+import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.domain.tournament.TournamentMatches;
 import hu.kits.tennis.domain.utr.BookedMatch;
-import hu.kits.tennis.domain.utr.Match;
-import hu.kits.tennis.domain.utr.MatchRepository;
-import hu.kits.tennis.domain.utr.MatchResult;
-import hu.kits.tennis.domain.utr.MatchResultInfo;
-import hu.kits.tennis.domain.utr.Player;
-import hu.kits.tennis.domain.utr.PlayerRepository;
-import hu.kits.tennis.domain.utr.Players;
 import hu.kits.tennis.domain.utr.UTR;
 
 public class MatchJdbcRepository implements MatchRepository  {
