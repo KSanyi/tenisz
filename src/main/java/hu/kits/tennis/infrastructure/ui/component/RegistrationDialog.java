@@ -43,7 +43,6 @@ public class RegistrationDialog extends Dialog {
         passwordField.setWidth("300px");
         
         phoneField.setPattern("[0-9]*");
-        phoneField.setPreventInvalidInput(true);
         
         VerticalLayout layout = new VerticalLayout(new H4("Regisztráció"),
                 nameField,

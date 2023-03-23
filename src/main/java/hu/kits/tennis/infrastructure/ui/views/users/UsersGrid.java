@@ -64,7 +64,7 @@ class UsersGrid extends Grid<UserData> {
             .setWidth("100")
             .setFlexGrow(0);
         
-        setHeightByRows(true);
+        setAllRowsVisible(true);
         
         UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleColumns(e.getBodyClientWidth()));
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleColumns(e.getWidth()));

@@ -179,7 +179,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         startingUTRField.setMin(1);
         startingUTRField.setMax(16);
         startingUTRField.setStep(0.01);
-        startingUTRField.setHasControls(true);
+        startingUTRField.setStepButtonsVisible(true);
         
         return fieldsLayout;
     }
