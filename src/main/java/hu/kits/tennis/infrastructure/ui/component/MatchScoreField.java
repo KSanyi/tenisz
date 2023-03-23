@@ -84,7 +84,6 @@ public class MatchScoreField extends HorizontalLayout {
         TextField scoreField = new TextField();
         scoreField.setPattern("[0-9]*");
         scoreField.setMaxLength(2);
-        scoreField.setPreventInvalidInput(true);
         scoreField.setAutoselect(true);
         scoreField.setWidth(40, Unit.PIXELS);
         scoreField.addThemeVariants(TextFieldVariant.LUMO_ALIGN_CENTER);

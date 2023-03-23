@@ -1,9 +1,10 @@
 package hu.kits.tennis.infrastructure.ui.component;
 
 import java.util.List;
-import java.util.Locale;
 
 import com.vaadin.flow.component.datepicker.DatePicker;
+
+import hu.kits.tennis.common.LocaleUtil;
 
 public class HungarianDatePicker extends DatePicker  {
 
@@ -13,11 +14,9 @@ public class HungarianDatePicker extends DatePicker  {
     
     public HungarianDatePicker(String caption) {
         setLabel(caption);
-        setLocale(new Locale("HU"));
+        setLocale(LocaleUtil.HUN_LOCALE);
         
         setI18n(new DatePickerI18n()
-                .setWeek("Hét")
-                .setCalendar("Kalendár")
                 .setToday("Ma")
                 .setCancel("Mégsem")
                 .setFirstDayOfWeek(1)

@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -21,28 +20,28 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.kits.tennis.common.LocaleUtil;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.match.MatchRepository;
 import hu.kits.tennis.domain.match.MatchResult;
-import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.match.MatchResult.SetResult;
+import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.Players;
-import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
-import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.UTR;
 
 class KVTKMeccsImporter {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd", new Locale("HU"));
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd", LocaleUtil.HUN_LOCALE);
     
     private final PlayerRepository playerRepository;
     private final MatchService matchService;
@@ -97,16 +96,6 @@ class KVTKMeccsImporter {
         }
     }
 
-    private static boolean isDuplicate(List<BookedMatch> allMatches, Match match) {
-        return allMatches.stream().anyMatch(m -> isTheSameMatch(match, m.playedMatch()));
-    }
-    
-    private static boolean isTheSameMatch(Match match1, Match match2) {
-        return match1.date().equals(match2.date()) && match1.tournamentId().equals(match2.tournamentId()) 
-                && match1.player1().equals(match2.player1())
-                && match1.player2().equals(match2.player2()) && match1.result().equals(match2.result());
-    }
-
     private Match processMatchLine(int rowNum, String line) {
         try {
             String[] parts = line.split("\t");
@@ -158,19 +147,6 @@ class KVTKMeccsImporter {
         return tournament;
     }
 
-    private Player findOrCreatePlayer(String playerName) {
-        Optional<Player> player = players.findPlayer(playerName);
-        if(player.isPresent()) {
-            return player.get();
-        } else {
-            logger.info("Saving new player: {}", playerName);
-            Player newPlayer = playerRepository.saveNewPlayer(Player.createNew(playerName));
-            logger.info("New player saved: {}", newPlayer);
-            players = players.add(newPlayer);
-            return newPlayer;
-        }
-    }
-    
     public void setupTournaments() {
         
         List<Tournament> tournamentsNotSetup = tournamentService.loadAllTournaments().stream()
