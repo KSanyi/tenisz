@@ -136,15 +136,6 @@ public class UserService {
         }
     }
     
-    private void validateUserDataChange(UserData userData) {
-        
-        Users users = userRepository.loadAllUsers();
-        if(users.hasUserWithEmail(userData)) {
-            logger.info("User exists with this email address: {}", userData.email());
-            throw new KITSException("Létezik már felhasználó ezzel az email címmel");
-        }
-    }
-    
     public void deleteUser(String userId) {
         
         logger.info("Deleting user: {}", userId);

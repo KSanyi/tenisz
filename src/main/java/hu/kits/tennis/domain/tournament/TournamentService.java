@@ -89,7 +89,7 @@ public class TournamentService {
         return tournamentRepository.findTournament(tournamentId);
     }
     
-    public void createMatches(String tournamentId, DrawMode drawMode) {
+    public void createMatches(String tournamentId) {
         
         Tournament tournament = loadTournament(tournamentId);
         

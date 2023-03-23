@@ -28,18 +28,13 @@ public class HttpServer {
         RestHandlers restHandlers = new RestHandlers();
         
         javalin = Javalin.create(config -> {
-            config.server(() -> new VaadinJettyServer("/ui/", port));
+            config.server(() -> new VaadinJettyServer(port));
             config.registerPlugin(new RouteOverviewPlugin("/routes")); 
             config.defaultContentType = "application/json";
-            //config.addStaticFiles("/public");
             config.enableCorsForAllOrigins();
             config.requestLogger(this::log);
             config.jsonMapper(new TeniszJsonMapper());
         }).routes(() -> {
-            //path("api/docs", () -> {
-            //    get(apiDocHandler::createTestCasesList);
-            //    get("{testCase}", apiDocHandler::createTestCaseDoc);
-            //});
             path("api/matches", () -> {
                 get(restHandlers::listAllMatches);
             });

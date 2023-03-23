@@ -31,7 +31,6 @@ import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.Players;
-import hu.kits.tennis.domain.tournament.DrawMode;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Status;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
@@ -185,7 +184,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     }
 
     private void fillMainBoard() {
-        tournamentService.createMatches(tournament.id(), DrawMode.SIMPLE);
+        tournamentService.createMatches(tournament.id());
         refresh();
     }
 

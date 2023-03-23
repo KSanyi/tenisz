@@ -42,34 +42,4 @@ public class MatchResultTest {
         
     }
     
-    @Test
-    void test2() {
-        
-        UTR player1UTR = new UTR(8.0);
-        UTR player2UTR = new UTR(7.0);
-        
-        MatchResult result;
-        UTR matchUTRForPlayer1;
-        UTR matchUTRForPlayer2;
-        
-        for(int i=0;i<5;i++) {
-            result = MatchResult.of(6, i);
-            matchUTRForPlayer1 = result.calculateUTRForPlayer1(player2UTR);
-            System.out.println(result + " -> " + matchUTRForPlayer1);
-            
-            result = MatchResult.of(i, 6);
-            matchUTRForPlayer1 = result.calculateUTRForPlayer1(player2UTR);
-            System.out.println(result + " -> " + matchUTRForPlayer1);
-        }
-        
-        result = MatchResult.of(6, 5);
-        matchUTRForPlayer1 = result.calculateUTRForPlayer1(player2UTR);
-        System.out.println(result + " -> " + matchUTRForPlayer1);
-        
-        result = MatchResult.of(5, 6);
-        matchUTRForPlayer1 = result.calculateUTRForPlayer1(player2UTR);
-        System.out.println(result + " -> " + matchUTRForPlayer1);
-        
-    }
-    
 }

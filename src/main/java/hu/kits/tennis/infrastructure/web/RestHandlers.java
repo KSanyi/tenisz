@@ -10,30 +10,17 @@ import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.StringUtil;
-import hu.kits.tennis.domain.player.Player;
-import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import hu.kits.tennis.domain.utr.UTRService;
-import hu.kits.tennis.infrastructure.web.Requests.PlayerCreationRequest;
 import io.javalin.http.ContentType;
 import io.javalin.http.Context;
-import io.javalin.http.HttpCode;
 
 class RestHandlers {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private final PlayerRepository playerRepository = Main.resourceFactory.getPlayerRepository();
     private final UTRService utrService = Main.resourceFactory.getUTRService();
-    
-    void createPlayer(Context context) {
-        PlayerCreationRequest playerCreationRequest = RequestParser.parseUserCreationRequest(context.body());
-        Player newPlayer = Player.createNew(playerCreationRequest.name());
-        Player savedPlayer = playerRepository.saveNewPlayer(newPlayer);
-        context.json(savedPlayer);
-        context.status(HttpCode.CREATED);
-    }
     
     void listAllMatches(Context context) {
         List<BookedMatch> bookedMatches = utrService.loadBookedMatches();

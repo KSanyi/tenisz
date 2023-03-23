@@ -25,7 +25,6 @@ import hu.kits.tennis.domain.match.MatchResultInfo;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.tournament.Contestant;
-import hu.kits.tennis.domain.tournament.DrawMode;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Board;
@@ -116,7 +115,7 @@ public class TournamentApplicationTest {
         Tournament tournament = tournamentService.createTournament(Organization.KVTK, "BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.SIMPLE_BOARD, 2);
         
         tournamentService.updateContestants(tournament, List.of(player1, player2, player3, player4));
-        tournamentService.createMatches(tournament.id(), DrawMode.SIMPLE);
+        tournamentService.createMatches(tournament.id());
         tournament = tournamentService.findTournament(tournament.id()).get();
         
         assertEquals(List.of(
@@ -174,7 +173,7 @@ public class TournamentApplicationTest {
         Tournament tournament = tournamentService.createTournament(Organization.KVTK, "BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.SIMPLE_BOARD, 3);
         
         tournamentService.updateContestants(tournament, List.of(player1, Player.BYE, player2, player3, player4, player5, Player.BYE, player6));
-        tournamentService.createMatches(tournament.id(), DrawMode.SIMPLE);
+        tournamentService.createMatches(tournament.id());
         tournament = tournamentService.findTournament(tournament.id()).get();
         
         assertEquals(List.of(
@@ -206,7 +205,7 @@ public class TournamentApplicationTest {
         Tournament tournament = tournamentService.createTournament(Organization.KVTK, "BVSC Szőnyi út Nyári tour 2022", "BVSC Szőnyi út", LocalDate.of(2022, 6, 1), Tournament.Type.BOARD_AND_CONSOLATION, 3);
         
         tournamentService.updateContestants(tournament, List.of(player1, player2, player3, player4, player5, player6, player7, player8));
-        tournamentService.createMatches(tournament.id(), DrawMode.SIMPLE);
+        tournamentService.createMatches(tournament.id());
         var mainBoardMatches = tournamentService.findTournament(tournament.id()).get().mainBoard().matches();
         
         Match quarterFinal1 = mainBoardMatches.get(1);

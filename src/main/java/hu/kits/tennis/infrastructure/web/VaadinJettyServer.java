@@ -29,19 +29,19 @@ import hu.kits.tennis.Main;
  */
 public class VaadinJettyServer extends Server {
 
-    public VaadinJettyServer(String vaadinContextRoot, int port) {
+    public VaadinJettyServer(int port) {
         super(port);
-        setHandler(createHandler(vaadinContextRoot));
+        setHandler(createHandler());
     }
     
-    private static Handler createHandler(String vaadinContextRoot) {
+    private static Handler createHandler() {
         
         ContextHandlerCollection handlerCollection = new ContextHandlerCollection();
-        handlerCollection.addHandler(createVaadinHandler(vaadinContextRoot));
+        handlerCollection.addHandler(createVaadinHandler());
         return handlerCollection;
     }
     
-    private static Handler createVaadinHandler(String vaadinContextRoot) {
+    private static Handler createVaadinHandler() {
         
         ContextHandlerCollection handlerCollection = new ContextHandlerCollection();
         
