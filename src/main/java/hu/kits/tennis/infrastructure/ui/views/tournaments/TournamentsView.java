@@ -9,6 +9,7 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
@@ -18,7 +19,9 @@ import com.vaadin.flow.router.RouteParameters;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.domain.tournament.Tournament;
+import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.util.AllowedRoles;
@@ -73,7 +76,10 @@ public class TournamentsView extends SplitViewFrame implements View {
         tabsheet.add("TOUR-ok", tourTournamentsGrid);
         tabsheet.add("Napi versenyek", dailyTournamentsGrid);
         
-        VerticalLayout layout = new VerticalLayout(addButton, tabsheet);
+        Span pending = new Span("Pending");
+        pending.getElement().getThemeList().add("badge");
+        
+        VerticalLayout layout = new VerticalLayout(pending, addButton, tabsheet);
         layout.setPadding(false);
         layout.setSpacing(false);
         layout.setSizeFull();
@@ -86,9 +92,9 @@ public class TournamentsView extends SplitViewFrame implements View {
     }
     
     private void loadTournaments() {
-        List<Tournament> tournaments = tournamentService.loadAllTournaments();
-        List<Tournament> dailyTournaments = tournaments.stream().filter(t -> !t.params().name().contains("TOUR")).toList();
-        List<Tournament> tourTournaments = tournaments.stream().filter(t -> t.params().name().contains("TOUR")).toList();
+        List<TournamentSummary> tournamentSummaries = tournamentService.loadTournamentSummariesList();
+        List<TournamentSummary> dailyTournaments = tournamentSummaries.stream().filter(t -> t.type() == Type.DAILY).toList();
+        List<TournamentSummary> tourTournaments = tournamentSummaries.stream().filter(t -> t.type() == Type.TOUR).toList();
         dailyTournamentsGrid.setItems(dailyTournaments);
         tourTournamentsGrid.setItems(tourTournaments);
     }

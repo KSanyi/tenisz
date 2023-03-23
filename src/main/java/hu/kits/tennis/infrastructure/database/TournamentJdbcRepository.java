@@ -19,6 +19,7 @@ import hu.kits.tennis.domain.match.MatchRepository;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.Players;
+import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
@@ -26,6 +27,7 @@ import hu.kits.tennis.domain.tournament.TournamentBoard;
 import hu.kits.tennis.domain.tournament.TournamentMatches;
 import hu.kits.tennis.domain.tournament.TournamentParams;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
+import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.tournament.TournamentParams.Level;
 import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
@@ -58,18 +60,50 @@ public class TournamentJdbcRepository implements TournamentRepository {
         this.playerRepository = playerRepository;
         this.matchRepository = matchRepository;
     }
+    
     @Override
-    public List<Tournament> loadAllTournaments() {
+    public Map<String, BasicTournamentInfo> loadBasicTournamentInfosMap() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    @Override
+    public List<TournamentSummary> loadTournamentSummariesList() {
         
+        Map<String, Integer> matchCountByTournament = matchRepository.countMatchesByTournament();
+        Map<String, Integer> playerCountByTournament = contestantDBTable.countPlayersByTournament();
+        Map<String, Integer> winnerIdByTournament = Map.of();//contestantDBTable.findWinnerByTournament();
         Players players = playerRepository.loadAllPlayers();
-        Map<String, List<Contestant>> contestantsByTournament = contestantDBTable.loadAllContestantsByTournament(players);
-
-        //TODO
+        Map<String, Player> winnerByTournament = CollectionsUtil.mapValues(winnerIdByTournament, players::get);
+        
         String sql = String.format("SELECT * FROM %s", TABLE_TOURNAMENT);
         
         return jdbi.withHandle(handle -> 
             handle.createQuery(sql)
-            .map((rs, ctx) -> mapToTournament(rs, contestantsByTournament, Map.of())).list());
+            .map((rs, ctx) -> mapToTournamentSummary(rs, 
+                    matchCountByTournament, 
+                    playerCountByTournament,
+                    winnerByTournament)).list());
+    }
+    
+    private static TournamentSummary mapToTournamentSummary(ResultSet rs, 
+            Map<String, Integer> matchCountByTournament,
+            Map<String, Integer> playerCountByTournament,
+            Map<String, Player> winnerByTournament) throws SQLException {
+        
+        String tournamentId = rs.getString(COLUMN_ID);
+        
+        return new TournamentSummary(
+                tournamentId,
+                Organization.valueOf(rs.getString(COLUMN_ORGANIZATION)),
+                Type.valueOf(rs.getString(COLUMN_TYPE)),
+                Level.valueOf(rs.getString(COLUMN_LEVEL_FROM)),
+                Level.valueOf(rs.getString(COLUMN_LEVEL_TO)),
+                rs.getString(COLUMN_NAME),
+                rs.getDate(COLUMN_DATE).toLocalDate(),
+                Status.valueOf(rs.getString(COLUMN_STATUS)),
+                matchCountByTournament.getOrDefault(tournamentId, 0),
+                playerCountByTournament.getOrDefault(tournamentId, 0),
+                winnerByTournament.get(tournamentId));
     }
     
     @Override

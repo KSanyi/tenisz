@@ -36,12 +36,14 @@ public class TournamentService {
         this.matchRepository = matchRepository;
         this.utrService = utrService;
     }
-
-    // TODO
-    public List<Tournament> loadAllTournaments() {
-        return tournamentRepository.loadAllTournaments();
-    }
     
+    public List<TournamentSummary> loadTournamentSummariesList() {
+        logger.info("Loading tournament summaries list");
+        List<TournamentSummary> tournamentSummaries = tournamentRepository.loadTournamentSummariesList();
+        logger.info("{} tournament summaries list loaded", tournamentSummaries.size());
+        return tournamentSummaries;
+    }
+
     public Tournament createTournament(TournamentParams tournamentParams) {
         String id = UUID.randomUUID().toString().substring(0, 8);
         Tournament tournament = new Tournament(

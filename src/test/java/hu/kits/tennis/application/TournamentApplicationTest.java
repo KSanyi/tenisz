@@ -29,10 +29,12 @@ import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentBoard;
 import hu.kits.tennis.domain.tournament.TournamentParams;
-import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.TournamentParams.Level;
+import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
 import hu.kits.tennis.domain.tournament.TournamentParams.Type;
+import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.infrastructure.ResourceFactory;
 import hu.kits.tennis.testutil.InMemoryDataSourceFactory;
 import hu.kits.tennis.testutil.SpyEmailSender;
@@ -68,21 +70,22 @@ public class TournamentApplicationTest {
     
     @Test
     void createTournament() {
-        List<Tournament> tournaments = tournamentService.loadAllTournaments();
-        assertEquals(0, tournaments.size());
+        List<TournamentSummary> tournamentSummaries = tournamentService.loadTournamentSummariesList();
+        assertEquals(0, tournamentSummaries.size());
         
         tournamentService.createTournament(DEFAULT_PARAMS);
         
-        tournaments = tournamentService.loadAllTournaments();
-        assertEquals(1, tournaments.size());
+        tournamentSummaries = tournamentService.loadTournamentSummariesList();
+        assertEquals(1, tournamentSummaries.size());
         
-        Tournament tournament = tournaments.get(0);
-        TournamentParams params = tournament.params();
-        assertEquals("Masters 500", params.name());
-        assertEquals("Mini Garros", params.venue());
-        assertEquals(LocalDate.of(2022, 1, 1), params.date());
-        assertEquals(Structure.SIMPLE_BOARD, params.structure());
-        assertEquals(List.of(), tournament.contestants());
+        TournamentSummary tournamentSummary = tournamentSummaries.get(0);
+        assertEquals(Organization.KVTK, tournamentSummary.organiser());
+        assertEquals(Type.DAILY, tournamentSummary.type());
+        assertEquals(Level.L250, tournamentSummary.levelFrom());
+        assertEquals(Level.L250, tournamentSummary.levelTo());
+        assertEquals(Status.DRAFT, tournamentSummary.status());
+        assertEquals("Masters 500", tournamentSummary.name());
+        assertEquals(LocalDate.of(2022, 1, 1), tournamentSummary.date());
     }
     
     //@Test
@@ -115,8 +118,8 @@ public class TournamentApplicationTest {
         Tournament tournament = tournamentService.createTournament(DEFAULT_PARAMS);
         
         tournamentService.deleteTournament(tournament);
-        List<Tournament> tournaments = tournamentService.loadAllTournaments();
-        assertEquals(0, tournaments.size());
+        List<TournamentSummary> tournamentSummaries = tournamentService.loadTournamentSummariesList();
+        assertEquals(0, tournamentSummaries.size());
     }
         
     @Test

@@ -31,6 +31,11 @@ public record TournamentParams(
         private Level(int value) {
             this.value = value;
         }
+        
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
     }
     
     public enum Status {

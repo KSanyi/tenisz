@@ -3,6 +3,7 @@ package hu.kits.tennis.infrastructure.database;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -90,6 +91,13 @@ class ContestantDBTable {
     void deleteContestants(String tournamentId) {
         
         jdbi.withHandle(handle -> handle.execute(String.format("DELETE FROM %s WHERE %s = ?", TABLE_TOURNAMENT_CONTESTANT, COLUMN_TOURNAMENT_ID), tournamentId));
+    }
+
+    public Map<String, Integer> countPlayersByTournament() {
+        String sql = String.format("SELECT %s, COUNT(*) FROM %s GROUP BY %s", COLUMN_TOURNAMENT_ID, TABLE_TOURNAMENT_CONTESTANT, COLUMN_TOURNAMENT_ID);
+        return jdbi.withHandle(handle -> handle.createQuery(sql)
+                .map((rs, ctx) -> Pair.of(rs.getString(1), rs.getInt(2))).list()).stream()
+                    .collect(toMap(Pair::first, Pair::second));
     }
 
 }

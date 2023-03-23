@@ -1,20 +1,17 @@
 package hu.kits.tennis.domain.match;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.domain.player.Player;
-import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
 import hu.kits.tennis.domain.utr.BookedMatch;
@@ -35,22 +32,19 @@ public class MatchService {
     public List<MatchInfo> loadMatchesForPlayer(Player player) {
         List<BookedMatch> matches = matchRepository.loadAllPlayedMatches(player);
         
-        Map<String, Tournament> tournamenMap = tournamentRepository.loadAllTournaments().stream()
-                .collect(toMap(Tournament::id, Function.identity()));
+        Map<String, BasicTournamentInfo> basicTournamentInfoMap = tournamentRepository.loadBasicTournamentInfosMap();
         
         List<MatchInfo> matchInfos = matches.stream()
                 .map(match -> player.equals(match.playedMatch().player1()) ? match : match.swap())
-                .map(bookedMatch -> toMatchInfo(bookedMatch, tournamenMap))
+                .map(bookedMatch -> toMatchInfo(bookedMatch, basicTournamentInfoMap))
                 .collect(toList());
         
         return matchInfos;
     }
 
-    private static MatchInfo toMatchInfo(BookedMatch bookedMatch, Map<String, Tournament> tournamenMap) {
+    private static MatchInfo toMatchInfo(BookedMatch bookedMatch, Map<String, BasicTournamentInfo> basicTournamentInfoMap) {
         
-        Tournament tournament = tournamenMap.get(bookedMatch.playedMatch().tournamentId());
-        
-        BasicTournamentInfo tournamentInfo = tournament != null ? tournament.tournamentInfo() : BasicTournamentInfo.UNKNOWN;
+        BasicTournamentInfo tournamentInfo = basicTournamentInfoMap.get(bookedMatch.playedMatch().tournamentId());
         
         return new MatchInfo(bookedMatch.playedMatch().id(),
                 tournamentInfo, 
@@ -68,12 +62,11 @@ public class MatchService {
     public List<MatchInfo> loadAllMatches() {
         List<BookedMatch> matches = matchRepository.loadAllBookedMatches();
         
-        Map<String, Tournament> tournamenMap = tournamentRepository.loadAllTournaments().stream()
-                .collect(toMap(Tournament::id, Function.identity()));
+        Map<String, BasicTournamentInfo> basicTournamentInfoMap = tournamentRepository.loadBasicTournamentInfosMap();
         
         List<MatchInfo> matchInfos = matches.stream()
                 .filter(bookedMatch -> ! bookedMatch.hasPlayed(Player.BYE))
-                .map(bookedMatch -> toMatchInfo(bookedMatch, tournamenMap))
+                .map(bookedMatch -> toMatchInfo(bookedMatch, basicTournamentInfoMap))
                 .collect(toList());
         
         return matchInfos;
@@ -98,11 +91,10 @@ public class MatchService {
     public List<MatchInfo> loadMatchesOfTournament(String tournementId) {
         List<BookedMatch> matches = matchRepository.loadAllBookedMatchesForTournament(tournementId);
         
-        Map<String, Tournament> tournamenMap = tournamentRepository.loadAllTournaments().stream()
-                .collect(toMap(Tournament::id, Function.identity()));
+        Map<String, BasicTournamentInfo> basicTournamentInfoMap = tournamentRepository.loadBasicTournamentInfosMap();
         
         List<MatchInfo> matchInfos = matches.stream()
-                .map(bookedMatch -> toMatchInfo(bookedMatch, tournamenMap))
+                .map(bookedMatch -> toMatchInfo(bookedMatch, basicTournamentInfoMap))
                 .sorted(Comparator.comparing(MatchInfo::id))
                 .collect(toList());
         

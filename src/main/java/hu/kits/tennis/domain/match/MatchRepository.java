@@ -1,6 +1,7 @@
 package hu.kits.tennis.domain.match;
 
 import java.util.List;
+import java.util.Map;
 
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.TournamentMatches;
@@ -37,5 +38,7 @@ public interface MatchRepository {
     void setPlayer2(int matchId, Player player);
     
     void updateTournament(int matchId, String tournamentId, int boardNumber, int tournamentMatchNumber);
+
+    Map<String, Integer> countMatchesByTournament();
 
 }

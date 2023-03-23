@@ -13,7 +13,7 @@ import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.RouteParameters;
 
 import hu.kits.tennis.common.Formatters;
-import hu.kits.tennis.domain.tournament.Tournament;
+import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.Badge;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.FlexBoxLayout;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.FontSize;
@@ -31,7 +31,7 @@ import hu.kits.tennis.infrastructure.ui.vaadin.util.layout.size.Right;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.layout.size.Vertical;
 import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentView;
 
-class TournamentsGrid extends Grid<Tournament> {
+class TournamentsGrid extends Grid<TournamentSummary> {
     
     private static final int MOBILE_BREAKPOINT = 800;
     
@@ -40,15 +40,20 @@ class TournamentsGrid extends Grid<Tournament> {
         addComponentColumn(TournamentsMobileTemplate::new)
             .setVisible(false);
         
-        addColumn(t -> t.params().name())
+        addColumn(TournamentSummary::name)
             .setHeader("Név")
             .setSortable(true)
             .setKey("name");
         
+        addColumn(TournamentSummary::levelDisplay)
+            .setHeader("Szint")
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setSortable(true);
+        
         addComponentColumn(t -> new Badge(t.status().name(), BadgeColor.SUCCESS, BadgeSize.M, BadgeShape.PILL))
             .setHeader("Státusz")
             .setSortable(true)
-            .setComparator(comparing(Tournament::status))
+            .setComparator(comparing(TournamentSummary::status))
             .setTextAlign(ColumnTextAlign.CENTER)
             .setKey("state");
         
@@ -57,22 +62,21 @@ class TournamentsGrid extends Grid<Tournament> {
 //            .setSortable(true)
 //            .setFlexGrow(2);
     
-        addColumn(new LocalDateRenderer<>(t -> t.params().date(), () -> Formatters.DATE_FORMAT))
+        addColumn(new LocalDateRenderer<>(TournamentSummary::date, () -> Formatters.DATE_FORMAT))
             .setHeader("Dátum")
             .setSortable(true)
-            .setComparator(comparing(t -> t.params().date()))
+            .setComparator(comparing(TournamentSummary::date))
             .setKey("date");
         
-        addColumn(t -> t.contestants().size())
+        addColumn(TournamentSummary::numberOfPlayers)
             .setHeader("Indulók")
             .setSortable(true)
-            .setTextAlign(ColumnTextAlign.CENTER);
-        /*
-        addColumn(t -> t.matches().size())
+            .setTextAlign(ColumnTextAlign.END);
+        
+        addColumn(TournamentSummary::numberOfMatchesPlayed)
             .setHeader("Lejátszott meccsek")
             .setSortable(true)
-            .setFlexGrow(1);
-            */
+            .setTextAlign(ColumnTextAlign.END);
         
         setHeightFull();
         
@@ -86,7 +90,7 @@ class TournamentsGrid extends Grid<Tournament> {
     
     private void updateVisibleColumns(int width) {
         boolean mobile = width < MOBILE_BREAKPOINT;
-        List<Grid.Column<Tournament>> columns = getColumns();
+        List<Grid.Column<TournamentSummary>> columns = getColumns();
 
         // "Mobile" column
         columns.get(0).setVisible(mobile);
@@ -97,18 +101,18 @@ class TournamentsGrid extends Grid<Tournament> {
         }
     }
     
-    private void rowSelected(SelectionEvent<Grid<Tournament>,Tournament> event) {
+    private void rowSelected(SelectionEvent<Grid<TournamentSummary>, TournamentSummary> event) {
         if(event.getFirstSelectedItem().isPresent()) {
-            Tournament tournament = event.getFirstSelectedItem().get();
+            TournamentSummary tournament = event.getFirstSelectedItem().get();
             getUI().ifPresent(ui -> ui.navigate(TournamentView.class, new RouteParameters("tournamentId", tournament.id())));
         }
     }
     
     static class TournamentsMobileTemplate extends FlexBoxLayout {
 
-        private Tournament tournament;
+        private TournamentSummary tournament;
 
-        public TournamentsMobileTemplate(Tournament tournament) {
+        public TournamentsMobileTemplate(TournamentSummary tournament) {
             this.tournament = tournament;
 
             UIUtils.setLineHeight(LineHeight.M, this);
@@ -128,11 +132,11 @@ class TournamentsGrid extends Grid<Tournament> {
         }
 
         private FlexBoxLayout getName() {
-            Label owner = UIUtils.createLabel(FontSize.M, TextColor.BODY, tournament.params().name());
+            Label owner = UIUtils.createLabel(FontSize.M, TextColor.BODY, tournament.name());
             UIUtils.setOverflow(Overflow.HIDDEN, owner);
             UIUtils.setTextOverflow(TextOverflow.ELLIPSIS, owner);
 
-            Badge badge = new Badge(tournament.contestants().size() + " induló", BadgeColor.SUCCESS, BadgeSize.M, BadgeShape.PILL);
+            Badge badge = new Badge(tournament.numberOfPlayers() + " induló", BadgeColor.SUCCESS, BadgeSize.M, BadgeShape.PILL);
             badge.setWidth("100px");
             
             FlexBoxLayout wrapper = new FlexBoxLayout(owner, badge);
@@ -144,7 +148,7 @@ class TournamentsGrid extends Grid<Tournament> {
         }
 
         private Label getDate() {
-            Label account = UIUtils.createLabel(FontSize.S, TextColor.SECONDARY,  Formatters.formatDateLong(tournament.params().date()));
+            Label account = UIUtils.createLabel(FontSize.S, TextColor.SECONDARY,  Formatters.formatDateLong(tournament.date()));
             account.addClassNames(LumoStyles.Margin.Bottom.S);
             UIUtils.setOverflow(Overflow.HIDDEN, account);
             UIUtils.setTextOverflow(TextOverflow.ELLIPSIS, account);

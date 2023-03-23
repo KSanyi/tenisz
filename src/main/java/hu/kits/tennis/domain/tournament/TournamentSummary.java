@@ -10,13 +10,17 @@ import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 public record TournamentSummary(String id,
         Organization organiser,
         Type type,
-        Level categoryFrom,
-        Level categoryTo,
+        Level levelFrom,
+        Level levelTo,
         String name,
         LocalDate date,
         Status status,
         int numberOfMatchesPlayed,
         int numberOfPlayers,
         Player winner) {
+    
+    public String levelDisplay() {
+        return levelFrom == levelTo ? levelFrom.toString() : (levelFrom + "-" + levelTo);
+    }
 
 }

@@ -21,6 +21,7 @@ import javax.sql.DataSource;
 import org.jdbi.v3.core.Jdbi;
 
 import hu.kits.tennis.common.CollectionsUtil;
+import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchRepository;
 import hu.kits.tennis.domain.match.MatchResult;
@@ -307,6 +308,14 @@ public class MatchJdbcRepository implements MatchRepository  {
         
         Set<String> columns = values.get(0).keySet();
         jdbi.withHandle(handle -> JdbiUtil.createBatchInsertStatement(handle, TABLE_TENNIS_MATCH, columns, values).execute());
+    }
+
+    @Override
+    public Map<String, Integer> countMatchesByTournament() {
+        String sql = String.format("SELECT %s, COUNT(*) FROM %s WHERE %s IS NULL GROUP BY %s", COLUMN_TOURNAMENT_ID, TABLE_TENNIS_MATCH, COLUMN_RESULT, COLUMN_TOURNAMENT_ID);
+        return jdbi.withHandle(handle -> handle.createQuery(sql)
+                .map((rs, ctx) -> Pair.of(rs.getString(1), rs.getInt(2))).list()).stream()
+                    .collect(toMap(Pair::first, Pair::second));
     }
 
 }

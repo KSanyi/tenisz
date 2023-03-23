@@ -31,10 +31,12 @@ import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.Players;
+import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentParams;
 import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.tournament.TournamentParams.Level;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
 import hu.kits.tennis.domain.tournament.TournamentParams.Type;
@@ -53,7 +55,7 @@ public class KVTKMeccsImporter {
     private final TournamentService tournamentService;
     
     private Players players;
-    private Map<String, Tournament> tournaments;
+    private Map<String, BasicTournamentInfo> tournaments;
     
     public KVTKMeccsImporter(ResourceFactory resourceFactory) {
         playerRepository = resourceFactory.getPlayerRepository();
@@ -69,10 +71,6 @@ public class KVTKMeccsImporter {
         players = playerRepository.loadAllPlayers();
         logger.info("{} players loaded", players.entries().size());
         
-        tournaments = tournamentService.loadAllTournaments().stream()
-                .filter(tournament -> tournament.params().organization() == Organization.KVTK)
-                .filter(tournament -> tournament.params().organization() != Organization.KVTK)
-                .collect(toMap(tournament -> tournament.params().name(), Function.identity()));
         
         //List<BookedMatch> allMatches = matchRepository.loadAllBookedMatches();
         
@@ -115,7 +113,7 @@ public class KVTKMeccsImporter {
             Integer score2_3 = parseGames(parts[10]);
             String name = parts[12] + " " + parts[13];
             
-            Tournament tournament = findOrCreateTournament(date, name);
+            Tournament tournament = null;//findOrCreateTournament(date, name);
             
             Player player1 = new Player(playerOneId, "", null, null, Set.of());//findOrCreatePlayer(playerOne);
             Player player2 = new Player(playerTwoId, "", null, null, Set.of());//
@@ -141,6 +139,7 @@ public class KVTKMeccsImporter {
         return games.isEmpty() ? null :Integer.parseInt(games);
     }
     
+    /*
     private Tournament findOrCreateTournament(LocalDate date, String tournamentName) {
         Tournament tournament = tournaments.get(tournamentName);
         if(tournament == null) {
@@ -151,21 +150,22 @@ public class KVTKMeccsImporter {
         }
         return tournament;
     }
+    */
 
     public void setupTournaments() {
         
-        List<Tournament> tournamentsNotSetup = tournamentService.loadAllTournaments().stream()
-                .filter(tournament -> tournament.params().organization() == Organization.KVTK)
-                .filter(tournament -> tournament.contestants().isEmpty())
+        List<TournamentSummary> tournamentsNotSetup = tournamentService.loadTournamentSummariesList().stream()
+                .filter(tournament -> tournament.numberOfPlayers() == 0)
                 .collect(toList());
         
-        for(Tournament tournament : tournamentsNotSetup) {
-            List<MatchInfo> matches = matchService.loadMatchesOfTournament(tournament.id());
+        for(TournamentSummary tournamentSummary : tournamentsNotSetup) {
+            List<MatchInfo> matches = matchService.loadMatchesOfTournament(tournamentSummary.id());
             List<Player> players = findPlayers(matches);
             for(MatchInfo match : matches) {
-                matchRepository.updateTournament(match.id(), tournament.id(), 1, matches.indexOf(match) + 1);
+                matchRepository.updateTournament(match.id(), tournamentSummary.id(), 1, matches.indexOf(match) + 1);
             }
            
+            Tournament tournament = tournamentService.findTournament(tournamentSummary.id()).get();
             tournamentService.updateContestants(tournament, players);
         }
     }
