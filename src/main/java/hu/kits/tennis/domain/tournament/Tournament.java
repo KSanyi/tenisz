@@ -164,8 +164,8 @@ public record Tournament(String id,
         return getMatch(match.tournamentBoardNumber(), nextRoundMatchNumber);
     }
 
-    public TournamentInfo tournamentInfo() {
-        return new TournamentInfo(id, organization, date, name, venue, bestOfNSets, contestants.size());
+    public BasicTournamentInfo tournamentInfo() {
+        return new BasicTournamentInfo(id, organization, name);
     }
 
     public List<Match> matches() {

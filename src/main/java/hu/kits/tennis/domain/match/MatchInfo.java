@@ -5,11 +5,11 @@ import java.time.LocalDate;
 import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.common.StringUtil;
 import hu.kits.tennis.domain.player.Player;
-import hu.kits.tennis.domain.tournament.TournamentInfo;
+import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
 import hu.kits.tennis.domain.utr.UTR;
 
 public record MatchInfo(Integer id, 
-        TournamentInfo tournamentInfo, 
+        BasicTournamentInfo tournamentInfo, 
         LocalDate date,
         Player player1,
         UTR player1UTR,
@@ -24,7 +24,6 @@ public record MatchInfo(Integer id,
         return StringUtil.cleanNameString(player1().name()).contains(filterPart) ||
                StringUtil.cleanNameString(player2().name()).contains(filterPart) ||
                StringUtil.cleanNameString(tournamentInfo.name()).contains(filterPart) ||
-               StringUtil.cleanNameString(tournamentInfo.venue()).contains(filterPart) ||
                date != null && Formatters.formatDate(date).contains(filterPart);
     }
     

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.Tournament;
-import hu.kits.tennis.domain.tournament.TournamentInfo;
+import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
 import hu.kits.tennis.domain.utr.BookedMatch;
 
@@ -50,7 +50,7 @@ public class MatchService {
         
         Tournament tournament = tournamenMap.get(bookedMatch.playedMatch().tournamentId());
         
-        TournamentInfo tournamentInfo = tournament != null ? tournament.tournamentInfo() : TournamentInfo.UNKNOWN;
+        BasicTournamentInfo tournamentInfo = tournament != null ? tournament.tournamentInfo() : BasicTournamentInfo.UNKNOWN;
         
         return new MatchInfo(bookedMatch.playedMatch().id(),
                 tournamentInfo, 

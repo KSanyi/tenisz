@@ -34,7 +34,7 @@ import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
-import hu.kits.tennis.domain.tournament.TournamentInfo;
+import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.UTR;
@@ -271,7 +271,7 @@ public class TeniszPartnerMeccsImporter {
     public void createTournaments() {
         
         Map<LocalDate, List<MatchInfo>> matchesByDate = matchService.loadAllMatches().stream()
-                .filter(match -> match.tournamentInfo().equals(TournamentInfo.UNKNOWN))
+                .filter(match -> match.tournamentInfo().equals(BasicTournamentInfo.UNKNOWN))
                 .collect(Collectors.groupingBy(match -> match.date()));
         
         for(LocalDate date : matchesByDate.keySet()) {
