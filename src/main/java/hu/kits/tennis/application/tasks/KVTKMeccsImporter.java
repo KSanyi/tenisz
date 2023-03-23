@@ -1,4 +1,4 @@
-package hu.kits.tennis.application;
+package hu.kits.tennis.application.tasks;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -36,8 +36,9 @@ import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.UTR;
+import hu.kits.tennis.infrastructure.ResourceFactory;
 
-class KVTKMeccsImporter {
+public class KVTKMeccsImporter {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
@@ -51,14 +52,14 @@ class KVTKMeccsImporter {
     private Players players;
     private Map<String, Tournament> tournaments;
     
-    KVTKMeccsImporter(ResourceFactory resourceFactory) {
+    public KVTKMeccsImporter(ResourceFactory resourceFactory) {
         playerRepository = resourceFactory.getPlayerRepository();
         matchService = resourceFactory.getMatchService();
         tournamentService = resourceFactory.getTournamentService();
         matchRepository = resourceFactory.getMatchRepository();
     }
     
-    void importMatches() throws IOException {
+    public void importMatches() throws IOException {
         
         List<String> lines = Files.readAllLines(Paths.get("c:\\Users\\kocso\\Desktop\\Tenisz\\KVTK\\meccsek.txt"));
         

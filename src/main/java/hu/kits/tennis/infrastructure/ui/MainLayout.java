@@ -36,7 +36,7 @@ import hu.kits.tennis.infrastructure.ui.vaadin.util.css.Display;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.css.Overflow;
 import hu.kits.tennis.infrastructure.ui.views.View;
 import hu.kits.tennis.infrastructure.ui.views.players.PlayersView;
-import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentsView;
+import hu.kits.tennis.infrastructure.ui.views.tournaments.TournamentsView;
 import hu.kits.tennis.infrastructure.ui.views.users.UsersView;
 import hu.kits.tennis.infrastructure.ui.views.utr.matches.MatchesView;
 import hu.kits.tennis.infrastructure.ui.views.utr.ranking.UTRRankingView;

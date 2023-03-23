@@ -21,6 +21,7 @@ import hu.kits.tennis.domain.user.Requests.UserRegistrationRequest;
 import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.domain.user.UserData;
 import hu.kits.tennis.domain.user.UserData.Status;
+import hu.kits.tennis.infrastructure.ResourceFactory;
 import hu.kits.tennis.domain.user.UserService;
 import hu.kits.tennis.domain.user.Users;
 import hu.kits.tennis.testutil.InMemoryDataSourceFactory;

@@ -1,4 +1,4 @@
-package hu.kits.tennis.application;
+package hu.kits.tennis.application.tasks;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
@@ -19,6 +19,7 @@ import hu.kits.tennis.common.Clock;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.utr.UTRDetails;
 import hu.kits.tennis.domain.utr.UTRService;
+import hu.kits.tennis.infrastructure.ResourceFactory;
 
 public class TaskMain {
 

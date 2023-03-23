@@ -44,6 +44,7 @@ import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 import hu.kits.tennis.infrastructure.ui.views.View;
+import hu.kits.tennis.infrastructure.ui.views.tournaments.TournamentsView;
 import hu.kits.tennis.infrastructure.ui.views.utr.MatchesGrid;
 import hu.kits.tennis.infrastructure.ui.views.utr.matches.SimpleMatchDialog;
 

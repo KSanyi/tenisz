@@ -1,38 +1,21 @@
-package hu.kits.tennis.infrastructure.ui.views.tournament;
+package hu.kits.tennis.infrastructure.ui.views.tournaments;
 
 import static java.util.Comparator.comparing;
 
 import java.util.List;
-import java.util.function.Consumer;
 
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
 
-import hu.kits.tennis.Main;
 import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.tournament.Tournament;
-import hu.kits.tennis.domain.tournament.TournamentService;
-import hu.kits.tennis.domain.user.Role;
-import hu.kits.tennis.infrastructure.ui.MainLayout;
-import hu.kits.tennis.infrastructure.ui.util.AllowedRoles;
-import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.Badge;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.FlexBoxLayout;
-import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.FontSize;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.LineHeight;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.LumoStyles;
@@ -46,76 +29,7 @@ import hu.kits.tennis.infrastructure.ui.vaadin.util.css.lumo.BadgeShape;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.css.lumo.BadgeSize;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.layout.size.Right;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.layout.size.Vertical;
-import hu.kits.tennis.infrastructure.ui.views.View;
-
-@Route(value = "tournaments", layout = MainLayout.class)
-@PageTitle("Versenyek")
-@AllowedRoles({Role.ADMIN})
-public class TournamentsView extends SplitViewFrame implements View {
-
-    private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
-
-    private final Button addButton = UIUtils.createPrimaryButton("Új verseny", VaadinIcon.PLUS);
-    
-    private final TournamentsGrid dailyTournamentsGrid = new TournamentsGrid();
-    private final TournamentsGrid tourTournamentsGrid = new TournamentsGrid();
-    
-    public TournamentsView() {
-        addButton.addClickListener(click -> openNewTournamentDialog());
-        loadTournaments();
-        
-        dailyTournamentsGrid.sort(GridSortOrder.desc(dailyTournamentsGrid.getColumnByKey("date"))
-                .build());
-        
-        tourTournamentsGrid.sort(GridSortOrder.desc(tourTournamentsGrid.getColumnByKey("name"))
-                .build());
-    }
-    
-    private static void openNewTournamentDialog() {
-        Consumer<Tournament> callback = tournament -> UI.getCurrent().navigate(TournamentView.class, new RouteParameters("tournamentId", tournament.id()));
-        new NewTournamentDialog(callback).open();
-    }
-
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        super.onAttach(attachEvent);
-        initAppBar();
-        setViewContent(createContent());
-    }
-    
-    private static void initAppBar() {
-        AppBar appBar = MainLayout.get().getAppBar();
-        appBar.removeAllActionItems();
-    }
-    
-    private Component createContent() {
-        
-        TabSheet tabsheet = new TabSheet();
-        tabsheet.setSizeFull();
-        tabsheet.add("TOUR-ok", tourTournamentsGrid);
-        tabsheet.add("Napi versenyek", dailyTournamentsGrid);
-        
-        VerticalLayout layout = new VerticalLayout(addButton, tabsheet);
-        layout.setPadding(false);
-        layout.setSpacing(false);
-        layout.setSizeFull();
-        return layout;
-    }
-    
-    public void refresh() {
-        loadTournaments();
-    }
-    
-    private void loadTournaments() {
-        
-        List<Tournament> tournaments = tournamentService.loadAllTournaments();
-        List<Tournament> dailyTournaments = tournaments.stream().filter(t -> !t.name().contains("TOUR")).toList();
-        List<Tournament> tourTournaments = tournaments.stream().filter(t -> t.name().contains("TOUR")).toList();
-        dailyTournamentsGrid.setItems(dailyTournaments);
-        tourTournamentsGrid.setItems(tourTournaments);
-    }
-
-}
+import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentView;
 
 class TournamentsGrid extends Grid<Tournament> {
     

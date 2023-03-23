@@ -1,4 +1,4 @@
-package hu.kits.tennis.application;
+package hu.kits.tennis.infrastructure;
 
 import javax.sql.DataSource;
 

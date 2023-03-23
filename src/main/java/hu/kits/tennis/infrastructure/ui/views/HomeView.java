@@ -6,7 +6,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentsView;
+import hu.kits.tennis.infrastructure.ui.views.tournaments.TournamentsView;
 
 @Route(value = "")
 @PageTitle("Home")

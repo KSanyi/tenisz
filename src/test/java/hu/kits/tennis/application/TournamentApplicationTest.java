@@ -28,6 +28,7 @@ import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.Tournament.Board;
+import hu.kits.tennis.infrastructure.ResourceFactory;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.testutil.InMemoryDataSourceFactory;
 import hu.kits.tennis.testutil.SpyEmailSender;

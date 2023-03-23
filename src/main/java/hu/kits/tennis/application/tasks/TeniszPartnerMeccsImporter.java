@@ -1,4 +1,4 @@
-package hu.kits.tennis.application;
+package hu.kits.tennis.application.tasks;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -39,6 +39,7 @@ import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.domain.utr.UTRService;
+import hu.kits.tennis.infrastructure.ResourceFactory;
 
 public class TeniszPartnerMeccsImporter {
 
