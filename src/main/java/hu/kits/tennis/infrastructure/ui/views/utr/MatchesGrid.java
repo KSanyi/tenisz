@@ -16,7 +16,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.provider.SortDirection;
-import com.vaadin.flow.data.renderer.TemplateRenderer;
+import com.vaadin.flow.data.renderer.LitRenderer;
 
 import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.match.MatchInfo;
@@ -49,7 +49,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(1);
         
-        addColumn(TemplateRenderer.<MatchInfo>of("[[item.name1]] <small>[[item.utr1]]</small>")
+        addColumn(LitRenderer.<MatchInfo>of("${item.name1} <small>${item.utr1}</small>")
                 .withProperty("name1", match -> match.player1().name())
                 .withProperty("utr1", match -> displayUTR(match.player1UTR())))
             .setClassNameGenerator(match -> match.result() != null && match.result().isPlayer1Winner() ? "bold" : "")
@@ -60,7 +60,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(3);
         
-        addColumn(TemplateRenderer.<MatchInfo>of("[[item.name2]] [[item.utr2]]")
+        addColumn(LitRenderer.<MatchInfo>of("${item.name2} ${item.utr2}")
                 .withProperty("name2", match -> match.player2().name())
                 .withProperty("utr2", match -> displayUTR(match.player2UTR())))
             .setClassNameGenerator(match -> match.result() != null && match.result().isPlayer2Winner() ? "bold" : "")

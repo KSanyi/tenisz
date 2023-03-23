@@ -143,7 +143,7 @@ class TournamentsGrid extends Grid<Tournament> {
 //            .setSortable(true)
 //            .setFlexGrow(2);
     
-        addColumn(new LocalDateRenderer<>(Tournament::date, Formatters.DATE_FORMAT))
+        addColumn(new LocalDateRenderer<>(Tournament::date, () -> Formatters.DATE_FORMAT))
             .setHeader("Dátum")
             .setSortable(true)
             .setComparator(comparing(Tournament::date))

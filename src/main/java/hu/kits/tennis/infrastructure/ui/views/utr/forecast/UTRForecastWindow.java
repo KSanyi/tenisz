@@ -31,7 +31,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.renderer.TemplateRenderer;
+import com.vaadin.flow.data.renderer.LitRenderer;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.domain.match.Match;
@@ -180,7 +180,7 @@ public class UTRForecastWindow extends Dialog {
         
         public MatchGrid() {
             
-            addColumn(TemplateRenderer.<BookedMatch>of("[[item.name1]]")
+            addColumn(LitRenderer.<BookedMatch>of("${item.name1}")
                     .withProperty("name1", match -> match.playedMatch().player1().name()))
                 .setClassNameGenerator(match -> match.playedMatch().result().isPlayer1Winner() ? "bold" : "")
                 .setHeader("")
@@ -188,7 +188,7 @@ public class UTRForecastWindow extends Dialog {
                 .setTextAlign(ColumnTextAlign.CENTER)
                 .setFlexGrow(3);
             
-            addColumn(TemplateRenderer.<BookedMatch>of("[[item.name2]]")
+            addColumn(LitRenderer.<BookedMatch>of("${item.name}")
                     .withProperty("name2", match -> match.playedMatch().player2().name()))
                 .setClassNameGenerator(match -> match.playedMatch().result().isPlayer2Winner() ? "bold" : "")
                 .setHeader("")
