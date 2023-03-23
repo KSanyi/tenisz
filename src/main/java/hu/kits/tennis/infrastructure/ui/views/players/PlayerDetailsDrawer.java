@@ -53,8 +53,6 @@ class PlayerDetailsDrawer extends DetailsDrawer {
     private final Checkbox kvtkCheckBox = new Checkbox("KVTK tag");
     private final Binder<PlayerDataBean> binder = new Binder<>(PlayerDataBean.class);
 
-    private final Button reconcileButton = UIUtils.createPrimaryButton("Összevon");
-    
     private final Button saveButton = UIUtils.createPrimaryButton("Mentés");
     private final Button deleteButton = UIUtils.createErrorButton(VaadinIcon.TRASH);
     
@@ -77,15 +75,10 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         binder.addValueChangeListener(e -> saveButton.setVisible(binder.hasChanges()));
         saveButton.addClickListener(click -> save());
         deleteButton.addClickListener(click -> delete());
-        reconcileButton.addClickListener(click -> openReconciliationWindow());
         
         idField.setReadOnly(true);
     }
     
-    private void openReconciliationWindow() {
-        new ReconciliationWindow(player, () -> playersView.refresh()).open();
-    }
-
     private void bind() {
         binder.bind(idField, "playerId");
         binder.forField(nameField)
@@ -165,8 +158,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
                 startingUTRField,
                 kvtkCheckBox,
                 new Hr(),
-                deleteButton,
-                reconcileButton);
+                deleteButton);
         fieldsLayout.setSpacing(false);
         fieldsLayout.setAlignSelf(Alignment.END, deleteButton);
         
