@@ -95,6 +95,7 @@ public class TournamentService {
     }
     
     public Optional<Tournament> findTournament(String tournamentId) {
+        logger.debug("Finding tournement: {}", tournamentId);
         return tournamentRepository.findTournament(tournamentId);
     }
     
@@ -272,6 +273,10 @@ public class TournamentService {
         matchRepository.setResult(new MatchResultInfo(match, null, null));
         
         logger.info("Match result deleted: {}", match);
+    }
+
+    public void setWinner(String tournamentId, Player winner) {
+        tournamentRepository.setWinner(tournamentId, winner.id());
     }
 
 }

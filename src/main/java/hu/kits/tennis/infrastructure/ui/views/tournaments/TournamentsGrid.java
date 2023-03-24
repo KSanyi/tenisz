@@ -9,6 +9,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.RouteParameters;
@@ -45,19 +46,21 @@ class TournamentsGrid extends Grid<TournamentSummary> {
         
         addColumn(TournamentSummary::name)
             .setHeader("Név")
+            .setTextAlign(ColumnTextAlign.CENTER)
             .setSortable(true)
             .setKey("name");
         
         addComponentColumn(t -> createLevelComponent(t.levelTo()))
             .setHeader("Szint")
             .setTextAlign(ColumnTextAlign.CENTER)
+            .setComparator(comparing(t -> t.levelTo()))
             .setSortable(true);
         
         addComponentColumn(t -> createStatusComponent(t.status()))
             .setHeader("Státusz")
+            .setTextAlign(ColumnTextAlign.CENTER)
             .setSortable(true)
             .setComparator(comparing(TournamentSummary::status))
-            .setTextAlign(ColumnTextAlign.CENTER)
             .setKey("state");
         
 //        addColumn(tournament -> tournament.organization().name)
@@ -67,19 +70,27 @@ class TournamentsGrid extends Grid<TournamentSummary> {
     
         addColumn(new LocalDateRenderer<>(TournamentSummary::date, () -> Formatters.LONG_DATE_FORMAT))
             .setHeader("Dátum")
+            .setTextAlign(ColumnTextAlign.CENTER)
             .setSortable(true)
             .setComparator(comparing(TournamentSummary::date))
             .setKey("date");
         
         addColumn(TournamentSummary::numberOfPlayers)
             .setHeader("Indulók")
-            .setSortable(true)
-            .setTextAlign(ColumnTextAlign.END);
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setSortable(true);
         
         addColumn(TournamentSummary::numberOfMatchesPlayed)
             .setHeader("Lejátszott meccsek")
-            .setSortable(true)
-            .setTextAlign(ColumnTextAlign.END);
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setSortable(true);
+        
+        addColumn(LitRenderer.<TournamentSummary>of("<b>${item.name}</b>")
+                .withProperty("name", t -> t.winner() != null ? t.winner().name() : ""))
+            .setHeader("Győztes")
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setComparator(comparing(t -> t.winner() != null ? t.winner().name() : ""))
+            .setSortable(true);
         
         setHeightFull();
         

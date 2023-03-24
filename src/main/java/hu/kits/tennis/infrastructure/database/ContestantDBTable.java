@@ -27,6 +27,7 @@ class ContestantDBTable {
     private static final String COLUMN_TOURNAMENT_ID = "TOURNAMENT_ID";
     private static final String COLUMN_PLAYER_ID = "PLAYER_ID";
     private static final String COLUMN_RANK_NUMBER = "RANK_NUMBER";
+    private static final String COLUMN_POSITION = "POSITION";
     
     private final Jdbi jdbi;
     
@@ -98,6 +99,18 @@ class ContestantDBTable {
         return jdbi.withHandle(handle -> handle.createQuery(sql)
                 .map((rs, ctx) -> Pair.of(rs.getString(1), rs.getInt(2))).list()).stream()
                     .collect(toMap(Pair::first, Pair::second));
+    }
+
+    public Map<String, Integer> findWinnerByTournament() {
+        String sql = String.format("SELECT %s, %s FROM %s WHERE %s = 1", COLUMN_TOURNAMENT_ID, COLUMN_PLAYER_ID, TABLE_TOURNAMENT_CONTESTANT, COLUMN_POSITION);
+        return jdbi.withHandle(handle -> handle.createQuery(sql)
+                .map((rs, ctx) -> Pair.of(rs.getString(1), rs.getInt(2))).list()).stream()
+                    .collect(toMap(Pair::first, Pair::second));
+    }
+
+    public void setPosition(String tournamentId, int playerId, int position) {
+        JdbiUtil.executeUpdate(jdbi, TABLE_TOURNAMENT_CONTESTANT, Map.of(), Map.of(COLUMN_POSITION, position), Map.of(COLUMN_TOURNAMENT_ID, tournamentId, COLUMN_PLAYER_ID, playerId));
+        
     }
 
 }

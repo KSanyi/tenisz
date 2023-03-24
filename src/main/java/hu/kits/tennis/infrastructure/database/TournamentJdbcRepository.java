@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -28,12 +26,12 @@ import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentBoard;
 import hu.kits.tennis.domain.tournament.TournamentMatches;
 import hu.kits.tennis.domain.tournament.TournamentParams;
-import hu.kits.tennis.domain.tournament.TournamentRepository;
-import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.tournament.TournamentParams.Level;
 import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
 import hu.kits.tennis.domain.tournament.TournamentParams.Type;
+import hu.kits.tennis.domain.tournament.TournamentRepository;
+import hu.kits.tennis.domain.tournament.TournamentSummary;
 
 public class TournamentJdbcRepository implements TournamentRepository {
 
@@ -86,7 +84,7 @@ public class TournamentJdbcRepository implements TournamentRepository {
         
         Map<String, Integer> matchCountByTournament = matchRepository.countMatchesByTournament();
         Map<String, Integer> playerCountByTournament = contestantDBTable.countPlayersByTournament();
-        Map<String, Integer> winnerIdByTournament = Map.of();//contestantDBTable.findWinnerByTournament();
+        Map<String, Integer> winnerIdByTournament = contestantDBTable.findWinnerByTournament();
         Players players = playerRepository.loadAllPlayers();
         Map<String, Player> winnerByTournament = CollectionsUtil.mapValues(winnerIdByTournament, players::get);
         
@@ -251,6 +249,11 @@ public class TournamentJdbcRepository implements TournamentRepository {
     @Override
     public void updateContestants(String id, List<Contestant> contestants) {
         contestantDBTable.updateContestants(id, contestants);
+    }
+
+    @Override
+    public void setWinner(String tournamentId, int winnerId) {
+        contestantDBTable.setPosition(tournamentId, winnerId, 1);
     }
 
 }

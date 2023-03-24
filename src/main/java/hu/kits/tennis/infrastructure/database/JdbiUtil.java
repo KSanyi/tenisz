@@ -63,7 +63,7 @@ public class JdbiUtil {
         executeUpdate(jdbi,tableName, originalMap, updatedMap, Map.of(keyColumn, keyColumnValue));
     }
     
-    public static void executeUpdate(Jdbi jdbi, String tableName, Map<String, Object> originalMap, Map<String, Object> updatedMap, Map<String, String> keysWithValues) {
+    public static void executeUpdate(Jdbi jdbi, String tableName, Map<String, Object> originalMap, Map<String, Object> updatedMap, Map<String, Object> keysWithValues) {
         
         Map<String, Object> paramMap = new HashMap<>();
         List<String> updatesLog = new ArrayList<>();

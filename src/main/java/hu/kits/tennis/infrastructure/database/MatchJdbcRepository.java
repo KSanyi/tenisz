@@ -312,7 +312,7 @@ public class MatchJdbcRepository implements MatchRepository  {
 
     @Override
     public Map<String, Integer> countMatchesByTournament() {
-        String sql = String.format("SELECT %s, COUNT(*) FROM %s WHERE %s IS NULL GROUP BY %s", COLUMN_TOURNAMENT_ID, TABLE_TENNIS_MATCH, COLUMN_RESULT, COLUMN_TOURNAMENT_ID);
+        String sql = String.format("SELECT %s, COUNT(*) FROM %s WHERE %s IS NOT NULL GROUP BY %s", COLUMN_TOURNAMENT_ID, TABLE_TENNIS_MATCH, COLUMN_RESULT, COLUMN_TOURNAMENT_ID);
         return jdbi.withHandle(handle -> handle.createQuery(sql)
                 .map((rs, ctx) -> Pair.of(rs.getString(1), rs.getInt(2))).list()).stream()
                     .collect(toMap(Pair::first, Pair::second));

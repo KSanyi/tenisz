@@ -6,7 +6,10 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -16,7 +19,13 @@ import org.slf4j.LoggerFactory;
 import com.mysql.cj.jdbc.MysqlDataSource;
 
 import hu.kits.tennis.common.Clock;
+import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.tournament.Tournament;
+import hu.kits.tennis.domain.tournament.TournamentParams.Status;
+import hu.kits.tennis.domain.tournament.TournamentParams.Type;
+import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.utr.UTRDetails;
 import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ResourceFactory;
@@ -38,8 +47,8 @@ public class TaskMain {
         
         //new KVTKMeccsImporter(resourceFactory).importContactData();
         //new KVTKMeccsImporter(resourceFactory).importPlayers();
-        new KVTKMeccsImporter(resourceFactory).importMatches();
-        new KVTKMeccsImporter(resourceFactory).setupTournaments();
+        //new KVTKMeccsImporter(resourceFactory).importMatches();
+        //new KVTKMeccsImporter(resourceFactory).setupTournaments();
         
         //new TeniszPartnerMeccsImporter(resourceFactory).importMatches();
         //new TeniszPartnerMeccsImporter(resourceFactory).createTournaments();
@@ -48,9 +57,39 @@ public class TaskMain {
         //new TeniszPartnerMeccsImporter(resourceFactory).importPlayers();
         //new TeniszPartnerMeccsImporter(resourceFactory).importTournaments();
         
-        runUTRFluctationsTask();
+        //runUTRFluctationsTask();
+        
+        setTourWinners();
     }
     
+    private static void setTourWinners() {
+        TournamentService tournamentService = resourceFactory.getTournamentService();
+        for(TournamentSummary summary : tournamentService.loadTournamentSummariesList()) {
+            if(summary.status() == Status.COMPLETED) {
+                Player winner;
+                Tournament tournament = tournamentService.findTournament(summary.id()).get();
+                if(summary.type() == Type.TOUR) {
+                    Match lastMatch = tournament.matches().stream().filter(Match::isPlayed).max(Comparator.comparing(Match::date)).get();
+                    winner = lastMatch.winner();
+                } else {
+                    winner = findPlayerWhoWonAllHisMatches(tournament.matches());
+                }
+                if(winner != null) {
+                    tournamentService.setWinner(tournament.id(), winner);
+                    System.out.println(summary.name() + " winner: " + winner);
+                }
+            }
+        }
+    }
+
+    private static Player findPlayerWhoWonAllHisMatches(List<Match> matches) {
+        Set<Player> players = matches.stream().flatMap(Match::players).collect(Collectors.toSet());
+        for(var match : matches) {
+            players.remove(match.loser());
+        }
+        return players.isEmpty() ? null : players.iterator().next();
+    }
+
     private static void runUTRFluctationsTask() {
         UTRService utrService = resourceFactory.getUTRService();
         LocalDateTime time = LocalDateTime.now();
