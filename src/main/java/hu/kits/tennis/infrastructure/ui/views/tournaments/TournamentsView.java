@@ -9,7 +9,6 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
@@ -76,10 +75,7 @@ public class TournamentsView extends SplitViewFrame implements View {
         tabsheet.add("TOUR-ok", tourTournamentsGrid);
         tabsheet.add("Napi versenyek", dailyTournamentsGrid);
         
-        Span pending = new Span("Pending");
-        pending.getElement().getThemeList().add("badge");
-        
-        VerticalLayout layout = new VerticalLayout(pending, addButton, tabsheet);
+        VerticalLayout layout = new VerticalLayout(addButton, tabsheet);
         layout.setPadding(false);
         layout.setSpacing(false);
         layout.setSizeFull();

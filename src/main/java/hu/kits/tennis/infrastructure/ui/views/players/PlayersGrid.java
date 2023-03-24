@@ -88,11 +88,12 @@ class PlayersGrid extends Grid<Player> {
         
         BadgeColor badgeColor = switch(startingUTR.utrGroup()) {
             case 10 -> BadgeColor.ERROR_PRIMARY;
-            case 9 -> BadgeColor.ERROR;
-            case 8 -> BadgeColor.SUCCESS_PRIMARY;
-            case 7 -> BadgeColor.SUCCESS;
-            case 6 -> BadgeColor.CONTRAST_PRIMARY;
-            default -> BadgeColor.CONTRAST;
+            case 9 -> BadgeColor.ERROR_PRIMARY;
+            case 8 -> BadgeColor.ERROR;
+            case 7 -> BadgeColor.ERROR;
+            case 6 -> BadgeColor.NORMAL_PRIMARY;
+            case 5 -> BadgeColor.NORMAL;
+            default -> BadgeColor.SUCCESS;
         };
         Badge badge = new Badge(startingUTR != null ? startingUTR.toString() : "", badgeColor, BadgeSize.M, BadgeShape.PILL);
         badge.setWidth("80px");

@@ -4,6 +4,7 @@ import static java.util.Comparator.comparing;
 
 import java.util.List;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
@@ -13,6 +14,8 @@ import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.RouteParameters;
 
 import hu.kits.tennis.common.Formatters;
+import hu.kits.tennis.domain.tournament.TournamentParams.Level;
+import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.Badge;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.FlexBoxLayout;
@@ -45,12 +48,12 @@ class TournamentsGrid extends Grid<TournamentSummary> {
             .setSortable(true)
             .setKey("name");
         
-        addColumn(TournamentSummary::levelDisplay)
+        addComponentColumn(t -> createLevelComponent(t.levelTo()))
             .setHeader("Szint")
             .setTextAlign(ColumnTextAlign.CENTER)
             .setSortable(true);
         
-        addComponentColumn(t -> new Badge(t.status().name(), BadgeColor.SUCCESS, BadgeSize.M, BadgeShape.PILL))
+        addComponentColumn(t -> createStatusComponent(t.status()))
             .setHeader("Státusz")
             .setSortable(true)
             .setComparator(comparing(TournamentSummary::status))
@@ -62,7 +65,7 @@ class TournamentsGrid extends Grid<TournamentSummary> {
 //            .setSortable(true)
 //            .setFlexGrow(2);
     
-        addColumn(new LocalDateRenderer<>(TournamentSummary::date, () -> Formatters.DATE_FORMAT))
+        addColumn(new LocalDateRenderer<>(TournamentSummary::date, () -> Formatters.LONG_DATE_FORMAT))
             .setHeader("Dátum")
             .setSortable(true)
             .setComparator(comparing(TournamentSummary::date))
@@ -86,6 +89,31 @@ class TournamentsGrid extends Grid<TournamentSummary> {
         this.setMultiSort(true);
         
         addSelectionListener(this::rowSelected);
+    }
+    
+    private static Component createStatusComponent(Status status) {
+        BadgeColor color = switch(status) {
+            case COMPLETED -> BadgeColor.SUCCESS;
+            case DRAFT -> BadgeColor.CONTRAST;
+            case LIVE -> BadgeColor.ERROR;
+        };
+        return new Badge(status.name(), color, BadgeSize.S, BadgeShape.PILL);
+    }
+    
+    private static Component createLevelComponent(Level level) {
+        BadgeColor color = switch(level) {
+            case L90 -> BadgeColor.CONTRAST;    
+            case L125 -> BadgeColor.CONTRAST_PRIMARY;
+            case L250 -> BadgeColor.SUCCESS;
+            case L375 -> BadgeColor.SUCCESS_PRIMARY;
+            case L500 -> BadgeColor.NORMAL;
+            case L625 -> BadgeColor.NORMAL_PRIMARY;
+            case L750 -> BadgeColor.ERROR;
+            case L875 -> BadgeColor.ERROR_PRIMARY;
+            case L1000 -> BadgeColor.ERROR_PRIMARY;
+            
+        };
+        return new Badge(level.toString(), color, BadgeSize.M, BadgeShape.PILL);
     }
     
     private void updateVisibleColumns(int width) {

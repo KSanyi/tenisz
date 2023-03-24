@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -63,9 +65,22 @@ public class TournamentJdbcRepository implements TournamentRepository {
     
     @Override
     public Map<String, BasicTournamentInfo> loadBasicTournamentInfosMap() {
-        // TODO Auto-generated method stub
-        return null;
+        String sql = String.format("SELECT * FROM %s", TABLE_TOURNAMENT);
+        
+        List<BasicTournamentInfo> tournamentInfoList = jdbi.withHandle(handle -> handle.createQuery(sql)
+            .map((rs, ctx) -> mapToBasicTournamentInfo(rs)).list());
+        
+        return CollectionsUtil.mapBy(tournamentInfoList, BasicTournamentInfo::id);
     }
+    
+    private static BasicTournamentInfo mapToBasicTournamentInfo(ResultSet rs) throws SQLException {
+        
+        return new BasicTournamentInfo(
+                rs.getString(COLUMN_ID),
+                Organization.valueOf(rs.getString(COLUMN_ORGANIZATION)),
+                rs.getString(COLUMN_NAME));
+    }
+    
     @Override
     public List<TournamentSummary> loadTournamentSummariesList() {
         

@@ -508,7 +508,7 @@ public class UIUtils {
 
     public static void setTheme(String theme, Component... components) {
         for (Component component : components) {
-            component.getElement().setAttribute("theme", theme);
+            component.getElement().getThemeList().add(theme);
         }
     }
 

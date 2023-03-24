@@ -2,12 +2,14 @@ package hu.kits.tennis.common;
 
 import static java.util.stream.Collectors.toMap;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class CollectionsUtil {
 
@@ -29,6 +31,10 @@ public class CollectionsUtil {
         return map.entrySet().stream()
                 .filter(e -> predicate.test(e.getValue()))
                 .collect(toMap(Entry::getKey, Entry::getValue));
+    }
+    
+    public static <K, V> Map<K, V> mapBy(Collection<V> collection, Function<V, K> key) {
+        return collection.stream().collect(Collectors.toMap(key, Function.identity()));
     }
     
 }
