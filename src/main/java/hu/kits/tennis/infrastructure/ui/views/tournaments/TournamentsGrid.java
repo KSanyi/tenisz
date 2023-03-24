@@ -75,6 +75,13 @@ class TournamentsGrid extends Grid<TournamentSummary> {
             .setComparator(comparing(TournamentSummary::date))
             .setKey("date");
         
+        addColumn(LitRenderer.<TournamentSummary>of("<b>${item.name}</b>")
+                .withProperty("name", t -> t.winner() != null ? t.winner().name() : ""))
+            .setHeader("Győztes")
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setComparator(comparing(t -> t.winner() != null ? t.winner().name() : ""))
+            .setSortable(true);
+        
         addColumn(TournamentSummary::numberOfPlayers)
             .setHeader("Indulók")
             .setTextAlign(ColumnTextAlign.CENTER)
@@ -83,13 +90,6 @@ class TournamentsGrid extends Grid<TournamentSummary> {
         addColumn(TournamentSummary::numberOfMatchesPlayed)
             .setHeader("Lejátszott meccsek")
             .setTextAlign(ColumnTextAlign.CENTER)
-            .setSortable(true);
-        
-        addColumn(LitRenderer.<TournamentSummary>of("<b>${item.name}</b>")
-                .withProperty("name", t -> t.winner() != null ? t.winner().name() : ""))
-            .setHeader("Győztes")
-            .setTextAlign(ColumnTextAlign.CENTER)
-            .setComparator(comparing(t -> t.winner() != null ? t.winner().name() : ""))
             .setSortable(true);
         
         setHeightFull();

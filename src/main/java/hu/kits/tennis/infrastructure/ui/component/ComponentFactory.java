@@ -1,17 +1,13 @@
 package hu.kits.tennis.infrastructure.ui.component;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 import com.vaadin.flow.component.ItemLabelGenerator;
-import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.checkbox.CheckboxGroupVariant;
-import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -65,45 +61,13 @@ public class ComponentFactory {
         return field;
     }
     
-    public static Span createSpacer(String width) {
-        Span spacer = new Span();
-        spacer.setWidth(width);
-        return spacer;
-    }
-    
-    public static Div createVerticalSpacer(int height) {
-        Div div = new Div();
-        div.setHeight(height + "px");
-        return div;
-    }
-    
-    public static Span createSpacer(int width) {
-        return createSpacer(width + "px");
-    }
-    
-    public static <T> ComboBox<T> createComboBox(String caption, ItemLabelGenerator<T> itemLabelGenerator, List<T> items) {
-        ComboBox<T> comboBox = createComboBox(100);
-        comboBox.setLabel(caption);
-        comboBox.setItems(items);
-        comboBox.setItemLabelGenerator(itemLabelGenerator);
-        
-        return comboBox;
-    }
-    
-    public static <T> ComboBox<T> createComboBox(int width, String caption) {
-        ComboBox<T> comboBox = new ComboBox<>(caption);
-        comboBox.setWidth(width, Unit.PIXELS);
-        //comboBox.getElement().setAttribute("theme", "small");
-        return comboBox;
-    }
-    
-    public static <T> ComboBox<T> createComboBox(int width) {
-        return createComboBox(width, "");
-    }
-    
     @SafeVarargs
-    public static <T> ComboBox<T> createComboBox(String caption, ItemLabelGenerator<T> itemLabelGenerator, T ... items) {
-        return createComboBox(caption, itemLabelGenerator, Arrays.asList(items));
+    public static <T> Select<T> createSelect(String caption, ItemLabelGenerator<T> itemLabelGenerator, T ... items) {
+        Select<T> select = new Select<>();
+        select.setLabel(caption);
+        select.setItemLabelGenerator(itemLabelGenerator);
+        select.setItems(items);
+        return select;
     }
     
     @SuppressWarnings("unchecked")

@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -24,6 +24,7 @@ import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.domain.user.UserData;
 import hu.kits.tennis.domain.user.UserData.Status;
 import hu.kits.tennis.domain.user.UserService;
+import hu.kits.tennis.infrastructure.ui.component.ComponentFactory;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
@@ -41,7 +42,7 @@ class UserDetailsDrawer extends DetailsDrawer {
     private final TextField nameField = new TextField("Név");
     private final EmailField emailField = new EmailField("Email");
     private final TextField phoneField = new TextField("Telefon");
-    private final ComboBox<Role> roleCombo = new ComboBox<>("Típus", Role.all());
+    private final Select<Role> roleSelect = ComponentFactory.createSelect("Típus", Role::label, Role.values());
     private final StatusField statusField;
     private final Binder<UserDataBean> binder = new Binder<>(UserDataBean.class);
 
@@ -86,7 +87,7 @@ class UserDetailsDrawer extends DetailsDrawer {
             .withValidator(new EmailValidator("Helytelen email cím"))
             .bind("email");
         binder.bind(phoneField, "phone");
-        binder.bind(roleCombo, "role");
+        binder.bind(roleSelect, "role");
         binder.bind(statusField, "status");
     }
 
@@ -140,7 +141,7 @@ class UserDetailsDrawer extends DetailsDrawer {
                 nameField, 
                 emailField,
                 phoneField,
-                roleCombo, 
+                roleSelect, 
                 statusField,
                 new Hr(),
                 generatePasswordButton, 
@@ -152,9 +153,7 @@ class UserDetailsDrawer extends DetailsDrawer {
         nameField.setWidth("300px");
         emailField.setWidth("300px");
         phoneField.setWidth("200px");
-        roleCombo.setWidth("120px");
-        
-        roleCombo.setItemLabelGenerator(Role::label);
+        roleSelect.setWidth("120px");
         
         return fieldsLayout;
     }
