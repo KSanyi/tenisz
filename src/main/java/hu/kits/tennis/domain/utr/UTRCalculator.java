@@ -40,7 +40,7 @@ public class UTRCalculator {
                 .collect(toList());
         
         if(allRelevantMatchesForPlayer.isEmpty()) {
-            return new UTRDetails(player.startingUTR(), Set.of(), allPlayedMatchesForPlayer.size());
+            return new UTRDetails(player.startingUTR(), Set.of(), 0, 0);
         }
         
         List<BookedMatch> lastRelevantMatches = findLastRelevantMatches(allRelevantMatchesForPlayer);
@@ -55,7 +55,9 @@ public class UTRCalculator {
         
         double weightedAverage = calculatWeightedAverage(utrWithWeights);
         
-        return new UTRDetails(new UTR(weightedAverage), effectiveMatches, allPlayedMatchesForPlayer.size());
+        int numberOfWins = (int)allPlayedMatchesForPlayer.stream().filter(b -> b.playedMatch().winner().equals(player)).count();
+        
+        return new UTRDetails(new UTR(weightedAverage), effectiveMatches, allPlayedMatchesForPlayer.size(), numberOfWins);
     }
     
     private static List<BookedMatch> findLastRelevantMatches(List<BookedMatch> allRelevantMatchesForPlayer) {

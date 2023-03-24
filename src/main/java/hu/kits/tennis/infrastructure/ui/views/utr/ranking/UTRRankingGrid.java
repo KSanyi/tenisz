@@ -47,23 +47,24 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
             .setFlexGrow(1);
         
         addColumn(playerWithUTR -> playerWithUTR.numberOfMatches())
-            .setHeader("Meccsek")
+            .setHeader("Match")
             .setTextAlign(ColumnTextAlign.CENTER)
             .setSortable(true)
             .setAutoWidth(true)
             .setFlexGrow(0);
         
-        addColumn(playerWithUTR -> playerWithUTR.utr())
+        addColumn(playerWithUTR -> playerWithUTR.numberOfWins())
+            .setHeader("Wins")
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setSortable(true)
+            .setAutoWidth(true)
+            .setFlexGrow(0);
+        
+        addComponentColumn(this::createUTRComponent)
             .setHeader("UTR")
-            .setTextAlign(ColumnTextAlign.CENTER)
-            .setSortable(true)
-            .setAutoWidth(true)
-            .setFlexGrow(0);
-        
-        addComponentColumn(this::createUTRChangeComponent)
-            .setHeader("Változás")
-            .setKey("utrChange")
-            .setComparator(Comparator.comparing(PlayerWithUTR::utrChange))
+            //.setTextAlign(ColumnTextAlign.CENTER)
+            .setComparator(Comparator.comparing(PlayerWithUTR::utr))
+            .setWidth("110px")
             .setFlexGrow(0);
         
         linkColumn = addComponentColumn(this::createPlayerStatsLink)
@@ -96,38 +97,20 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleColumns(e.getWidth()));
     }
     
-    private void updateVisibleColumns(int width) {
-        boolean mobile = width < VaadinUtil.MOBILE_BREAKPOINT;
-        boolean smallScreen = width < VaadinUtil.SMALL_SCREEN_BREAKPOINT;
-        var columns = getColumns();
-
-        // "Mobile" column
-        mobileColumn.setVisible(mobile);
-        // "Desktop" columns
-        for (int i = 1; i < columns.size(); i++) {
-            columns.get(i).setVisible(!mobile);
-        }
-        
-        linkColumn.setVisible(smallScreen && !mobile);
-        
-        if(! mobile) {
-            setMinWidth("560px");
-        }
-    }
-
-    private Component createUTRChangeComponent(PlayerWithUTR playerWithUTR) {
+    private Component createUTRComponent(PlayerWithUTR playerWithUTR) {
+        Span span = new Span(new Label(playerWithUTR.utr().toString()));
         UTR utrChange = playerWithUTR.utrChange();
         if(utrChange.isDefinded() && utrChange.value().doubleValue() != 0) {
             double diff = utrChange.value().doubleValue();
             if(Math.abs(diff) >= 0.05) {
                 if(diff > 0) {
-                    return createChangeSpan(utrChange, "arrow-up", "var(--lumo-success-text-color)");
+                    span.add(createChangeSpan(utrChange, "arrow-up", "var(--lumo-success-text-color)"));
                 } else {
-                    return createChangeSpan(utrChange, "arrow-down", "var(--lumo-error-text-color)");
+                    span.add(createChangeSpan(utrChange, "arrow-down", "var(--lumo-error-text-color)"));
                 }  
             }
         }
-        return new Span();
+        return span;
     }
     
     private Component createPlayerStatsLink(PlayerWithUTR playerWithUTR) {
@@ -166,9 +149,28 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
         name.setText(playerWithUTR.player().name());
         Label numberOfMatches = new Label(String.valueOf(playerWithUTR.numberOfMatches()));
         Label utr = new Label(playerWithUTR.utr().toString());
-        HorizontalLayout layout = new HorizontalLayout(rank, name, numberOfMatches, createUTRChangeComponent(playerWithUTR), utr);
+        HorizontalLayout layout = new HorizontalLayout(rank, name, numberOfMatches, createUTRComponent(playerWithUTR), utr);
         layout.expand(name);
         return layout;
+    }
+    
+    private void updateVisibleColumns(int width) {
+        boolean mobile = width < VaadinUtil.MOBILE_BREAKPOINT;
+        boolean smallScreen = width < VaadinUtil.SMALL_SCREEN_BREAKPOINT;
+        var columns = getColumns();
+
+        // "Mobile" column
+        mobileColumn.setVisible(mobile);
+        // "Desktop" columns
+        for (int i = 1; i < columns.size(); i++) {
+            columns.get(i).setVisible(!mobile);
+        }
+        
+        linkColumn.setVisible(smallScreen && !mobile);
+        
+        if(! mobile) {
+            setMinWidth("600px");
+        }
     }
 
 }
