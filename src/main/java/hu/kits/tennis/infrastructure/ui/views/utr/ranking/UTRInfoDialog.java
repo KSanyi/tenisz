@@ -5,10 +5,13 @@ import java.lang.invoke.MethodHandles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.VaadinIcon;
 
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
+import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
 class UTRInfoDialog extends Dialog {
 
@@ -20,6 +23,9 @@ class UTRInfoDialog extends Dialog {
         setResizable(true);
         
         setHeaderTitle("UTR információ");
+        Button closeButton = UIUtils.createTertiaryButton(VaadinIcon.CLOSE);
+        closeButton.addClickListener(click -> close());
+        getHeader().add(closeButton);
         
         String content = """
                 A játékos UTR-je a legutóbbi 14&ast; mérkőzése <b>meccs UTR</b>-jének súlyozott átlaga.<br/>

@@ -67,8 +67,7 @@ public class UTRForecastWindow extends Dialog {
     private final List<BookedMatch> allBookedMatches;
     
     public UTRForecastWindow(List<PlayerWithUTR> utrRankingList) {
-        
-        this.allBookedMatches = Main.resourceFactory.getUTRService().loadBookedMatches();
+        allBookedMatches = Main.resourceFactory.getUTRService().loadBookedMatches();
         matchScoreField = new MatchScoreField(3);
         matchScoreField.addScoreChangedListener(() -> inputChanged());
         

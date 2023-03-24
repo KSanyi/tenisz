@@ -14,7 +14,6 @@ import com.vaadin.flow.component.html.AnchorTarget;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
@@ -26,13 +25,9 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
     
     private ListDataProvider<PlayerWithUTR> dataProvider;
     
-    private final Column<PlayerWithUTR> mobileColumn;
-    private final Column<PlayerWithUTR> linkColumn;
+    private Column<PlayerWithUTR> linkColumn;
     
     UTRRankingGrid() {
-        
-        mobileColumn = addComponentColumn(this::createMobileComponent);
-        mobileColumn.setVisible(false);
         
         addColumn(playerWithUTR -> playerWithUTR.rank())
             .setHeader("Rank")
@@ -72,26 +67,8 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
             .setFlexGrow(0);
         
         setWidthFull();
-        
-        /*
-        addColumn(playerWithUTR -> playerWithUTR.player().utrGroup())
-            .setHeader("UTR csop")
-            .setTextAlign(ColumnTextAlign.CENTER)
-            .setSortable(true)
-            .setAutoWidth(true)
-            .setFlexGrow(0);
-        
-        addColumn(playerWithUTR -> String.format("%.1f", playerWithUTR.utr().value() - playerWithUTR.player().utrGroup()))
-            .setHeader("UTR diff")
-            .setTextAlign(ColumnTextAlign.CENTER)
-            .setSortable(true)
-            .setAutoWidth(true)
-            .setFlexGrow(0);
-            
-        setWidth("600px");
-        */
-        
         setHeightFull();
+        setMinWidth("600px");
         
         UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleColumns(e.getBodyClientWidth()));
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleColumns(e.getWidth()));
@@ -120,7 +97,7 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
     }
     
     private static Anchor createAnchor(int playerId) {
-        return new Anchor("player-stats/" + playerId, "link", AnchorTarget.BLANK);
+        return new Anchor("player-stats/" + playerId, "Részletek...", AnchorTarget.BLANK);
     }
     
     private static Component createChangeSpan(UTR utrChange, String arrow, String color) {
@@ -143,34 +120,10 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
         dataProvider.addFilter(playerWithUtr -> cleanNameString(playerWithUtr.player().name()).contains(cleanNameString(playerNamePart)));
     }
     
-    private Component createMobileComponent(PlayerWithUTR playerWithUTR) {
-        Label rank = new Label(String.valueOf(playerWithUTR.rank()));
-        Anchor name = createAnchor(playerWithUTR.player().id());
-        name.setText(playerWithUTR.player().name());
-        Label numberOfMatches = new Label(String.valueOf(playerWithUTR.numberOfMatches()));
-        Label utr = new Label(playerWithUTR.utr().toString());
-        HorizontalLayout layout = new HorizontalLayout(rank, name, numberOfMatches, createUTRComponent(playerWithUTR), utr);
-        layout.expand(name);
-        return layout;
-    }
-    
     private void updateVisibleColumns(int width) {
-        boolean mobile = width < VaadinUtil.MOBILE_BREAKPOINT;
         boolean smallScreen = width < VaadinUtil.SMALL_SCREEN_BREAKPOINT;
-        var columns = getColumns();
 
-        // "Mobile" column
-        mobileColumn.setVisible(mobile);
-        // "Desktop" columns
-        for (int i = 1; i < columns.size(); i++) {
-            columns.get(i).setVisible(!mobile);
-        }
-        
-        linkColumn.setVisible(smallScreen && !mobile);
-        
-        if(! mobile) {
-            setMinWidth("600px");
-        }
+        linkColumn.setVisible(smallScreen);
     }
 
 }

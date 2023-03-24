@@ -60,7 +60,11 @@ export const injectGlobalCss = (css, target, first) => {
   }
 };
 import stylesCss from 'themes/tennis-theme/styles.css?inline';
+import { typography } from '@vaadin/vaadin-lumo-styles/typography.js';
+import { color } from '@vaadin/vaadin-lumo-styles/color.js';
+import { spacing } from '@vaadin/vaadin-lumo-styles/spacing.js';
 import { badge } from '@vaadin/vaadin-lumo-styles/badge.js';
+import { utility } from '@vaadin/vaadin-lumo-styles/utility.js';
 
 window.Vaadin = window.Vaadin || {};
 window.Vaadin.theme = window.Vaadin.theme || {};
@@ -107,6 +111,10 @@ export const applyTheme = (target) => {
     
     document['_vaadintheme_tennis-theme_componentCss'] = true;
   }
-  injectGlobalCss(badge.cssText, target, true);
+  injectGlobalCss(typography.cssText, target, true);
+injectGlobalCss(color.cssText, target, true);
+injectGlobalCss(spacing.cssText, target, true);
+injectGlobalCss(badge.cssText, target, true);
+injectGlobalCss(utility.cssText, target, true);
 
 }

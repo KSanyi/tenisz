@@ -58,7 +58,7 @@ public record UTR(Double value) implements Comparable<UTR> {
     }
 
     public int utrGroup() {
-        return value != null ? (int)Math.round(value) : 0;
+        return value != null ? value.intValue() : 0;
     }
 
 }

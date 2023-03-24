@@ -47,17 +47,23 @@ public class UTRRankingView extends SplitViewFrame implements View {
     
     private final TextField filter = new TextField();
     private final UTRRankingGrid utrRankingGrid = new UTRRankingGrid();
+    private final UTRRankingGridMobile utrRankingGridMobile = new UTRRankingGridMobile();
     private final PlayerStatsComponent playerStatsView = new PlayerStatsComponent();
     
     private final Button utrForecastButton = UIUtils.createButton("UTR előrejelzés", ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
     
     private List<PlayerWithUTR> utrRankingList;
     
+    private HorizontalLayout content;
+    
     public UTRRankingView() {
         
         filter.setPlaceholder("Játékos szűrő");
         filter.addValueChangeListener(v -> utrRankingGrid.filter(v.getValue()));
+        filter.addValueChangeListener(v -> utrRankingGridMobile.filter(v.getValue()));
         filter.setValueChangeMode(ValueChangeMode.EAGER);
+        
+        utrRankingGridMobile.setVisible(false);
         
         utrForecastButton.addClickListener(click -> UTRForecastWindow.open(utrRankingList));
     }
@@ -100,13 +106,13 @@ public class UTRRankingView extends SplitViewFrame implements View {
         helpIcon.addClickListener(click -> UTRInfoDialog.openDialog());
         HorizontalLayout header = new HorizontalLayout(filter, helpIcon, utrForecastButton);
         
-        VerticalLayout column1 = new VerticalLayout(header, utrRankingGrid);
+        VerticalLayout column1 = new VerticalLayout(header, utrRankingGrid, utrRankingGridMobile);
         column1.setPadding(false);
         column1.setSpacing(false);
         column1.setSizeUndefined();
         column1.setHorizontalComponentAlignment(Alignment.CENTER, header);
         
-        HorizontalLayout content = new HorizontalLayout(column1, playerStatsView);
+        content = new HorizontalLayout(column1, playerStatsView);
         content.setFlexGrow(1, column1);
         content.setFlexGrow(2, playerStatsView);
         content.setSizeFull();
@@ -118,11 +124,19 @@ public class UTRRankingView extends SplitViewFrame implements View {
     public void refresh() {
         utrRankingList = utrService.calculateUTRRanking();
         utrRankingGrid.setUTRRankingList(utrRankingList);
+        utrRankingGridMobile.setUTRRankingList(utrRankingList);
     }
     
     private void updateVisibleParts(int width) {
-        boolean smallScreen = width < VaadinUtil.SMALL_SCREEN_BREAKPOINT;
-        playerStatsView.setVisible(!smallScreen);
+        
+        boolean isMobile = width < VaadinUtil.MOBILE_BREAKPOINT;
+        boolean isSmallScreen = width < VaadinUtil.SMALL_SCREEN_BREAKPOINT;
+        
+        playerStatsView.setVisible(!isSmallScreen);
+        filter.setWidth(isMobile ? "130px" : "200px");
+        content.setPadding(!isMobile);
+        utrRankingGrid.setVisible(!isMobile);
+        utrRankingGridMobile.setVisible(isMobile);
     }
     
 }
