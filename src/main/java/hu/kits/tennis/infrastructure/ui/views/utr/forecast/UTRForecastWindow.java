@@ -1,6 +1,5 @@
 package hu.kits.tennis.infrastructure.ui.views.utr.forecast;
 
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 
 import java.lang.invoke.MethodHandles;
@@ -34,6 +33,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.LitRenderer;
 
 import hu.kits.tennis.Main;
+import hu.kits.tennis.common.StringUtil;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchResult;
 import hu.kits.tennis.domain.match.MatchService;
@@ -74,7 +74,7 @@ public class UTRForecastWindow extends Dialog {
         this.setHeaderTitle("UTR előrejelzés");
         
         List<PlayerWithUTR> sortedUTRRankingList = utrRankingList.stream()
-                .sorted(comparing(p -> p.player().name()))
+                .sorted((p1, p2) -> StringUtil.HUN_COLLATOR.compare(p1.player().name(), p2.player().name()))
                 .toList();
         
         player1Combo = createPlayerCombo(sortedUTRRankingList);

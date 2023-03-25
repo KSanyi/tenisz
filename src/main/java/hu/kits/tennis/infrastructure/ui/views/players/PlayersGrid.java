@@ -52,6 +52,7 @@ class PlayersGrid extends Grid<Player> {
         addColumn(Player::name)
             .setHeader("Név")
             .setSortable(true)
+            .setComparator((p1, p2) -> StringUtil.HUN_COLLATOR.compare(p1.name(), p2.name()))
             .setFlexGrow(3);
         
         addColumn(p -> p.contact().email())

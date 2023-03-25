@@ -17,6 +17,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
+import hu.kits.tennis.common.StringUtil;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
@@ -40,6 +41,7 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
         addColumn(playerWithUTR -> playerWithUTR.player().name())
             .setHeader("Név")
             .setSortable(true)
+            .setComparator((p1, p2) -> StringUtil.HUN_COLLATOR.compare(p1.player().name(), p2.player().name()))
             .setFlexGrow(1);
         
         addComponentColumn(UTRRankingGrid::createUTRComponent)
