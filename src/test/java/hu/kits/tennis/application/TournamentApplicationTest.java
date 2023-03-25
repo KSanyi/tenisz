@@ -125,6 +125,8 @@ public class TournamentApplicationTest {
     @Test
     void createAndPlay2RoundsTournament() {
         
+        // ************** SETUP TOURNAMENT **************
+        
         Tournament tournament = tournamentService.createTournament(DEFAULT_PARAMS);
         
         tournamentService.updateContestants(tournament, List.of(player1, player2, player3, player4));
@@ -153,6 +155,8 @@ public class TournamentApplicationTest {
         assertEquals(player4, semiFinal2.player2());
         assertNull(semiFinal2.result());
         
+        // ************** PLAY MATCHES **************
+        
         tournamentService.setTournamentMatchResult(new MatchResultInfo(semiFinal1, LocalDate.of(2022,1,1), new MatchResult(6, 4)));
         
         matches = tournamentService.findTournament(tournament.id()).get().mainBoard().matches();
@@ -178,6 +182,11 @@ public class TournamentApplicationTest {
         tournamentService.setTournamentMatchResult(new MatchResultInfo(theFinal, LocalDate.of(2022,1,1), new MatchResult(6, 0)));
         matches = tournamentService.findTournament(tournament.id()).get().mainBoard().matches();
         assertEquals(3, matches.size());
+        
+        TournamentSummary tournamentSummary = tournamentService.loadTournamentSummariesList().get(0);
+        
+        assertEquals(Status.COMPLETED, tournamentSummary.status());
+        assertEquals(player1, tournamentSummary.winner());
     }
     
     @Test

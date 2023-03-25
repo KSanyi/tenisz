@@ -154,6 +154,7 @@ public class TournamentService {
         MatchResult matchResult = matchResultInfo.matchResult();
         
         matchRepository.setResult(matchResultInfo);
+        match = matchRepository.loadMatch(match.id());
         
         Tournament tournament = loadTournament(match.tournamentId());
         
@@ -162,55 +163,58 @@ public class TournamentService {
             logger.info("Tournament {} status is updated to LIVE", tournament);
         }
         
-        Player winner = matchResult.isPlayer1Winner() ? match.player1() : match.player2();
+        Player winner = match.winner();
         
         if(tournament.isBoardFinal(match)) {
-            return;
-        }
-        
-        int nextRoundMatchNumber = tournament.nextRoundMatchNumber(match);
-        
-        Match followUpMatch = tournament.followUpMatch(match);
-        
-        if(followUpMatch == null) {
-            if(match.tournamentMatchNumber() % 2 == 1) {
-                followUpMatch = Match.createNew(match.tournamentId(), match.tournamentBoardNumber(), nextRoundMatchNumber, null, winner, null);
-            } else {
-                followUpMatch = Match.createNew(match.tournamentId(), match.tournamentBoardNumber(), nextRoundMatchNumber, null, null, winner);
-            }
-            matchRepository.save(new BookedMatch(followUpMatch, null, null, null, null));
-            logger.info("Next round match created: {}", followUpMatch);
+            tournamentRepository.updateTournamentStatus(match.tournamentId(), Status.COMPLETED);
+            logger.info("Tournament {} status is updated to COMPLETED", tournament);
+
+            setWinner(tournament.id(), match.winner());
         } else {
-            if(match.tournamentMatchNumber() % 2 == 1) {
-                matchRepository.setPlayer1(followUpMatch.id(), winner);    
+            int nextRoundMatchNumber = tournament.nextRoundMatchNumber(match);
+            
+            Match followUpMatch = tournament.followUpMatch(match);
+            
+            if(followUpMatch == null) {
+                if(match.tournamentMatchNumber() % 2 == 1) {
+                    followUpMatch = Match.createNew(match.tournamentId(), match.tournamentBoardNumber(), nextRoundMatchNumber, null, winner, null);
+                } else {
+                    followUpMatch = Match.createNew(match.tournamentId(), match.tournamentBoardNumber(), nextRoundMatchNumber, null, null, winner);
+                }
+                matchRepository.save(new BookedMatch(followUpMatch, null, null, null, null));
+                logger.info("Next round match created: {}", followUpMatch);
             } else {
-                matchRepository.setPlayer2(followUpMatch.id(), winner);
+                if(match.tournamentMatchNumber() % 2 == 1) {
+                    matchRepository.setPlayer1(followUpMatch.id(), winner);    
+                } else {
+                    matchRepository.setPlayer2(followUpMatch.id(), winner);
+                }
+                logger.info("{} is set to next round match: {}", winner.name(), followUpMatch);
             }
-            logger.info("{} is set to next round match: {}", winner.name(), followUpMatch);
-        }
-        
-        if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION && match.tournamentBoardNumber() == 1 && tournament.mainBoard().roundNumber(match) == 1) {
-            Player loser = matchResult.isPlayer1Winner() ? match.player2() : match.player1();
             
-            int consolationMatchNumber = (match.tournamentMatchNumber() + 1) / 2;
-            
-            Match consolationMatch = tournament.getMatch(2, consolationMatchNumber);
-            
-            if(consolationMatch == null) {
-                if(match.tournamentMatchNumber() % 2 == 1) {
-                    consolationMatch = Match.createNew(match.tournamentId(), 2, consolationMatchNumber, null, loser, null);
+            if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION && match.tournamentBoardNumber() == 1 && tournament.mainBoard().roundNumber(match) == 1) {
+                Player loser = matchResult.isPlayer1Winner() ? match.player2() : match.player1();
+                
+                int consolationMatchNumber = (match.tournamentMatchNumber() + 1) / 2;
+                
+                Match consolationMatch = tournament.getMatch(2, consolationMatchNumber);
+                
+                if(consolationMatch == null) {
+                    if(match.tournamentMatchNumber() % 2 == 1) {
+                        consolationMatch = Match.createNew(match.tournamentId(), 2, consolationMatchNumber, null, loser, null);
+                    } else {
+                        consolationMatch = Match.createNew(match.tournamentId(), 2, consolationMatchNumber, null, null, loser);
+                    }
+                    matchRepository.save(new BookedMatch(consolationMatch, null, null, null, null));
+                    logger.info("Consolation round match created: {}", consolationMatch);
                 } else {
-                    consolationMatch = Match.createNew(match.tournamentId(), 2, consolationMatchNumber, null, null, loser);
+                    if(match.tournamentMatchNumber() % 2 == 1) {
+                        matchRepository.setPlayer1(consolationMatch.id(), loser);    
+                    } else {
+                        matchRepository.setPlayer2(consolationMatch.id(), loser);
+                    }
+                    logger.info("{} is set to consolation match: {}", loser.name(), consolationMatch);
                 }
-                matchRepository.save(new BookedMatch(consolationMatch, null, null, null, null));
-                logger.info("Consolation round match created: {}", consolationMatch);
-            } else {
-                if(match.tournamentMatchNumber() % 2 == 1) {
-                    matchRepository.setPlayer1(consolationMatch.id(), loser);    
-                } else {
-                    matchRepository.setPlayer2(consolationMatch.id(), loser);
-                }
-                logger.info("{} is set to consolation match: {}", loser.name(), consolationMatch);
             }
         }
         
