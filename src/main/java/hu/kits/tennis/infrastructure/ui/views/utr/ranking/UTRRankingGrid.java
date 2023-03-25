@@ -14,6 +14,7 @@ import com.vaadin.flow.component.html.AnchorTarget;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
@@ -41,6 +42,12 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
             .setSortable(true)
             .setFlexGrow(1);
         
+        addComponentColumn(UTRRankingGrid::createUTRComponent)
+            .setHeader("UTR")
+            .setComparator(Comparator.comparing(PlayerWithUTR::utr))
+            .setWidth("110px")
+            .setFlexGrow(0);
+        
         addColumn(playerWithUTR -> playerWithUTR.numberOfMatches())
             .setHeader("Match")
             .setTextAlign(ColumnTextAlign.CENTER)
@@ -55,58 +62,75 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
             .setAutoWidth(true)
             .setFlexGrow(0);
         
-        addComponentColumn(this::createUTRComponent)
-            .setHeader("UTR")
-            //.setTextAlign(ColumnTextAlign.CENTER)
-            .setComparator(Comparator.comparing(PlayerWithUTR::utr))
+        addComponentColumn(UTRRankingGrid::createTrophiesComponent)
+            .setHeader("Trophies")
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setComparator(Comparator.comparing(PlayerWithUTR::numberOfTrophies))
             .setWidth("110px")
             .setFlexGrow(0);
         
-        linkColumn = addComponentColumn(this::createPlayerStatsLink)
+        linkColumn = addComponentColumn(UTRRankingGrid::createPlayerStatsLink)
             .setHeader("")
             .setFlexGrow(0);
         
         setWidthFull();
         setHeightFull();
-        setMinWidth("600px");
+        setMinWidth("690px");
         
         UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleColumns(e.getBodyClientWidth()));
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleColumns(e.getWidth()));
     }
     
-    private Component createUTRComponent(PlayerWithUTR playerWithUTR) {
+    private static Component createUTRComponent(PlayerWithUTR playerWithUTR) {
         Span span = new Span(new Label(playerWithUTR.utr().toString()));
-        UTR utrChange = playerWithUTR.utrChange();
+        span.add(createUTRChangeSpan(playerWithUTR.utrChange()));
+        return span;
+    }
+    
+    static Span createUTRChangeSpan(UTR utrChange) {
         if(utrChange.isDefinded() && utrChange.value().doubleValue() != 0) {
             double diff = utrChange.value().doubleValue();
             if(Math.abs(diff) >= 0.05) {
                 if(diff > 0) {
-                    span.add(createChangeSpan(utrChange, "arrow-up", "var(--lumo-success-text-color)"));
+                    return createUTRChangeSpan(utrChange, "arrow-up", "var(--lumo-success-text-color)");
                 } else {
-                    span.add(createChangeSpan(utrChange, "arrow-down", "var(--lumo-error-text-color)"));
+                    return createUTRChangeSpan(utrChange, "arrow-down", "var(--lumo-error-text-color)");
                 }  
             }
         }
-        return span;
+        return new Span();
     }
     
-    private Component createPlayerStatsLink(PlayerWithUTR playerWithUTR) {
-        Anchor anchor = createAnchor(playerWithUTR.player().id());
-        UIUtils.setTooltip("Megnyitás új böngészőablakban", anchor);
-        return anchor;
-    }
-    
-    private static Anchor createAnchor(int playerId) {
-        return new Anchor("player-stats/" + playerId, "Részletek...", AnchorTarget.BLANK);
-    }
-    
-    private static Component createChangeSpan(UTR utrChange, String arrow, String color) {
+    private static Span createUTRChangeSpan(UTR utrChange, String arrow, String color) {
         Icon icon = new Icon("lumo", arrow);
         Label label = new Label(utrChange.toString());
         label.getStyle().set("font-size", "11px");
         Span span = new Span(icon, label);
         span.getStyle().set("color", color);
         UIUtils.setTooltip("UTR változás az elmúlt hét napban", span);
+        return span;
+    }
+    
+    static Component createPlayerStatsLink(PlayerWithUTR playerWithUTR) {
+        Anchor anchor = createAnchor(playerWithUTR.player().id());
+        UIUtils.setTooltip("Megnyitás új böngészőablakban", anchor);
+        return anchor;
+    }
+    
+    private static Anchor createAnchor(int playerId) {
+        return new Anchor("player-stats/" + playerId, "Adatlap", AnchorTarget.BLANK);
+    }
+    
+    static Component createTrophiesComponent(PlayerWithUTR playerWithUTR) {
+        
+        Span span = new Span();
+        for(int i=0;i<playerWithUTR.numberOfTrophies();i++) {
+            Icon icon = VaadinIcon.TROPHY.create();
+            icon.setColor("Goldenrod");
+            icon.setSize("15px");
+            span.add(icon);
+        }
+        
         return span;
     }
     

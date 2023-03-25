@@ -59,13 +59,13 @@ public class TaskMain {
         
         //runUTRFluctationsTask();
         
-        setTourWinners();
+        setTournamentWinners();
     }
     
-    private static void setTourWinners() {
+    private static void setTournamentWinners() {
         TournamentService tournamentService = resourceFactory.getTournamentService();
         for(TournamentSummary summary : tournamentService.loadTournamentSummariesList()) {
-            if(summary.status() == Status.COMPLETED) {
+            if(summary.status() == Status.COMPLETED && summary.winner() == null) {
                 Player winner;
                 Tournament tournament = tournamentService.findTournament(summary.id()).get();
                 if(summary.type() == Type.TOUR) {

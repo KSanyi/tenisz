@@ -39,7 +39,7 @@ public class ResourceFactory {
         playersService = new PlayersService(playerRepository, matchRepository);
         
         matchService = new MatchService(matchRepository, tournamentRepository);
-        utrService = new UTRService(matchService, matchRepository, playerRepository);
+        utrService = new UTRService(matchService, matchRepository, playerRepository, tournamentRepository);
         tournamentService = new TournamentService(tournamentRepository, matchRepository, utrService);
     }
     

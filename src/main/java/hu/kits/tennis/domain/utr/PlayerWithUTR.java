@@ -2,7 +2,7 @@ package hu.kits.tennis.domain.utr;
 
 import hu.kits.tennis.domain.player.Player;
 
-public record PlayerWithUTR(Player player, int rank, UTR utr, UTR utrOneWeekAgo, int numberOfMatches, int numberOfWins) {
+public record PlayerWithUTR(Player player, int rank, UTR utr, UTR utrOneWeekAgo, int numberOfMatches, int numberOfWins, int numberOfTrophies) {
     
     public UTR utrChange() {
         if(utr.isDefinded() && utrOneWeekAgo.isDefinded()) {

@@ -95,7 +95,7 @@ public class TournamentService {
     }
     
     public Optional<Tournament> findTournament(String tournamentId) {
-        logger.debug("Finding tournement: {}", tournamentId);
+        logger.debug("Finding tournament: {}", tournamentId);
         return tournamentRepository.findTournament(tournamentId);
     }
     
