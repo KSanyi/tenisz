@@ -58,18 +58,19 @@ public class MatchesGridMobile extends Grid<MatchInfo> {
                     BorderRadius.LARGE,
                     JustifyContent.BETWEEN);
             
-            Span date = new Span(Formatters.formatDateLong(matchInfo.date()) + " " + matchInfo.tournamentInfo().name());
-            date.addClassNames(FontSize.SMALL, TextColor.SECONDARY);
+            String date = matchInfo.date() != null ? Formatters.formatDateLong(matchInfo.date()) : "?";
+            Span dateAndTournament = new Span(date + " " + matchInfo.tournamentInfo().name());
+            dateAndTournament.addClassNames(FontSize.SMALL, TextColor.SECONDARY);
             
-            Span names = new Span();
-            names.addClassNames(Display.FLEX, FlexDirection.COLUMN);
+            Span playersAndResult = new Span();
+            playersAndResult.addClassNames(Display.FLEX, FlexDirection.COLUMN);
             
             Span player1Row = createPlayerRow(matchInfo, true);
             Span player2Row = createPlayerRow(matchInfo, false);
             
-            names.add(player1Row, player2Row);
+            playersAndResult.add(player1Row, player2Row);
             
-            add(date, names);
+            add(dateAndTournament, playersAndResult);
         }
         
         private static Span createPlayerRow(MatchInfo matchInfo, boolean player1) {
@@ -80,14 +81,16 @@ public class MatchesGridMobile extends Grid<MatchInfo> {
             
             Span playerAndUTR = new Span(player, playerUTR);
             playerAndUTR.setWidth("220px");
-            if(matchInfo.result().isPlayer1Winner() && player1 || matchInfo.result().isPlayer2Winner() && !player1) {
-                playerAndUTR.addClassNames(FontWeight.SEMIBOLD);
-            }
             
-            Span games = games(matchInfo.result().setResults(), player1);
-            
-            Span span = new Span(playerAndUTR, games);
+            Span span = new Span(playerAndUTR);
             span.addClassNames(Display.FLEX);
+            if(matchInfo.result() != null) {
+                if(matchInfo.result().isPlayer1Winner() && player1 || matchInfo.result().isPlayer2Winner() && !player1) {
+                    playerAndUTR.addClassNames(FontWeight.SEMIBOLD);
+                }
+                
+                span.add(games(matchInfo.result().setResults(), player1));
+            }
             
             return span;
         }

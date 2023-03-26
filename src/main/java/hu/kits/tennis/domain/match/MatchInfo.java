@@ -27,4 +27,8 @@ public record MatchInfo(Integer id,
                date != null && Formatters.formatDate(date).contains(filterPart);
     }
     
+    public LocalDate dateForCompare() {
+        return date != null ? date : LocalDate.MAX;
+    }
+    
 }

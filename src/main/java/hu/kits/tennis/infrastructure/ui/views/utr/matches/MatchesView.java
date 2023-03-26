@@ -1,7 +1,10 @@
 package hu.kits.tennis.infrastructure.ui.views.utr.matches;
 
+import java.util.List;
+
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.icon.Icon;
@@ -14,6 +17,8 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import hu.kits.tennis.Main;
+import hu.kits.tennis.domain.match.MatchInfo;
+import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
@@ -34,10 +39,12 @@ import hu.kits.tennis.infrastructure.ui.views.View;
 public class MatchesView extends SplitViewFrame implements View {
 
     private final UTRService utrService = Main.resourceFactory.getUTRService();
+    private final MatchService matchService = Main.resourceFactory.getMatchService();
     
     private final Button recalculateButton = createRecalculateButton();
     private final TextField filterField = new TextField();
     private final AllMatchesGrid matchesGrid = new AllMatchesGrid();
+    private final AllMatchesGridMobile matchesGridMobile = new AllMatchesGridMobile();
     
     public MatchesView() {
         filterField.setValueChangeMode(ValueChangeMode.TIMEOUT);
@@ -50,6 +57,11 @@ public class MatchesView extends SplitViewFrame implements View {
         super.onAttach(attachEvent);
         initAppBar();
         setViewContent(createContent());
+        
+        UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleParts(e.getBodyClientWidth()));
+        UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleParts(e.getWidth()));
+        
+        refresh();
     }
     
     private static void initAppBar() {
@@ -63,7 +75,7 @@ public class MatchesView extends SplitViewFrame implements View {
         recalculateButton.getStyle().set("margin-left", "auto");
         filterField.getStyle().set("margin-left", "auto");
         buttonsLayout.setWidthFull();
-        FlexBoxLayout content = new FlexBoxLayout(buttonsLayout, matchesGrid);
+        FlexBoxLayout content = new FlexBoxLayout(buttonsLayout, matchesGrid, matchesGridMobile);
         filterField.setWidth("250px");
         content.setBoxSizing(BoxSizing.BORDER_BOX);
         content.setSizeFull();
@@ -89,7 +101,17 @@ public class MatchesView extends SplitViewFrame implements View {
     }
 
     public void refresh() {
-        matchesGrid.refresh();
+        List<MatchInfo> allMatches = matchService.loadAllMatches();
+        matchesGrid.setMatches(allMatches);
+        matchesGridMobile.setMatches(allMatches);
+    }
+    
+    private void updateVisibleParts(int width) {
+        
+        boolean isMobile = width < VaadinUtil.MOBILE_BREAKPOINT;
+        
+        matchesGrid.setVisible(!isMobile);
+        matchesGridMobile.setVisible(isMobile);
     }
     
 }

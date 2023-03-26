@@ -60,6 +60,7 @@ public class MatchService {
     }
 
     public List<MatchInfo> loadAllMatches() {
+        logger.info("Loading all matches");
         List<BookedMatch> matches = matchRepository.loadAllBookedMatches();
         
         Map<String, BasicTournamentInfo> basicTournamentInfoMap = tournamentRepository.loadBasicTournamentInfosMap();
@@ -67,7 +68,10 @@ public class MatchService {
         List<MatchInfo> matchInfos = matches.stream()
                 .filter(bookedMatch -> ! bookedMatch.hasPlayed(Player.BYE))
                 .map(bookedMatch -> toMatchInfo(bookedMatch, basicTournamentInfoMap))
+                .sorted(Comparator.comparing(MatchInfo::dateForCompare).reversed())
                 .collect(toList());
+        
+        logger.info("{} matches loaded", matchInfos.size());
         
         return matchInfos;
     }

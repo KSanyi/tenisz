@@ -7,9 +7,9 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 
 import hu.kits.tennis.common.StringUtil;
 import hu.kits.tennis.domain.match.MatchInfo;
-import hu.kits.tennis.infrastructure.ui.views.utr.MatchesGrid;
+import hu.kits.tennis.infrastructure.ui.views.utr.MatchesGridMobile;
 
-class AllMatchesGrid extends MatchesGrid {
+class AllMatchesGridMobile extends MatchesGridMobile {
     
     private ListDataProvider<MatchInfo> dataProvider;
     

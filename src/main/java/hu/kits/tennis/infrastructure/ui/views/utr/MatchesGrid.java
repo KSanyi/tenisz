@@ -30,7 +30,6 @@ public class MatchesGrid extends Grid<MatchInfo> {
  
     private final Column<MatchInfo> player1UtrColumn;
     private final Column<MatchInfo> player2UtrColumn;
-    private final Column<MatchInfo> tournamentInfoColumn;
     
     public MatchesGrid() {
         
@@ -42,7 +41,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(1);
         
-        tournamentInfoColumn = addColumn(match -> match.tournamentInfo().name())
+        addColumn(match -> match.tournamentInfo().name())
             .setKey("tournament")
             .setHeader("Verseny")
             .setAutoWidth(true)
@@ -138,10 +137,5 @@ public class MatchesGrid extends Grid<MatchInfo> {
         player2UtrColumn.setVisible(false);
         player1UtrColumn.setHeader("Meccs UTR");
     }
-    
-    public void hideTournamentInfoColumn() {
-        tournamentInfoColumn.setVisible(false);
-    }
-    
     
 }
