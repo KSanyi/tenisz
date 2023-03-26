@@ -28,6 +28,7 @@ public class PlayerStatsView extends SplitViewFrame implements View, BeforeEnter
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     private final PlayerStatsComponent playerStatsComponent = new PlayerStatsComponent();
+    private final PlayerStatsComponentMobile playerStatsComponentMobile = new PlayerStatsComponentMobile();
     
     private final PlayerRepository playerRepository = Main.resourceFactory.getPlayerRepository();
     private Player player;
@@ -43,14 +44,20 @@ public class PlayerStatsView extends SplitViewFrame implements View, BeforeEnter
     }
     
     private void updateVisiblePars(int width) {
-        boolean smallScreen = width < VaadinUtil.SMALL_SCREEN_BREAKPOINT;
-
-        playerStatsComponent.setSmallScreen(smallScreen);
+        
+        boolean isMobile = width < VaadinUtil.MOBILE_BREAKPOINT;
+        
+        if(isMobile) {
+            setViewContent(playerStatsComponentMobile);
+        } else {
+            setViewContent(playerStatsComponent);
+        }
     }
     
     public void refresh() {
         player = playerRepository.findPlayer(player.id()).get();
         playerStatsComponent.setPlayer(player);
+        playerStatsComponentMobile.setPlayer(player);
     }
 
     @Override
@@ -60,6 +67,7 @@ public class PlayerStatsView extends SplitViewFrame implements View, BeforeEnter
             Optional<Player> player = playerRepository.findPlayer(playerId);
             this.player = player.get();
             playerStatsComponent.setPlayer(player.get());
+            playerStatsComponentMobile.setPlayer(player.get());
             VaadinUtil.logUserAction(logger, "Looking for {}'s stats view", this.player.name());
         } catch(Exception ex) {
             KITSNotification.showError("Hibás azonosító az url-ben");

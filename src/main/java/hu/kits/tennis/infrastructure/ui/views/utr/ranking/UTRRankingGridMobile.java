@@ -11,7 +11,6 @@ import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.theme.lumo.LumoUtility.AlignItems;
-import com.vaadin.flow.theme.lumo.LumoUtility.Background;
 import com.vaadin.flow.theme.lumo.LumoUtility.BorderRadius;
 import com.vaadin.flow.theme.lumo.LumoUtility.Display;
 import com.vaadin.flow.theme.lumo.LumoUtility.FlexDirection;
@@ -35,7 +34,8 @@ class UTRRankingGridMobile extends Grid<PlayerWithUTR> {
     UTRRankingGridMobile() {
         
         addComponentColumn(UTRRankingCard::new);
-        
+
+        setSelectionMode(SelectionMode.NONE);
         setSizeFull();
     }
     
@@ -53,7 +53,7 @@ class UTRRankingGridMobile extends Grid<PlayerWithUTR> {
         
         UTRRankingCard(PlayerWithUTR playerWithUTR) {
             
-            addClassNames(Background.CONTRAST_5,
+            addClassNames(
                     Display.FLEX, 
                     FlexDirection.ROW, 
                     AlignItems.CENTER, 

@@ -1,6 +1,5 @@
 package hu.kits.tennis.infrastructure.ui.views.utr.ranking;
 
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -17,7 +16,7 @@ import hu.kits.tennis.infrastructure.ui.views.utr.MatchesGrid;
 
 class PlayerStatsComponent extends VerticalLayout {
 
-    private final UTRService utrService;
+    private final UTRService utrService = Main.resourceFactory.getUTRService();
     
     private final Label nameLabel = UIUtils.createH2Label("");
     private final Label utrHighLabel = new Label();
@@ -25,12 +24,11 @@ class PlayerStatsComponent extends VerticalLayout {
     private final Label gameStatsLabel = new Label();
     private final Div utrHistoryChartHolder = new Div();
     
-    private final MatchesGrid matchesGrid;
+    private final MatchesGrid matchesGrid = new MatchesGrid();
     
     public PlayerStatsComponent() {
-        utrService = Main.resourceFactory.getUTRService();
-        matchesGrid = new MatchesGrid();
         matchesGrid.setSizeFull();
+        
         HorizontalLayout nameRow = new HorizontalLayout(nameLabel, utrHighLabel);
         nameRow.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
         
@@ -75,18 +73,10 @@ class PlayerStatsComponent extends VerticalLayout {
         matchesGrid.setBestWorstAndUTRRelevantMatches(playerStats.bestUTRMatch().orElse(null), playerStats.worstUTRMatch().orElse(null), playerStats.utrDetails().relevantMatches());
         
         utrHistoryChartHolder.removeAll();
-        utrHistoryChartHolder.add(new UTRHistoryChart(playerStats.utrHistory()));
-    }
-
-    public void setSmallScreen(boolean isSmallScreen) {
-        matchStatsLabel.setVisible(!isSmallScreen);
-        gameStatsLabel.setVisible(!isSmallScreen);
-        utrHighLabel.setVisible(!isSmallScreen);
-        utrHistoryChartHolder.setVisible(!isSmallScreen);
-        if(isSmallScreen) {
-            matchesGrid.hideTournamentInfoColumn();
-            matchesGrid.addThemeVariants(GridVariant.LUMO_COMPACT);
-        }
+        UTRHistoryChart chart = new UTRHistoryChart(playerStats.utrHistory());
+        chart.setHeight("110px");
+        chart.setWidth("400px");
+        utrHistoryChartHolder.add(chart);
     }
     
 }

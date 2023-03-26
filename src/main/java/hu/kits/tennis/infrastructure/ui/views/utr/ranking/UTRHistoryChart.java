@@ -60,14 +60,10 @@ class UTRHistoryChart extends ApexCharts {
                 .withWidth(2.)
                 .build());
         
-        setHeight("110px");
-        setWidth("400px");
-        
         List<Coordinate<?,?>> seriesData = new ArrayList<>();
         for(var entry : utrHistory.entries()) {
             seriesData.add(new Coordinate<>(entry.date().toString(), entry.utr().value()));
         }
-        
         super.setSeries(new Series<>("UTR", seriesData.toArray(new Coordinate[0])));
     }
     
