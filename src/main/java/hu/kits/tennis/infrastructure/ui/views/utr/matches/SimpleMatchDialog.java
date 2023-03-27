@@ -59,6 +59,10 @@ public class SimpleMatchDialog extends Dialog {
         player1Combo = createPlayerCombo(players.entries(), match.player1());
         player2Combo = createPlayerCombo(players.entries(), match.player2());
         
+        player1Combo.addValueChangeListener(e -> player2Combo.focus());
+        player2Combo.addValueChangeListener(e -> matchScoreField.focus());
+        player1Combo.focus();
+        
         setDraggable(true);
         setResizable(true);
         

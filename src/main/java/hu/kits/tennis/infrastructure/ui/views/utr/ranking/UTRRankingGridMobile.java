@@ -17,6 +17,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Display;
 import com.vaadin.flow.theme.lumo.LumoUtility.FlexDirection;
 import com.vaadin.flow.theme.lumo.LumoUtility.FontSize;
 import com.vaadin.flow.theme.lumo.LumoUtility.FontWeight;
+import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import com.vaadin.flow.theme.lumo.LumoUtility.JustifyContent;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 import com.vaadin.flow.theme.lumo.LumoUtility.TextColor;
@@ -75,6 +76,7 @@ class UTRRankingGridMobile extends Grid<PlayerWithUTR> {
             
             Span utrChangeSpan = UTRRankingGrid.createUTRChangeSpan(playerWithUTR.utrChange());
             Span utr = new Span(utrChangeSpan, utrBadge);
+            utr.addClassNames(Gap.SMALL);
             
             String stats = playerWithUTR.numberOfWins() + " / " + playerWithUTR.numberOfMatches() + " győzelem";
             Span statsSpan = new Span(stats);

@@ -155,4 +155,8 @@ public class MatchScoreField extends HorizontalLayout {
         void scoreChanged();
     }
     
+    public void focus() {
+        scoreFields.get(0).first().focus();
+    }
+    
 }

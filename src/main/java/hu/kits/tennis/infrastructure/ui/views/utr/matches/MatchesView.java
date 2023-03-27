@@ -49,6 +49,7 @@ public class MatchesView extends SplitViewFrame implements View {
     public MatchesView() {
         filterField.setValueChangeMode(ValueChangeMode.TIMEOUT);
         filterField.addValueChangeListener(e -> matchesGrid.filter(e.getValue()));
+        filterField.addValueChangeListener(e -> matchesGridMobile.filter(e.getValue()));
         filterField.setPlaceholder("Szűrő");
     }
     

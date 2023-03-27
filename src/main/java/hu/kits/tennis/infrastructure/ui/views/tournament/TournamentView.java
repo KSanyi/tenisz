@@ -26,6 +26,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import hu.kits.tennis.Main;
+import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.match.MatchService;
@@ -65,6 +66,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     private TournamentBoardComponent consolationBoard;
     private VerticalLayout tableWithButton;
     private MatchesGrid matchesGrid;
+    private final Label matchCounter = new Label("");
     
     private Tournament tournament;
     
@@ -82,9 +84,8 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         VerticalLayout layout = new VerticalLayout();
         layout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         
-        Label title = UIUtils.createH2Label(tournament.params().name());
+        Label title = UIUtils.createH2Label(tournament.params().name() + " " + Formatters.formatDateLong(tournament.params().date()));
         HorizontalLayout header = new HorizontalLayout(title);
-        //Label date = UIUtils.createH3Label(Formatters.formatDateLong(tournament.date()));
         
         if(tournament.params().structure() == Structure.NA) {
             matchesGrid = new MatchesGrid();
@@ -101,7 +102,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             Button addMatchButton = createAddMatchButton();
             Button recalculateButton = createRecalculateButton();
             
-            VerticalLayout leftColumn = new VerticalLayout(matchesGrid, new HorizontalLayout(addMatchButton, recalculateButton));
+            VerticalLayout leftColumn = new VerticalLayout(matchesGrid, new HorizontalLayout(matchCounter, addMatchButton, recalculateButton));
             leftColumn.setPadding(false);
             
             HorizontalLayout horizontalLayout = new HorizontalLayout(leftColumn, contestantsTable);
@@ -172,16 +173,27 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
 
         button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         button.addClickListener(click -> {
-            Tournament tournamentLatest = tournamentService.findTournament(tournament.id()).get();
-            Players players = new Players(tournamentLatest.contestants().stream().map(c -> c.player()).collect(toList()));
-            new SimpleMatchDialog(
-                Match.createNew(tournament.id(), 1, tournament.matches().size()+1, tournament.params().date(), null, null),
-                players, 
-                tournament.params().bestOfNSets(), 
-                () -> refresh()).open();
+            tournament = tournamentService.findTournament(tournament.id()).get();
+            openDialog();
         });
         
         return button;
+    }
+    
+    private void openDialog() {
+        
+        Players players = new Players(tournament.contestants().stream().map(c -> c.player()).collect(toList()));
+        Runnable callback = () -> {
+            refresh();
+            openDialog();
+            KITSNotification.showInfo("Meccs elmentve");
+        };
+        
+        new SimpleMatchDialog(
+            Match.createNew(tournament.id(), 1, tournament.matches().size()+1, tournament.params().date(), null, null),
+            players, 
+            tournament.params().bestOfNSets(), 
+            callback).open();
     }
 
     private void fillMainBoard() {
@@ -203,7 +215,9 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         
         if(tournament.params().structure() == Structure.NA) {
             contestantsTable.setPlayers(tournament.simplePlayersLineup());
-            matchesGrid.setItems(matchService.loadMatchesOfTournament(tournament.id()));
+            List<MatchInfo> matches = matchService.loadMatchesOfTournament(tournament.id());
+            matchesGrid.setItems(matches);
+            matchCounter.setText(matches.size() + " meccs");
         } else if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION || tournament.params().structure() == Structure.SIMPLE_BOARD) {
             contestantsTable.setPlayers(tournament.playersLineup());
             tableWithButton.setVisible(tournament.status() == Status.DRAFT);
