@@ -64,11 +64,14 @@ class TournamentMatchDialog extends Dialog {
         deleteButton.setVisible(match.isPlayed());
         
         Button saveButton = UIUtils.createButton("Mentés", ButtonVariant.LUMO_PRIMARY);
-        getFooter().add(saveButton);
         saveButton.addClickListener(click -> save());
         saveButton.addClickShortcut(Key.ENTER);
         
-        //addThemeVariants(DialogVariant.LUMO_NO_PADDING);
+        Button cancelButton = UIUtils.createButton("Mégsem", ButtonVariant.LUMO_CONTRAST);
+        cancelButton.addClickListener(click -> close());
+        
+        getFooter().add(cancelButton, saveButton);
+        
         setWidth("420px");
     }
     

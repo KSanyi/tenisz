@@ -59,12 +59,12 @@ public class SimpleMatchDialog extends Dialog {
         player1Combo = createPlayerCombo(players.entries(), match.player1());
         player2Combo = createPlayerCombo(players.entries(), match.player2());
         
-        player1Combo.addValueChangeListener(e -> player2Combo.focus());
+        player1Combo.addValueChangeListener(e -> player2Combo.setOpened(true));
         player2Combo.addValueChangeListener(e -> matchScoreField.focus());
-        player1Combo.focus();
         
-        setDraggable(true);
-        setResizable(true);
+        if(!match.arePlayersSet()) {
+            player1Combo.setOpened(true);    
+        }
         
         add(createForm());
         
@@ -83,9 +83,8 @@ public class SimpleMatchDialog extends Dialog {
         saveButton.addClickListener(click -> save());
         saveButton.addClickShortcut(Key.ENTER);
         
-        //addThemeVariants(DialogVariant.LUMO_NO_PADDING);
         setWidth("400px");
-        this.setCloseOnOutsideClick(false);
+        setCloseOnOutsideClick(false);
     }
     
     private static ComboBox<Player> createPlayerCombo(List<Player> players, Player player) {
@@ -97,6 +96,7 @@ public class SimpleMatchDialog extends Dialog {
         if(player != null) {
             comboBox.setValue(player);
         }
+        comboBox.setPageSize(players.size());
         return comboBox;
     }
 
