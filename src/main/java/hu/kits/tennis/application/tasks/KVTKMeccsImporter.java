@@ -1,7 +1,6 @@
 package hu.kits.tennis.application.tasks;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -34,15 +32,12 @@ import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
-import hu.kits.tennis.domain.tournament.TournamentParams;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
-import hu.kits.tennis.domain.tournament.TournamentParams.Level;
-import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
-import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ResourceFactory;
 
+@SuppressWarnings("unused")
 public class KVTKMeccsImporter {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -98,7 +93,7 @@ public class KVTKMeccsImporter {
         }
     }
 
-    private Match processMatchLine(int rowNum, String line) {
+    private static Match processMatchLine(int rowNum, String line) {
         try {
             String[] parts = line.split("\t");
             LocalDate date = LocalDate.parse(parts[0], DATE_FORMAT);

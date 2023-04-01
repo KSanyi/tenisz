@@ -1,7 +1,5 @@
 package hu.kits.tennis.infrastructure.ui.views.tournament;
 
-import java.util.Locale;
-
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
@@ -17,6 +15,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.Clock;
+import hu.kits.tennis.common.LocaleUtil;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchResult;
 import hu.kits.tennis.domain.match.MatchResultInfo;
@@ -85,7 +84,7 @@ class TournamentMatchDialog extends Dialog {
         
         datePicker.addThemeVariants(DatePickerVariant.LUMO_SMALL);
         datePicker.setWidth("130px");
-        datePicker.setLocale(new Locale("HU"));
+        datePicker.setLocale(LocaleUtil.HUN_LOCALE);
         
         VerticalLayout playersLayout = new VerticalLayout(createPlayerLabel(match.player1()), createPlayerLabel(match.player2()));
         playersLayout.setPadding(false);

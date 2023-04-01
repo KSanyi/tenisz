@@ -30,6 +30,7 @@ import hu.kits.tennis.domain.utr.UTRDetails;
 import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ResourceFactory;
 
+@SuppressWarnings("unused")
 public class TaskMain {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -39,7 +40,7 @@ public class TaskMain {
     public static void main(String[] args) throws Exception {
         
         URI dbUri = getDatabaseUri();
-        dbUri = new URI("mysql://bace8362c32290:cf1b3d55@eu-cdbr-west-02.cleardb.net/heroku_5a25f1ea8b513bf?useUnicode=yes&characterEncoding=UTF-8&reconnect=true");
+        //dbUri = new URI("mysql://bace8362c32290:cf1b3d55@eu-cdbr-west-02.cleardb.net/heroku_5a25f1ea8b513bf?useUnicode=yes&characterEncoding=UTF-8&reconnect=true");
         
         DataSource dataSource = createDataSource(dbUri);
         
@@ -59,7 +60,9 @@ public class TaskMain {
         
         //runUTRFluctationsTask();
         
-        setTournamentWinners();
+        //setTournamentWinners();
+        
+        new UTRChangeAnalyzer(resourceFactory).analyse();
     }
     
     private static void setTournamentWinners() {

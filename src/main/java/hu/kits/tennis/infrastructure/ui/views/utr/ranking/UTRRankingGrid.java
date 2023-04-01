@@ -77,7 +77,7 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
         
         setWidthFull();
         setHeightFull();
-        setMinWidth("690px");
+        setMinWidth("700px");
         
         UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleColumns(e.getBodyClientWidth()));
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleColumns(e.getWidth()));
