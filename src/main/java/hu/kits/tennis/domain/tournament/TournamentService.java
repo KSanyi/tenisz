@@ -29,12 +29,14 @@ public class TournamentService {
     
     private final TournamentRepository tournamentRepository;
     private final MatchRepository matchRepository;
+    private final VenueRepository venueRepository;
     private final UTRService utrService;
 
-    public TournamentService(TournamentRepository tournamentRepository, MatchRepository matchRepository, UTRService utrService) {
+    public TournamentService(TournamentRepository tournamentRepository, MatchRepository matchRepository, VenueRepository venueRepository, UTRService utrService) {
         this.tournamentRepository = tournamentRepository;
         this.matchRepository = matchRepository;
         this.utrService = utrService;
+        this.venueRepository = venueRepository;
     }
     
     public List<TournamentSummary> loadTournamentSummariesList() {
@@ -281,6 +283,10 @@ public class TournamentService {
 
     public void setWinner(String tournamentId, Player winner) {
         tournamentRepository.setWinner(tournamentId, winner.id());
+    }
+    
+    public List<String> loadVenues() {
+        return venueRepository.loadVenues();
     }
 
 }

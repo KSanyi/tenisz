@@ -9,6 +9,7 @@ import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.PlayersService;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
 import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.tournament.VenueRepository;
 import hu.kits.tennis.domain.user.UserRepository;
 import hu.kits.tennis.domain.user.UserService;
 import hu.kits.tennis.domain.user.password.DummyPasswordHasher;
@@ -17,6 +18,7 @@ import hu.kits.tennis.infrastructure.database.MatchJdbcRepository;
 import hu.kits.tennis.infrastructure.database.PlayerJdbcRepository;
 import hu.kits.tennis.infrastructure.database.TournamentJdbcRepository;
 import hu.kits.tennis.infrastructure.database.UserJdbcRepository;
+import hu.kits.tennis.infrastructure.database.VenueHardcodedRepository;
 
 public class ResourceFactory {
 
@@ -40,7 +42,8 @@ public class ResourceFactory {
         
         matchService = new MatchService(matchRepository, tournamentRepository);
         utrService = new UTRService(matchService, matchRepository, playerRepository, tournamentRepository);
-        tournamentService = new TournamentService(tournamentRepository, matchRepository, utrService);
+        VenueRepository venueRepository = new VenueHardcodedRepository();
+        tournamentService = new TournamentService(tournamentRepository, matchRepository, venueRepository, utrService);
     }
     
     public UserService getUserService() {

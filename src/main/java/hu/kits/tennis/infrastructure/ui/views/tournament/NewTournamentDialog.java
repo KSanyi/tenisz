@@ -33,6 +33,7 @@ public class NewTournamentDialog extends Dialog {
     private final Consumer<Tournament> callback;
     
     private final Select<Organization> organizationSelect = ComponentFactory.createSelect("Szervező", o -> o.name, Organization.values());
+    private final Select<String> venueSelect = new Select<>();
     private final Select<Type> typeSelect = ComponentFactory.createSelect("Típus", t -> t.label, Type.values());
     private final Select<Level> levelSelect = ComponentFactory.createSelect("Szint", l -> String.valueOf(l.value), Level.values());
     private final TextField nameField = new TextField("Név");
@@ -47,6 +48,9 @@ public class NewTournamentDialog extends Dialog {
     public NewTournamentDialog(Consumer<Tournament> callback) {
         this.callback = callback;
         
+        venueSelect.setLabel("Helyszín");
+        venueSelect.setItems(tournamentService.loadVenues());
+        
         bind();
         
         add(createContent());
@@ -57,6 +61,7 @@ public class NewTournamentDialog extends Dialog {
     private void bind() {
         
         binder.bind(organizationSelect, "organization");
+        binder.bind(venueSelect, "venue");
         binder.bind(typeSelect, "type");
         binder.bind(levelSelect, "levelFrom");
         binder.forField(nameField)
@@ -67,6 +72,7 @@ public class NewTournamentDialog extends Dialog {
         binder.bind(structureSelect, "structure");
         
         organizationSelect.setValue(Organization.KVTK);
+        venueSelect.setValue("Mini Garros");
         typeSelect.setValue(Type.DAILY);
         levelSelect.setValue(Level.L500);
         dateField.setValue(Clock.today());
@@ -90,6 +96,7 @@ public class NewTournamentDialog extends Dialog {
     private Component createContent() {
         
         organizationSelect.setWidth("200px");
+        venueSelect.setWidth("200px");
         typeSelect.setWidth("150px");
         levelSelect.setWidth("100px");
         nameField.setWidth("200px");
@@ -97,7 +104,7 @@ public class NewTournamentDialog extends Dialog {
         setsSelect.setWidth("80px");
         structureSelect.setWidth("200px");
         
-        VerticalLayout layout = new VerticalLayout(organizationSelect, typeSelect, levelSelect, nameField, dateField, setsSelect, structureSelect);
+        VerticalLayout layout = new VerticalLayout(organizationSelect, venueSelect, typeSelect, levelSelect, nameField, dateField, setsSelect, structureSelect);
         layout.setSpacing(false);
         layout.setPadding(false);
         layout.setAlignSelf(Alignment.CENTER, saveButton);
