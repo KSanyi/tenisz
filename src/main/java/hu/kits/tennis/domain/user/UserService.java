@@ -1,16 +1,27 @@
 package hu.kits.tennis.domain.user;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.scribejava.core.model.OAuth2AccessToken;
+import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Response;
+import com.github.scribejava.core.model.Verb;
+import com.github.scribejava.core.oauth.OAuth20Service;
 
 import hu.kits.tennis.common.KITSException;
 import hu.kits.tennis.common.Pair;
 import hu.kits.tennis.domain.email.EmailCreator;
 import hu.kits.tennis.domain.email.EmailSender;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.user.Requests.PasswordChangeRequest;
 import hu.kits.tennis.domain.user.Requests.UserCreationRequest;
 import hu.kits.tennis.domain.user.Requests.UserDataUpdateRequest;
@@ -24,13 +35,17 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     private final UserRepository userRepository;
+    private final PlayerRepository playerRepository;
     private final EmailSender emailSender;
     private final PasswordHasher passwordHasher;
+    private final OAuth20Service oAuthService;
     
-    public UserService(UserRepository userRepository, EmailSender emailSender, PasswordHasher passwordHasher) {
+    public UserService(UserRepository userRepository, PlayerRepository playerRepository, EmailSender emailSender, PasswordHasher passwordHasher, OAuth20Service oAuthService) {
         this.userRepository = userRepository;
+        this.playerRepository = playerRepository;
         this.emailSender = emailSender;
         this.passwordHasher = passwordHasher;
+        this.oAuthService = oAuthService;
     }
     
     public Users loadAllUsers() {
@@ -202,6 +217,50 @@ public class UserService {
         
         logger.info("Successful password generation for '{}'", userId);
         emailSender.sendEmail(EmailCreator.createNewPasswordEmail(newPassword, userData));        
+    }
+
+    public String getAuthorizationUrl() {
+        return oAuthService.getAuthorizationUrl();
+    }
+    
+    public UserData authenticateWithOAuth(String code) throws AuthenticationException {
+        OAuth2AccessToken accessToken;
+        try {
+            logger.debug("Getting access token");
+            accessToken = oAuthService.getAccessToken(code);
+            logger.debug("Access token retrieved");
+            //accessToken = oAuthService.refreshAccessToken(accessToken.getRefreshToken());
+            
+            OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, "https://www.googleapis.com/oauth2/v3/userinfo");
+            oAuthService.signRequest(accessToken, oAuthRequest);
+            logger.debug("OAuth request signed. Sending request.");
+            try (Response oAuthResponse = oAuthService.execute(oAuthRequest)) {
+                if(oAuthResponse.getCode() == 200) {
+                    logger.debug("Response code: 200, parsing body");
+                    JSONObject jsonObject = new JSONObject(oAuthResponse.getBody());
+                    String email = jsonObject.getString("email");
+                    logger.info("Email found in response: {}", email);
+                    Optional<UserData> user = userRepository.findUserByEmail(email);
+                    logger.info("User found for email: {}", user);
+                    if(user.isPresent()) {
+                        return user.get();
+                    } else {
+                        Optional<Player> player = playerRepository.findPlayerByEmail(email);
+                        if(player.isPresent()) {
+                            return new UserData("", player.get().name(), Role.MEMBER, player.get().contact().phone(), email, Status.ACTIVE, player.get().id());
+                        } else {
+                            throw new AuthenticationException("Authentication failure");
+                        }
+                    }
+                } else {
+                    logger.error("Response code: {}", oAuthResponse.getCode());
+                    throw new AuthenticationException("Authentication failure. Status code: " + oAuthResponse.getCode());
+                }
+            }
+        } catch (IOException | InterruptedException | ExecutionException ex) {
+            logger.error("Authentication failure: ", ex);
+            throw new AuthenticationException("Authentication failure");
+        }
     }
 
 }

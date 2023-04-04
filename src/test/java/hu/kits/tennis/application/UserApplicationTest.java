@@ -40,7 +40,7 @@ public class UserApplicationTest {
                 "INSERT INTO USER VALUES('ksanyi', 'PWD', 'Kócsó Sanyi', 'ADMIN', '06703699209', 'kocso.sandor.gabor@gmail.com', 'ACTIVE', 1)",
                 "INSERT INTO USER VALUES('csányika', 'PWD', 'Csányi Zsolt', 'MEMBER', '', 'csanyika@xxx.hu', 'ACTIVE', 0)");
         
-        ResourceFactory resourceFactory = new ResourceFactory(dataSource, spyEmailSender);
+        ResourceFactory resourceFactory = new ResourceFactory(dataSource, spyEmailSender, null);
         userService = resourceFactory.getUserService();
     }
     

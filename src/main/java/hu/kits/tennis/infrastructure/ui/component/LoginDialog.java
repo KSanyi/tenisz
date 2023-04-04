@@ -1,5 +1,6 @@
 package hu.kits.tennis.infrastructure.ui.component;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 import org.slf4j.Logger;
@@ -7,11 +8,17 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.login.AbstractLogin.LoginEvent;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.server.RequestHandler;
+import com.vaadin.flow.server.VaadinRequest;
+import com.vaadin.flow.server.VaadinResponse;
+import com.vaadin.flow.server.VaadinServletResponse;
+import com.vaadin.flow.server.VaadinSession;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.KITSException;
@@ -21,22 +28,22 @@ import hu.kits.tennis.domain.user.UserService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
-public class LoginDialog extends Dialog {
+public class LoginDialog extends Dialog implements RequestHandler {
     
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private final UserService userService;
+    private final UserService userService = Main.resourceFactory.getUserService();
     
     private final LoginForm loginForm = new LoginForm(createHungarianI18n());
     private final Button registerButton = UIUtils.createTertiaryButton("Regisztráció");
+    private final Anchor googleAuthButton;
     
     public LoginDialog() {
-
-        userService = Main.resourceFactory.getUserService();
-        
         setModal(true);
         
-        VerticalLayout layout = new VerticalLayout(loginForm, registerButton);
+        googleAuthButton = new Anchor(userService.getAuthorizationUrl(), "Bejelentkezés Gmail-lel");
+        
+        VerticalLayout layout = new VerticalLayout(loginForm, googleAuthButton, registerButton);
         layout.setAlignItems(Alignment.CENTER);
         layout.setPadding(false);
         layout.setSpacing(false);
@@ -44,13 +51,17 @@ public class LoginDialog extends Dialog {
         add(layout);
         
         loginForm.addLoginListener(this::logIn);
+        
         registerButton.addClickListener(click -> {
             new RegistrationDialog(userService).open();
             close();
         });
         registerButton.setVisible(false);
+        googleAuthButton.setVisible(false);
         
         loginForm.addForgotPasswordListener(e -> KITSNotification.showInfo("Nincs még implementálva"));
+        
+        VaadinSession.getCurrent().addRequestHandler(this);
     }
     
     private static LoginI18n createHungarianI18n() {
@@ -86,4 +97,34 @@ public class LoginDialog extends Dialog {
             KITSNotification.showError("Felhasználó státusza inaktív. Az admin fogja aktivizálni");
         }
     }
+
+    @Override
+    public boolean handleRequest(VaadinSession session, VaadinRequest request, VaadinResponse response) throws IOException {
+        if (request.getParameter("code") != null) {
+            String code = request.getParameter("code");
+            try {
+                UserData user = userService.authenticateWithOAuth(code);
+                getUI().ifPresent(ui -> ui.access(() -> {
+                    MainLayout.get().userLoggedIn(user);
+                    KITSNotification.showInfo("Üdv " + user.name());
+                    close();
+                    logger.info(user.name() + " logged in");
+                    VaadinSession.getCurrent().removeRequestHandler(this);
+                }));
+            } catch(AuthenticationException ex) {
+                loginForm.setError(true);
+                if(!ex.getMessage().isEmpty()) {
+                    KITSNotification.showError(ex.getMessage());
+                }
+            } catch(KITSException ex) {
+                KITSNotification.showError("Felhasználó státusza inaktív. Az admin fogja aktivizálni");
+            }
+
+            ((VaadinServletResponse) response).getHttpServletResponse().sendRedirect("http://localhost:7979/ui/");
+            return true;
+        }
+
+        return false;
+    }
+    
 }

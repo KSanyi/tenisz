@@ -119,6 +119,16 @@ public class PlayerJdbcRepository implements PlayerRepository {
             .bind("id", playerId)
             .map((rs, ctx) -> mapToPlayer(rs)).findFirst());
     }
+    
+    @Override
+    public Optional<Player> findPlayerByEmail(String email) {
+        String sql = String.format("SELECT * FROM %s WHERE %s = :email", TABLE_PLAYER, COLUMN_EMAIL);
+        
+        return jdbi.withHandle(handle -> 
+            handle.createQuery(sql)
+            .bind("email", email)
+            .map((rs, ctx) -> mapToPlayer(rs)).findFirst());
+    }
 
     @Override
     public void deletePlayer(Player player) {

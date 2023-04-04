@@ -2,6 +2,8 @@ package hu.kits.tennis.infrastructure;
 
 import javax.sql.DataSource;
 
+import com.github.scribejava.core.oauth.OAuth20Service;
+
 import hu.kits.tennis.domain.email.EmailSender;
 import hu.kits.tennis.domain.match.MatchRepository;
 import hu.kits.tennis.domain.match.MatchService;
@@ -30,12 +32,12 @@ public class ResourceFactory {
     private final UTRService utrService;
     private final MatchService matchService;
     
-    public ResourceFactory(DataSource dataSource, EmailSender emailSender) {
-        
-        UserRepository userRepository = new UserJdbcRepository(dataSource);
-        userService = new UserService(userRepository, emailSender, new DummyPasswordHasher());
-        
+    public ResourceFactory(DataSource dataSource, EmailSender emailSender, OAuth20Service oAuthService) {
+
         playerRepository = new PlayerJdbcRepository(dataSource);
+        UserRepository userRepository = new UserJdbcRepository(dataSource);
+        userService = new UserService(userRepository, playerRepository, emailSender, new DummyPasswordHasher(), oAuthService);
+        
         matchRepository = new MatchJdbcRepository(dataSource, playerRepository);
         TournamentRepository tournamentRepository = new TournamentJdbcRepository(dataSource, playerRepository, matchRepository);
         playersService = new PlayersService(playerRepository, matchRepository);

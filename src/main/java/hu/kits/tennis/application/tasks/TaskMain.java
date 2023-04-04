@@ -44,7 +44,7 @@ public class TaskMain {
         
         DataSource dataSource = createDataSource(dbUri);
         
-        resourceFactory = new ResourceFactory(dataSource, null);
+        resourceFactory = new ResourceFactory(dataSource, null, null);
         
         //new KVTKMeccsImporter(resourceFactory).importContactData();
         //new KVTKMeccsImporter(resourceFactory).importPlayers();
@@ -62,7 +62,7 @@ public class TaskMain {
         
         //setTournamentWinners();
         
-        new UTRChangeAnalyzer(resourceFactory).analyse();
+        //new UTRChangeAnalyzer(resourceFactory).analyse();
     }
     
     private static void setTournamentWinners() {

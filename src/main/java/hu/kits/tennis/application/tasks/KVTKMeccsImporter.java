@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,6 +33,10 @@ import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
+import hu.kits.tennis.domain.tournament.TournamentParams;
+import hu.kits.tennis.domain.tournament.TournamentParams.Level;
+import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
+import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.utr.UTR;
@@ -50,7 +55,7 @@ public class KVTKMeccsImporter {
     private final TournamentService tournamentService;
     
     private Players players;
-    private Map<String, BasicTournamentInfo> tournaments;
+    private Map<String, String> tournamentIdsByName = new HashMap<>();
     
     public KVTKMeccsImporter(ResourceFactory resourceFactory) {
         playerRepository = resourceFactory.getPlayerRepository();
@@ -93,7 +98,7 @@ public class KVTKMeccsImporter {
         }
     }
 
-    private static Match processMatchLine(int rowNum, String line) {
+    private Match processMatchLine(int rowNum, String line) {
         try {
             String[] parts = line.split("\t");
             LocalDate date = LocalDate.parse(parts[0], DATE_FORMAT);
@@ -108,7 +113,7 @@ public class KVTKMeccsImporter {
             Integer score2_3 = parseGames(parts[10]);
             String name = parts[12] + " " + parts[13];
             
-            Tournament tournament = null;//findOrCreateTournament(date, name);
+            String tournamentId = findOrCreateTournament(date, name);
             
             Player player1 = new Player(playerOneId, "", null, null, Set.of());//findOrCreatePlayer(playerOne);
             Player player2 = new Player(playerTwoId, "", null, null, Set.of());//
@@ -123,7 +128,7 @@ public class KVTKMeccsImporter {
             }
             MatchResult result = new MatchResult(setResults);
             
-            return new Match(0, tournament.id(), null, null, date, player1, player2, result);
+            return new Match(0, tournamentId, null, null, date, player1, player2, result);
         } catch(Exception ex) {
             logger.error("Error parsing line " + rowNum + ": " + line + ": " + ex);
             return null;
@@ -134,18 +139,17 @@ public class KVTKMeccsImporter {
         return games.isEmpty() ? null :Integer.parseInt(games);
     }
     
-    /*
-    private Tournament findOrCreateTournament(LocalDate date, String tournamentName) {
-        Tournament tournament = tournaments.get(tournamentName);
-        if(tournament == null) {
+    private String findOrCreateTournament(LocalDate date, String tournamentName) {
+        String tournamentId = tournamentIdsByName.get(tournamentName);
+        if(tournamentId == null) {
             TournamentParams params = new TournamentParams(Organization.KVTK, Type.DAILY, Level.L90, Level.L1000, date, tournamentName, "Mini Garros", Structure.NA, 1);
-            tournament = tournamentService.createTournament(params);
-            logger.info("Saving tournament " + tournament);
-            tournaments.put(tournamentName, tournament);
+            logger.info("Saving tournament " + params);
+            Tournament tournament = tournamentService.createTournament(params);
+            tournamentId = tournament.id();
+            tournamentIdsByName.put(tournamentName, tournamentId);
         }
-        return tournament;
+        return tournamentId;
     }
-    */
 
     public void setupTournaments() {
         
@@ -175,8 +179,6 @@ public class KVTKMeccsImporter {
         for(String line : lines) {
             playerRepository.saveNewPlayer(new Player(null, line, null, UTR.UNDEFINED, Set.of(Organization.KVTK)));    
         }
-        
-        
     }
 
     public void importContactData() throws IOException {

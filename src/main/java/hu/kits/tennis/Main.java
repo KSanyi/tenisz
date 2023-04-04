@@ -9,6 +9,9 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.scribejava.apis.GoogleApi20;
+import com.github.scribejava.core.builder.ServiceBuilder;
+import com.github.scribejava.core.oauth.OAuth20Service;
 import com.mysql.cj.jdbc.MysqlDataSource;
 
 import hu.kits.tennis.common.Environment;
@@ -36,7 +39,9 @@ public class Main {
         
         EmailSender emailSender = createEmailSender(environment);
         
-        resourceFactory = new ResourceFactory(dataSource, emailSender);
+        OAuth20Service oAuthService = createOAuthService();
+        
+        resourceFactory = new ResourceFactory(dataSource, emailSender, oAuthService);
         
         new HttpServer(port).start();
     }
@@ -98,6 +103,19 @@ public class Main {
         } else {
             return variable;
         }
+    }
+    
+    private static OAuth20Service createOAuthService() {
+        
+        String googleClientId = loadMandatoryEnvVariable("GOOGLE_CLIENT_ID");
+        String googleClientSecret = loadMandatoryEnvVariable("GOOGLE_CLIENT_SECRET");
+        String callbackUrl = loadMandatoryEnvVariable("OAUTH_CALLBACK_URL");
+        
+        return new ServiceBuilder(googleClientId)
+                .apiSecret(googleClientSecret)
+                .defaultScope("profile email") // replace with desired scope
+                .callback(callbackUrl)
+                .build(GoogleApi20.instance());
     }
 
 }

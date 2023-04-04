@@ -49,6 +49,15 @@ public class UserJdbcRepository implements UserRepository {
     }
     
     @Override
+    public Optional<UserData> findUserByEmail(String email) {
+        String sql = String.format("SELECT * FROM %s WHERE %s = :email", TABLE_USER, COLUMN_EMAIL);
+        return jdbi.withHandle(handle -> 
+            handle.createQuery(sql)
+                .bind("email", email)
+                .map((rs, ctx) -> mapToUser(rs)).findOne());
+    }
+    
+    @Override
     public Optional<Pair<UserData, String>> findUserWithPasswordHash(String userIdOrEmail) {
         
         String sql = String.format("SELECT * FROM %s WHERE %s = :userIdOrEmail OR %s = :userIdOrEmail", TABLE_USER, COLUMN_USERID, COLUMN_EMAIL);

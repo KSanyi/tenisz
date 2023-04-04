@@ -24,4 +24,6 @@ public interface UserRepository {
 
     void inActivateUser(String userId);
 
+    Optional<UserData> findUserByEmail(String email);
+
 }

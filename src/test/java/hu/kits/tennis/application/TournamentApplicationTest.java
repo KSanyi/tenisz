@@ -54,7 +54,7 @@ public class TournamentApplicationTest {
                 "INSERT INTO USER VALUES('ksanyi', 'PWD', 'Kócsó Sanyi', 'ADMIN', '06703699209', 'kocso.sandor.gabor@gmail.com', 'ACTIVE', 0)",
                 "INSERT INTO USER VALUES('csányika', 'PWD', 'Csányi Zsolt', 'MEMBER', '', 'csanyika@xxx.hu', 'ACTIVE', 0)");
         
-        ResourceFactory resourceFactory = new ResourceFactory(dataSource, spyEmailSender);
+        ResourceFactory resourceFactory = new ResourceFactory(dataSource, spyEmailSender, null);
         tournamentService = resourceFactory.getTournamentService();
         PlayerRepository playerRepositosy = resourceFactory.getPlayerRepository();
         

@@ -14,4 +14,6 @@ public interface PlayerRepository {
 
     Optional<Player> findPlayer(int id);
 
+    Optional<Player> findPlayerByEmail(String email);
+
 }

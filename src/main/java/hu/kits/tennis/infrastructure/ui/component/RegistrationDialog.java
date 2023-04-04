@@ -2,6 +2,7 @@ package hu.kits.tennis.infrastructure.ui.component;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.dialog.DialogVariant;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -61,6 +62,8 @@ public class RegistrationDialog extends Dialog {
         
         registerButton.addClickListener(click -> register());
         cancelButton.addClickListener(click -> close());
+        
+        addThemeVariants(DialogVariant.LUMO_NO_PADDING);
     }
     
     private void bind() {
