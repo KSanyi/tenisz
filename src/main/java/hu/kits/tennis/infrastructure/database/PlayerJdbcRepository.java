@@ -20,6 +20,7 @@ import hu.kits.tennis.common.KITSException;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.Players;
+import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.utr.UTR;
@@ -31,6 +32,9 @@ public class PlayerJdbcRepository implements PlayerRepository {
     private static final String COLUMN_NAME = "NAME";
     private static final String COLUMN_EMAIL = "EMAIL";
     private static final String COLUMN_PHONE = "PHONE";
+    private static final String COLUMN_ZIP = "ZIP";
+    private static final String COLUMN_TOWN = "TOWN";
+    private static final String COLUMN_STREET_ADDRESS = "STREET_ADDRESS";
     private static final String COLUMN_COMMENT = "COMMENT";
     private static final String COLUMN_UTR_GROUP = "UTR_GROUP";
     private static final String COLUMN_ORGS = "ORGS";
@@ -57,9 +61,25 @@ public class PlayerJdbcRepository implements PlayerRepository {
         return new Player(
                 rs.getInt(COLUMN_ID),
                 rs.getString(COLUMN_NAME),
-                new Contact(rs.getString(COLUMN_EMAIL), rs.getString(COLUMN_PHONE), rs.getString(COLUMN_COMMENT)),
+                new Contact(
+                        rs.getString(COLUMN_EMAIL), 
+                        rs.getString(COLUMN_PHONE),
+                        mapToAddress(rs),
+                        rs.getString(COLUMN_COMMENT)),
                 JdbiUtil.mapToOptionalDouble(rs, COLUMN_UTR_GROUP).map(UTR::of).orElse(UTR.UNDEFINED),
                 mapToOrganisations(rs.getString(COLUMN_ORGS)));
+    }
+    
+    private static Address mapToAddress(ResultSet rs) throws SQLException {
+        int zip = rs.getInt(COLUMN_ZIP);
+        if(rs.wasNull()) {
+            return Address.EMPTY;
+        } else {
+            return new Address(
+                    zip,
+                    rs.getString(COLUMN_TOWN),
+                    rs.getString(COLUMN_STREET_ADDRESS));
+        }
     }
 
     @Override
@@ -77,6 +97,9 @@ public class PlayerJdbcRepository implements PlayerRepository {
         valuesMap.put(COLUMN_NAME, player.name());
         valuesMap.put(COLUMN_EMAIL, player.contact().email());
         valuesMap.put(COLUMN_PHONE, player.contact().phone());
+        valuesMap.put(COLUMN_ZIP, player.contact().address().zip());
+        valuesMap.put(COLUMN_TOWN, player.contact().address().town());
+        valuesMap.put(COLUMN_STREET_ADDRESS, player.contact().address().streetAddress());
         valuesMap.put(COLUMN_COMMENT, player.contact().comment());
         valuesMap.put(COLUMN_UTR_GROUP, player.startingUTR().value());
         valuesMap.put(COLUMN_ORGS, mapToOrganisationsString(player.organisations()));

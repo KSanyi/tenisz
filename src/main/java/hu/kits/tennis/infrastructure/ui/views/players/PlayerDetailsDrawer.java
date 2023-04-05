@@ -28,6 +28,7 @@ import com.vaadin.flow.data.validator.RegexpValidator;
 import hu.kits.tennis.common.KITSException;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayersService;
+import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.utr.UTR;
@@ -220,7 +221,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         }
         
         public Player toPlayer() {
-            return new Player(!playerId.isEmpty() ? Integer.parseInt(playerId) : null, name, new Contact(email, phone, comment), UTR.of(startingUTR), organisations);
+            return new Player(!playerId.isEmpty() ? Integer.parseInt(playerId) : null, name, new Contact(email, phone, Address.EMPTY, comment), UTR.of(startingUTR), organisations);
         }
 
         public PlayerDataBean() {

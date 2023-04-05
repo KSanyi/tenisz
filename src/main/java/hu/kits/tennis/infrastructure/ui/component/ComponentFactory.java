@@ -17,6 +17,14 @@ import com.vaadin.flow.component.textfield.TextFieldVariant;
 
 public class ComponentFactory {
 
+    public static TextField createTextField(String caption, int width) {
+        TextField textField = new TextField(caption);
+        textField.setWidth(width + "px");
+        textField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+        textField.setAutoselect(true);
+        return textField;
+    }
+    
     public static TextField createTextField(String caption) {
         TextField textField = new TextField(caption);
         textField.addThemeVariants(TextFieldVariant.LUMO_SMALL);

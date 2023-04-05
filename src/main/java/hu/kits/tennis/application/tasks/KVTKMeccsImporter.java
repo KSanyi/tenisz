@@ -27,6 +27,7 @@ import hu.kits.tennis.domain.match.MatchResult;
 import hu.kits.tennis.domain.match.MatchResult.SetResult;
 import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.Players;
@@ -195,7 +196,7 @@ public class KVTKMeccsImporter {
                     System.err.println("Cant find player with id " + id);
                 } else {
                     Player updatedPlayer = p.get();
-                    updatedPlayer = new Player(id, updatedPlayer.name(), new Contact(email, phone, ""), updatedPlayer.startingUTR(), updatedPlayer.organisations());
+                    updatedPlayer = new Player(id, updatedPlayer.name(), new Contact(email, phone, Address.EMPTY, ""), updatedPlayer.startingUTR(), updatedPlayer.organisations());
                     playerRepository.updatePlayer(updatedPlayer);
                 }  
             }

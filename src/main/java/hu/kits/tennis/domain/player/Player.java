@@ -36,9 +36,14 @@ public record Player(Integer id,
         return Objects.equals(id, other.id);
     }
 
-    public static record Contact(String email, String phone, String comment) {
+    public static record Contact(String email, String phone, Address address, String comment) {
         
-        public static Contact EMPTY = new Contact("", "", "");
+        public static Contact EMPTY = new Contact("", "", Address.EMPTY, "");
+    }
+    
+    public record Address(int zip, String town, String streetAddress) {
+        
+        public static Address EMPTY = new Address(0, "", "");
     }
     
     @Override

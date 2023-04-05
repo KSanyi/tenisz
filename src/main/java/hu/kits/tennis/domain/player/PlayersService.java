@@ -1,11 +1,14 @@
 package hu.kits.tennis.domain.player;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.domain.match.MatchRepository;
+import hu.kits.tennis.domain.player.Player.Address;
+import hu.kits.tennis.domain.player.Player.Contact;
 
 public class PlayersService {
 
@@ -43,6 +46,22 @@ public class PlayersService {
 
     public Player findPlayer(int playerId) {
         return loadAllPlayers().get(playerId);
+    }
+
+    public Optional<Player> saveAddress(String name, String email, Address address) {
+        Optional<Player> player = playerRepository.findPlayerByEmail(email);
+        logger.info("Saving address data: {}, {} {}", name, email, address);
+        if(player.isPresent()) {
+            Player p = player.get();
+            Contact c = p.contact();
+            Contact updatedContact = new Contact(c.email(), c.phone(), address, c.comment());
+            Player updatedPlayer = new Player(p.id(), p.name(), updatedContact, p.startingUTR(), p.organisations());
+            playerRepository.updatePlayer(updatedPlayer);
+            logger.info("Address data saved");
+        } else {
+            logger.warn("Email address not found: {}", email);
+        }
+        return player;
     }
 
 }
