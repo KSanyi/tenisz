@@ -38,7 +38,7 @@ public class PlayersView extends SplitViewFrame implements View {
     private final TextField filter = new TextField();
     private final PlayersGrid playersGrid;
     private final PlayerDetailsDrawer playerDetailsDrawer;
-    private final Button newUserButton = UIUtils.createPrimaryButton("Új felhasználó", VaadinIcon.PLUS);
+    private final Button newPlayerButton = UIUtils.createPrimaryButton("Új játékos", VaadinIcon.PLUS);
     
     public PlayersView() {
         
@@ -47,7 +47,7 @@ public class PlayersView extends SplitViewFrame implements View {
         playersGrid.setSizeFull();
         
         playersGrid.addSelectionListener(event -> event.getFirstSelectedItem().ifPresent(this::showDetails));
-        newUserButton.addClickListener(click -> newUser());
+        newPlayerButton.addClickListener(click -> createNewPlayer());
     }
     
     @Override
@@ -76,9 +76,9 @@ public class PlayersView extends SplitViewFrame implements View {
         filter.addValueChangeListener(v -> playersGrid.filter(v.getValue()));
         filter.setValueChangeMode(ValueChangeMode.EAGER);
         
-        newUserButton.setWidth("160px");
+        newPlayerButton.setWidth("160px");
         
-        FlexBoxLayout content = new FlexBoxLayout(newUserButton, tableWithFilter);
+        FlexBoxLayout content = new FlexBoxLayout(newPlayerButton, tableWithFilter);
         content.setBoxSizing(BoxSizing.BORDER_BOX);
         content.setSizeFull();
         content.setPadding(Horizontal.RESPONSIVE_X, Top.RESPONSIVE_X);
@@ -92,7 +92,7 @@ public class PlayersView extends SplitViewFrame implements View {
         playerDetailsDrawer.show();
     }
     
-    private void newUser() {
+    private void createNewPlayer() {
         playerDetailsDrawer.setNewPlayer();
         playerDetailsDrawer.show();
     }

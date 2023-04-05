@@ -126,10 +126,11 @@ class UTRRankingGrid extends Grid<PlayerWithUTR> {
     static Component createTrophiesComponent(PlayerWithUTR playerWithUTR) {
         
         Span span = new Span();
+        String size = playerWithUTR.numberOfTrophies() < 6 ? "15px" : "15px";
         for(int i=0;i<playerWithUTR.numberOfTrophies();i++) {
             Icon icon = VaadinIcon.TROPHY.create();
             icon.setColor("Goldenrod");
-            icon.setSize("15px");
+            icon.setSize(size);
             span.add(icon);
         }
         
