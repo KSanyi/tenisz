@@ -1,6 +1,10 @@
 package hu.kits.tennis.infrastructure.ui.views.users;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -31,6 +35,8 @@ import hu.kits.tennis.infrastructure.ui.views.utr.ranking.UTRRankingView;
 @PageTitle("Adatbekérő")
 public class UserDataGatherView extends VerticalLayout {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     private final PlayersService playerService = Main.resourceFactory.getPlayersService();
     
     private final TextField nameField = new TextField("Név");
@@ -45,6 +51,8 @@ public class UserDataGatherView extends VerticalLayout {
     
     public UserDataGatherView() {
 
+        logger.info("Init");
+        
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         setSpacing(false);
         
@@ -103,6 +111,7 @@ public class UserDataGatherView extends VerticalLayout {
     }
 
     private void save() {
+        logger.info("Save button clicked");
         AddressDataGatherBean bean = new AddressDataGatherBean();
         boolean valid = binder.writeBeanIfValid(bean);
         if(valid) {
