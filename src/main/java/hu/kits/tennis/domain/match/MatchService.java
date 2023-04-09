@@ -67,7 +67,7 @@ public class MatchService {
         
         List<MatchInfo> matchInfos = matches.stream()
                 .filter(bookedMatch -> ! bookedMatch.hasPlayed(Player.BYE))
-                .map(bookedMatch -> toMatchInfo(bookedMatch, basicTournamentInfoMap))
+                .map(bookedMatch -> toMatchInfo(bookedMatch.swapIfPlayer2Won(), basicTournamentInfoMap))
                 .sorted(Comparator.comparing(MatchInfo::dateForCompare).reversed())
                 .collect(toList());
         

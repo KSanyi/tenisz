@@ -17,6 +17,14 @@ public record BookedMatch(Match playedMatch, UTR player1UTR, UTR player2UTR, UTR
         return playedMatch.hasPlayer(player);
     }
 
+    public BookedMatch swapIfPlayer2Won() {
+        if(playedMatch.player2().equals(playedMatch.winner())) {
+            return swap();
+        } else {
+            return this;
+        }
+    }
+    
     public BookedMatch swap() {
         return new BookedMatch(playedMatch.swap(), player2UTR, player1UTR, matchUTRForPlayer2, matchUTRForPlayer1);
     }

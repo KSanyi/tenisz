@@ -55,7 +55,6 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setKey("player1")
             .setHeader("")
             .setAutoWidth(true)
-            .setSortable(true)
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(3);
         
@@ -66,7 +65,6 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setKey("player2")
             .setHeader("")
             .setAutoWidth(true)
-            .setSortable(true)
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(3);
         
@@ -80,6 +78,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setHeader("Meccs UTR 1")
             .setTextAlign(ColumnTextAlign.CENTER)
             .setAutoWidth(true)
+            .setSortable(true)
             .setFlexGrow(0);
         
         player2UtrColumn = addColumn(match -> match.matchUTRForPlayer2())
