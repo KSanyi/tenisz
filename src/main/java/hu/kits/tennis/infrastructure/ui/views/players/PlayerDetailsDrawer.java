@@ -258,9 +258,12 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         }
         
         public Player toPlayer() {
+            
+            Address address = zip != null ? new Address(zip, town, streetAddress) : null;
+            
             return new Player(!playerId.isEmpty() ? Integer.parseInt(playerId) : null,
                     name, 
-                    new Contact(email, phone, new Address(zip, town, streetAddress), comment), 
+                    new Contact(email, phone, address, comment), 
                     UTR.of(startingUTR), 
                     organisations);
         }
