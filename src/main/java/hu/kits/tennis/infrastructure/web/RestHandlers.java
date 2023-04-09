@@ -20,7 +20,7 @@ class RestHandlers {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private final UTRService utrService = Main.resourceFactory.getUTRService();
+    private final UTRService utrService = Main.applicationContext.getUTRService();
     
     void listAllMatches(Context context) {
         List<BookedMatch> bookedMatches = utrService.loadBookedMatches();

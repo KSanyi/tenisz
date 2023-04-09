@@ -19,8 +19,11 @@ import org.slf4j.LoggerFactory;
 import com.mysql.cj.jdbc.MysqlDataSource;
 
 import hu.kits.tennis.common.Clock;
+import hu.kits.tennis.common.Environment;
+import hu.kits.tennis.domain.invoice.InvoiceService;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Type;
@@ -28,45 +31,50 @@ import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.utr.UTRDetails;
 import hu.kits.tennis.domain.utr.UTRService;
-import hu.kits.tennis.infrastructure.ResourceFactory;
+import hu.kits.tennis.infrastructure.ApplicationContext;
+import hu.kits.tennis.infrastructure.invoice.BillingoInvoiceService;
 
 @SuppressWarnings("unused")
 public class TaskMain {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    public static ResourceFactory resourceFactory;
+    public static ApplicationContext applicationContext;
     
     public static void main(String[] args) throws Exception {
         
         URI dbUri = getDatabaseUri();
-        //dbUri = new URI("mysql://bace8362c32290:cf1b3d55@eu-cdbr-west-02.cleardb.net/heroku_5a25f1ea8b513bf?useUnicode=yes&characterEncoding=UTF-8&reconnect=true");
+        dbUri = new URI("mysql://bace8362c32290:cf1b3d55@eu-cdbr-west-02.cleardb.net/heroku_5a25f1ea8b513bf?useUnicode=yes&characterEncoding=UTF-8&reconnect=true");
         
         DataSource dataSource = createDataSource(dbUri);
         
-        resourceFactory = new ResourceFactory(dataSource, null, null);
+        InvoiceService invoiceService = createInvoiceService(Environment.LIVE);
         
-        //new KVTKMeccsImporter(resourceFactory).importContactData();
-        //new KVTKMeccsImporter(resourceFactory).importPlayers();
-        //new KVTKMeccsImporter(resourceFactory).importMatches();
-        //new KVTKMeccsImporter(resourceFactory).setupTournaments();
+        applicationContext = new ApplicationContext(dataSource, null, null, invoiceService);
         
-        //new TeniszPartnerMeccsImporter(resourceFactory).importMatches();
-        //new TeniszPartnerMeccsImporter(resourceFactory).createTournaments();
-        //new TeniszPartnerMeccsImporter(resourceFactory).cleanupDuplicates();
+        //new KVTKMeccsImporter(applicationContext).importContactData();
+        //new KVTKMeccsImporter(applicationContext).importPlayers();
+        //new KVTKMeccsImporter(applicationContext).importMatches();
+        //new KVTKMeccsImporter(applicationContext).setupTournaments();
         
-        //new TeniszPartnerMeccsImporter(resourceFactory).importPlayers();
-        //new TeniszPartnerMeccsImporter(resourceFactory).importTournaments();
+        //new TeniszPartnerMeccsImporter(applicationContext).importMatches();
+        //new TeniszPartnerMeccsImporter(applicationContext).createTournaments();
+        //new TeniszPartnerMeccsImporter(applicationContext).cleanupDuplicates();
+        
+        //new TeniszPartnerMeccsImporter(applicationContext).importPlayers();
+        //new TeniszPartnerMeccsImporter(applicationContext).importTournaments();
         
         //runUTRFluctationsTask();
         
         //setTournamentWinners();
         
         //new UTRChangeAnalyzer(resourceFactory).analyse();
+        
+        new BillingoPartnerSaver(applicationContext).saveNewPartners();
     }
     
     private static void setTournamentWinners() {
-        TournamentService tournamentService = resourceFactory.getTournamentService();
+        TournamentService tournamentService = applicationContext.getTournamentService();
         for(TournamentSummary summary : tournamentService.loadTournamentSummariesList()) {
             if(summary.status() == Status.COMPLETED && summary.winner() == null) {
                 Player winner;
@@ -94,7 +102,7 @@ public class TaskMain {
     }
 
     private static void runUTRFluctationsTask() {
-        UTRService utrService = resourceFactory.getUTRService();
+        UTRService utrService = applicationContext.getUTRService();
         LocalDateTime time = LocalDateTime.now();
         List<Double> values = new ArrayList<>();
         for(int i=0;i<152;i++) {
@@ -108,6 +116,12 @@ public class TaskMain {
         double min = values.stream().mapToDouble(v -> v).min().orElse(0);
         double max = values.stream().mapToDouble(v -> v).max().orElse(0);
         System.out.println(min + " - " + max);
+    }
+    
+    private static InvoiceService createInvoiceService(Environment environment) throws URISyntaxException {
+        String apiKey = loadMandatoryEnvVariable("BILLINGO_API_KEY");
+        
+        return new BillingoInvoiceService(environment, apiKey);
     }
     
     private static URI getDatabaseUri() throws URISyntaxException {

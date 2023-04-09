@@ -1,4 +1,4 @@
-package hu.kits.tennis.infrastructure.ui.views.users;
+package hu.kits.tennis.infrastructure.ui.views.players;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Optional;
@@ -23,9 +23,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
 
 import hu.kits.tennis.Main;
-import hu.kits.tennis.domain.player.Player.Address;
+import hu.kits.tennis.application.tasks.AddPlayerAddressWorkflow;
 import hu.kits.tennis.domain.player.Player;
-import hu.kits.tennis.domain.player.PlayersService;
+import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 import hu.kits.tennis.infrastructure.ui.views.utr.ranking.PlayerStatsView;
@@ -33,11 +33,11 @@ import hu.kits.tennis.infrastructure.ui.views.utr.ranking.UTRRankingView;
 
 @Route(value = "data-request")
 @PageTitle("Adatbekérő")
-public class UserDataGatherView extends VerticalLayout {
+public class PlayerDataGatherView extends VerticalLayout {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private final PlayersService playerService = Main.resourceFactory.getPlayersService();
+    private final AddPlayerAddressWorkflow addPlayerAddressWorkflow = Main.applicationContext.getAddPlayerAddressWorkflow();
     
     private final TextField nameField = new TextField("Név");
     private final EmailField emailField = new EmailField("Email cím");
@@ -49,7 +49,7 @@ public class UserDataGatherView extends VerticalLayout {
     
     private final Button saveButton = UIUtils.createPrimaryButton("Mentés");
     
-    public UserDataGatherView() {
+    public PlayerDataGatherView() {
 
         logger.info("Init");
         
@@ -115,7 +115,7 @@ public class UserDataGatherView extends VerticalLayout {
         AddressDataGatherBean bean = new AddressDataGatherBean();
         boolean valid = binder.writeBeanIfValid(bean);
         if(valid) {
-            Optional<Player> player = playerService.saveAddress(bean.getName(), bean.getEmail(), bean.getAddress());
+            Optional<Player> player = addPlayerAddressWorkflow.addPlayerAddress(bean.getName(), bean.getEmail(), bean.getAddress());
             KITSNotification.showInfo("Sikeres adatmentés!");
             if(player.isPresent()) {
                 UI.getCurrent().navigate(PlayerStatsView.class, new RouteParameters("playerId" , String.valueOf(player.get().id())));

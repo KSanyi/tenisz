@@ -16,15 +16,17 @@ import com.mysql.cj.jdbc.MysqlDataSource;
 
 import hu.kits.tennis.common.Environment;
 import hu.kits.tennis.domain.email.EmailSender;
-import hu.kits.tennis.infrastructure.ResourceFactory;
+import hu.kits.tennis.domain.invoice.InvoiceService;
+import hu.kits.tennis.infrastructure.ApplicationContext;
 import hu.kits.tennis.infrastructure.email.SendGridEmailSender;
+import hu.kits.tennis.infrastructure.invoice.BillingoInvoiceService;
 import hu.kits.tennis.infrastructure.web.HttpServer;
 
 public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    public static ResourceFactory resourceFactory;
+    public static ApplicationContext applicationContext;
     
     public static void main(String[] args) throws Exception {
         
@@ -41,7 +43,9 @@ public class Main {
         
         OAuth20Service oAuthService = createOAuthService();
         
-        resourceFactory = new ResourceFactory(dataSource, emailSender, oAuthService);
+        InvoiceService invoiceService = createInvoiceService(environment);
+        
+        applicationContext = new ApplicationContext(dataSource, emailSender, oAuthService, invoiceService);
         
         new HttpServer(port).start();
     }
@@ -94,6 +98,12 @@ public class Main {
         String sendGridPassword = System.getenv("SENDGRID_PASSWORD");
         
         return new SendGridEmailSender(environment, sendGridPassword);
+    }
+    
+    private static InvoiceService createInvoiceService(Environment environment) throws URISyntaxException {
+        String apiKey = loadMandatoryEnvVariable("BILLINGO_API_KEY");
+        
+        return new BillingoInvoiceService(environment, apiKey);
     }
     
     private static String loadMandatoryEnvVariable(String name) {

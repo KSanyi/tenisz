@@ -52,7 +52,7 @@ public class UTRForecastWindow extends Dialog {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private final MatchService matchService = Main.resourceFactory.getMatchService();
+    private final MatchService matchService = Main.applicationContext.getMatchService();
     
     private final ComboBox<PlayerWithUTR> player1Combo;
     private final ComboBox<PlayerWithUTR> player2Combo;
@@ -67,7 +67,7 @@ public class UTRForecastWindow extends Dialog {
     private final List<BookedMatch> allBookedMatches;
     
     public UTRForecastWindow(List<PlayerWithUTR> utrRankingList) {
-        allBookedMatches = Main.resourceFactory.getUTRService().loadBookedMatches();
+        allBookedMatches = Main.applicationContext.getUTRService().loadBookedMatches();
         matchScoreField = new MatchScoreField(3);
         matchScoreField.addScoreChangedListener(() -> inputChanged());
         

@@ -26,7 +26,7 @@ public class PlayerSelector extends VerticalLayout {
     private final Consumer<Player> callBack;
     
     public PlayerSelector(Consumer<Player> callBack) {
-        this(callBack, Main.resourceFactory.getPlayerRepository().loadAllPlayers().entries());
+        this(callBack, Main.applicationContext.getPlayerRepository().loadAllPlayers().entries());
     }
     
     public PlayerSelector(Consumer<Player> callBack, List<Player> players) {

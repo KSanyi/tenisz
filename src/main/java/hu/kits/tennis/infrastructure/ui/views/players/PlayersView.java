@@ -33,7 +33,7 @@ import hu.kits.tennis.infrastructure.ui.views.View;
 @AllowedRoles({Role.ADMIN})
 public class PlayersView extends SplitViewFrame implements View {
 
-    private final PlayersService playersService = Main.resourceFactory.getPlayersService();
+    private final PlayersService playersService = Main.applicationContext.getPlayersService();
     
     private final TextField filter = new TextField();
     private final PlayersGrid playersGrid;

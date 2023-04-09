@@ -55,9 +55,9 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private final UTRService utrService = Main.resourceFactory.getUTRService();
-    private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
-    private final MatchService matchService = Main.resourceFactory.getMatchService();
+    private final UTRService utrService = Main.applicationContext.getUTRService();
+    private final TournamentService tournamentService = Main.applicationContext.getTournamentService();
+    private final MatchService matchService = Main.applicationContext.getMatchService();
     
     private final Button deleteButton = UIUtils.createButton("Verseny törlése", ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_SMALL);
     

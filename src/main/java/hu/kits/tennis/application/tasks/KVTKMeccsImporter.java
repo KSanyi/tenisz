@@ -41,7 +41,7 @@ import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.utr.UTR;
-import hu.kits.tennis.infrastructure.ResourceFactory;
+import hu.kits.tennis.infrastructure.ApplicationContext;
 
 @SuppressWarnings("unused")
 public class KVTKMeccsImporter {
@@ -58,7 +58,7 @@ public class KVTKMeccsImporter {
     private Players players;
     private Map<String, String> tournamentIdsByName = new HashMap<>();
     
-    public KVTKMeccsImporter(ResourceFactory resourceFactory) {
+    public KVTKMeccsImporter(ApplicationContext resourceFactory) {
         playerRepository = resourceFactory.getPlayerRepository();
         matchService = resourceFactory.getMatchService();
         tournamentService = resourceFactory.getTournamentService();

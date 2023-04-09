@@ -21,7 +21,7 @@ import hu.kits.tennis.domain.user.Requests.UserRegistrationRequest;
 import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.domain.user.UserData;
 import hu.kits.tennis.domain.user.UserData.Status;
-import hu.kits.tennis.infrastructure.ResourceFactory;
+import hu.kits.tennis.infrastructure.ApplicationContext;
 import hu.kits.tennis.domain.user.UserService;
 import hu.kits.tennis.domain.user.Users;
 import hu.kits.tennis.testutil.InMemoryDataSourceFactory;
@@ -40,7 +40,7 @@ public class UserApplicationTest {
                 "INSERT INTO USER VALUES('ksanyi', 'PWD', 'Kócsó Sanyi', 'ADMIN', '06703699209', 'kocso.sandor.gabor@gmail.com', 'ACTIVE', 1)",
                 "INSERT INTO USER VALUES('csányika', 'PWD', 'Csányi Zsolt', 'MEMBER', '', 'csanyika@xxx.hu', 'ACTIVE', 0)");
         
-        ResourceFactory resourceFactory = new ResourceFactory(dataSource, spyEmailSender, null);
+        ApplicationContext resourceFactory = new ApplicationContext(dataSource, spyEmailSender, null, null);
         userService = resourceFactory.getUserService();
     }
     

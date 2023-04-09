@@ -58,12 +58,19 @@ class PlayersGrid extends Grid<Player> {
         addColumn(p -> p.contact().email())
             .setHeader("Email")
             .setSortable(true)
+            .setTooltipGenerator(p -> p.contact().email())
             .setFlexGrow(2);
         
         addColumn(p -> p.contact().phone())
             .setHeader("Telefonszám")
             .setSortable(true)
             .setFlexGrow(2);
+        
+        addColumn(p -> p.contact().address())
+            .setHeader("Cím")
+            .setSortable(true)
+            .setTooltipGenerator(p -> p.contact().address().toString())
+            .setFlexGrow(3);
         
         addColumn(p -> p.contact().comment())
             .setHeader("Megjegyzés")

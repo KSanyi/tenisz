@@ -72,7 +72,7 @@ public class PlayerJdbcRepository implements PlayerRepository {
     
     private static Address mapToAddress(ResultSet rs) throws SQLException {
         int zip = rs.getInt(COLUMN_ZIP);
-        if(rs.wasNull()) {
+        if(rs.wasNull() || zip == 0) {
             return Address.EMPTY;
         } else {
             return new Address(

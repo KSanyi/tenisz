@@ -43,7 +43,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private final UTRService utrService = Main.resourceFactory.getUTRService();
+    private final UTRService utrService = Main.applicationContext.getUTRService();
     
     private final TextField filter = new TextField();
     private final UTRRankingGrid utrRankingGrid = new UTRRankingGrid();

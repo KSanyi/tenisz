@@ -31,7 +31,7 @@ public class PasswordChangeDialog extends Dialog {
     
     public PasswordChangeDialog() {
 
-        userService = Main.resourceFactory.getUserService();
+        userService = Main.applicationContext.getUserService();
         
         setModal(true);
         

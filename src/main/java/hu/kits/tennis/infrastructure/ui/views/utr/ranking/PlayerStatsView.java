@@ -30,7 +30,7 @@ public class PlayerStatsView extends SplitViewFrame implements View, BeforeEnter
     private final PlayerStatsComponent playerStatsComponent = new PlayerStatsComponent();
     private final PlayerStatsComponentMobile playerStatsComponentMobile = new PlayerStatsComponentMobile();
     
-    private final PlayerRepository playerRepository = Main.resourceFactory.getPlayerRepository();
+    private final PlayerRepository playerRepository = Main.applicationContext.getPlayerRepository();
     private Player player;
     
     @Override

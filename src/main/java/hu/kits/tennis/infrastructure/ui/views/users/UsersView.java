@@ -35,7 +35,7 @@ public class UsersView extends SplitViewFrame implements View {
     
     public UsersView() {
         
-        UserService userService = Main.resourceFactory.getUserService();
+        UserService userService = Main.applicationContext.getUserService();
         detailsDrawer = new UserDetailsDrawer(userService, DetailsDrawer.Position.RIGHT, this);
         usersGrid = new UsersGrid(userService);
         

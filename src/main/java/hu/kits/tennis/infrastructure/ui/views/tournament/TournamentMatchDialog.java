@@ -28,7 +28,7 @@ import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
 class TournamentMatchDialog extends Dialog {
 
-    private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
+    private final TournamentService tournamentService = Main.applicationContext.getTournamentService();
     
     private final DatePicker datePicker = new DatePicker("Dátum");
     

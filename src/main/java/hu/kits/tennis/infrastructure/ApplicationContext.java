@@ -4,7 +4,9 @@ import javax.sql.DataSource;
 
 import com.github.scribejava.core.oauth.OAuth20Service;
 
+import hu.kits.tennis.application.tasks.AddPlayerAddressWorkflow;
 import hu.kits.tennis.domain.email.EmailSender;
+import hu.kits.tennis.domain.invoice.InvoiceService;
 import hu.kits.tennis.domain.match.MatchRepository;
 import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.player.PlayerRepository;
@@ -22,7 +24,7 @@ import hu.kits.tennis.infrastructure.database.TournamentJdbcRepository;
 import hu.kits.tennis.infrastructure.database.UserJdbcRepository;
 import hu.kits.tennis.infrastructure.database.VenueHardcodedRepository;
 
-public class ResourceFactory {
+public class ApplicationContext {
 
     private final UserService userService;
     private final PlayerRepository playerRepository;
@@ -31,8 +33,11 @@ public class ResourceFactory {
     private final TournamentService tournamentService;
     private final UTRService utrService;
     private final MatchService matchService;
+    private final InvoiceService invoiceService;
     
-    public ResourceFactory(DataSource dataSource, EmailSender emailSender, OAuth20Service oAuthService) {
+    private final AddPlayerAddressWorkflow addPlayerAddressWorkflow;
+    
+    public ApplicationContext(DataSource dataSource, EmailSender emailSender, OAuth20Service oAuthService, InvoiceService invoiceService) {
 
         playerRepository = new PlayerJdbcRepository(dataSource);
         UserRepository userRepository = new UserJdbcRepository(dataSource);
@@ -46,6 +51,9 @@ public class ResourceFactory {
         utrService = new UTRService(matchService, matchRepository, playerRepository, tournamentRepository);
         VenueRepository venueRepository = new VenueHardcodedRepository();
         tournamentService = new TournamentService(tournamentRepository, matchRepository, venueRepository, utrService);
+        this.invoiceService = invoiceService;
+        
+        addPlayerAddressWorkflow = new AddPlayerAddressWorkflow(playersService, invoiceService);
     }
     
     public UserService getUserService() {
@@ -74,6 +82,14 @@ public class ResourceFactory {
     
     public PlayersService getPlayersService() {
         return playersService;
+    }
+    
+    public InvoiceService getInvoiceService() {
+        return invoiceService;
+    }
+    
+    public AddPlayerAddressWorkflow getAddPlayerAddressWorkflow() {
+        return addPlayerAddressWorkflow;
     }
     
 }

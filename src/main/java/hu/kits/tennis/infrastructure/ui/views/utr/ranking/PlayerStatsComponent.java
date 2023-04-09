@@ -16,7 +16,7 @@ import hu.kits.tennis.infrastructure.ui.views.utr.MatchesGrid;
 
 class PlayerStatsComponent extends VerticalLayout {
 
-    private final UTRService utrService = Main.resourceFactory.getUTRService();
+    private final UTRService utrService = Main.applicationContext.getUTRService();
     
     private final Label nameLabel = UIUtils.createH2Label("");
     private final Label utrHighLabel = new Label();

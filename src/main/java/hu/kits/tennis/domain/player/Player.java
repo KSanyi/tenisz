@@ -44,6 +44,18 @@ public record Player(Integer id,
     public record Address(int zip, String town, String streetAddress) {
         
         public static Address EMPTY = new Address(0, "", "");
+
+        public boolean isEmpty() {
+            return this.equals(EMPTY);
+        }
+        
+        public String toString() {
+            if(isEmpty()) {
+                return "";
+            } else {
+                return zip + " " + town + " " + streetAddress;
+            }
+        }
     }
     
     @Override

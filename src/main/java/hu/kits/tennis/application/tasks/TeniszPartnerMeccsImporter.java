@@ -41,7 +41,7 @@ import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.domain.utr.UTRService;
-import hu.kits.tennis.infrastructure.ResourceFactory;
+import hu.kits.tennis.infrastructure.ApplicationContext;
 
 public class TeniszPartnerMeccsImporter {
 
@@ -50,7 +50,7 @@ public class TeniszPartnerMeccsImporter {
     private final TournamentService tournamentService;
     private final MatchService matchService;
     
-    public TeniszPartnerMeccsImporter(ResourceFactory resourceFactory) {
+    public TeniszPartnerMeccsImporter(ApplicationContext resourceFactory) {
         playerRepository = resourceFactory.getPlayerRepository();
         utrService = resourceFactory.getUTRService();
         tournamentService = resourceFactory.getTournamentService();

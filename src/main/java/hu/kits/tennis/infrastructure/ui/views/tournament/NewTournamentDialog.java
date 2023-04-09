@@ -28,7 +28,7 @@ import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
 public class NewTournamentDialog extends Dialog {
 
-    private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
+    private final TournamentService tournamentService = Main.applicationContext.getTournamentService();
     
     private final Consumer<Tournament> callback;
     

@@ -24,7 +24,7 @@ import hu.kits.tennis.infrastructure.ui.views.utr.MatchesGridMobile;
 
 class PlayerStatsComponentMobile extends VerticalLayout {
 
-    private final UTRService utrService = Main.resourceFactory.getUTRService();
+    private final UTRService utrService = Main.applicationContext.getUTRService();
     
     private final Label nameLabel = UIUtils.createH3Label("");
     private final Badge utrBadge = new Badge("", BadgeColor.CONTRAST_PRIMARY, BadgeSize.M, BadgeShape.PILL);

@@ -40,7 +40,7 @@ public class VaadinUtil {
                 if(userFromCookie.isPresent()) {
                     try {
                         logger.debug("User '{}' found in cookie", userFromCookie.get());
-                        user = Main.resourceFactory.getUserService().findUser(userFromCookie.get());
+                        user = Main.applicationContext.getUserService().findUser(userFromCookie.get());
                         setUser(user);
                         return user;
                     } catch(KITSException ex) {

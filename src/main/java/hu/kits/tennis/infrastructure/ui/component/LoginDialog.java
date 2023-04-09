@@ -32,7 +32,7 @@ public class LoginDialog extends Dialog implements RequestHandler {
     
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private final UserService userService = Main.resourceFactory.getUserService();
+    private final UserService userService = Main.applicationContext.getUserService();
     
     private final LoginForm loginForm = new LoginForm(createHungarianI18n());
     private final Button registerButton = UIUtils.createTertiaryButton("Regisztráció");

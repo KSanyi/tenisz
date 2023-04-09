@@ -10,13 +10,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import hu.kits.tennis.domain.utr.UTRService;
-import hu.kits.tennis.infrastructure.ResourceFactory;
+import hu.kits.tennis.infrastructure.ApplicationContext;
 
 public class UTRChangeAnalyzer {
 
     private final UTRService utrService;
 
-    public UTRChangeAnalyzer(ResourceFactory resourceFactory) {
+    public UTRChangeAnalyzer(ApplicationContext resourceFactory) {
         utrService = resourceFactory.getUTRService();
     }
     

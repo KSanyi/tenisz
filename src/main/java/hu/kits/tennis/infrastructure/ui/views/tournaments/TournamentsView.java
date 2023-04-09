@@ -36,7 +36,7 @@ import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentView;
 @AllowedRoles({Role.ADMIN})
 public class TournamentsView extends SplitViewFrame implements View {
 
-    private final TournamentService tournamentService = Main.resourceFactory.getTournamentService();
+    private final TournamentService tournamentService = Main.applicationContext.getTournamentService();
 
     private final Button addButton = UIUtils.createPrimaryButton("Új verseny", VaadinIcon.PLUS);
     

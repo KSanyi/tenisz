@@ -38,8 +38,8 @@ import hu.kits.tennis.infrastructure.ui.views.View;
 @AllowedRoles({Role.ADMIN})
 public class MatchesView extends SplitViewFrame implements View {
 
-    private final UTRService utrService = Main.resourceFactory.getUTRService();
-    private final MatchService matchService = Main.resourceFactory.getMatchService();
+    private final UTRService utrService = Main.applicationContext.getUTRService();
+    private final MatchService matchService = Main.applicationContext.getMatchService();
     
     private final Button recalculateButton = createRecalculateButton();
     private final TextField filterField = new TextField();

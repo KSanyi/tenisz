@@ -31,7 +31,7 @@ import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
 public class SimpleMatchDialog extends Dialog {
 
-    private final MatchService matchService = Main.resourceFactory.getMatchService();
+    private final MatchService matchService = Main.applicationContext.getMatchService();
     
     private final DatePicker datePicker = new HungarianDatePicker("Dátum");
     private final ComboBox<Player> player1Combo;

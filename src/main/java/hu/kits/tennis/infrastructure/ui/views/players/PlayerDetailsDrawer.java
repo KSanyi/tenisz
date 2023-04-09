@@ -14,26 +14,24 @@ import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationResult;
-import com.vaadin.flow.data.binder.Validator;
-import com.vaadin.flow.data.binder.ValueContext;
 import com.vaadin.flow.data.validator.DoubleRangeValidator;
 import com.vaadin.flow.data.validator.EmailValidator;
-import com.vaadin.flow.data.validator.RegexpValidator;
 
 import hu.kits.tennis.common.KITSException;
 import hu.kits.tennis.domain.player.Player;
-import hu.kits.tennis.domain.player.PlayersService;
 import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.domain.player.Player.Contact;
+import hu.kits.tennis.domain.player.PlayersService;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
+import hu.kits.tennis.infrastructure.ui.util.DataValidator.PhoneValidator;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.detailsdrawer.DetailsDrawer;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.detailsdrawer.DetailsDrawerHeader;
@@ -49,6 +47,9 @@ class PlayerDetailsDrawer extends DetailsDrawer {
     private final TextField nameField = new TextField("Név");
     private final EmailField emailField = new EmailField ("Email");
     private final TextField phoneField = new TextField("Telefonszám");
+    private final IntegerField zipField = new IntegerField("Irányítószám");
+    private final TextField townField = new TextField("Város");
+    private final TextArea streetAddressField = new TextArea("Utca, házszám");
     private final TextArea commentField = new TextArea("Megjegyzés");
     private final NumberField startingUTRField = new NumberField("Induló UTR");
     private final Checkbox kvtkCheckBox = new Checkbox("KVTK tag");
@@ -93,6 +94,19 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         binder.forField(phoneField)
             .withValidator(new PhoneValidator())
             .bind("phone");
+        
+        binder.forField(emailField)
+            .withValidator(new EmailValidator("Helytelen email cím"))
+            .bind("email");
+        
+        binder.forField(zipField)
+            .bind("zip");
+        
+        binder.forField(townField)
+            .bind("town");
+        
+        binder.forField(streetAddressField)
+            .bind("streetAddress");
         
         binder.forField(commentField)
             .bind("comment");
@@ -155,6 +169,9 @@ class PlayerDetailsDrawer extends DetailsDrawer {
                 nameField,
                 emailField,
                 phoneField,
+                zipField,
+                townField, 
+                streetAddressField, 
                 commentField,
                 startingUTRField,
                 kvtkCheckBox,
@@ -167,7 +184,13 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         nameField.setWidth("300px");
         emailField.setWidth("300px");
         phoneField.setWidth("300px");
+        zipField.setWidth("100px");
+        townField.setWidth("250px");
+        streetAddressField.setWidth("300px");
+        streetAddressField.setHeight("90px");
         startingUTRField.setWidth("120px");
+        
+        zipField.addValueChangeListener(e -> zipChanged(e.getValue()));
         
         startingUTRField.setMin(1);
         startingUTRField.setMax(16);
@@ -175,6 +198,12 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         startingUTRField.setStepButtonsVisible(true);
         
         return fieldsLayout;
+    }
+    
+    private void zipChanged(Integer value) {
+        if(value != null && 1000 <= value && value <=1999) {
+            townField.setValue("Budapest");
+        }
     }
     
     private Component createFooter() {
@@ -206,6 +235,9 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         private String name;
         private String email;
         private String phone;
+        private Integer zip;
+        private String town;
+        private String streetAddress;
         private String comment;
         private Double startingUTR;
         private Set<Organization> organisations;
@@ -218,10 +250,19 @@ class PlayerDetailsDrawer extends DetailsDrawer {
             this.comment = player.contact().comment();
             this.startingUTR = player.startingUTR().value();
             this.organisations = new HashSet<>(player.organisations());
+            if(!player.contact().address().isEmpty()) {
+                this.zip = player.contact().address().zip();
+                this.town = player.contact().address().town();
+                this.streetAddress = player.contact().address().streetAddress();
+            }
         }
         
         public Player toPlayer() {
-            return new Player(!playerId.isEmpty() ? Integer.parseInt(playerId) : null, name, new Contact(email, phone, Address.EMPTY, comment), UTR.of(startingUTR), organisations);
+            return new Player(!playerId.isEmpty() ? Integer.parseInt(playerId) : null,
+                    name, 
+                    new Contact(email, phone, new Address(zip, town, streetAddress), comment), 
+                    UTR.of(startingUTR), 
+                    organisations);
         }
 
         public PlayerDataBean() {
@@ -263,6 +304,30 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         public void setPhone(String phone) {
             this.phone = phone;
         }
+        
+        public Integer getZip() {
+            return zip;
+        }
+        
+        public void setZip(Integer zip) {
+            this.zip = zip;
+        }
+        
+        public String getTown() {
+            return town;
+        }
+        
+        public void setTown(String town) {
+            this.town = town;
+        }
+        
+        public String getStreetAddress() {
+            return streetAddress;
+        }
+        
+        public void setStreetAddress(String streetAddress) {
+            this.streetAddress = streetAddress;
+        }
 
         public String getComment() {
             return comment;
@@ -292,18 +357,6 @@ class PlayerDetailsDrawer extends DetailsDrawer {
             }
         }
 
-    }
-    
-    private static class PhoneValidator implements Validator<String> {
-
-        private final RegexpValidator regexpValidator = new RegexpValidator("Hibás telefonszám: a helyes formátum: +36/70-123-1234, +39/12-1234-1234", 
-                "\\+\\d{2}/\\d{2}\\-\\d{3,4}-\\d{4}");
-        
-        @Override
-        public ValidationResult apply(String value, ValueContext context) {
-            return value.isEmpty() ? ValidationResult.ok() : regexpValidator.apply(value, context);
-        }
-        
     }
     
 }

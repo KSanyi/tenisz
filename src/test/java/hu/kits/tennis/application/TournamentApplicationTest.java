@@ -35,7 +35,7 @@ import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
 import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
-import hu.kits.tennis.infrastructure.ResourceFactory;
+import hu.kits.tennis.infrastructure.ApplicationContext;
 import hu.kits.tennis.testutil.InMemoryDataSourceFactory;
 import hu.kits.tennis.testutil.SpyEmailSender;
 
@@ -54,7 +54,7 @@ public class TournamentApplicationTest {
                 "INSERT INTO USER VALUES('ksanyi', 'PWD', 'Kócsó Sanyi', 'ADMIN', '06703699209', 'kocso.sandor.gabor@gmail.com', 'ACTIVE', 0)",
                 "INSERT INTO USER VALUES('csányika', 'PWD', 'Csányi Zsolt', 'MEMBER', '', 'csanyika@xxx.hu', 'ACTIVE', 0)");
         
-        ResourceFactory resourceFactory = new ResourceFactory(dataSource, spyEmailSender, null);
+        ApplicationContext resourceFactory = new ApplicationContext(dataSource, spyEmailSender, null, null);
         tournamentService = resourceFactory.getTournamentService();
         PlayerRepository playerRepositosy = resourceFactory.getPlayerRepository();
         
