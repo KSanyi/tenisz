@@ -1,4 +1,4 @@
-package hu.kits.tennis.application.tasks;
+package hu.kits.tennis.application;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Optional;

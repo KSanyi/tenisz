@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.theme.lumo.LumoUtility.AlignItems;
@@ -17,11 +18,16 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import com.vaadin.flow.theme.lumo.LumoUtility.JustifyContent;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 import com.vaadin.flow.theme.lumo.LumoUtility.TextColor;
+import com.vaadin.flow.theme.lumo.LumoUtility.Width;
 
 import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.match.MatchResult.SetResult;
 import hu.kits.tennis.domain.utr.BookedMatch;
+import hu.kits.tennis.infrastructure.ui.vaadin.components.Badge;
+import hu.kits.tennis.infrastructure.ui.vaadin.util.css.lumo.BadgeColor;
+import hu.kits.tennis.infrastructure.ui.vaadin.util.css.lumo.BadgeShape;
+import hu.kits.tennis.infrastructure.ui.vaadin.util.css.lumo.BadgeSize;
 
 public class MatchesGridMobile extends Grid<MatchInfo> {
  
@@ -70,7 +76,14 @@ public class MatchesGridMobile extends Grid<MatchInfo> {
             
             playersAndResult.add(player1Row, player2Row);
             
-            add(dateAndTournament, playersAndResult);
+            Div resultAndMatchUTR = new Div();
+            resultAndMatchUTR.addClassNames(Display.FLEX, FlexDirection.ROW, AlignItems.CENTER, Width.FULL, JustifyContent.BETWEEN);
+            
+            Badge matchUTRBadge = new Badge("UTR " + matchInfo.matchUTRForPlayer1().toString(), BadgeColor.NORMAL, BadgeSize.S, BadgeShape.PILL);
+            
+            resultAndMatchUTR.add(playersAndResult, matchUTRBadge);
+            
+            add(dateAndTournament, resultAndMatchUTR);
         }
         
         private static Span createPlayerRow(MatchInfo matchInfo, boolean player1) {

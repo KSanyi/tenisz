@@ -1,6 +1,7 @@
 package hu.kits.tennis.infrastructure.ui.views.utr;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 import com.vaadin.flow.component.Component;
@@ -53,6 +54,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
                 .withProperty("utr1", match -> displayUTR(match.player1UTR())))
             .setClassNameGenerator(match -> match.result() != null && match.result().isPlayer1Winner() ? "bold" : "")
             .setKey("player1")
+            .setComparator(Comparator.comparing(MatchInfo::player1UTR))
             .setHeader("")
             .setAutoWidth(true)
             .setTextAlign(ColumnTextAlign.CENTER)
@@ -63,6 +65,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
                 .withProperty("utr2", match -> displayUTR(match.player2UTR())))
             .setClassNameGenerator(match -> match.result() != null && match.result().isPlayer2Winner() ? "bold" : "")
             .setKey("player2")
+            .setComparator(Comparator.comparing(MatchInfo::player2UTR))
             .setHeader("")
             .setAutoWidth(true)
             .setTextAlign(ColumnTextAlign.CENTER)

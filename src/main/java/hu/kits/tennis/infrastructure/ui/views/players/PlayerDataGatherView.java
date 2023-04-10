@@ -23,7 +23,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
 
 import hu.kits.tennis.Main;
-import hu.kits.tennis.application.tasks.AddPlayerAddressWorkflow;
+import hu.kits.tennis.application.AddPlayerAddressWorkflow;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;

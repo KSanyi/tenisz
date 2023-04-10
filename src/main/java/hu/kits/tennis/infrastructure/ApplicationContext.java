@@ -4,7 +4,7 @@ import javax.sql.DataSource;
 
 import com.github.scribejava.core.oauth.OAuth20Service;
 
-import hu.kits.tennis.application.tasks.AddPlayerAddressWorkflow;
+import hu.kits.tennis.application.AddPlayerAddressWorkflow;
 import hu.kits.tennis.domain.email.EmailSender;
 import hu.kits.tennis.domain.invoice.InvoiceService;
 import hu.kits.tennis.domain.match.MatchRepository;

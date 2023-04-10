@@ -79,7 +79,7 @@ public class BillingoInvoiceService implements InvoiceService {
         
         try {
             HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(new URI("https://api.billingo.hu/v3/partners"))
+                .uri(new URI("https://api.billingo.hu/v3/partners?per_page=100"))
                 .header("X-API-KEY", apiKey)
                 .GET()
                 .build();
