@@ -11,6 +11,7 @@ import hu.kits.tennis.domain.match.MatchRepository;
 import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.PlayersService;
+import hu.kits.tennis.domain.player.registration.RegistrationService;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.VenueRepository;
@@ -20,6 +21,7 @@ import hu.kits.tennis.domain.user.password.DummyPasswordHasher;
 import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.database.MatchJdbcRepository;
 import hu.kits.tennis.infrastructure.database.PlayerJdbcRepository;
+import hu.kits.tennis.infrastructure.database.RegistrationJdbcRepository;
 import hu.kits.tennis.infrastructure.database.TournamentJdbcRepository;
 import hu.kits.tennis.infrastructure.database.UserJdbcRepository;
 import hu.kits.tennis.infrastructure.database.VenueHardcodedRepository;
@@ -34,6 +36,7 @@ public class ApplicationContext {
     private final UTRService utrService;
     private final MatchService matchService;
     private final InvoiceService invoiceService;
+    private final RegistrationService registrationService;
     
     private final AddPlayerAddressWorkflow addPlayerAddressWorkflow;
     
@@ -52,6 +55,7 @@ public class ApplicationContext {
         VenueRepository venueRepository = new VenueHardcodedRepository();
         tournamentService = new TournamentService(tournamentRepository, matchRepository, venueRepository, utrService);
         this.invoiceService = invoiceService;
+        registrationService = new RegistrationService(playersService, new RegistrationJdbcRepository(dataSource));
         
         addPlayerAddressWorkflow = new AddPlayerAddressWorkflow(playersService, invoiceService);
     }
@@ -86,6 +90,10 @@ public class ApplicationContext {
     
     public InvoiceService getInvoiceService() {
         return invoiceService;
+    }
+    
+    public RegistrationService getRegistrationService() {
+        return registrationService;
     }
     
     public AddPlayerAddressWorkflow getAddPlayerAddressWorkflow() {

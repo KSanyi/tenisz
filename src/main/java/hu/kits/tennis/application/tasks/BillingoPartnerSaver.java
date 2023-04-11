@@ -1,5 +1,7 @@
 package hu.kits.tennis.application.tasks;
 
+import static java.util.stream.Collectors.joining;
+
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
@@ -30,10 +32,13 @@ public class BillingoPartnerSaver {
             .toList();
         
         List<String> partnerEmailsInBillingo = invoiceService.getPartnerEmails();
+        logger.info("Found {} partners in Billingo", partnerEmailsInBillingo.size());
         
         List<Player> playersWithAddressButNotInBillingo = playersWithAddress.stream()
                 .filter(p -> !partnerEmailsInBillingo.contains(p.contact().email()))
                 .toList();
+        
+        logger.info("Players to be created in Billingo: {}", playersWithAddressButNotInBillingo.stream().map(Player::toString).collect(joining("\n")));
         
         for(Player player : playersWithAddressButNotInBillingo) {
             logger.info("Creating player in billingo: {}", player);

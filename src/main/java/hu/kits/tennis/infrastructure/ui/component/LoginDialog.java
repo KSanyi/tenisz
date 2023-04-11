@@ -6,9 +6,9 @@ import java.lang.invoke.MethodHandles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.AnchorTarget;
 import com.vaadin.flow.component.login.AbstractLogin.LoginEvent;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
@@ -26,7 +26,6 @@ import hu.kits.tennis.domain.user.AuthenticationException;
 import hu.kits.tennis.domain.user.UserData;
 import hu.kits.tennis.domain.user.UserService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
-import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
 public class LoginDialog extends Dialog implements RequestHandler {
     
@@ -35,7 +34,7 @@ public class LoginDialog extends Dialog implements RequestHandler {
     private final UserService userService = Main.applicationContext.getUserService();
     
     private final LoginForm loginForm = new LoginForm(createHungarianI18n());
-    private final Button registerButton = UIUtils.createTertiaryButton("Regisztráció");
+    private final Anchor registerButton = new Anchor("registration", "Regisztráció", AnchorTarget.BLANK);
     private final Anchor googleAuthButton;
     
     public LoginDialog() {
@@ -52,11 +51,6 @@ public class LoginDialog extends Dialog implements RequestHandler {
         
         loginForm.addLoginListener(this::logIn);
         
-        registerButton.addClickListener(click -> {
-            new RegistrationDialog(userService).open();
-            close();
-        });
-        registerButton.setVisible(false);
         googleAuthButton.setVisible(false);
         
         loginForm.addForgotPasswordListener(e -> KITSNotification.showInfo("Nincs még implementálva"));

@@ -26,9 +26,13 @@ public class KITSNotification {
     }
 
     public static void showInfo(String message) {
+        showInfo(message, 2000);
+    }
+    
+    public static void showInfo(String message, int duration) {
         Notification notification = new Notification(message);
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-        notification.setDuration(2000);
+        notification.setDuration(duration);
         notification.setPosition(Position.MIDDLE);
         notification.open();
     }

@@ -27,7 +27,9 @@ public class PlayersService {
     }
     
     public Player saveNewPlayer(Player player) {
-        return playerRepository.saveNewPlayer(player);
+        Player savedPlayer = playerRepository.saveNewPlayer(player);
+        logger.info("Player created: {}", savedPlayer);
+        return savedPlayer;
     }
     
     public void updatePlayer(Player updatedPlayer) {
@@ -62,6 +64,10 @@ public class PlayersService {
             logger.warn("Email address not found: {}", email);
         }
         return player;
+    }
+    
+    public Optional<Player> findPlayerByEmail(String email) {
+        return playerRepository.findPlayerByEmail(email);
     }
 
 }

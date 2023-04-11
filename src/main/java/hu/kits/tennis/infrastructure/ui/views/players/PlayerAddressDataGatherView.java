@@ -33,7 +33,7 @@ import hu.kits.tennis.infrastructure.ui.views.utr.ranking.UTRRankingView;
 
 @Route(value = "data-request")
 @PageTitle("Adatbekérő")
-public class PlayerDataGatherView extends VerticalLayout {
+public class PlayerAddressDataGatherView extends VerticalLayout {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
@@ -49,7 +49,7 @@ public class PlayerDataGatherView extends VerticalLayout {
     
     private final Button saveButton = UIUtils.createPrimaryButton("Mentés");
     
-    public PlayerDataGatherView() {
+    public PlayerAddressDataGatherView() {
 
         logger.info("Init");
         
