@@ -259,7 +259,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         
         public Player toPlayer() {
             
-            Address address = zip != null ? new Address(zip, town, streetAddress) : null;
+            Address address = zip != null ? new Address(zip, town, streetAddress) : Address.EMPTY;
             
             return new Player(!playerId.isEmpty() ? Integer.parseInt(playerId) : null,
                     name, 
