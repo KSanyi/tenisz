@@ -42,9 +42,9 @@ public class RegistrationView extends VerticalLayout {
         setSpacing(false);
         
         add(new H3("KVTK regisztráció"),
-                new Label("Kérlek töltsd ki a az alábbi regisztrációs űrlapot. Adataidat bizalmasan kezeljük."),
-                registrationForm,
-                saveButton);
+            new Label("Kérlek töltsd ki a az alábbi regisztrációs űrlapot. Adataidat bizalmasan kezeljük."),
+            registrationForm,
+            saveButton);
         
         saveButton.addClickListener(click -> save());
     }
@@ -56,6 +56,7 @@ public class RegistrationView extends VerticalLayout {
         if(valid) {
             RegistrationData registrationData = bean.toRegistration();
             if(registrationService.isEmailAlreadyRegistered(registrationData.email())) {
+                logger.debug("Reistration attempt with existing email address: {}", registrationData);
                 KITSNotification.showError("Már regisztráltak ezzel az email címmel!");
                 return;
             }
