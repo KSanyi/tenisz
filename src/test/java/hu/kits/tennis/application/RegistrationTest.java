@@ -91,9 +91,7 @@ public class RegistrationTest {
         Registration registration = registrationService.loadAllNewRegistrations().get(0);
         registrationService.approveRegistration(registration, UTR.of(7.5), "Jó játékos");
         
-        registration = registrationService.loadAllNewRegistrations().get(0);
-        
-        Assertions.assertEquals(RegistrationStatus.ACCEPTED, registration.status());
+        Assertions.assertTrue(registrationService.loadAllNewRegistrations().isEmpty());
         
         Optional<Player> player = playersService.loadAllPlayers().findPlayer("Kiss Péter");
         Assertions.assertTrue(player.isPresent());
