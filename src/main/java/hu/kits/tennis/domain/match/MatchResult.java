@@ -61,15 +61,15 @@ public record MatchResult(List<SetResult> setResults) {
     }
     
     public boolean isPlayer1Winner() {
-        int numberOfSets = setResults.size();
         int setsWon = (int)setResults.stream().filter(SetResult::isPlayer1Winner).count();
-        return setsWon > numberOfSets / 2;
+        int setsLost = (int)setResults.stream().filter(SetResult::isPlayer2Winner).count();
+        return setsWon > setsLost;
     }
     
     public boolean isPlayer2Winner() {
-        int numberOfSets = setResults.size();
         int setsWon = (int)setResults.stream().filter(SetResult::isPlayer2Winner).count();
-        return setsWon > numberOfSets / 2;
+        int setsLost = (int)setResults.stream().filter(SetResult::isPlayer1Winner).count();
+        return setsWon > setsLost;
     }
     
     public static MatchResult of(int ... gamesInSets) {
