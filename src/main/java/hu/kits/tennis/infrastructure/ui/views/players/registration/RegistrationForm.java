@@ -33,18 +33,18 @@ class RegistrationForm extends VerticalLayout {
 
         setWidthFull();
         
-        nameField.setWidth("365px");
-        phoneField.setWidth("365px");
+        nameField.setWidth("280px");
+        phoneField.setWidth("280px");
         phoneField.setTooltipText("Formátum: +36/20-123-4567");
         //phoneField.setPattern("[0-9]*");
-        emailField.setWidth("365px");
+        emailField.setWidth("280px");
         zipField.setWidth("100px");
-        townField.setWidth("250px");
-        streetAddressField.setWidth("365px");
+        townField.setWidth("165px");
+        streetAddressField.setWidth("280px");
         streetAddressField.setHeight("90px");
         experienceSelect.setWidth("200px");
         frequencySelect.setWidth("200px");
-        venueField.setWidth("365px");
+        venueField.setWidth("280px");
         hasPlayedInTournamentSelect.setWidth("200px");
         
         bind();
