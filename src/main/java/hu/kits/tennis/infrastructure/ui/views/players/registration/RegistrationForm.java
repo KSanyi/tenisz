@@ -79,7 +79,7 @@ class RegistrationForm extends VerticalLayout {
         
         binder.forField(phoneField)
             .asRequired("Kötelező mező")
-            .withValidator(new RegexpValidator("Helytelen telefonszám", "\\+\\d{1,2}/\\d{2}\\-\\d{3}-\\d{4}"))
+            .withValidator(new RegexpValidator("Helytelen telefonszám, a helyes formátum: +36/20-123-4567", "\\+\\d{1,2}/\\d{2}\\-\\d{3}-\\d{4}"))
             .bind("phone");
         
         binder.forField(emailField)
