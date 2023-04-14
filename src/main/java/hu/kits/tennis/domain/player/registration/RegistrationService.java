@@ -7,6 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.kits.tennis.domain.invoice.InvoiceService;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayersService;
 import hu.kits.tennis.domain.player.registration.Registration.RegistrationData;
@@ -19,10 +20,12 @@ public class RegistrationService {
     
     private final PlayersService playersService;
     private final RegistrationRepository registartionRepository;
+    private final InvoiceService invoiceService;
     
-    public RegistrationService(PlayersService playersService, RegistrationRepository registartionRepository) {
+    public RegistrationService(PlayersService playersService, RegistrationRepository registartionRepository, InvoiceService invoiceService) {
         this.playersService = playersService;
         this.registartionRepository = registartionRepository;
+        this.invoiceService = invoiceService;
     }
     
     public List<Registration> loadAllNewRegistrations() {
@@ -42,7 +45,10 @@ public class RegistrationService {
         logger.info("Registration is accepted for player: {} with starting  UTR {}", registration.data().name(), statingUTR);
         registartionRepository.setRegistrationStatus(registration.id(), RegistrationStatus.ACCEPTED);
         Player player = registration.data().toPlayer(statingUTR, comment);
-        playersService.saveNewPlayer(player);
+        Player savedPlayer = playersService.saveNewPlayer(player);
+        logger.info("Creating player in invoice system");
+        invoiceService.createPartnerForPlayer(savedPlayer);
+        logger.info("Player created in invoice system");
     }
 
     public boolean isEmailAlreadyRegistered(String email) {

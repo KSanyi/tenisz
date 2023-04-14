@@ -42,7 +42,7 @@ public class BillingoPartnerSaver {
         
         for(Player player : playersWithAddressButNotInBillingo) {
             logger.info("Creating player in billingo: {}", player);
-            //invoiceService.createPartnerForPlayer(player);
+            invoiceService.createPartnerForPlayer(player);
         }
     }
     
