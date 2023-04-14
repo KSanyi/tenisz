@@ -26,6 +26,7 @@ import hu.kits.tennis.domain.user.AuthenticationException;
 import hu.kits.tennis.domain.user.UserData;
 import hu.kits.tennis.domain.user.UserService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
+import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 
 public class LoginDialog extends Dialog implements RequestHandler {
     
@@ -56,6 +57,8 @@ public class LoginDialog extends Dialog implements RequestHandler {
         loginForm.addForgotPasswordListener(e -> KITSNotification.showInfo("Nincs még implementálva"));
         
         VaadinSession.getCurrent().addRequestHandler(this);
+        
+        VaadinUtil.logUserAction(logger, "Login clicked");
     }
     
     private static LoginI18n createHungarianI18n() {

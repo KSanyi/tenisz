@@ -39,7 +39,7 @@ public class RegistrationService {
     }
     
     public void approveRegistration(Registration registration, UTR statingUTR, String comment) {
-        logger.info("Registration is accepted for player: {}", registration.data().name());
+        logger.info("Registration is accepted for player: {} with starting  UTR {}", registration.data().name(), statingUTR);
         registartionRepository.setRegistrationStatus(registration.id(), RegistrationStatus.ACCEPTED);
         Player player = registration.data().toPlayer(statingUTR, comment);
         playersService.saveNewPlayer(player);
