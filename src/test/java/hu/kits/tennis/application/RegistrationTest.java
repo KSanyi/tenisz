@@ -28,6 +28,7 @@ import hu.kits.tennis.testutil.SpyEmailSender;
 public class RegistrationTest {
 
     private static final SpyEmailSender spyEmailSender = new SpyEmailSender();
+    private static final SpyInvoiceService spyInvoiceService = new SpyInvoiceService();
     
     private static RegistrationService registrationService;
     private static PlayersService playersService;
@@ -37,7 +38,7 @@ public class RegistrationTest {
     private void init() throws Exception {
         DataSource dataSource = InMemoryDataSourceFactory.createDataSource();
         
-        ApplicationContext resourceFactory = new ApplicationContext(dataSource, spyEmailSender, null, null);
+        ApplicationContext resourceFactory = new ApplicationContext(dataSource, spyEmailSender, null, spyInvoiceService);
         registrationService = resourceFactory.getRegistrationService();
         playersService = resourceFactory.getPlayersService();
     }
@@ -103,6 +104,8 @@ public class RegistrationTest {
         Assertions.assertEquals("petekiss@gmail.com", newPlayer.contact().email());
         Assertions.assertEquals(new Address(1132, "Budapest", "Teve utca 9"), newPlayer.contact().address());
         Assertions.assertEquals(UTR.of(7.5), newPlayer.startingUTR());
+        
+        Assertions.assertEquals(newPlayer, spyInvoiceService.lastSavedPlayer);
     }
     
 }

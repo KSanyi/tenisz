@@ -55,7 +55,7 @@ public class ApplicationContext {
         VenueRepository venueRepository = new VenueHardcodedRepository();
         tournamentService = new TournamentService(tournamentRepository, matchRepository, venueRepository, utrService);
         this.invoiceService = invoiceService;
-        registrationService = new RegistrationService(playersService, new RegistrationJdbcRepository(dataSource));
+        registrationService = new RegistrationService(playersService, new RegistrationJdbcRepository(dataSource), invoiceService);
         
         addPlayerAddressWorkflow = new AddPlayerAddressWorkflow(playersService, invoiceService);
     }
