@@ -65,6 +65,7 @@ public class UTRService {
         
         List<PlayerWithUTR> ranking = players.stream()
                 .map(player -> createPlayerWithUTR(player, allBookedMatches, numberOfTrophiesByPlayer.getOrDefault(player, 0L)))
+                .filter(playerWithUTR -> playerWithUTR.numberOfMatches() > 0)
                 .sorted(comparing(PlayerWithUTR::utr).reversed())
                 .collect(toList());
         
