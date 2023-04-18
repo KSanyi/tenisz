@@ -83,6 +83,7 @@ public class MatchScoreField extends HorizontalLayout {
     private TextField createScoreField() {
         TextField scoreField = new TextField();
         scoreField.setPattern("[0-9]*");
+        scoreField.setAllowedCharPattern("[0-9]*");
         scoreField.setMaxLength(2);
         scoreField.setAutoselect(true);
         scoreField.setWidth(40, Unit.PIXELS);
