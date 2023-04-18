@@ -22,7 +22,7 @@ class RestHandlers {
     }
     
     void listAllPlayersWithUtr(Context context) {
-        List<PlayerWithUTR> playersWithUTR = utrService.calculateUTRRanking();
+        List<PlayerWithUTR> playersWithUTR = utrService.calculateUTRRanking(true);
         List<PlayerWithUTR> playersWithUTRSortedByName = playersWithUTR.stream()
                 .sorted((p1, p2) -> StringUtil.HUN_COLLATOR.compare(p1.player().name(), p2.player().name()))
                 .toList();
@@ -30,7 +30,7 @@ class RestHandlers {
     }
     
     void listAllPlayersWithUtrInCSV(Context context) {
-        List<PlayerWithUTR> playersWithUTR = utrService.calculateUTRRanking();
+        List<PlayerWithUTR> playersWithUTR = utrService.calculateUTRRanking(true);
         
         String content = playersWithUTR.stream()
                 .sorted((p1, p2) -> StringUtil.HUN_COLLATOR.compare(p1.player().name(), p2.player().name()))

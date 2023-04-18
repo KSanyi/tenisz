@@ -22,7 +22,7 @@ public class UTRChangeAnalyzer {
     
     public void analyse() {
         
-        List<NameAndUTR> currentUTRs = utrService.calculateUTRRanking().stream()
+        List<NameAndUTR> currentUTRs = utrService.calculateUTRRanking(false).stream()
                 .map(u -> new NameAndUTR(u.player().name(), u.utr().value())).toList();
         
         List<NameAndUTR> utrsFromFile = loadNamesAndUTRsFromFile();

@@ -122,7 +122,7 @@ public class UTRRankingView extends SplitViewFrame implements View {
     }
     
     public void refresh() {
-        utrRankingList = utrService.calculateUTRRanking();
+        utrRankingList = utrService.calculateUTRRanking(false);
         utrRankingGrid.setUTRRankingList(utrRankingList);
         utrRankingGridMobile.setUTRRankingList(utrRankingList);
     }
