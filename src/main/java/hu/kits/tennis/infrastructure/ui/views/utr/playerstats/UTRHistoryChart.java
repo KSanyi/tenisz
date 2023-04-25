@@ -1,4 +1,4 @@
-package hu.kits.tennis.infrastructure.ui.views.utr.ranking;
+package hu.kits.tennis.infrastructure.ui.views.utr.playerstats;
 
 import java.util.ArrayList;
 import java.util.List;

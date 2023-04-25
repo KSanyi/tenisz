@@ -1,4 +1,4 @@
-package hu.kits.tennis.infrastructure.ui.views.utr.ranking;
+package hu.kits.tennis.infrastructure.ui.views.utr.playerstats;
 
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;

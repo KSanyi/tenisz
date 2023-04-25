@@ -35,6 +35,7 @@ import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 import hu.kits.tennis.infrastructure.ui.views.View;
 import hu.kits.tennis.infrastructure.ui.views.utr.forecast.UTRForecastWindow;
+import hu.kits.tennis.infrastructure.ui.views.utr.playerstats.PlayerStatsComponent;
 
 @Route(value = "utr-ranking", layout = MainLayout.class)
 @PageTitle("UTR Rangsor")

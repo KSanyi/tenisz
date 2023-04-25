@@ -76,7 +76,7 @@ public record Tournament(String id,
     }
 
     public BasicTournamentInfo tournamentInfo() {
-        return new BasicTournamentInfo(id, params.organization(), params.name());
+        return new BasicTournamentInfo(id, params.organization(), params.name(), params.date());
     }
 
     public List<Match> matches() {

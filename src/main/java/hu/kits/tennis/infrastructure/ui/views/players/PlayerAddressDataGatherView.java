@@ -28,7 +28,7 @@ import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
-import hu.kits.tennis.infrastructure.ui.views.utr.ranking.PlayerStatsView;
+import hu.kits.tennis.infrastructure.ui.views.utr.playerstats.PlayerStatsView;
 import hu.kits.tennis.infrastructure.ui.views.utr.ranking.UTRRankingView;
 
 @Route(value = "data-request")

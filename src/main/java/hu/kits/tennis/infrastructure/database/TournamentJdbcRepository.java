@@ -76,7 +76,8 @@ public class TournamentJdbcRepository implements TournamentRepository {
         return new BasicTournamentInfo(
                 rs.getString(COLUMN_ID),
                 Organization.valueOf(rs.getString(COLUMN_ORGANIZATION)),
-                rs.getString(COLUMN_NAME));
+                rs.getString(COLUMN_NAME),
+                rs.getDate(COLUMN_DATE).toLocalDate());
     }
     
     @Override
