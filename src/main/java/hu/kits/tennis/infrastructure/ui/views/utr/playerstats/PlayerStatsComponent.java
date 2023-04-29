@@ -77,6 +77,8 @@ public class PlayerStatsComponent extends VerticalLayout {
         
         tournamentMatchesComponent.setMatches(playerStats.matches());
         matchesGrid.setItems(playerStats.matches());
+        matchesGrid.hidePlayer2UtrColumn();
+        matchesGrid.setBestWorstAndUTRRelevantMatches(playerStats.bestUTRMatch().orElse(null), playerStats.worstUTRMatch().orElse(null), playerStats.utrDetails().relevantMatches());
         
         utrHistoryChartHolder.removeAll();
         UTRHistoryChart chart = new UTRHistoryChart(playerStats.utrHistory());
