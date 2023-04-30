@@ -114,14 +114,14 @@ class TournamentsGrid extends Grid<TournamentSummary> {
     private static Component createLevelComponent(Level level) {
         BadgeColor color = switch(level) {
             case L90 -> BadgeColor.CONTRAST;    
-            case L125 -> BadgeColor.CONTRAST_PRIMARY;
+            case L125 -> BadgeColor.NORMAL;
             case L250 -> BadgeColor.SUCCESS;
-            case L375 -> BadgeColor.SUCCESS_PRIMARY;
-            case L500 -> BadgeColor.NORMAL;
+            case L375 -> BadgeColor.ERROR;
+            case L500 -> BadgeColor.SUCCESS_PRIMARY;
             case L625 -> BadgeColor.NORMAL_PRIMARY;
-            case L750 -> BadgeColor.ERROR;
-            case L875 -> BadgeColor.ERROR_PRIMARY;
-            case L1000 -> BadgeColor.ERROR_PRIMARY;
+            case L750 -> BadgeColor.ERROR_PRIMARY;
+            case L875 -> BadgeColor.CONTRAST_PRIMARY;
+            case L1000 -> BadgeColor.CONTRAST_PRIMARY;
             
         };
         return new Badge(level.toString(), color, BadgeSize.M, BadgeShape.PILL);
