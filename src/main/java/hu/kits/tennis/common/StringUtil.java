@@ -5,6 +5,15 @@ import java.text.RuleBasedCollator;
 
 public class StringUtil {
     
+    public static String capitalize(String string) {
+        if(string == null || string.isEmpty()) return string;
+        return Character.toUpperCase(string.charAt(0)) + string.substring(1, string.length());
+    }
+    
+    public static boolean startsWith(String text, String regex) {
+        return text.matches("^" + regex + ".*");
+    }
+    
     public static String cleanNameString(String value) {
         return value.toLowerCase()
                 .replace("ő", "o").replace("ö", "o").replace("ó", "o")

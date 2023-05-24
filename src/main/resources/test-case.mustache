@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+  pre code {
+      background-color: #eee;
+      border: 1px solid #999;
+      display: block;
+      padding: 20px;
+  }
+  </style>
+</head>
+<body>
+
+<h1>Api doc for test case <b>{{testCase}}</b></h1>
+<p>
+    {{#useCaseCalls}}
+        <h3> {{name}} </h3>
+        <h4> {{description}}</h4>
+        url: {{path}}<br/>
+        {{#staticTime}} set-time: <b>{{staticTime}}</b><br/>{{/staticTime}}
+        method: <b>{{httpMethod}}</b><br/>
+        request: {{^requestJson.isEmpty}}<pre><code>{{requestJson}}</code></pre>{{/requestJson.isEmpty}}<br/>
+        response status: <b>{{responseStatus}}</b><br/>
+        response body: <pre><code>{{responseJson}}</code></pre><br/>
+        <br/>
+        <hr/>
+    {{/useCaseCalls}}
+</p>
+
+</body>
+</html>

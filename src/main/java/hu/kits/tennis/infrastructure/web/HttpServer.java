@@ -26,6 +26,7 @@ public class HttpServer {
         this.port = port;
         
         RestHandlers restHandlers = new RestHandlers();
+        ApiDocHandler apiDocHandler = new ApiDocHandler();
         
         javalin = Javalin.create(config -> {
             config.server(() -> new VaadinJettyServer(port));
@@ -35,6 +36,10 @@ public class HttpServer {
             config.requestLogger(this::log);
             config.jsonMapper(new TeniszJsonMapper());
         }).routes(() -> {
+            path("api/docs", () -> {
+                get(apiDocHandler::createTestCasesList);
+                get("{testCase}", apiDocHandler::createTestCaseDoc);
+            });
             path("api/matches", () -> {
                 get(restHandlers::listAllMatches);
             });

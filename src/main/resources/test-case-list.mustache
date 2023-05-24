@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+  pre code {
+      background-color: #eee;
+      border: 1px solid #999;
+      display: block;
+      padding: 20px;
+  }
+  </style>
+</head>
+<body>
+
+<h1>Test cases</h1>
+<p>
+    <ul>
+    {{#testCases}}
+        <li><a href="/api/docs/{{.}}">{{.}}</a></li>
+    {{/testCases}}
+    </ul>
+</p>
+
+</body>
+</html>
