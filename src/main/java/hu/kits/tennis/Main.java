@@ -26,6 +26,7 @@ public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
+    // Vaadin UI classes access applicationContext via this static reference as I didn't find a nice way of passing it 
     public static ApplicationContext applicationContext;
     
     public static void main(String[] args) throws Exception {
@@ -47,7 +48,7 @@ public class Main {
         
         applicationContext = new ApplicationContext(dataSource, emailSender, oAuthService, invoiceService);
         
-        new HttpServer(port).start();
+        new HttpServer(port, applicationContext).start();
     }
     
     private static Environment getEnvironment() {

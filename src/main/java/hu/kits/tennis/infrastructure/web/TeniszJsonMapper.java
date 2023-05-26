@@ -47,7 +47,13 @@ public class TeniszJsonMapper implements JsonMapper {
         return new JSONObject()
                 .put("id", playerWithUtr.player().id())
                 .put("name", playerWithUtr.player().name())
-                .put("UTR", playerWithUtr.utr());
+                .put("numberOfMatches", playerWithUtr.numberOfMatches())
+                .put("numberOfWins", playerWithUtr.numberOfWins())
+                .put("numberOfTrophies", playerWithUtr.numberOfTrophies())
+                .put("rank", playerWithUtr.rank())
+                .put("UTR", playerWithUtr.utr())
+                .put("utrOneWeekAgo", playerWithUtr.utrOneWeekAgo())
+                .put("utrChange", playerWithUtr.utrChange());
     }
     
     private static JSONObject mapMatchToJson(BookedMatch bookedMatch) {

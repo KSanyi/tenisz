@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.kits.tennis.infrastructure.ApplicationContext;
 import io.javalin.Javalin;
 import io.javalin.core.util.RouteOverviewPlugin;
 import io.javalin.core.validation.JavalinValidation;
@@ -21,11 +22,11 @@ public class HttpServer {
     private final Javalin javalin;
     private final int port;
     
-    public HttpServer(int port) {
+    public HttpServer(int port, ApplicationContext applicationContext) {
         
         this.port = port;
         
-        RestHandlers restHandlers = new RestHandlers();
+        RestHandlers restHandlers = new RestHandlers(applicationContext);
         ApiDocHandler apiDocHandler = new ApiDocHandler();
         
         javalin = Javalin.create(config -> {
@@ -43,8 +44,8 @@ public class HttpServer {
             path("api/matches", () -> {
                 get(restHandlers::listAllMatches);
             });
-            path("api/utr", () -> {
-                get(restHandlers::listAllPlayersWithUtr);
+            path("api/utr-ranking", () -> {
+                get(restHandlers::calculateUTRRanking);
             });
             path("api/utr-csv", () -> {
                 get(restHandlers::listAllPlayersWithUtrInCSV);

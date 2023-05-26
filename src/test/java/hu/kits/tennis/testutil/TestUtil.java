@@ -1,5 +1,7 @@
 package hu.kits.tennis.testutil;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
@@ -75,6 +77,17 @@ public class TestUtil {
     
     public static LocalDate date(String dateString) {
         return LocalDate.parse(dateString);
+    }
+    
+    public static int findFreePort() {
+        try {
+            ServerSocket socket = new ServerSocket(0);
+            int port = socket.getLocalPort();
+            socket.close();
+            return port;
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
     
 }

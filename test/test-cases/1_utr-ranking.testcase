@@ -1,0 +1,30 @@
+Call 1
+description: UTR ranking of all players
+url: <url-base>/api/utr-ranking
+method: GET
+response-status: 200
+response-body:
+[
+{
+    "UTR": "8.11",
+    "utrChange": "0.00",
+    "numberOfWins": 1,
+    "name": "Nagy Róbert",
+    "numberOfTrophies": 0,
+    "rank": 1,
+    "id": 1,
+    "utrOneWeekAgo": "8.11",
+    "numberOfMatches": 1
+  },
+  {
+    "UTR": "6.89",
+    "utrChange": "0.00",
+    "numberOfWins": 0,
+    "name": "Kiss István",
+    "numberOfTrophies": 0,
+    "rank": 2,
+    "id": 2,
+    "utrOneWeekAgo": "6.89",
+    "numberOfMatches": 1
+  }
+]
