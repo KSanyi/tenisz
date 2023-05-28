@@ -1,5 +1,5 @@
 Call 1
-description: UTR ranking of all players
+description: List of all matches
 url: <url-base>/api/matches
 method: GET
 response-status: 200
