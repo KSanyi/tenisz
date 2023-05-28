@@ -10,7 +10,7 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import hu.kits.tennis.domain.utr.BookedMatch;
+import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import io.javalin.plugin.json.JsonMapper;
 
@@ -35,8 +35,8 @@ public class TeniszJsonMapper implements JsonMapper {
             return new JSONObject(jsonEntriesMap);
         } else if(object instanceof PlayerWithUTR playerWithUTR) {
             return mapPlayerWithUTRToJson(playerWithUTR);    
-        } else if(object instanceof BookedMatch bookedMatch) {
-            return mapMatchToJson(bookedMatch);    
+        } else if(object instanceof MatchInfo matchInfo) {
+            return mapMatchToJson(matchInfo);    
         } else {
             return object;
         }
@@ -56,20 +56,27 @@ public class TeniszJsonMapper implements JsonMapper {
                 .put("utrChange", playerWithUtr.utrChange());
     }
     
-    private static JSONObject mapMatchToJson(BookedMatch bookedMatch) {
+    private static JSONObject mapMatchToJson(MatchInfo matchInfo) {
         
         JSONObject jsonObject = new JSONObject()
-                .put("id", bookedMatch.playedMatch().id())
-                .put("date", bookedMatch.playedMatch().date())
-                .put("player1", bookedMatch.playedMatch().player1().name())
-                .put("player2", bookedMatch.playedMatch().player2().name());
+                .put("id", matchInfo.id())
+                .put("date", matchInfo.date())
+                .put("tournamentName", matchInfo.tournamentInfo().name())
+                .put("player1Id", matchInfo.player1().id())
+                .put("player1", matchInfo.player1().name())
+                .put("player1UTR", matchInfo.player1UTR())
+                .put("player2", matchInfo.player2().name())
+                .put("player2Id", matchInfo.player2().id())
+                .put("player2UTR", matchInfo.player2UTR());
         
-        if(bookedMatch.playedMatch().result() != null) {
-            jsonObject = jsonObject.put("result", bookedMatch.playedMatch().result().toString());
-            if(bookedMatch.matchUTRForPlayer1() != null) {
+        if(matchInfo.result() != null) {
+            jsonObject = jsonObject
+                    .put("result", matchInfo.result().toString())
+                    .put("upset", matchInfo.isUpset());
+            if(matchInfo.matchUTRForPlayer1() != null) {
                 jsonObject = jsonObject
-                        .put("matchUTRForPlayer1", bookedMatch.matchUTRForPlayer1().value())
-                        .put("matchUTRForPlayer2", bookedMatch.matchUTRForPlayer2().value());
+                        .put("matchUTRForPlayer1", matchInfo.matchUTRForPlayer1().value())
+                        .put("matchUTRForPlayer2", matchInfo.matchUTRForPlayer2().value());
             }
         }
         

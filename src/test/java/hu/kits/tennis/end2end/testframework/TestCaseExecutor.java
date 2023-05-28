@@ -73,14 +73,15 @@ public class TestCaseExecutor {
         PlayerRepository playerRepository = applicationContext.getPlayerRepository();
         Player player1 = playerRepository.saveNewPlayer(new Player(null, "Nagy Róbert", Contact.EMPTY, UTR.of(8.), Set.of(Organization.KVTK)));
         Player player2 = playerRepository.saveNewPlayer(new Player(null, "Kiss István", Contact.EMPTY, UTR.of(7.), Set.of(Organization.KVTK)));
+        Player player3 = playerRepository.saveNewPlayer(new Player(null, "Tóth Gábor", Contact.EMPTY, UTR.of(7.5), Set.of(Organization.KVTK)));
         
         TournamentService tournamentService = applicationContext.getTournamentService();
-        
         Tournament tournament = tournamentService.createTournament(new TournamentParams(Organization.KVTK, TournamentParams.Type.DAILY, Level.L500, Level.L500, LocalDate.of(2023,3,15), "Napi 500 verseny", "Mini Garros", Structure.SIMPLE_BOARD, 1));
         
         MatchService matchService = applicationContext.getMatchService();
-        
         matchService.saveMatch(new Match(null, tournament.id(), 1, 1, LocalDate.of(2023,3,15), player1, player2, new MatchResult(6, 0)));
+        matchService.saveMatch(new Match(null, tournament.id(), 1, 1, LocalDate.of(2023,3,15), player1, player3, new MatchResult(6, 2)));
+        matchService.saveMatch(new Match(null, tournament.id(), 1, 1, LocalDate.of(2023,3,15), player2, player3, new MatchResult(7, 5)));
         
         applicationContext.getUTRService().recalculateAllUTRs();
     }

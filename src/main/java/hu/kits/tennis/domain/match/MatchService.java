@@ -68,7 +68,7 @@ public class MatchService {
         List<MatchInfo> matchInfos = matches.stream()
                 .filter(bookedMatch -> ! bookedMatch.hasPlayed(Player.BYE))
                 .map(bookedMatch -> toMatchInfo(bookedMatch.swapIfPlayer2Won(), basicTournamentInfoMap))
-                .sorted(Comparator.comparing(MatchInfo::dateForCompare).reversed())
+                .sorted(Comparator.comparing(MatchInfo::dateForCompare).reversed().thenComparing(MatchInfo::id).reversed())
                 .collect(toList());
         
         logger.info("{} matches loaded", matchInfos.size());

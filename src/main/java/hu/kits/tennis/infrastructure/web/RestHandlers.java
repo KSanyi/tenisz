@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import hu.kits.tennis.common.StringUtil;
-import hu.kits.tennis.domain.utr.BookedMatch;
+import hu.kits.tennis.domain.match.MatchInfo;
+import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ApplicationContext;
@@ -15,14 +16,16 @@ import io.javalin.http.Context;
 class RestHandlers {
 
     private final UTRService utrService;
+    private final MatchService matchService;
     
     RestHandlers(ApplicationContext applicationContext) {
         utrService = applicationContext.getUTRService();
+        matchService = applicationContext.getMatchService();
     }
     
     void listAllMatches(Context context) {
-        List<BookedMatch> bookedMatches = utrService.loadBookedMatches();
-        context.json(bookedMatches);
+        List<MatchInfo> allMatches = matchService.loadAllMatches();
+        context.json(allMatches);
     }
     
     void calculateUTRRanking(Context context) {
