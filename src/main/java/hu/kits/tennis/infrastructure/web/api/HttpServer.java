@@ -45,6 +45,9 @@ public class HttpServer {
             path("api/matches", () -> {
                 get(restHandlers::listAllMatches);
             });
+            path("api/tournaments", () -> {
+                get(restHandlers::listAllTournaments);
+            });
             path("api/utr-ranking", () -> {
                 get(restHandlers::calculateUTRRanking);
             });

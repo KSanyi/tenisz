@@ -150,10 +150,11 @@ public class TestCaseExecutor {
     }
     
     private static String normalize(String responseJson) {
+        String commentsRemoved = responseJson.replaceAll("//.*\n", "\n");
         try {
-            return new JSONObject(responseJson).toString(2);
+            return new JSONObject(commentsRemoved).toString(2);
         } catch(Exception ex) {
-            return new JSONArray(responseJson).toString(2);
+            return new JSONArray(commentsRemoved).toString(2);
         }
     }
 

@@ -9,6 +9,8 @@ import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayerRepository;
+import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.utr.PlayerStats;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import hu.kits.tennis.domain.utr.UTRService;
@@ -21,16 +23,23 @@ class RestHandlers {
     private final PlayerRepository playerRepository;
     private final UTRService utrService;
     private final MatchService matchService;
+    private final TournamentService tournamentService;
     
     RestHandlers(ApplicationContext applicationContext) {
         playerRepository = applicationContext.getPlayerRepository();
         utrService = applicationContext.getUTRService();
         matchService = applicationContext.getMatchService();
+        tournamentService = applicationContext.getTournamentService();
     }
     
     void listAllMatches(Context context) {
         List<MatchInfo> allMatches = matchService.loadAllMatches();
         context.json(allMatches);
+    }
+    
+    void listAllTournaments(Context context) {
+        List<TournamentSummary> tournamentSummaries = tournamentService.loadTournamentSummariesList();
+        context.json(tournamentSummaries);
     }
     
     void calculateUTRRanking(Context context) {

@@ -5,15 +5,26 @@ method: GET
 response-status: 200
 response-body:
 {
+  "id": 1,
+  "name": "Nagy Róbert",
+  "utr": "8.20",
   "numberOfTournaments": 1,
+  "numberOfTrophies": 0,
+  "numberOfWins": 2,
+  "winPercentage": 100,
+  "numberOfLosses": 0,
+  "lossPercentage": 0,
+  "numberOfGames": 14,
+  "numberOfGamesWon": 12,
+  "gamesWinPercentage": 85.71,
   "numberOfGamesLost": 2,
+  "gamesLossPercentage": 14.29,
+  "bestUTRMatchId": 1,           // id of the match (from the matches array) that had the best match UTR
+  "worstUTRMatchId": 2,          // id of the match (from the matches array) that was the had the worst match UTR
   "utrHigh": {
     "date": "2023-04-01",
     "utr": 8.2
   },
-  "bestUTRMatchId": 1,
-  "numberOfGamesWon": 12,
-  "gamesLossPercentage": 14.29,
   "matches": [
     {
       "date": "2023-03-15",
@@ -46,8 +57,10 @@ response-body:
       "matchUTRForPlayer2": 6.67
     }
   ],
-  "numberOfGames": 14,
-  "gamesWinPercentage": 85.71,
+  "utrRelevantMatchIds": [  // ids of the matches (from the matches array) that were used for calculting the UTR
+    1,
+    2
+  ],
   "utrHistory": [
     {
       "date": "2023-03-15",
@@ -121,18 +134,5 @@ response-body:
       "date": "2023-04-01",
       "utr": 8.2
     }
-  ],
-  "utrRelevantMatchIds": [
-    1,
-    2
-  ],
-  "utr": "8.20",
-  "numberOfWins": 2,
-  "worstUTRMatchId": 2,
-  "lossPercentage": 0,
-  "name": "Nagy Róbert",
-  "numberOfTrophies": 0,
-  "id": 1,
-  "numberOfLosses": 0,
-  "winPercentage": 100
+  ]
 }

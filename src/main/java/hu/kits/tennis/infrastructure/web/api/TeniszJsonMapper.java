@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.match.MatchInfo;
+import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.utr.PlayerStats;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import hu.kits.tennis.domain.utr.UTR;
@@ -41,13 +42,15 @@ public class TeniszJsonMapper implements JsonMapper {
             return mapPlayerWithUTRToJson(playerWithUTR);    
         } else if(object instanceof MatchInfo matchInfo) {
             return mapMatchToJson(matchInfo);    
+        } else if(object instanceof TournamentSummary tournamentSummary) {
+            return mapTournamentSummaryToJson(tournamentSummary);    
         } else if(object instanceof PlayerStats playerStats) {
             return mapPlayerStatsToJson(playerStats);    
         } else if(object instanceof UTRHistoryEntry utrHistoryEntry) {
             return mapUTRHistoryEntryToJson(utrHistoryEntry);    
         } else if(object instanceof UTR utr) {
             return mapUTRToDouble(utr);    
-        }else {
+        } else {
             return object;
         }
     }
@@ -91,6 +94,17 @@ public class TeniszJsonMapper implements JsonMapper {
         }
         
         return jsonObject;
+    }
+    
+    private static JSONObject mapTournamentSummaryToJson(TournamentSummary tournamentSummary) {
+        return new JSONObject()
+                .put("id", tournamentSummary.id())
+                .put("id", tournamentSummary.id())
+                .put("id", tournamentSummary.id())
+                .put("id", tournamentSummary.id())
+                .put("id", tournamentSummary.id())
+                .put("id", tournamentSummary.id())
+                .put("id", tournamentSummary.id());
     }
     
     private static JSONObject mapPlayerStatsToJson(PlayerStats playerStats) {
