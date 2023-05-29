@@ -2,6 +2,7 @@ package hu.kits.tennis.domain.utr;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
@@ -48,6 +49,10 @@ public class UTRCalculator {
         List<BookedMatch> effectiveMatches = lastRelevantMatches.size() < RELEVANT_MATCH_COUNT ?
             addDummyMatches(player, lastRelevantMatches) : lastRelevantMatches;
         
+        Set<Integer> relevantMatchIds = lastRelevantMatches.stream()
+                .map(b -> b.playedMatch().id())
+                .collect(toSet());
+        
         List<Pair<Double, Integer>> utrWithWeights = effectiveMatches.stream()
                 .map(match -> Pair.of(match.utrOfMatchFor(player).value(),
                                       calculateMatchWeight(match, referenceDate)))
@@ -57,7 +62,7 @@ public class UTRCalculator {
         
         int numberOfWins = (int)allPlayedMatchesForPlayer.stream().filter(b -> b.playedMatch().winner().equals(player)).count();
         
-        return new UTRDetails(new UTR(weightedAverage), effectiveMatches, allPlayedMatchesForPlayer.size(), numberOfWins, numberOfTrophies);
+        return new UTRDetails(new UTR(weightedAverage), relevantMatchIds, allPlayedMatchesForPlayer.size(), numberOfWins, numberOfTrophies);
     }
     
     private static List<BookedMatch> findLastRelevantMatches(List<BookedMatch> allRelevantMatchesForPlayer) {

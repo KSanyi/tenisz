@@ -32,4 +32,8 @@ public class MathUtil {
         
         return Pair.of(round, matchNumberInRound);
     }
+    
+    public static double roundToTwoDigits(double value) {
+        return Math.round(value * 100) / 100.;
+    }
 }

@@ -1,4 +1,4 @@
-package hu.kits.tennis.infrastructure.web;
+package hu.kits.tennis.infrastructure.web.api;
 
 public class Requests {
 

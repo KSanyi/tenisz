@@ -1,7 +1,7 @@
 package hu.kits.tennis.infrastructure.ui.views.utr;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
@@ -23,7 +23,6 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Width;
 import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.match.MatchResult.SetResult;
-import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.Badge;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.css.lumo.BadgeColor;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.css.lumo.BadgeShape;
@@ -38,13 +37,13 @@ public class MatchesGridMobile extends Grid<MatchInfo> {
         setSelectionMode(SelectionMode.NONE);
     }
     
-    public void setBestWorstAndUTRRelevantMatches(MatchInfo bestMatch, MatchInfo worstMatch, Collection<BookedMatch> utrRelevantMatches) {
+    public void setBestWorstAndUTRRelevantMatches(MatchInfo bestMatch, MatchInfo worstMatch, Set<Integer> utrRelevantMatchIds) {
         setClassNameGenerator(match -> {
             if(match.equals(bestMatch)) {
                 return "green";
             } else if(match.equals(worstMatch)) {
                 return "red";
-            } else if(utrRelevantMatches.stream().noneMatch(relevantMatch -> relevantMatch.playedMatch().id().equals(match.id()))) {
+            } else if(!utrRelevantMatchIds.contains(match.id())) {
                 return "grey";
             } else {
                 return "";

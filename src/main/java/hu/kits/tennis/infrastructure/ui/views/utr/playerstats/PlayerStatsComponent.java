@@ -10,8 +10,8 @@ import hu.kits.tennis.Main;
 import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.utr.PlayerStats;
+import hu.kits.tennis.domain.utr.UTRHistory.UTRHistoryEntry;
 import hu.kits.tennis.domain.utr.UTRService;
-import hu.kits.tennis.domain.utr.UTRWithDate;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 import hu.kits.tennis.infrastructure.ui.views.utr.MatchesGrid;
 
@@ -60,12 +60,8 @@ public class PlayerStatsComponent extends VerticalLayout {
         
         nameLabel.setText(playerStats.player().name() + " UTR: " + playerStats.utrDetails().utr());
         
-        if(playerStats.utrHigh().isPresent()) {
-            UTRWithDate utrHigh = playerStats.utrHigh().get();
-            utrHighLabel.setText(String.format("UTR csúcs: %s (%s)", utrHigh.utr(), Formatters.formatDate(utrHigh.date())));
-        } else {
-            utrHighLabel.setText("");
-        }
+        UTRHistoryEntry utrHigh = playerStats.utrHigh();
+        utrHighLabel.setText(String.format("UTR csúcs: %s (%s)", utrHigh.utr(), Formatters.formatDate(utrHigh.date())));
         
         matchStatsLabel.setText(String.format("%d mérkőzés: %d győzelem (%s) %d vereség (%s)", playerStats.numberOfMatches(),
                 playerStats.numberOfWins(), Formatters.formatPercent(playerStats.winPercentage()),
@@ -78,7 +74,7 @@ public class PlayerStatsComponent extends VerticalLayout {
         tournamentMatchesComponent.setMatches(playerStats.matches());
         matchesGrid.setItems(playerStats.matches());
         matchesGrid.hidePlayer2UtrColumn();
-        matchesGrid.setBestWorstAndUTRRelevantMatches(playerStats.bestUTRMatch().orElse(null), playerStats.worstUTRMatch().orElse(null), playerStats.utrDetails().relevantMatches());
+        matchesGrid.setBestWorstAndUTRRelevantMatches(playerStats.bestUTRMatch(), playerStats.worstUTRMatch(), playerStats.utrDetails().relevantMatchIds());
         
         utrHistoryChartHolder.removeAll();
         UTRHistoryChart chart = new UTRHistoryChart(playerStats.utrHistory());

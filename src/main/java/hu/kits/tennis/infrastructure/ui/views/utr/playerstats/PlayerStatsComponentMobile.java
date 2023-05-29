@@ -57,7 +57,7 @@ class PlayerStatsComponentMobile extends VerticalLayout {
         utrBadge.setText("UTR: " + playerStats.utrDetails().utr().toString());
         
         matchesGrid.setItems(playerStats.matches());
-        matchesGrid.setBestWorstAndUTRRelevantMatches(playerStats.bestUTRMatch().orElse(null), playerStats.worstUTRMatch().orElse(null), playerStats.utrDetails().relevantMatches());
+        matchesGrid.setBestWorstAndUTRRelevantMatches(playerStats.bestUTRMatch(), playerStats.worstUTRMatch(), playerStats.utrDetails().relevantMatchIds());
         
         setUTRHistoryChart(playerStats.utrHistory());
     }

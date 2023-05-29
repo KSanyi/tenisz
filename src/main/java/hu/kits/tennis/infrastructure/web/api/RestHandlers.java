@@ -1,4 +1,4 @@
-package hu.kits.tennis.infrastructure.web;
+package hu.kits.tennis.infrastructure.web.api;
 
 import java.util.Arrays;
 import java.util.List;
@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 import hu.kits.tennis.common.StringUtil;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.match.MatchService;
+import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayerRepository;
+import hu.kits.tennis.domain.utr.PlayerStats;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ApplicationContext;
@@ -15,10 +18,12 @@ import io.javalin.http.Context;
 
 class RestHandlers {
 
+    private final PlayerRepository playerRepository;
     private final UTRService utrService;
     private final MatchService matchService;
     
     RestHandlers(ApplicationContext applicationContext) {
+        playerRepository = applicationContext.getPlayerRepository();
         utrService = applicationContext.getUTRService();
         matchService = applicationContext.getMatchService();
     }
@@ -31,6 +36,13 @@ class RestHandlers {
     void calculateUTRRanking(Context context) {
         List<PlayerWithUTR> utrRanking = utrService.calculateUTRRanking(true);
         context.json(utrRanking);
+    }
+    
+    void playerStats(Context context) {
+        int playerId = Integer.parseInt(context.pathParam("playerId"));
+        Player player = playerRepository.findPlayer(playerId).get();
+        PlayerStats playerStats = utrService.loadPlayerStats(player);
+        context.json(playerStats);
     }
     
     void listAllPlayersWithUtrInCSV(Context context) {

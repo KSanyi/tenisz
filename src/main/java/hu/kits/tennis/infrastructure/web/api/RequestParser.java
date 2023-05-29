@@ -1,9 +1,9 @@
-package hu.kits.tennis.infrastructure.web;
+package hu.kits.tennis.infrastructure.web.api;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import hu.kits.tennis.infrastructure.web.Requests.PlayerCreationRequest;
+import hu.kits.tennis.infrastructure.web.api.Requests.PlayerCreationRequest;
 
 public class RequestParser {
 

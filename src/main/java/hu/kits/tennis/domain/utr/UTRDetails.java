@@ -1,7 +1,11 @@
 package hu.kits.tennis.domain.utr;
 
-import java.util.Collection;
+import java.util.Set;
 
-public record UTRDetails(UTR utr, Collection<BookedMatch> relevantMatches, int numberOfMatches, int numberOfWins, int numberOfTrophies) {
+public record UTRDetails(UTR utr,
+        Set<Integer> relevantMatchIds,
+        int numberOfMatches, 
+        int numberOfWins, 
+        int numberOfTrophies) {
 
 }

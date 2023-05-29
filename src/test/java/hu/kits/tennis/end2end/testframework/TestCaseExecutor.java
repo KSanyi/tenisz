@@ -13,6 +13,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -43,7 +44,7 @@ import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ApplicationContext;
-import hu.kits.tennis.infrastructure.web.HttpServer;
+import hu.kits.tennis.infrastructure.web.api.HttpServer;
 import hu.kits.tennis.testutil.FakeInvoiceService;
 import hu.kits.tennis.testutil.InMemoryDataSourceFactory;
 import hu.kits.tennis.testutil.SpyEmailSender;
@@ -84,6 +85,8 @@ public class TestCaseExecutor {
         matchService.saveMatch(new Match(null, tournament.id(), 1, 1, LocalDate.of(2023,3,15), player2, player3, new MatchResult(7, 5)));
         
         applicationContext.getUTRService().recalculateAllUTRs();
+        
+        Clock.setStaticTime(LocalDateTime.of(2023,4,1, 10,0));
     }
 
     @AfterEach

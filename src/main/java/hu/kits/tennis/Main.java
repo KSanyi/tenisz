@@ -20,7 +20,7 @@ import hu.kits.tennis.domain.invoice.InvoiceService;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 import hu.kits.tennis.infrastructure.email.SendGridEmailSender;
 import hu.kits.tennis.infrastructure.invoice.BillingoInvoiceService;
-import hu.kits.tennis.infrastructure.web.HttpServer;
+import hu.kits.tennis.infrastructure.web.api.HttpServer;
 
 public class Main {
 

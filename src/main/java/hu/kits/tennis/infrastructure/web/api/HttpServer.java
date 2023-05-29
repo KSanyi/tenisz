@@ -1,4 +1,4 @@
-package hu.kits.tennis.infrastructure.web;
+package hu.kits.tennis.infrastructure.web.api;
 
 import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.path;
@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.infrastructure.ApplicationContext;
+import hu.kits.tennis.infrastructure.web.VaadinJettyServer;
 import io.javalin.Javalin;
 import io.javalin.core.util.RouteOverviewPlugin;
 import io.javalin.core.validation.JavalinValidation;
@@ -49,6 +50,9 @@ public class HttpServer {
             });
             path("api/utr-csv", () -> {
                 get(restHandlers::listAllPlayersWithUtrInCSV);
+            });
+            path("api/player-stats/{playerId}", () -> {
+                get(restHandlers::playerStats);
             });
             path("", () -> {
                 get(restHandlers::redirectToVaadin);

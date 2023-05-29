@@ -2,11 +2,11 @@ package hu.kits.tennis.domain.utr;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 import hu.kits.tennis.common.Clock;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.utr.UTRHistory.UTRHistoryEntry;
 
 public record PlayerStats(Player player,
         List<MatchInfo> matches,
@@ -22,9 +22,9 @@ public record PlayerStats(Player player,
         double gamesWinPercentage,
         int numberOfGamesLost,
         double gamesLossPercentage,
-        Optional<UTRWithDate> utrHigh,
-        Optional<MatchInfo> bestUTRMatch,
-        Optional<MatchInfo> worstUTRMatch,
+        UTRHistoryEntry utrHigh,
+        MatchInfo bestUTRMatch,
+        MatchInfo worstUTRMatch,
         UTRHistory utrHistory
         ) {
 
@@ -44,15 +44,17 @@ public record PlayerStats(Player player,
         double gamesWinPercentage = sumGamesPlayed > 0 ? (double)numberOfGamesWon / sumGamesPlayed : 0;
         double gamesLossPercentage = sumGamesPlayed > 0 ? (double)numberOfGamesLost / sumGamesPlayed : 0;
         
-        Optional<MatchInfo> bestUTRMatch = matchInfos.stream()
+        MatchInfo bestUTRMatch = matchInfos.stream()
                 .filter(match -> match.matchUTRForPlayer1().isDefinded())
-                .max(Comparator.comparing(MatchInfo::matchUTRForPlayer1));
+                .max(Comparator.comparing(MatchInfo::matchUTRForPlayer1))
+                .get();
         
-        Optional<MatchInfo> worstUTRMatch = matchInfos.stream()
+        MatchInfo worstUTRMatch = matchInfos.stream()
                 .filter(match -> match.matchUTRForPlayer1().isDefinded())
-                .min(Comparator.comparing(MatchInfo::matchUTRForPlayer1));
+                .min(Comparator.comparing(MatchInfo::matchUTRForPlayer1))
+                .get();
         
-        Optional<UTRWithDate> utrHigh = findUTRHeight(utrDetails.utr(), matchInfos);
+        UTRHistoryEntry utrHigh = findUTRHeight(utrDetails.utr(), matchInfos);
         
         return new PlayerStats(player,
                 matchInfos,
@@ -73,13 +75,15 @@ public record PlayerStats(Player player,
                 utrHistory);
     }
     
-    private static Optional<UTRWithDate> findUTRHeight(UTR currentUTR, List<MatchInfo> matchInfos) {
+    private static UTRHistoryEntry findUTRHeight(UTR currentUTR, List<MatchInfo> matchInfos) {
         
-        Optional<UTRWithDate> utrHeight = matchInfos.stream().max(Comparator.comparing(match -> match.player1UTR()))
-                .map(m -> new UTRWithDate(m.player1UTR(), m.date()));
+        UTRHistoryEntry utrHeight = matchInfos.stream()
+                .max(Comparator.comparing(match -> match.player1UTR()))
+                .map(m -> new UTRHistoryEntry(m.date(), m.player1UTR()))
+                .get();
         
-        if(utrHeight.isPresent() && currentUTR.compareTo(utrHeight.get().utr()) > 0) {
-            return Optional.of(new UTRWithDate(currentUTR, Clock.today()));
+        if(currentUTR.compareTo(utrHeight.utr()) > 0) {
+            return new UTRHistoryEntry(Clock.today(), currentUTR);
         } else {
             return utrHeight;
         }
