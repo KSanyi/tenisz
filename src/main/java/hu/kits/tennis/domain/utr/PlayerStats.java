@@ -34,15 +34,15 @@ public record PlayerStats(Player player,
         int numberOfMatches = matchInfos.size();
         int numberOfWins = (int)matchInfos.stream().filter(match -> match.result().isPlayer1Winner()).count();
         int numberOfLosses = (int)matchInfos.stream().filter(match -> match.result().isPlayer2Winner()).count();
-        double winPercentage = numberOfMatches > 0 ? (double)numberOfWins / numberOfMatches : 0;
-        double lossPercentage = numberOfMatches > 0 ? (double)numberOfLosses / numberOfMatches : 0;
+        double winPercentage = calculatePercentage(numberOfWins, numberOfMatches);
+        double lossPercentage = calculatePercentage(numberOfLosses, numberOfMatches);
         
         int numberOfGamesWon = matchInfos.stream().mapToInt(match -> match.result().sumPlayer1Games()).sum();
         int numberOfGamesLost = matchInfos.stream().mapToInt(match -> match.result().sumPlayer2Games()).sum();
         int numberOfGames = numberOfGamesWon + numberOfGamesLost;
         int sumGamesPlayed = numberOfGamesWon + numberOfGamesLost;
-        double gamesWinPercentage = sumGamesPlayed > 0 ? (double)numberOfGamesWon / sumGamesPlayed : 0;
-        double gamesLossPercentage = sumGamesPlayed > 0 ? (double)numberOfGamesLost / sumGamesPlayed : 0;
+        double gamesWinPercentage = calculatePercentage(numberOfGamesWon, sumGamesPlayed);
+        double gamesLossPercentage = calculatePercentage(numberOfGamesLost, sumGamesPlayed);
         
         MatchInfo bestUTRMatch = matchInfos.stream()
                 .filter(match -> match.matchUTRForPlayer1().isDefinded())
@@ -74,6 +74,11 @@ public record PlayerStats(Player player,
                 bestUTRMatch, worstUTRMatch,
                 utrHistory);
     }
+    
+    private static double calculatePercentage(double x, double n) {
+        return n > 0 ? 100 * x / n : 0;
+    }
+    
     
     private static UTRHistoryEntry findUTRHeight(UTR currentUTR, List<MatchInfo> matchInfos) {
         

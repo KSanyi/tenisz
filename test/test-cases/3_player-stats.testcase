@@ -13,7 +13,7 @@ response-body:
   },
   "bestUTRMatchId": 1,
   "numberOfGamesWon": 12,
-  "gamesLossPercentage": 0.14,
+  "gamesLossPercentage": 14.29,
   "matches": [
     {
       "date": "2023-03-15",
@@ -47,7 +47,7 @@ response-body:
     }
   ],
   "numberOfGames": 14,
-  "gamesWinPercentage": 0.86,
+  "gamesWinPercentage": 85.71,
   "utrHistory": [
     {
       "date": "2023-03-15",
@@ -134,5 +134,5 @@ response-body:
   "numberOfTrophies": 0,
   "id": 1,
   "numberOfLosses": 0,
-  "winPercentage": 1
+  "winPercentage": 100
 }

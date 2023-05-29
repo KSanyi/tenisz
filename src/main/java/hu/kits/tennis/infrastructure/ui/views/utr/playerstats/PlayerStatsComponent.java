@@ -64,12 +64,12 @@ public class PlayerStatsComponent extends VerticalLayout {
         utrHighLabel.setText(String.format("UTR csúcs: %s (%s)", utrHigh.utr(), Formatters.formatDate(utrHigh.date())));
         
         matchStatsLabel.setText(String.format("%d mérkőzés: %d győzelem (%s) %d vereség (%s)", playerStats.numberOfMatches(),
-                playerStats.numberOfWins(), Formatters.formatPercent(playerStats.winPercentage()),
-                playerStats.numberOfLosses(), Formatters.formatPercent(playerStats.lossPercentage())));
+                playerStats.numberOfWins(), Formatters.formatPercent(playerStats.winPercentage() / 100),
+                playerStats.numberOfLosses(), Formatters.formatPercent(playerStats.lossPercentage() / 100)));
         
         gameStatsLabel.setText(String.format("%d game: %d nyert (%s) %d elvesztett (%s)", playerStats.numberOfGames(),
-                playerStats.numberOfGamesWon(), Formatters.formatPercent(playerStats.gamesWinPercentage()),
-                playerStats.numberOfGamesLost(), Formatters.formatPercent(playerStats.gamesLossPercentage())));
+                playerStats.numberOfGamesWon(), Formatters.formatPercent(playerStats.gamesWinPercentage() / 100),
+                playerStats.numberOfGamesLost(), Formatters.formatPercent(playerStats.gamesLossPercentage() / 100)));
         
         tournamentMatchesComponent.setMatches(playerStats.matches());
         matchesGrid.setItems(playerStats.matches());
