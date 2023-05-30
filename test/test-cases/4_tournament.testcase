@@ -1,5 +1,5 @@
 Call 1
-description: UTR ranking of all players
+description: Tournament test cases
 url: <url-base>/api/tournaments
 method: GET
 response-status: 200
