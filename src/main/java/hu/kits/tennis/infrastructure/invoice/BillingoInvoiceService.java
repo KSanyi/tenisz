@@ -1,5 +1,6 @@
 package hu.kits.tennis.infrastructure.invoice;
 
+import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -7,11 +8,17 @@ import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonWriter;
+import javax.json.JsonWriterFactory;
+import javax.json.stream.JsonGenerator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,6 +106,8 @@ public class BillingoInvoiceService implements InvoiceService {
     }
     
     private static List<String> parseEmails(String body) {
+        throw new RuntimeException("TODO implement");
+        /*
         JSONObject jsonObject = new JSONObject(body);
         List<String> emails = new ArrayList<>();
         for(Object object : jsonObject.getJSONArray("data")) {
@@ -110,25 +119,33 @@ public class BillingoInvoiceService implements InvoiceService {
             }
         }
         return emails;
+        */
     }
 
     private static String createPartnerJson(Player player) {
         
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name", player.name());
-        JSONArray emailsJsonArray = new JSONArray();
-        emailsJsonArray.put(player.contact().email());
-        jsonObject.put("emails", emailsJsonArray);
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder()
+            .add("name", player.name());
         
-        JSONObject addressJsonObject = new JSONObject();
-        addressJsonObject.put("country_code", "HU");
-        addressJsonObject.put("post_code", player.contact().address().zip());
-        addressJsonObject.put("city", player.contact().address().town());
-        addressJsonObject.put("address", player.contact().address().streetAddress());
+        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+        jsonArrayBuilder.add(player.contact().email());
+        jsonObjectBuilder.add("emails", jsonArrayBuilder.build());
         
-        jsonObject.put("address", addressJsonObject);
+        JsonObject addressJsonObject = Json.createObjectBuilder()
+                .add("country_code", "HU")
+                .add("post_code", player.contact().address().zip())
+                .add("city", player.contact().address().town())
+                .add("address", player.contact().address().streetAddress())
+                .build();
         
-        return jsonObject.toString(2);
+        jsonObjectBuilder.add("address", addressJsonObject);
+        
+        JsonWriterFactory jwf = Json.createWriterFactory(Map.of(JsonGenerator.PRETTY_PRINTING, true));
+        StringWriter sw = new StringWriter();
+        try (JsonWriter jsonWriter = jwf.createWriter(sw)) {
+            jsonWriter.write(jsonObjectBuilder.build());
+            return sw.toString();
+        }
     }
     
 }

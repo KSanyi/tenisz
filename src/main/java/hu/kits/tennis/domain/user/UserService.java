@@ -1,12 +1,16 @@
 package hu.kits.tennis.domain.user;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-import org.json.JSONObject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -237,7 +241,8 @@ public class UserService {
             try (Response oAuthResponse = oAuthService.execute(oAuthRequest)) {
                 if(oAuthResponse.getCode() == 200) {
                     logger.debug("Response code: 200, parsing body");
-                    JSONObject jsonObject = new JSONObject(oAuthResponse.getBody());
+                    JsonReader jsonReader = Json.createReader(new StringReader(oAuthResponse.getBody()));
+                    JsonObject jsonObject = jsonReader.readObject();        
                     String email = jsonObject.getString("email");
                     logger.info("Email found in response: {}", email);
                     Optional<UserData> user = userRepository.findUserByEmail(email);
