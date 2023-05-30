@@ -5,12 +5,13 @@ method: GET
 response-status: 200
 response-body:
 
+
 {
     "player": {
         "id": 1,
         "name": "Nagy Róbert"
     },
-    "utr": 8.2,
+    "utr": 8.15,
     "numberOfTournaments": 1,
     "numberOfTrophies": 0,
     "numberOfWins": 2,
@@ -62,12 +63,12 @@ response-body:
             "matchUTRForPlayer2": 6.67
         }
     ],
-    "utrRelevantMatchIds": [            // ids of the matches (from the matches array) that were used for calculating the UTR
+    "utrRelevantMatchIds": [
         1,
         2
     ],
-    "bestUTRMatchId": 1,                // id of the match (from the matches array) that had the best match UTR
-    "worstUTRMatchId": 2,               // id of the match (from the matches array) that had the worst match UTR
+    "bestUTRMatchId": 1,
+    "worstUTRMatchId": 2,
     "utrHistory": [
         {
             "date": "2023-03-15",
@@ -75,75 +76,75 @@ response-body:
         },
         {
             "date": "2023-03-16",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-17",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-18",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-19",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-20",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-21",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-22",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-23",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-24",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-25",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-26",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-27",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-28",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-29",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-30",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-03-31",
-            "utr": 8.2
+            "utr": 8.15
         },
         {
             "date": "2023-04-01",
-            "utr": 8.2
+            "utr": 8.15
         }
     ],
     "utrHigh": {
         "date": "2023-04-01",
-        "utr": 8.2
+        "utr": 8.15
     }
 }

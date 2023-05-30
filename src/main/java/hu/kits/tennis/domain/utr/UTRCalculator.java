@@ -25,7 +25,7 @@ public class UTRCalculator {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private static final int RELEVANT_MATCH_COUNT = 14;
+    private static final int RELEVANT_MATCH_COUNT = 25;
     
     public static UTRDetails calculatePlayersUTRDetails(Player player, List<BookedMatch> allBookedMatches, LocalDate referenceDate, int numberOfTrophies) {
         
@@ -87,7 +87,7 @@ public class UTRCalculator {
             return matches;
         }
         
-        int dummyMatchCount = RELEVANT_MATCH_COUNT - matches.size() - 4;
+        int dummyMatchCount = (int)Math.max(Math.round(RELEVANT_MATCH_COUNT * 0.5) - matches.size(), 0);
         
         UTR utr = player.startingUTR();
         List<BookedMatch> extendedMatches = new ArrayList<>(matches);

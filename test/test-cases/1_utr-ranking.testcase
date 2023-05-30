@@ -5,6 +5,7 @@ method: GET
 response-status: 200
 response-body:
 
+
 [
     {
         "player": {
@@ -15,8 +16,8 @@ response-body:
         "numberOfWins": 2,
         "numberOfTrophies": 0,
         "rank": 1,
-        "utr": 8.2,
-        "utrOneWeekAgo": 8.2,
+        "utr": 8.15,
+        "utrOneWeekAgo": 8.15,
         "utrChange": 0.0
     },
     {
@@ -28,8 +29,8 @@ response-body:
         "numberOfWins": 0,
         "numberOfTrophies": 0,
         "rank": 2,
-        "utr": 7.29,
-        "utrOneWeekAgo": 7.29,
+        "utr": 7.34,
+        "utrOneWeekAgo": 7.34,
         "utrChange": 0.0
     },
     {
