@@ -1,14 +1,12 @@
 package hu.kits.tennis.infrastructure.ui.views.utr;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -16,7 +14,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.LitRenderer;
 
 import hu.kits.tennis.common.Formatters;
@@ -90,8 +87,6 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setFlexGrow(0);
         
         setHeightFull();
-        
-        sort(List.of(new GridSortOrder<>(getColumnByKey("date"), SortDirection.DESCENDING)));
     }
     
     private static String displayUTR(UTR utr) {
