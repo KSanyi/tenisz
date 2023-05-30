@@ -1,17 +1,16 @@
 package hu.kits.tennis.infrastructure.web.api;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 
 import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.match.MatchInfo;
+import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.utr.PlayerStats;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
@@ -26,18 +25,15 @@ public class TeniszJsonMapper implements JsonMapper {
         return mapToJson(object).toString();
     }
     
-    private static Object mapToJson(Object object) {
+    private static JsonValue mapToJson(Object object) {
         
         if(object instanceof Collection) {
-            Collection<?> collection = (Collection<?>)object; 
-            return new JSONArray(collection.stream().map(TeniszJsonMapper::mapToJson).collect(toList()));
-        } else if(object instanceof Map) {
-            Map<?, ?> map = (Map<?, ?>)object;
-            Map<?, ?> jsonEntriesMap = map.entrySet().stream().collect(toMap(
-                    e -> e.getKey().toString(),
-                    e -> TeniszJsonMapper.mapToJson(e.getValue()),
-                    (a, b) -> a, LinkedHashMap::new));
-            return new JSONObject(jsonEntriesMap);
+            Collection<?> collection = (Collection<?>)object;
+            JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+            collection.stream().map(TeniszJsonMapper::mapToJson).forEach(jsonArrayBuilder::add);
+            return jsonArrayBuilder.build();
+        } else if(object instanceof Player player) {
+            return mapPlayerToJson(player);    
         } else if(object instanceof PlayerWithUTR playerWithUTR) {
             return mapPlayerWithUTRToJson(playerWithUTR);    
         } else if(object instanceof MatchInfo matchInfo) {
@@ -48,94 +44,113 @@ public class TeniszJsonMapper implements JsonMapper {
             return mapPlayerStatsToJson(playerStats);    
         } else if(object instanceof UTRHistoryEntry utrHistoryEntry) {
             return mapUTRHistoryEntryToJson(utrHistoryEntry);    
-        } else if(object instanceof UTR utr) {
-            return mapUTRToDouble(utr);    
+        } else if(object instanceof String string) {
+            return Json.createValue(string);
+        } else if(object instanceof Double number) {
+            return Json.createValue(number);
+        } else if(object instanceof Integer number) {
+            return Json.createValue(number);
         } else {
-            return object;
+            throw new IllegalArgumentException("Can not convert " + object.getClass() + " to JsonValue");
         }
     }
     
-    private static JSONObject mapPlayerWithUTRToJson(PlayerWithUTR playerWithUtr) {
+    private static JsonObject mapPlayerToJson(Player player) {
         
-        return new JSONObject()
-                .put("id", playerWithUtr.player().id())
-                .put("name", playerWithUtr.player().name())
-                .put("numberOfMatches", playerWithUtr.numberOfMatches())
-                .put("numberOfWins", playerWithUtr.numberOfWins())
-                .put("numberOfTrophies", playerWithUtr.numberOfTrophies())
-                .put("rank", playerWithUtr.rank())
-                .put("utr", mapUTRToDouble(playerWithUtr.utr()))
-                .put("utrOneWeekAgo", mapUTRToDouble(playerWithUtr.utrOneWeekAgo()))
-                .put("utrChange", mapUTRToDouble(playerWithUtr.utrChange()));
+        if(player == null) {
+            return JsonObject.EMPTY_JSON_OBJECT;
+        } else {
+            return Json.createObjectBuilder()
+                    .add("id", player.id())
+                    .add("name", player.name())
+                    .build();
+        }
+    }
+
+    private static JsonObject mapPlayerWithUTRToJson(PlayerWithUTR playerWithUtr) {
+        
+        return Json.createObjectBuilder()
+                .add("player", mapPlayerToJson(playerWithUtr.player()))
+                .add("numberOfMatches", playerWithUtr.numberOfMatches())
+                .add("numberOfWins", playerWithUtr.numberOfWins())
+                .add("numberOfTrophies", playerWithUtr.numberOfTrophies())
+                .add("rank", playerWithUtr.rank())
+                .add("utr", mapUTRToDouble(playerWithUtr.utr()))
+                .add("utrOneWeekAgo", mapUTRToDouble(playerWithUtr.utrOneWeekAgo()))
+                .add("utrChange", mapUTRToDouble(playerWithUtr.utrChange()))
+                .build();
     }
     
-    private static JSONObject mapMatchToJson(MatchInfo matchInfo) {
+    private static JsonObject mapMatchToJson(MatchInfo matchInfo) {
         
-        JSONObject jsonObject = new JSONObject()
-                .put("id", matchInfo.id())
-                .put("date", matchInfo.date())
-                .put("tournamentName", matchInfo.tournamentInfo().name())
-                .put("player1Id", matchInfo.player1().id())
-                .put("player1", matchInfo.player1().name())
-                .put("player1UTR", mapUTRToDouble(matchInfo.player1UTR()))
-                .put("player2", matchInfo.player2().name())
-                .put("player2Id", matchInfo.player2().id())
-                .put("player2UTR", mapUTRToDouble(matchInfo.player2UTR()));
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder()
+                .add("id", matchInfo.id())
+                .add("date", matchInfo.date().toString())
+                .add("tournamentName", matchInfo.tournamentInfo().name())
+                .add("player1", mapPlayerToJson(matchInfo.player1()))
+                .add("player1UTR", mapUTRToDouble(matchInfo.player1UTR()))
+                .add("player2", mapPlayerToJson(matchInfo.player2()))
+                .add("player2UTR", mapUTRToDouble(matchInfo.player2UTR()));
         
         if(matchInfo.result() != null) {
-            jsonObject = jsonObject
-                    .put("result", matchInfo.result().toString())
-                    .put("upset", matchInfo.isUpset());
+            jsonObjectBuilder = jsonObjectBuilder
+                    .add("result", matchInfo.result().toString())
+                    .add("upset", matchInfo.isUpset());
             if(matchInfo.matchUTRForPlayer1() != null) {
-                jsonObject = jsonObject
-                        .put("matchUTRForPlayer1", mapUTRToDouble(matchInfo.matchUTRForPlayer1()))
-                        .put("matchUTRForPlayer2", mapUTRToDouble(matchInfo.matchUTRForPlayer2()));
+                jsonObjectBuilder = jsonObjectBuilder
+                        .add("matchUTRForPlayer1", mapUTRToDouble(matchInfo.matchUTRForPlayer1()))
+                        .add("matchUTRForPlayer2", mapUTRToDouble(matchInfo.matchUTRForPlayer2()));
             }
         }
         
-        return jsonObject;
+        return jsonObjectBuilder.build();
     }
     
-    private static JSONObject mapTournamentSummaryToJson(TournamentSummary tournamentSummary) {
-        return new JSONObject()
-                .put("id", tournamentSummary.id())
-                .put("id", tournamentSummary.id())
-                .put("id", tournamentSummary.id())
-                .put("id", tournamentSummary.id())
-                .put("id", tournamentSummary.id())
-                .put("id", tournamentSummary.id())
-                .put("id", tournamentSummary.id());
+    private static JsonObject mapTournamentSummaryToJson(TournamentSummary tournamentSummary) {
+        return Json.createObjectBuilder()
+                .add("id", tournamentSummary.id())
+                .add("name", tournamentSummary.name())
+                .add("date", tournamentSummary.date().toString())
+                .add("levelFrom", tournamentSummary.levelFrom().name())
+                .add("levelTo", tournamentSummary.levelTo().name())
+                .add("status", tournamentSummary.status().name())
+                .add("type", tournamentSummary.type().name())
+                .add("winner", mapPlayerToJson(tournamentSummary.winner()))
+                .add("numberOfPlayers", tournamentSummary.numberOfPlayers())
+                .add("numberOfMatchesPlayed", tournamentSummary.numberOfMatchesPlayed())
+                .build();
     }
     
-    private static JSONObject mapPlayerStatsToJson(PlayerStats playerStats) {
+    private static JsonObject mapPlayerStatsToJson(PlayerStats playerStats) {
         
-        return new JSONObject()
-                .put("id", playerStats.player().id())
-                .put("name", playerStats.player().name())
-                .put("utr", playerStats.utrDetails().utr())
-                .put("utrRelevantMatchIds", mapToJson(playerStats.utrDetails().relevantMatchIds()))
-                .put("matches", mapToJson(playerStats.matches()))
-                .put("numberOfTournaments", playerStats.numberOfTournaments())
-                .put("numberOfTrophies", playerStats.utrDetails().numberOfTrophies())
-                .put("numberOfWins", playerStats.numberOfWins())
-                .put("winPercentage", MathUtil.roundToTwoDigits(playerStats.winPercentage()))
-                .put("numberOfLosses", playerStats.numberOfLosses())
-                .put("lossPercentage", MathUtil.roundToTwoDigits(playerStats.lossPercentage()))
-                .put("numberOfGames", playerStats.numberOfGames())
-                .put("numberOfGamesWon", playerStats.numberOfGamesWon())
-                .put("gamesWinPercentage", MathUtil.roundToTwoDigits(playerStats.gamesWinPercentage()))
-                .put("numberOfGamesLost", playerStats.numberOfGamesLost())
-                .put("gamesLossPercentage", MathUtil.roundToTwoDigits(playerStats.gamesLossPercentage()))
-                .put("utrHigh", mapToJson(playerStats.utrHigh()))
-                .put("bestUTRMatchId", playerStats.bestUTRMatch().id())
-                .put("worstUTRMatchId", playerStats.worstUTRMatch().id())
-                .put("utrHistory", mapToJson(playerStats.utrHistory().entries()));
+        return Json.createObjectBuilder()
+                .add("player", mapPlayerToJson(playerStats.player()))
+                .add("utr", mapUTRToDouble(playerStats.utrDetails().utr()))
+                .add("numberOfTournaments", playerStats.numberOfTournaments())
+                .add("numberOfTrophies", playerStats.utrDetails().numberOfTrophies())
+                .add("numberOfWins", playerStats.numberOfWins())
+                .add("winPercentage", MathUtil.roundToTwoDigits(playerStats.winPercentage()))
+                .add("numberOfLosses", playerStats.numberOfLosses())
+                .add("lossPercentage", MathUtil.roundToTwoDigits(playerStats.lossPercentage()))
+                .add("numberOfGames", playerStats.numberOfGames())
+                .add("numberOfGamesWon", playerStats.numberOfGamesWon())
+                .add("gamesWinPercentage", MathUtil.roundToTwoDigits(playerStats.gamesWinPercentage()))
+                .add("numberOfGamesLost", playerStats.numberOfGamesLost())
+                .add("gamesLossPercentage", MathUtil.roundToTwoDigits(playerStats.gamesLossPercentage()))
+                .add("matches", mapToJson(playerStats.matches()))
+                .add("utrRelevantMatchIds", mapToJson(playerStats.utrDetails().relevantMatchIds()))
+                .add("bestUTRMatchId", playerStats.bestUTRMatch().id())
+                .add("worstUTRMatchId", playerStats.worstUTRMatch().id())
+                .add("utrHistory", mapToJson(playerStats.utrHistory().entries()))
+                .add("utrHigh", mapToJson(playerStats.utrHigh()))
+                .build();
     }
     
-    private static JSONObject mapUTRHistoryEntryToJson(UTRHistoryEntry utrHistoryEntry) {
-        return new JSONObject()
-                .put("date", utrHistoryEntry.date())
-                .put("utr", mapUTRToDouble(utrHistoryEntry.utr()));
+    private static JsonObject mapUTRHistoryEntryToJson(UTRHistoryEntry utrHistoryEntry) {
+        return Json.createObjectBuilder()
+                .add("date", utrHistoryEntry.date().toString())
+                .add("utr", mapUTRToDouble(utrHistoryEntry.utr()))
+                .build();
     }
     
     private static double mapUTRToDouble(UTR utr) {

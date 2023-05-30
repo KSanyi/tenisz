@@ -1,0 +1,21 @@
+Call 1
+description: UTR ranking of all players
+url: <url-base>/api/tournaments
+method: GET
+response-status: 200
+response-body:
+[
+    {
+        "id": "23c60001",
+        "name": "Napi 500 verseny",
+        "date": "2023-03-15",
+        "levelFrom": "L500",        // L90, L125, L250, L375, L500, L625, L750, L875, L1000
+        "levelTo": "L500",          // L90, L125, L250, L375, L500, L625, L750, L875, L1000
+        "status": "DRAFT",          // DRAFT, LIVE, COMPLETED
+        "type": "DAILY",            // DAILY, TOUR
+        "winner": {
+        },
+        "numberOfPlayers": 0,
+        "numberOfMatchesPlayed": 3
+    }
+]

@@ -4,38 +4,45 @@ url: <url-base>/api/utr-ranking
 method: GET
 response-status: 200
 response-body:
+
 [
-  {
-    "utr": 8.2,
-    "utrChange": 0,
-    "numberOfWins": 2,
-    "name": "Nagy Róbert",
-    "numberOfTrophies": 0,
-    "rank": 1,
-    "id": 1,
-    "utrOneWeekAgo": 8.2,
-    "numberOfMatches": 2
-  },
-  {
-    "utr": 7.29,
-    "utrChange": 0,
-    "numberOfWins": 0,
-    "name": "Tóth Gábor",
-    "numberOfTrophies": 0,
-    "rank": 2,
-    "id": 3,
-    "utrOneWeekAgo": 7.29,
-    "numberOfMatches": 2
-  },
-  {
-    "utr": 7.01,
-    "utrChange": 0,
-    "numberOfWins": 1,
-    "name": "Kiss István",
-    "numberOfTrophies": 0,
-    "rank": 3,
-    "id": 2,
-    "utrOneWeekAgo": 7.01,
-    "numberOfMatches": 2
-  }
+    {
+        "player": {
+            "id": 1,
+            "name": "Nagy Róbert"
+        },
+        "numberOfMatches": 2,
+        "numberOfWins": 2,
+        "numberOfTrophies": 0,
+        "rank": 1,
+        "utr": 8.2,
+        "utrOneWeekAgo": 8.2,
+        "utrChange": 0.0
+    },
+    {
+        "player": {
+            "id": 3,
+            "name": "Tóth Gábor"
+        },
+        "numberOfMatches": 2,
+        "numberOfWins": 0,
+        "numberOfTrophies": 0,
+        "rank": 2,
+        "utr": 7.29,
+        "utrOneWeekAgo": 7.29,
+        "utrChange": 0.0
+    },
+    {
+        "player": {
+            "id": 2,
+            "name": "Kiss István"
+        },
+        "numberOfMatches": 2,
+        "numberOfWins": 1,
+        "numberOfTrophies": 0,
+        "rank": 3,
+        "utr": 7.01,
+        "utrOneWeekAgo": 7.01,
+        "utrChange": 0.0
+    }
 ]

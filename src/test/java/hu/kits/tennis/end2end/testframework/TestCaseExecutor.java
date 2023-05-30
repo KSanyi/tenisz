@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,12 +17,16 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.json.Json;
+import javax.json.JsonReader;
+import javax.json.JsonWriter;
+import javax.json.JsonWriterFactory;
+import javax.json.stream.JsonGenerator;
 import javax.sql.DataSource;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,12 +34,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.common.Clock;
+import hu.kits.tennis.common.IdGenerator;
 import hu.kits.tennis.common.UseCaseFileParser;
 import hu.kits.tennis.common.UseCaseFileParser.TestCall;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchResult;
 import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
@@ -41,7 +49,6 @@ import hu.kits.tennis.domain.tournament.TournamentParams;
 import hu.kits.tennis.domain.tournament.TournamentParams.Level;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
 import hu.kits.tennis.domain.tournament.TournamentService;
-import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 import hu.kits.tennis.infrastructure.web.api.HttpServer;
@@ -64,6 +71,8 @@ public class TestCaseExecutor {
         ApplicationContext applicationContext = new ApplicationContext(dataSource, new SpyEmailSender(), null, new FakeInvoiceService());
         
         setup(applicationContext);
+        
+        IdGenerator.useFakeGenerator();
         
         port = TestUtil.findFreePort();
         httpServer = new HttpServer(port, applicationContext);
@@ -151,11 +160,15 @@ public class TestCaseExecutor {
     
     private static String normalize(String responseJson) {
         String commentsRemoved = responseJson.replaceAll("//.*\n", "\n");
-        try {
-            return new JSONObject(commentsRemoved).toString(2);
-        } catch(Exception ex) {
-            return new JSONArray(commentsRemoved).toString(2);
+        JsonReader jsonReader = Json.createReader(new StringReader(commentsRemoved));
+        
+        JsonWriterFactory jwf = Json.createWriterFactory(Map.of(JsonGenerator.PRETTY_PRINTING, true));
+        StringWriter sw = new StringWriter();
+        try (JsonWriter jsonWriter = jwf.createWriter(sw)) {
+            jsonWriter.write(jsonReader.read());
+            return sw.toString();
         }
+        
     }
 
 }

@@ -5,49 +5,61 @@ method: GET
 response-status: 200
 response-body:
 [
-  {
-    "date": "2023-03-15",
-    "player1Id": 2,
-    "upset": false,
-    "player1": "Kiss István",
-    "player2": "Tóth Gábor",
-    "player2Id": 3,
-    "result": "7:5",
-    "tournamentName": "Napi 500 verseny",
-    "player1UTR": 7,
-    "id": 3,
-    "matchUTRForPlayer1": 8.07,
-    "player2UTR": 7.5,
-    "matchUTRForPlayer2": 6.43
-  },
-  {
-    "date": "2023-03-15",
-    "player1Id": 1,
-    "upset": false,
-    "player1": "Nagy Róbert",
-    "player2": "Tóth Gábor",
-    "player2Id": 3,
-    "result": "6:2",
-    "tournamentName": "Napi 500 verseny",
-    "player1UTR": 8,
-    "id": 2,
-    "matchUTRForPlayer1": 8.83,
-    "player2UTR": 7.5,
-    "matchUTRForPlayer2": 6.67
-  },
-  {
-    "date": "2023-03-15",
-    "player1Id": 1,
-    "upset": false,
-    "player1": "Nagy Róbert",
-    "player2": "Kiss István",
-    "player2Id": 2,
-    "result": "6:0",
-    "tournamentName": "Napi 500 verseny",
-    "player1UTR": 8,
-    "id": 1,
-    "matchUTRForPlayer1": 9,
-    "player2UTR": 7,
-    "matchUTRForPlayer2": 6
-  }
+    {
+        "id": 3,
+        "date": "2023-03-15",
+        "tournamentName": "Napi 500 verseny",
+        "player1": {
+            "id": 2,
+            "name": "Kiss István"
+        },
+        "player1UTR": 7.0,
+        "player2": {
+            "id": 3,
+            "name": "Tóth Gábor"
+        },
+        "player2UTR": 7.5,
+        "result": "7:5",
+        "upset": false,
+        "matchUTRForPlayer1": 8.07,
+        "matchUTRForPlayer2": 6.43
+    },
+    {
+        "id": 2,
+        "date": "2023-03-15",
+        "tournamentName": "Napi 500 verseny",
+        "player1": {
+            "id": 1,
+            "name": "Nagy Róbert"
+        },
+        "player1UTR": 8.0,
+        "player2": {
+            "id": 3,
+            "name": "Tóth Gábor"
+        },
+        "player2UTR": 7.5,
+        "result": "6:2",
+        "upset": false,
+        "matchUTRForPlayer1": 8.83,
+        "matchUTRForPlayer2": 6.67
+    },
+    {
+        "id": 1,
+        "date": "2023-03-15",
+        "tournamentName": "Napi 500 verseny",
+        "player1": {
+            "id": 1,
+            "name": "Nagy Róbert"
+        },
+        "player1UTR": 8.0,
+        "player2": {
+            "id": 2,
+            "name": "Kiss István"
+        },
+        "player2UTR": 7.0,
+        "result": "6:0",
+        "upset": false,
+        "matchUTRForPlayer1": 9.0,
+        "matchUTRForPlayer2": 6.0
+    }
 ]

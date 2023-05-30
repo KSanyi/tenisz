@@ -7,12 +7,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.kits.tennis.common.IdGenerator;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchRepository;
 import hu.kits.tennis.domain.match.MatchResult;
@@ -47,7 +47,7 @@ public class TournamentService {
     }
 
     public Tournament createTournament(TournamentParams tournamentParams) {
-        String id = UUID.randomUUID().toString().substring(0, 8);
+        String id = IdGenerator.generateId();
         Tournament tournament = new Tournament(
                 id,
                 tournamentParams,
