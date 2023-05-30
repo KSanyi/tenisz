@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,14 +15,9 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import javax.json.Json;
-import javax.json.JsonReader;
-import javax.json.JsonWriter;
-import javax.json.JsonWriterFactory;
-import javax.json.stream.JsonGenerator;
+import javax.json.JsonStructure;
 import javax.sql.DataSource;
 
 import org.junit.jupiter.api.AfterEach;
@@ -35,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.common.Clock;
 import hu.kits.tennis.common.IdGenerator;
+import hu.kits.tennis.common.JsonUtil;
 import hu.kits.tennis.common.UseCaseFileParser;
 import hu.kits.tennis.common.UseCaseFileParser.TestCall;
 import hu.kits.tennis.domain.match.Match;
@@ -160,15 +154,9 @@ public class TestCaseExecutor {
     
     private static String normalize(String responseJson) {
         String commentsRemoved = responseJson.replaceAll("//.*\n", "\n");
-        JsonReader jsonReader = Json.createReader(new StringReader(commentsRemoved));
+        JsonStructure json = JsonUtil.readJson(commentsRemoved);
         
-        JsonWriterFactory jwf = Json.createWriterFactory(Map.of(JsonGenerator.PRETTY_PRINTING, true));
-        StringWriter sw = new StringWriter();
-        try (JsonWriter jsonWriter = jwf.createWriter(sw)) {
-            jsonWriter.write(jsonReader.read());
-            return sw.toString();
-        }
-        
+        return JsonUtil.printJson(json);
     }
 
 }

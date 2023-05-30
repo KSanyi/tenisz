@@ -1,6 +1,5 @@
 package hu.kits.tennis.infrastructure.invoice;
 
-import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -9,20 +8,17 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
-import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonWriter;
-import javax.json.JsonWriterFactory;
-import javax.json.stream.JsonGenerator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.common.Environment;
+import hu.kits.tennis.common.JsonUtil;
 import hu.kits.tennis.common.KITSException;
 import hu.kits.tennis.domain.invoice.InvoiceService;
 import hu.kits.tennis.domain.player.Player;
@@ -140,12 +136,7 @@ public class BillingoInvoiceService implements InvoiceService {
         
         jsonObjectBuilder.add("address", addressJsonObject);
         
-        JsonWriterFactory jwf = Json.createWriterFactory(Map.of(JsonGenerator.PRETTY_PRINTING, true));
-        StringWriter sw = new StringWriter();
-        try (JsonWriter jsonWriter = jwf.createWriter(sw)) {
-            jsonWriter.write(jsonObjectBuilder.build());
-            return sw.toString();
-        }
+        return JsonUtil.printJson(jsonObjectBuilder.build());
     }
     
 }
