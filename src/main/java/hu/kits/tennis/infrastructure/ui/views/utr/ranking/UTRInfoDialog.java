@@ -44,7 +44,7 @@ class UTRInfoDialog extends Dialog {
                 Ha a két játékos UTR-jének különbsége nagyobb mint 2, akkor a mérkőzésen nem számolunk UTR-t függetlenül az eredménytől.
                 <br/>
                 <h4>Meccs táblázat</h4>
-                Az UTR rangsorban egy játékosra kattintva megjelenik a játékos összes mérkőzése. (a funkció jelenleg mobilon nem működik)<br/>
+                Az UTR rangsorban egy játékosra kattintva megjelenik a játékos összes mérkőzése.<br/>
                 <li>zöld szín jelöli a játékos legjobb meccsét</li>
                 <li>piros szín jelöli a játékos legrosszabb meccsét</li>
                 <li>szürke szín jelöli az UTR szempontjából figyelembe nem vett meccseket</li>
