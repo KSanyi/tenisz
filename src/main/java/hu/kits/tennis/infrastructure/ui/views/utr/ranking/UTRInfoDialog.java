@@ -28,7 +28,7 @@ class UTRInfoDialog extends Dialog {
         getHeader().add(closeButton);
         
         String content = """
-                A játékos UTR-je a legutóbbi 14&ast; mérkőzése <b>meccs UTR</b>-jének súlyozott átlaga.<br/>
+                A játékos UTR-je a legutóbbi 25&ast; mérkőzése <b>meccs UTR</b>-jének súlyozott átlaga.<br/>
                 A súlyozás szempontjai:
                 <ul>
                 <li>mérkőzés dátuma: a korábbi mérkőzések kisebb súlyt képviselnek</li>
@@ -49,7 +49,7 @@ class UTRInfoDialog extends Dialog {
                 <li>piros szín jelöli a játékos legrosszabb meccsét</li>
                 <li>szürke szín jelöli az UTR szempontjából figyelembe nem vett meccseket</li>
                 <br/>
-                &ast; <small>amennyiben a játékos 14. mérkőzése napján több meccset is játszott (pl egy napi versenyen szerepelt), akkor minden aznap játszott mérkőzés beleszámít az UTR-be</small>
+                &ast; <small>amennyiben a játékos 25. mérkőzése napján több meccset is játszott (pl egy napi versenyen szerepelt), akkor minden aznap játszott mérkőzés beleszámít az UTR-be</small>
                 """;
         
         Label contentLabel = new Label();
