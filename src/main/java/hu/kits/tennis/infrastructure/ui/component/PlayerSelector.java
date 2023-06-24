@@ -1,7 +1,5 @@
 package hu.kits.tennis.infrastructure.ui.component;
 
-import static java.util.stream.Collectors.joining;
-
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -18,6 +16,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.StringUtil;
 import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.utr.PlayerWithUTR;
 
 public class PlayerSelector extends VerticalLayout {
 
@@ -26,10 +25,10 @@ public class PlayerSelector extends VerticalLayout {
     private final Consumer<Player> callBack;
     
     public PlayerSelector(Consumer<Player> callBack) {
-        this(callBack, Main.applicationContext.getPlayerRepository().loadAllPlayers().entries());
+        this(callBack, Main.applicationContext.getPlayersService().loadAllPlayersWithUTR().entries());
     }
     
-    public PlayerSelector(Consumer<Player> callBack, List<Player> players) {
+    public PlayerSelector(Consumer<Player> callBack, List<PlayerWithUTR> players) {
         
         setPadding(false);
         setMargin(false);
@@ -50,40 +49,35 @@ public class PlayerSelector extends VerticalLayout {
         filter.focus();
     }
     
-    private void clicked(ItemClickEvent<Player> e) {
+    private void clicked(ItemClickEvent<PlayerWithUTR> e) {
         if(e.getClickCount() > 1) {
-            callBack.accept(e.getItem());
+            callBack.accept(e.getItem().player());
         }
     }
 
-    public void addSelectionListener(SelectionListener<Grid<Player>, Player> listener) {
+    public void addSelectionListener(SelectionListener<Grid<PlayerWithUTR>, PlayerWithUTR> listener) {
         playersGrid.addSelectionListener(listener);
     }
     
-    private static class PlayersGrid extends Grid<Player> {
+    private static class PlayersGrid extends Grid<PlayerWithUTR> {
 
-        private ListDataProvider<Player> dataProvider;
+        private ListDataProvider<PlayerWithUTR> dataProvider;
         
-        public PlayersGrid(List<Player> players) {
-            addColumn(Player::id)
+        public PlayersGrid(List<PlayerWithUTR> players) {
+            addColumn(p -> p.player().id())
                 .setHeader("Id")
                 .setSortable(true)
                 .setFlexGrow(0);
             
-            addColumn(Player::name)
+            addColumn(p -> p.player().name())
                 .setHeader("Név")
                 .setSortable(true)
                 .setFlexGrow(3);
             
-            addColumn(Player::startingUTR)
-                .setHeader("Induló UTR")
+            addColumn(p -> p.utr())
+                .setHeader("UTR")
                 .setSortable(true)
                 .setFlexGrow(0);
-            
-            addColumn(player -> player.organisations().stream().map(org -> org.name).collect(joining(" ")))
-                .setHeader("Szervezetek")
-                .setSortable(true)
-                .setFlexGrow(1);
             
             dataProvider = new ListDataProvider<>(players);
             setItems(dataProvider);
@@ -96,7 +90,7 @@ public class PlayerSelector extends VerticalLayout {
             dataProvider.clearFilters();
             String[] filterParts = StringUtil.cleanNameString(value).split(" ");
             Stream.of(filterParts)
-                .forEach(filterPart -> dataProvider.addFilter(player -> player.matches(filterPart)));
+                .forEach(filterPart -> dataProvider.addFilter(p -> p.player().matches(filterPart)));
         }
         
     }

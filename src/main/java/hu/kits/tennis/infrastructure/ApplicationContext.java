@@ -48,10 +48,12 @@ public class ApplicationContext {
         
         matchRepository = new MatchJdbcRepository(dataSource, playerRepository);
         TournamentRepository tournamentRepository = new TournamentJdbcRepository(dataSource, playerRepository, matchRepository);
-        playersService = new PlayersService(playerRepository, matchRepository);
         
         matchService = new MatchService(matchRepository, tournamentRepository);
         utrService = new UTRService(matchService, matchRepository, playerRepository, tournamentRepository);
+        
+        playersService = new PlayersService(playerRepository, matchRepository, utrService);
+        
         VenueRepository venueRepository = new VenueHardcodedRepository();
         tournamentService = new TournamentService(tournamentRepository, matchRepository, venueRepository, utrService);
         this.invoiceService = invoiceService;
