@@ -20,5 +20,9 @@ public class PlayersWithUTR {
                 .sorted((p1, p2) -> StringUtil.HUN_COLLATOR.compare(p1.player().name(), p2.player().name()))
                 .toList();
     }
+
+    public UTR getUTR(Integer id) {
+        return idToPlayerWithUTR.get(id).utr();
+    }
     
 }

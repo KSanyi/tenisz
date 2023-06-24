@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import hu.kits.tennis.application.usecase.AllMatchesUseCase;
 import hu.kits.tennis.common.StringUtil;
 import hu.kits.tennis.domain.match.MatchInfo;
-import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.tournament.TournamentService;
@@ -22,18 +22,18 @@ class RestHandlers {
 
     private final PlayerRepository playerRepository;
     private final UTRService utrService;
-    private final MatchService matchService;
     private final TournamentService tournamentService;
+    private final AllMatchesUseCase allMatchesUseCase;
     
     RestHandlers(ApplicationContext applicationContext) {
         playerRepository = applicationContext.getPlayerRepository();
         utrService = applicationContext.getUTRService();
-        matchService = applicationContext.getMatchService();
         tournamentService = applicationContext.getTournamentService();
+        allMatchesUseCase = applicationContext.getAllMatchesUseCase();
     }
     
     void listAllMatches(Context context) {
-        List<MatchInfo> allMatches = matchService.loadAllMatches();
+        List<MatchInfo> allMatches = allMatchesUseCase.loadAllMatches();
         context.json(allMatches);
     }
     

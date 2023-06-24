@@ -17,8 +17,8 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import hu.kits.tennis.Main;
+import hu.kits.tennis.application.usecase.AllMatchesUseCase;
 import hu.kits.tennis.domain.match.MatchInfo;
-import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
@@ -39,7 +39,7 @@ import hu.kits.tennis.infrastructure.ui.views.View;
 public class MatchesView extends SplitViewFrame implements View {
 
     private final UTRService utrService = Main.applicationContext.getUTRService();
-    private final MatchService matchService = Main.applicationContext.getMatchService();
+    private final AllMatchesUseCase allMatchesUseCase = Main.applicationContext.getAllMatchesUseCase();
     
     private final Button recalculateButton = createRecalculateButton();
     private final TextField filterField = new TextField();
@@ -102,7 +102,7 @@ public class MatchesView extends SplitViewFrame implements View {
     }
 
     public void refresh() {
-        List<MatchInfo> allMatches = matchService.loadAllMatches();
+        List<MatchInfo> allMatches = allMatchesUseCase.loadAllMatches();
         matchesGrid.setMatches(allMatches);
         matchesGridMobile.setMatches(allMatches);
     }
