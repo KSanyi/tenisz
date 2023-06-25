@@ -4,11 +4,10 @@ url: <url-base>/api/player-stats/1
 method: GET
 response-status: 200
 response-body:
-
-
 {
     "player": {
         "id": 1,
+        "email": "nagy.robert@gmail.com",
         "name": "Nagy Róbert"
     },
     "utr": 8.15,
@@ -30,11 +29,13 @@ response-body:
             "tournamentName": "Napi 500 verseny",
             "player1": {
                 "id": 1,
+                "email": "nagy.robert@gmail.com",
                 "name": "Nagy Róbert"
             },
             "player1UTR": 8.0,
             "player2": {
                 "id": 2,
+                "email": "istvan.kiss@gmail.com",
                 "name": "Kiss István"
             },
             "player2UTR": 7.0,
@@ -49,11 +50,13 @@ response-body:
             "tournamentName": "Napi 500 verseny",
             "player1": {
                 "id": 1,
+                "email": "nagy.robert@gmail.com",
                 "name": "Nagy Róbert"
             },
             "player1UTR": 8.0,
             "player2": {
                 "id": 3,
+                "email": "toth.gabor@gmail.com",
                 "name": "Tóth Gábor"
             },
             "player2UTR": 7.5,
