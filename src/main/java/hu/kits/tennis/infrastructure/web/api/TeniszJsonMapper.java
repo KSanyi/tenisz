@@ -62,6 +62,7 @@ public class TeniszJsonMapper implements JsonMapper {
         } else {
             return Json.createObjectBuilder()
                     .add("id", player.id())
+                    .add("email", player.contact().email())
                     .add("name", player.name())
                     .build();
         }
