@@ -128,10 +128,6 @@ public class UTRService {
                 .toList();
     }
 
-    public void deleteMatch(int id) {
-        matchRepository.deleteMatch(id);
-    }
-    
     public PlayerStats loadPlayerStats(Player player) {
         
         UTRDetails utrDetails = calculatePlayersUTR(player);

@@ -21,7 +21,6 @@ public class MatchService {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     private final MatchRepository matchRepository;
-    
     private final TournamentRepository tournamentRepository;
 
     public MatchService(MatchRepository matchRepository, TournamentRepository tournamentRepository) {
@@ -91,8 +90,8 @@ public class MatchService {
         
     }
 
-    public List<MatchInfo> loadMatchesOfTournament(String tournementId) {
-        List<BookedMatch> matches = matchRepository.loadAllBookedMatchesForTournament(tournementId);
+    public List<MatchInfo> loadMatchesOfTournament(String tournamentId) {
+        List<BookedMatch> matches = matchRepository.loadAllBookedMatchesForTournament(tournamentId);
         
         Map<String, BasicTournamentInfo> basicTournamentInfoMap = tournamentRepository.loadBasicTournamentInfosMap();
         
