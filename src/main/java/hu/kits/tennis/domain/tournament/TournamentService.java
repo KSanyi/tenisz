@@ -79,15 +79,15 @@ public class TournamentService {
         logger.info("Tournament type is updated: {} -> {}", tournament.params().structure(), structure);
     }
     
-    public void updateContestants(Tournament tournament, List<Player> players) {
+    public void updateContestants(Tournament tournament, List<Contestant> contestants) {
         
-        List<Contestant> contestants = IntStream.range(0, players.size())
-                .mapToObj(index -> new Contestant(players.get(index), index+1))
+        List<Contestant> updatedContestants = IntStream.range(0, contestants.size())
+                .mapToObj(index -> contestants.get(index).withRank(index+1))
                 .filter(c -> !c.player().equals(Player.BYE))
                 .collect(toList());
         
-        tournamentRepository.updateContestants(tournament.id(), contestants);
-        logger.info("Contestants updated: {} -> {}", tournament.contestants(), contestants);
+        tournamentRepository.updateContestants(tournament.id(), updatedContestants);
+        logger.info("Contestants updated: {} -> {}", tournament.contestants(), updatedContestants);
     }
     
     public void deleteTournament(Tournament tournament) {
@@ -109,13 +109,13 @@ public class TournamentService {
             
             matchRepository.deleteMatchesForTournament(tournament.id());
             
-            List<Player> players = tournament.playersLineup();
+            List<Contestant> contestants = tournament.playersLineup();
             
             int matchNumber = 1;
             List<Match> matches = new ArrayList<>();
-            for(int i=0;i<players.size();i+=2) {
-                Player player1 = players.get(i);
-                Player player2 = players.get(i+1);
+            for(int i=0;i<contestants.size();i+=2) {
+                Player player1 = contestants.get(i).player();
+                Player player2 = contestants.get(i+1).player();
                 Match match = Match.createNew(tournament.id(), 1, matchNumber, null, player1, player2);
                 matchRepository.save(new BookedMatch(match, null, null, null, null));
                 matches.add(match);
@@ -287,6 +287,11 @@ public class TournamentService {
     
     public List<String> loadVenues() {
         return venueRepository.loadVenues();
+    }
+
+    public void setPaymentStatus(Tournament tournament, Player player, PaymentStatus paymentStatus) {
+        tournamentRepository.setPaymentStatus(tournament.id(), player.id(), paymentStatus);
+        logger.info("Payment staus is set to {} for {} for tournament {}", paymentStatus, player, tournament);
     }
 
 }

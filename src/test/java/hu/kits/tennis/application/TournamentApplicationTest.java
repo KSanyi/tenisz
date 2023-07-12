@@ -129,7 +129,7 @@ public class TournamentApplicationTest {
         
         Tournament tournament = tournamentService.createTournament(DEFAULT_PARAMS);
         
-        tournamentService.updateContestants(tournament, List.of(player1, player2, player3, player4));
+        tournamentService.updateContestants(tournament, Contestant.of(player1, player2, player3, player4));
         tournamentService.createMatches(tournament.id());
         tournament = tournamentService.findTournament(tournament.id()).get();
         
@@ -194,7 +194,7 @@ public class TournamentApplicationTest {
         
         Tournament tournament = tournamentService.createTournament(DEFAULT_PARAMS);
         
-        tournamentService.updateContestants(tournament, List.of(player1, Player.BYE, player2, player3, player4, player5, Player.BYE, player6));
+        tournamentService.updateContestants(tournament, Contestant.of(player1, Player.BYE, player2, player3, player4, player5, Player.BYE, player6));
         tournamentService.createMatches(tournament.id());
         tournament = tournamentService.findTournament(tournament.id()).get();
         
@@ -227,7 +227,7 @@ public class TournamentApplicationTest {
         TournamentParams params = new TournamentParams(Organization.KVTK, Type.DAILY, Level.L250, Level.L250, LocalDate.of(2022, 1, 1), "Napi", "Mini Garros", Structure.BOARD_AND_CONSOLATION, 3);
         Tournament tournament = tournamentService.createTournament(params);
         
-        tournamentService.updateContestants(tournament, List.of(player1, player2, player3, player4, player5, player6, player7, player8));
+        tournamentService.updateContestants(tournament, Contestant.of(player1, player2, player3, player4, player5, player6, player7, player8));
         tournamentService.createMatches(tournament.id());
         var mainBoardMatches = tournamentService.findTournament(tournament.id()).get().mainBoard().matches();
         

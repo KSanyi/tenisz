@@ -2,9 +2,11 @@ package hu.kits.tennis.infrastructure.ui.views.tournament;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.ItemClickEvent;
@@ -15,9 +17,12 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.tournament.Contestant;
+import hu.kits.tennis.domain.tournament.PaymentStatus;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.component.PlayerSelectorDialog;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
+import hu.kits.tennis.infrastructure.ui.views.tournament.ContestantsGrid.ContestantBean;
 
 class ContestantsTable extends VerticalLayout {
     
@@ -39,19 +44,19 @@ class ContestantsTable extends VerticalLayout {
         new PlayerSelectorDialog(grid::addPlayer).open();
     }
 
-    void setPlayers(List<Player> playersLineup) {
-        grid.setPlayers(playersLineup);
+    void setPlayers(List<Contestant> contestants) {
+        grid.setContestants(contestants.stream().map(ContestantBean::new).toList());
     }
     
 }
 
-class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tournament.ContestantsGrid.GridItem> {
+class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tournament.ContestantsGrid.ContestantBean> {
 
-    private GridListDataView<GridItem> dataView;
+    private GridListDataView<ContestantBean> dataView;
     
-    private GridItem draggedItem;
+    private ContestantBean draggedItem;
     
-    private List<GridItem> items;
+    private List<ContestantBean> items;
     
     private final TournamentView tournamentView;
     
@@ -70,7 +75,13 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
             .setAutoWidth(true)
             .setFlexGrow(1);
         
-        setWidth("300px");
+        addComponentColumn(item -> new PaymentStatusButton(tournamentView, item))
+            .setHeader("Fizetés státusz")
+            .setAutoWidth(true)
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setFlexGrow(1);
+        
+        setMaxWidth("500px");
         
         this.setAllRowsVisible(true);
         
@@ -79,7 +90,7 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         addItemClickListener(e -> handleClick(e));
     }
     
-    private void handleClick(ItemClickEvent<GridItem> e) {
+    private void handleClick(ItemClickEvent<ContestantBean> e) {
         if(e.getClickCount() > 1) {
             new PlayerSelectorDialog(player -> changePlayer(e.getItem().player, player)).open(); 
         }
@@ -93,7 +104,7 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         addDragEndListener(e -> draggedItem = null);
         
         addDropListener(e -> {
-            GridItem targetPlayer = e.getDropTargetItem().orElse(null);
+            ContestantBean targetPlayer = e.getDropTargetItem().orElse(null);
             GridDropLocation dropLocation = e.getDropLocation();
 
             if (targetPlayer != null || !draggedItem.equals(targetPlayer)) {
@@ -112,12 +123,13 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
     // TODO refactor these methods
     
     private void changePlayer(Player playerToRemove, Player playerToAdd) {
-        List<Player> players = items.stream().map(gridItem -> gridItem.player).collect(toList());
+        List<ContestantBean> contestants = items.stream().map(gridItem -> gridItem).collect(toList());
+        List<Player> players = contestants.stream().map(c -> c.player).collect(toList());
         if(!players.contains(playerToAdd)) {
             int index = players.indexOf(playerToRemove);
-            players.remove(index);
-            players.add(index, playerToAdd);
-            setPlayers(players);
+            contestants.remove(index);
+            contestants.add(index, new ContestantBean(playerToAdd));
+            setContestants(contestants);
             update();
             KITSNotification.showInfo(playerToAdd.name() + " hozzáadva a versenyhez " + playerToRemove.name() + " helyére");
         } else {
@@ -125,16 +137,17 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         }
     }
     
-    void setPlayers(List<Player> players) {
-        items = players.stream().map(GridItem::new).collect(toList());
+    void setContestants(List<ContestantBean> contestants) {
+        items = new ArrayList<>(contestants);
         dataView = this.setItems(items);
     }
     
     void addPlayer(Player player) {
-        List<Player> players = items.stream().map(gridItem -> gridItem.player).collect(toList());
+        List<ContestantBean> contestants = items.stream().map(gridItem -> gridItem).collect(toList());
+        List<Player> players = contestants.stream().map(c -> c.player).collect(toList());
         if(!players.contains(player)) {
-            players.add(player);
-            setPlayers(players);
+            contestants.add(new ContestantBean(player));
+            setContestants(contestants);
             update();
             KITSNotification.showInfo(player.name() + " hozzáadva a versenyhez");
         } else {
@@ -143,15 +156,62 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
     }
     
     private void update() {
-        List<Player> players = items.stream().map(gridItem -> gridItem.player).collect(toList());
-        tournamentView.updateContestants(players);
+        List<Contestant> contestants = items.stream().map(gridItem -> gridItem.toContestant()).collect(toList());
+        tournamentView.updateContestants(contestants);
     }
     
-    static class GridItem {
-        final Player player;
-
-        public GridItem(Player player) {
+    static class ContestantBean {
+        
+        private final Player player;
+        private PaymentStatus paymentStatus;
+        
+        ContestantBean(Contestant contestant) {
+            this.player = contestant.player();
+            this.paymentStatus = contestant.paymentStatus();
+        }
+        
+        ContestantBean(Player player) {
             this.player = player;
+            this.paymentStatus = PaymentStatus.NOT_PAID;
+        }
+        
+        Contestant toContestant() {
+            return new Contestant(player, 0, paymentStatus);
+        }
+    }
+    
+    static class PaymentStatusButton extends Button {
+        
+        private final TournamentView tournamentView;
+        private final ContestantBean contestantBean;
+        
+        PaymentStatusButton(TournamentView tournamentView, ContestantBean contestantBean) {
+            this.tournamentView = tournamentView;
+            this.contestantBean = contestantBean;
+            addClickListener(click -> clicked());
+            updateText();
+            setWidth("110px");
+            addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_PRIMARY);
+        }
+
+        private void clicked() {
+            PaymentStatus[] values = PaymentStatus.values();
+            contestantBean.paymentStatus = values[(contestantBean.paymentStatus.ordinal()+1) % values.length];
+            tournamentView.setPaymentStatus(contestantBean.player, contestantBean.paymentStatus);
+            updateText();
+        }
+        
+        private void updateText() {
+            setText(contestantBean.paymentStatus.label);
+            this.removeThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_ERROR);
+            switch(contestantBean.paymentStatus) {
+            case INVOICE_SENT: addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+                break;
+            case PAID: //addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+                break;
+            default: addThemeVariants(ButtonVariant.LUMO_ERROR);
+                break;
+            }
         }
     }
     

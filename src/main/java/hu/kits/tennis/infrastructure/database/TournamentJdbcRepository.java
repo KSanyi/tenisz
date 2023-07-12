@@ -22,6 +22,7 @@ import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.Organization;
+import hu.kits.tennis.domain.tournament.PaymentStatus;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentBoard;
 import hu.kits.tennis.domain.tournament.TournamentMatches;
@@ -255,6 +256,11 @@ public class TournamentJdbcRepository implements TournamentRepository {
     @Override
     public void setWinner(String tournamentId, int winnerId) {
         contestantDBTable.setPosition(tournamentId, winnerId, 1);
+    }
+    
+    @Override
+    public void setPaymentStatus(String tournamentId, int playerId, PaymentStatus status) {
+        contestantDBTable.setPaymentStatus(tournamentId, playerId, status);
     }
 
 }

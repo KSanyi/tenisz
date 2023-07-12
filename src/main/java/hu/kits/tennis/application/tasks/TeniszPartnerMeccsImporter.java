@@ -31,6 +31,7 @@ import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
+import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentParams;
@@ -282,7 +283,7 @@ public class TeniszPartnerMeccsImporter {
             TournamentParams params = new TournamentParams(Organization.KVTK, Type.DAILY, Level.L90, Level.L1000, date, "Teniszpartner verseny", "Bikás Park", Structure.NA, 1);
             Tournament tournament = tournamentService.createTournament(params);
             List<Player> players = findPlayers(matches);
-            tournamentService.updateContestants(tournament, players);
+            tournamentService.updateContestants(tournament, Contestant.of(players));
         }
     }
 

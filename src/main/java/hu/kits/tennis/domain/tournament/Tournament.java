@@ -1,10 +1,10 @@
 package hu.kits.tennis.domain.tournament;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.match.Match;
@@ -17,28 +17,27 @@ public record Tournament(String id,
         Status status, 
         List<TournamentBoard> boards) {
     
-    public List<Player> playersLineup() {
+    public List<Contestant> playersLineup() {
 
         if(contestants.isEmpty()) {
             return List.of();
         }
         
-        var playersByRank = contestants.stream().collect(toMap(Contestant::rank, Contestant::player));
+        var contestantsByRank = contestants.stream().collect(toMap(Contestant::rank, Function.identity()));
         
-        List<Player> lineup = new ArrayList<>();
+        List<Contestant> lineup = new ArrayList<>();
         for(int i=1;i<=MathUtil.pow2(mainBoard().numberOfRounds());i++) {
-            Player player = playersByRank.getOrDefault(i, Player.BYE);
-            if(player != Player.BYE || status == Status.DRAFT) {
-                lineup.add(player);    
+            Contestant contestant = contestantsByRank.getOrDefault(i, new Contestant(Player.BYE, i));
+            if(contestant.player() != Player.BYE || status == Status.DRAFT) {
+                lineup.add(contestant);    
             }
         }
         
         return lineup;
     }
     
-    public List<Player> simplePlayersLineup() {
-        
-        return contestants.stream().map(Contestant::player).collect(toList());
+    public List<Contestant> simplePlayersLineup() {
+        return contestants;
     }
     
     @Override

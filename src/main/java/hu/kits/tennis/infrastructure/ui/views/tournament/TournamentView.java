@@ -32,10 +32,11 @@ import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.Players;
+import hu.kits.tennis.domain.tournament.Contestant;
+import hu.kits.tennis.domain.tournament.PaymentStatus;
 import hu.kits.tennis.domain.tournament.Tournament;
-import hu.kits.tennis.domain.tournament.TournamentService;
-import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
+import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
@@ -220,7 +221,6 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             matchCounter.setText(matches.size() + " meccs");
         } else if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION || tournament.params().structure() == Structure.SIMPLE_BOARD) {
             contestantsTable.setPlayers(tournament.playersLineup());
-            tableWithButton.setVisible(tournament.status() == Status.DRAFT);
             mainBoard.setBoard(tournament, tournament.mainBoard());
             if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION) {
                 consolationBoard.setBoard(tournament, tournament.consolationBoard());    
@@ -251,16 +251,16 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         }
     }
     
-    public void updateContestants(List<Player> players) {
-        tournamentService.updateContestants(tournament, players);
+    public void updateContestants(List<Contestant> contestants) {
+        tournamentService.updateContestants(tournament, contestants);
     }
 
     private void updateVisibleParts(int width) {
         boolean mobile = width < VaadinUtil.MOBILE_BREAKPOINT;
         if(tableWithButton != null) {
-            tableWithButton.setVisible(!mobile && tournament.status() == Status.DRAFT);    
+            tableWithButton.setVisible(!mobile);    
         }
-        contestantsTable.setVisible(!mobile && tournament.status() == Status.DRAFT);
+        contestantsTable.setVisible(!mobile);
         deleteButton.setVisible(!mobile);
     }
     
@@ -270,6 +270,10 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             UI.getCurrent().navigate(TournamentsView.class);
             KITSNotification.showInfo("Verseny törölve");
         }).open();
+    }
+
+    public void setPaymentStatus(Player player, PaymentStatus paymentStatus) {
+        tournamentService.setPaymentStatus(tournament, player, paymentStatus);
     }
     
 }

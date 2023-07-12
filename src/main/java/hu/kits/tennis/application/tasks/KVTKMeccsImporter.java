@@ -32,6 +32,7 @@ import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
+import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentParams;
@@ -166,7 +167,7 @@ public class KVTKMeccsImporter {
             }
            
             Tournament tournament = tournamentService.findTournament(tournamentSummary.id()).get();
-            tournamentService.updateContestants(tournament, players);
+            tournamentService.updateContestants(tournament, Contestant.of(players));
         }
     }
     

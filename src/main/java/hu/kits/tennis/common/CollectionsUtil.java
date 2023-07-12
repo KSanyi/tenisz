@@ -36,5 +36,13 @@ public class CollectionsUtil {
     public static <K, V> Map<K, V> mapBy(Collection<V> collection, Function<V, K> key) {
         return collection.stream().collect(Collectors.toMap(key, Function.identity()));
     }
+
+    public static <T> Set<T> diff(Collection<T> collection1, Collection<T> collection2) {
+        return collection1.stream().filter(e -> !collection2.contains(e)).collect(Collectors.toSet());
+    }
+
+    public static <T> Set<T> intersection(Collection<T> collection1, Collection<T> collection2) {
+        return collection1.stream().filter(collection2::contains).collect(Collectors.toSet());
+    }
     
 }

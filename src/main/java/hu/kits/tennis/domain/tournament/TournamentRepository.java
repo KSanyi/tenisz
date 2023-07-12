@@ -36,5 +36,7 @@ public interface TournamentRepository {
     void updateContestants(String id, List<Contestant> contestants);
 
     void setWinner(String tournamentId, int winnerId);
+    
+    void setPaymentStatus(String tournamentId, int playerId, PaymentStatus status);
 
 }

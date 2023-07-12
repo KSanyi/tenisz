@@ -44,9 +44,9 @@ public class TournamentTest {
         
         Tournament tournament = new Tournament(TOURNAMENT_ID, tournamentParams, contestants, Status.DRAFT, List.of(new TournamentBoard(2, Map.of())));
         
-        List<Player> lineup = tournament.playersLineup();
+        List<Contestant> lineup = tournament.playersLineup();
         
-        assertEquals(List.of(player1, player2, player3, player4), lineup);
+        assertEquals(Contestant.of(player1, player2, player3, player4), lineup);
     }
     
     @Test
@@ -62,9 +62,9 @@ public class TournamentTest {
         
         Tournament tournament = new Tournament(TOURNAMENT_ID, tournamentParams, contestants, Status.DRAFT, List.of(new TournamentBoard(3, Map.of())));
         
-        List<Player> lineup = tournament.playersLineup();
+        List<Contestant> lineup = tournament.playersLineup();
         
-        assertEquals(List.of(player1, Player.BYE, player2, player3, player4, player5, player6, Player.BYE), lineup);
+        assertEquals(Contestant.of(player1, Player.BYE, player2, player3, player4, player5, player6, Player.BYE), lineup);
     }
     
     @Test
