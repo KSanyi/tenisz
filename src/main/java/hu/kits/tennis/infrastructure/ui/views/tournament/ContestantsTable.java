@@ -14,6 +14,7 @@ import com.vaadin.flow.component.grid.dataview.GridListDataView;
 import com.vaadin.flow.component.grid.dnd.GridDropLocation;
 import com.vaadin.flow.component.grid.dnd.GridDropMode;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import hu.kits.tennis.domain.player.Player;
@@ -29,15 +30,21 @@ class ContestantsTable extends VerticalLayout {
     private final ContestantsGrid grid;
     
     private final Button addButton = UIUtils.createPrimaryButton("Versenyző", VaadinIcon.PLUS);
+    private final Button createInvoiceButton = UIUtils.createPrimaryButton("Számla készítés", VaadinIcon.INVOICE);
 
-    public ContestantsTable(TournamentView tournamentView) {
+    public ContestantsTable(String tournamentId, TournamentView tournamentView) {
         this.grid = new ContestantsGrid(tournamentView);
         
         setPadding(false);
         
-        add(grid, addButton);
+        add(grid, new HorizontalLayout(addButton, createInvoiceButton));
         
         addButton.addClickListener(click -> openPlayerSelector());
+        createInvoiceButton.addClickListener(click -> openInvoiceCreationDialog(tournamentId));
+    }
+
+    private static void openInvoiceCreationDialog(String tournamentId) {
+        new InvoiceCreationDialog(tournamentId).open();
     }
 
     private void openPlayerSelector() {
@@ -46,6 +53,10 @@ class ContestantsTable extends VerticalLayout {
 
     void setPlayers(List<Contestant> contestants) {
         grid.setContestants(contestants.stream().map(ContestantBean::new).toList());
+    }
+    
+    void setAddButtonVisible(boolean visible) {
+        addButton.setVisible(visible);
     }
     
 }
@@ -83,7 +94,7 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         
         setMaxWidth("500px");
         
-        this.setAllRowsVisible(true);
+        setAllRowsVisible(true);
         
         configurDragAndDrop();
         

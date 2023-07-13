@@ -35,6 +35,7 @@ import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.PaymentStatus;
 import hu.kits.tennis.domain.tournament.Tournament;
+import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.utr.UTRService;
@@ -62,7 +63,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     
     private final Button deleteButton = UIUtils.createButton("Verseny törlése", ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_SMALL);
     
-    private final ContestantsTable contestantsTable = new ContestantsTable(this);
+    private ContestantsTable contestantsTable;
     private TournamentBoardComponent mainBoard;
     private TournamentBoardComponent consolationBoard;
     private VerticalLayout tableWithButton;
@@ -88,6 +89,8 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         Label title = UIUtils.createH2Label(tournament.params().name() + " " + Formatters.formatDateLong(tournament.params().date()));
         HorizontalLayout header = new HorizontalLayout(title);
         
+        contestantsTable = new ContestantsTable(tournament.id(), this);
+        
         if(tournament.params().structure() == Structure.NA) {
             matchesGrid = new MatchesGrid();
             matchesGrid.getColumnByKey("date").setVisible(false);
@@ -111,15 +114,15 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             horizontalLayout.setFlexGrow(1, leftColumn);
             layout.add(header, horizontalLayout, deleteButton);
             layout.setHorizontalComponentAlignment(Alignment.END, deleteButton);
-            
         } else if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION || tournament.params().structure() == Structure.SIMPLE_BOARD) {
 
             Runnable matchChangeCallback = () -> refresh();
             
             mainBoard = new TournamentBoardComponent(tournament, tournament.mainBoard(), matchChangeCallback);
-            
+
+            contestantsTable.setAddButtonVisible(tournament.status() == Status.DRAFT);
             Button fillBoardButton = UIUtils.createButton("Táblára", VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
-            fillBoardButton.setVisible(VaadinUtil.isUserLoggedIn());
+            fillBoardButton.setVisible(VaadinUtil.isUserLoggedIn() && tournament.status() == Status.DRAFT);
             fillBoardButton.addClickListener(click -> fillMainBoard());
             
             tableWithButton = new VerticalLayout(contestantsTable, fillBoardButton);

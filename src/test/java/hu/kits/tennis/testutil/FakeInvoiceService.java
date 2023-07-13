@@ -12,8 +12,13 @@ public class FakeInvoiceService implements InvoiceService {
     }
 
     @Override
-    public List<String> getPartnerEmails() {
+    public List<Partner> getPartners() {
         return List.of();
+    }
+
+    @Override
+    public List<String> createAndSendInvoices(List<String> emailAddresses, int amount) {
+        return emailAddresses;
     }
 
 }

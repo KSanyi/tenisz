@@ -70,7 +70,7 @@ public class TaskMain {
         
         //new UTRChangeAnalyzer(resourceFactory).analyse();
         
-        new BillingoPartnerSaver(applicationContext).saveNewPartners();
+        new BillingoClient(applicationContext).createInvoice();
     }
     
     private static void setTournamentWinners() {

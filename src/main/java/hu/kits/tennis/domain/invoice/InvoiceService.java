@@ -8,6 +8,9 @@ public interface InvoiceService {
 
     void createPartnerForPlayer(Player player);
     
-    List<String> getPartnerEmails();
+    List<Partner> getPartners();
     
+    List<String> createAndSendInvoices(List<String> emailAddresses, int amount);
+    
+    static record Partner(long partnerId, String email, String name) {}
 }
