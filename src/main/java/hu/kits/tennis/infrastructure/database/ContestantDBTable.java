@@ -156,7 +156,7 @@ class ContestantDBTable {
     }
 
     public Map<String, Integer> countPlayersByTournament() {
-        String sql = String.format("SELECT %s, COUNT(*) FROM %s GROUP BY %s", COLUMN_TOURNAMENT_ID, TABLE_TOURNAMENT_CONTESTANT, COLUMN_TOURNAMENT_ID);
+        String sql = String.format("SELECT %s, COUNT(*) FROM %s WHERE %s <> 0 GROUP BY %s", COLUMN_TOURNAMENT_ID, TABLE_TOURNAMENT_CONTESTANT, COLUMN_PLAYER_ID, COLUMN_TOURNAMENT_ID);
         return jdbi.withHandle(handle -> handle.createQuery(sql)
                 .map((rs, ctx) -> Pair.of(rs.getString(1), rs.getInt(2))).list()).stream()
                     .collect(toMap(Pair::first, Pair::second));
