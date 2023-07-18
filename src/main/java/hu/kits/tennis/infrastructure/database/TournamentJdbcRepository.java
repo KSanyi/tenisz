@@ -154,7 +154,7 @@ public class TournamentJdbcRepository implements TournamentRepository {
         
         List<TournamentBoard> boards = new ArrayList<>();
         
-        int numberOfRounds = MathUtil.log2(contestants.size());
+        int numberOfRounds = MathUtil.log2(contestants.stream().mapToInt(c -> c.rank()).max().orElse(0));
         boards.add(new TournamentBoard(numberOfRounds, tournamentMatches.matchesInBoard(1)));
         if(structure == Structure.BOARD_AND_CONSOLATION) {
             boards.add(new TournamentBoard(numberOfRounds - 1, tournamentMatches.matchesInBoard(2)));
