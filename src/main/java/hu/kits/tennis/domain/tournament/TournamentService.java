@@ -122,24 +122,41 @@ public class TournamentService {
                 
                 if(player1.equals(Player.BYE)) {
                     int nextRoundMatchNumber = tournament.mainBoard().nextRoundMatchNumber(matchNumber);
-                    Match nextRoundMatch;
-                    if(matchNumber % 2 == 1) {
-                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.params().date(), player2, null);    
+                    Match nextRoundMatch = tournament.followUpMatch(match);
+                    if(nextRoundMatch == null) {
+                        if(matchNumber % 2 == 1) {
+                            nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.params().date(), player2, null);    
+                        } else {
+                            nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.params().date(), null, player2);   
+                        }
+                        matchRepository.save(new BookedMatch(nextRoundMatch, null, null, null, null));
                     } else {
-                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.params().date(), null, player2);   
+                        if(match.tournamentMatchNumber() % 2 == 1) {
+                            matchRepository.setPlayer1(nextRoundMatch.id(), player2);    
+                        } else {
+                            matchRepository.setPlayer2(nextRoundMatch.id(), player2);
+                        }
                     }
-                    matchRepository.save(new BookedMatch(nextRoundMatch, null, null, null, null));
                 } else if(player2.equals(Player.BYE)) {
                     int nextRoundMatchNumber = tournament.mainBoard().nextRoundMatchNumber(matchNumber);
-                    Match nextRoundMatch;
-                    if(matchNumber % 2 == 1) {
-                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.params().date(), player1, null);    
+                    Match nextRoundMatch = tournament.followUpMatch(match);
+                    if(nextRoundMatch == null) {
+                        if(matchNumber % 2 == 1) {
+                            nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.params().date(), player1, null);    
+                        } else {
+                            nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.params().date(), null, player1);   
+                        }
+                        matchRepository.save(new BookedMatch(nextRoundMatch, null, null, null, null));
                     } else {
-                        nextRoundMatch = Match.createNew(tournament.id(), 1, nextRoundMatchNumber, tournament.params().date(), null, player1);   
+                        if(match.tournamentMatchNumber() % 2 == 1) {
+                            matchRepository.setPlayer1(nextRoundMatch.id(), player1);    
+                        } else {
+                            matchRepository.setPlayer2(nextRoundMatch.id(), player1);
+                        }
                     }
-                    matchRepository.save(new BookedMatch(nextRoundMatch, null, null, null, null));
                 }
                 
+                tournament = tournamentRepository.findTournament(tournamentId).get();
                 matchNumber++;
             }
             
