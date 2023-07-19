@@ -2,8 +2,12 @@ package hu.kits.tennis.infrastructure.ui.views.tournament;
 
 import static java.util.stream.Collectors.toList;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -22,6 +26,7 @@ import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.PaymentStatus;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.component.PlayerSelectorDialog;
+import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 import hu.kits.tennis.infrastructure.ui.views.tournament.ContestantsGrid.ContestantBean;
 
@@ -86,7 +91,7 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
             .setAutoWidth(true)
             .setFlexGrow(1);
         
-        addComponentColumn(item -> new PaymentStatusButton(tournamentView, item))
+        addComponentColumn(item -> item.player.equals(Player.BYE) ? null : new PaymentStatusButton(tournamentView, item))
             .setHeader("Fizetés státusz")
             .setAutoWidth(true)
             .setTextAlign(ColumnTextAlign.CENTER)
@@ -193,10 +198,13 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
     
     static class PaymentStatusButton extends Button {
         
+        private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+        
         private final TournamentView tournamentView;
         private final ContestantBean contestantBean;
         
         PaymentStatusButton(TournamentView tournamentView, ContestantBean contestantBean) {
+            
             this.tournamentView = tournamentView;
             this.contestantBean = contestantBean;
             addClickListener(click -> clicked());
@@ -206,8 +214,13 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         }
 
         private void clicked() {
+            PaymentStatus currentStatus = contestantBean.paymentStatus;
             PaymentStatus[] values = PaymentStatus.values();
-            contestantBean.paymentStatus = values[(contestantBean.paymentStatus.ordinal()+1) % values.length];
+            PaymentStatus nextStatus = values[(contestantBean.paymentStatus.ordinal()+1) % values.length];
+            
+            VaadinUtil.logUserAction(logger, "Clicked: {} -> {}", currentStatus, nextStatus);
+            
+            contestantBean.paymentStatus = nextStatus;
             tournamentView.setPaymentStatus(contestantBean.player, contestantBean.paymentStatus);
             updateText();
         }
