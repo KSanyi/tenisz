@@ -27,12 +27,13 @@ public class InvoiceCreationDialog extends Dialog {
     private final InvoicingGrid invoicingGrid = new InvoicingGrid();
     
     private final Button createInvoicesButton = UIUtils.createPrimaryButton("Számla készítése");
+    private final Button cancelButton = UIUtils.createContrastButton("Mégsem");
     
     public InvoiceCreationDialog(String tournamentId) {
         add(amountField, invoicingGrid);
         
         setHeaderTitle("Számla készítés");
-        getFooter().add(createInvoicesButton);
+        getFooter().add(cancelButton, createInvoicesButton);
         
         tournament = tournamentService.findTournament(tournamentId).get();
         
@@ -44,6 +45,7 @@ public class InvoiceCreationDialog extends Dialog {
         invoicingGrid.setItems(playersToSendInvoice);
         
         createInvoicesButton.addClickListener(click -> createInvoices(playersToSendInvoice));
+        cancelButton.addClickListener(click -> close());
     }
 
     private void createInvoices(List<Player> playersToSendInvoice) {
@@ -68,7 +70,6 @@ class InvoicingGrid extends Grid<Player> {
     InvoicingGrid() {
         
         addColumn(player -> player.name())
-            .setHeader("Név")
             .setAutoWidth(true)
             .setFlexGrow(1);
         

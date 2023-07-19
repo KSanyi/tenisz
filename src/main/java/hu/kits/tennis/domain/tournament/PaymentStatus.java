@@ -3,7 +3,8 @@ package hu.kits.tennis.domain.tournament;
 public enum PaymentStatus {
 
     NOT_PAID("Nincs fizetve"),
-    PAID("Fizetve"),
+    PAID("Utalva"),
+    PAID_CASH("KP-ban fizetve"),
     INVOICE_SENT("Számlázva");
     
     private PaymentStatus(String label) {

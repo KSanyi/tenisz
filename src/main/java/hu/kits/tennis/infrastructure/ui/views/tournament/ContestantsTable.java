@@ -209,7 +209,7 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
             this.contestantBean = contestantBean;
             addClickListener(click -> clicked());
             updateText();
-            setWidth("110px");
+            setWidth("120px");
             addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_PRIMARY);
         }
 
@@ -229,7 +229,8 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
             setText(contestantBean.paymentStatus.label);
             this.removeThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_ERROR);
             switch(contestantBean.paymentStatus) {
-            case INVOICE_SENT: addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+            case INVOICE_SENT:
+            case PAID_CASH: addThemeVariants(ButtonVariant.LUMO_SUCCESS);
                 break;
             case PAID: //addThemeVariants(ButtonVariant.LUMO_PRIMARY);
                 break;
