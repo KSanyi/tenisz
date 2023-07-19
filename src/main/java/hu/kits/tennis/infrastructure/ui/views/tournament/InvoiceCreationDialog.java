@@ -9,17 +9,18 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.textfield.NumberField;
 
 import hu.kits.tennis.Main;
-import hu.kits.tennis.domain.invoice.InvoiceService;
+import hu.kits.tennis.application.usecase.InvoicingUseCase;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.PaymentStatus;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
 public class InvoiceCreationDialog extends Dialog {
 
+    private final InvoicingUseCase invoicingUseCase = Main.applicationContext.getInvoicingUseCase();
     private final TournamentService tournamentService = Main.applicationContext.getTournamentService();
-    private final InvoiceService invoiceService = Main.applicationContext.getInvoiceService();
     
     private final Tournament tournament;
     
@@ -50,17 +51,13 @@ public class InvoiceCreationDialog extends Dialog {
 
     private void createInvoices(List<Player> playersToSendInvoice) {
         
-        List<String> emails = playersToSendInvoice.stream().map(p -> p.contact().email()).toList();
-        
-        List<String> emailsWithSucess = invoiceService.createAndSendInvoices(emails, amountField.getValue().intValue());
-        
-        for(String email : emailsWithSucess) {
-            Player player = playersToSendInvoice.stream().filter(p -> p.contact().email().equals(email)).findAny().get();
-            tournamentService.setPaymentStatus(tournament, player, PaymentStatus.INVOICE_SENT);    
+        if(amountField.getValue() != null && amountField.getValue() > 0) {
+            invoicingUseCase.createInvoices(playersToSendInvoice, amountField.getValue().intValue(), tournament);
+            close();
+            UI.getCurrent().getPage().reload();            
+        } else {
+            KITSNotification.showError("A számla összegét meg kell adni");
         }
-        
-        close();
-        UI.getCurrent().getPage().reload();
     }
 
 }

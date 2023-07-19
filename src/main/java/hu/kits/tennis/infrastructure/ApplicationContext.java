@@ -6,6 +6,7 @@ import com.github.scribejava.core.oauth.OAuth20Service;
 
 import hu.kits.tennis.application.AddPlayerAddressWorkflow;
 import hu.kits.tennis.application.usecase.AllMatchesUseCase;
+import hu.kits.tennis.application.usecase.InvoicingUseCase;
 import hu.kits.tennis.domain.email.EmailSender;
 import hu.kits.tennis.domain.invoice.InvoiceService;
 import hu.kits.tennis.domain.match.MatchRepository;
@@ -41,6 +42,7 @@ public class ApplicationContext {
     
     private final AddPlayerAddressWorkflow addPlayerAddressWorkflow;
     private final AllMatchesUseCase allMatchesUseCase;
+    private final InvoicingUseCase invoicingUseCase;
     
     public ApplicationContext(DataSource dataSource, EmailSender emailSender, OAuth20Service oAuthService, InvoiceService invoiceService) {
 
@@ -63,6 +65,7 @@ public class ApplicationContext {
         
         addPlayerAddressWorkflow = new AddPlayerAddressWorkflow(playersService, invoiceService);
         allMatchesUseCase = new AllMatchesUseCase(playersService, matchService);
+        invoicingUseCase = new InvoicingUseCase(tournamentService, invoiceService);
     }
     
     public UserService getUserService() {
@@ -107,6 +110,10 @@ public class ApplicationContext {
     
     public AllMatchesUseCase getAllMatchesUseCase() {
         return allMatchesUseCase;
+    }
+    
+    public InvoicingUseCase getInvoicingUseCase() {
+        return invoicingUseCase;
     }
     
 }
