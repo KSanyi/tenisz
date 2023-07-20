@@ -21,9 +21,11 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
+import hu.kits.tennis.Main;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.PaymentStatus;
+import hu.kits.tennis.domain.utr.PlayersWithUTR;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.component.PlayerSelectorDialog;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
@@ -80,13 +82,15 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         
         this.tournamentView = tournamentView;
         
+        PlayersWithUTR playersWithUTR = Main.applicationContext.getPlayersService().loadAllPlayersWithUTR();
+        
         addColumn(item -> items.indexOf(item) + 1)
             .setHeader("Rank")
             .setAutoWidth(true)
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(0);
         
-        addColumn(item -> item.player.name())
+        addColumn(item -> formatNameAndUTR(item.player, playersWithUTR))
             .setHeader("Név")
             .setAutoWidth(true)
             .setFlexGrow(1);
@@ -104,6 +108,14 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         configurDragAndDrop();
         
         addItemClickListener(e -> handleClick(e));
+    }
+    
+    private static String formatNameAndUTR(Player player, PlayersWithUTR playersWithUTR) {
+        if(player.equals(Player.BYE)) {
+            return "Bye";
+        } else {
+            return player.name() + " (" + playersWithUTR.getUTR(player.id()) + ")";
+        }
     }
     
     private void handleClick(ItemClickEvent<ContestantBean> e) {

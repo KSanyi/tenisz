@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
 
@@ -14,8 +13,6 @@ public interface TournamentRepository {
     Map<String, BasicTournamentInfo> loadBasicTournamentInfosMap();
     
     List<TournamentSummary> loadTournamentSummariesList();
-    
-    List<Tournament> loadAllTournaments(Player player);
     
     Optional<Tournament> findTournament(String tournamentId);
     

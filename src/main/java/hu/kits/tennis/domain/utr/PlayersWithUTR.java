@@ -22,7 +22,8 @@ public class PlayersWithUTR {
     }
 
     public UTR getUTR(Integer id) {
-        return idToPlayerWithUTR.get(id).utr();
+        PlayerWithUTR playerWithUTR = idToPlayerWithUTR.get(id);
+        return playerWithUTR != null ? playerWithUTR.utr() : UTR.UNDEFINED;
     }
     
 }

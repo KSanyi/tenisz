@@ -122,62 +122,6 @@ public class TournamentJdbcRepository implements TournamentRepository {
     }
     
     @Override
-    public List<Tournament> loadAllTournaments(Player player) {
-        
-        Players players = playerRepository.loadAllPlayers();
-        Map<String, List<Contestant>> contestantsByTournament = contestantDBTable.loadAllContestantsByTournament(players);
-
-        Map<String, List<Contestant>> contestantsByTournamentForPlayer = CollectionsUtil.filterByValue(contestantsByTournament, 
-                contestants -> contestants.stream().anyMatch(c -> c.player() != null && c.player().id().equals(player.id())));
-        
-        if(contestantsByTournamentForPlayer.isEmpty()) {
-            return List.of();
-        }
-        
-        String sql = String.format("SELECT * FROM %s WHERE %s IN(<tournamentIds>)", TABLE_TOURNAMENT, COLUMN_ID);
-        
-        return jdbi.withHandle(handle -> 
-            handle.createQuery(sql)
-            .bindList("tournamentIds", contestantsByTournamentForPlayer.keySet())
-            .map((rs, ctx) -> mapToTournament(rs, contestantsByTournamentForPlayer, Map.of())).list());
-    }
-    
-    private static Tournament mapToTournament(ResultSet rs, Map<String, List<Contestant>> contestantsByTournament, Map<String, TournamentMatches> matchesByTournament) throws SQLException {
-        
-        String tournamentId = rs.getString(COLUMN_ID);
-        
-        List<Contestant> contestants = contestantsByTournament.getOrDefault(tournamentId, List.of());
-        
-        Structure structure = Structure.valueOf(rs.getString(COLUMN_STRUCTURE));
-        
-        TournamentMatches tournamentMatches = matchesByTournament.getOrDefault(tournamentId, TournamentMatches.empty());
-        
-        List<TournamentBoard> boards = new ArrayList<>();
-        
-        int numberOfRounds = MathUtil.log2(contestants.stream().mapToInt(c -> c.rank()).max().orElse(0));
-        boards.add(new TournamentBoard(numberOfRounds, tournamentMatches.matchesInBoard(1)));
-        if(structure == Structure.BOARD_AND_CONSOLATION) {
-            boards.add(new TournamentBoard(numberOfRounds - 1, tournamentMatches.matchesInBoard(2)));
-        }
-        
-        return new Tournament(
-                tournamentId,
-                new TournamentParams(
-                        Organization.valueOf(rs.getString(COLUMN_ORGANIZATION)),
-                        Type.valueOf(rs.getString(COLUMN_TYPE)),
-                        Level.valueOf(rs.getString(COLUMN_LEVEL_FROM)),
-                        Level.valueOf(rs.getString(COLUMN_LEVEL_TO)),
-                        rs.getDate(COLUMN_DATE).toLocalDate(),
-                        rs.getString(COLUMN_NAME),
-                        rs.getString(COLUMN_VENUE),
-                        structure,
-                        rs.getInt(COLUMN_BEST_OF_N_SETS)),
-                contestants,
-                Status.valueOf(rs.getString(COLUMN_STATUS)),
-                boards);
-    }
-    
-    @Override
     public void createTournament(Tournament tournament) {
         Map<String, Object> map = createMap(tournament);
         jdbi.withHandle(handle -> JdbiUtil.createInsertStatement(handle, TABLE_TOURNAMENT, map).execute());
@@ -215,6 +159,41 @@ public class TournamentJdbcRepository implements TournamentRepository {
             handle.createQuery(sql)
             .bind("id", tournamentId)
             .map((rs, ctx) -> mapToTournament(rs, Map.of(tournamentId, contestants), Map.of(tournamentId, matches))).findFirst());
+    }
+    
+    private static Tournament mapToTournament(ResultSet rs, Map<String, List<Contestant>> contestantsByTournament, Map<String, TournamentMatches> matchesByTournament) throws SQLException {
+        
+        String tournamentId = rs.getString(COLUMN_ID);
+        
+        List<Contestant> contestants = contestantsByTournament.getOrDefault(tournamentId, List.of());
+        
+        Structure structure = Structure.valueOf(rs.getString(COLUMN_STRUCTURE));
+        
+        TournamentMatches tournamentMatches = matchesByTournament.getOrDefault(tournamentId, TournamentMatches.empty());
+        
+        List<TournamentBoard> boards = new ArrayList<>();
+        
+        int numberOfRounds = MathUtil.log2(contestants.stream().mapToInt(c -> c.rank()).max().orElse(0));
+        boards.add(new TournamentBoard(numberOfRounds, tournamentMatches.matchesInBoard(1)));
+        if(structure == Structure.BOARD_AND_CONSOLATION) {
+            boards.add(new TournamentBoard(numberOfRounds - 1, tournamentMatches.matchesInBoard(2)));
+        }
+        
+        return new Tournament(
+                tournamentId,
+                new TournamentParams(
+                        Organization.valueOf(rs.getString(COLUMN_ORGANIZATION)),
+                        Type.valueOf(rs.getString(COLUMN_TYPE)),
+                        Level.valueOf(rs.getString(COLUMN_LEVEL_FROM)),
+                        Level.valueOf(rs.getString(COLUMN_LEVEL_TO)),
+                        rs.getDate(COLUMN_DATE).toLocalDate(),
+                        rs.getString(COLUMN_NAME),
+                        rs.getString(COLUMN_VENUE),
+                        structure,
+                        rs.getInt(COLUMN_BEST_OF_N_SETS)),
+                contestants,
+                Status.valueOf(rs.getString(COLUMN_STATUS)),
+                boards);
     }
 
     @Override
