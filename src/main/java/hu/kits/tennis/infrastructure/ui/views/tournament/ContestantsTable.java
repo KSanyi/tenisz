@@ -174,7 +174,15 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         List<ContestantBean> contestants = items.stream().map(gridItem -> gridItem).collect(toList());
         List<Player> players = contestants.stream().map(c -> c.player).collect(toList());
         if(!players.contains(player)) {
-            contestants.add(new ContestantBean(player));
+            
+            int indexOfBye = players.indexOf(Player.BYE);
+            if(indexOfBye > -1) {
+                contestants.remove(indexOfBye);
+                contestants.add(indexOfBye, new ContestantBean(player));
+            } else {
+                contestants.add(new ContestantBean(player));
+            }
+            
             setContestants(contestants);
             update();
             KITSNotification.showInfo(player.name() + " hozzáadva a versenyhez");
