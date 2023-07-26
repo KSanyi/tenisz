@@ -137,11 +137,15 @@ public class UTRService {
                 .collect(toList());
         
         if(matchInfos.isEmpty()) {
-            return PlayerStats.create(player, utrDetails, matchInfos, UTRHistory.EMPTY);
+            return PlayerStats.create(player, utrDetails, matchInfos, UTRHistory.EMPTY, 0);
         } else {
+            List<PlayerWithUTR> utrRanking = calculateUTRRanking(false);
+            PlayerWithUTR playerWithUTR = utrRanking.stream().filter(p -> p.player().equals(player)).findFirst().get();
+            int rank = utrRanking.indexOf(playerWithUTR) + 1;
+            
             LocalDate firstMatchDate = matchInfos.get(matchInfos.size()-1).date();
             UTRHistory utrHistory = calculateUTRHistory(player, firstMatchDate);
-            return PlayerStats.create(player, utrDetails, matchInfos, utrHistory);
+            return PlayerStats.create(player, utrDetails, matchInfos, utrHistory, rank);
         }
     }
 

@@ -25,10 +25,11 @@ public record PlayerStats(Player player,
         UTRHistoryEntry utrHigh,
         MatchInfo bestUTRMatch,
         MatchInfo worstUTRMatch,
-        UTRHistory utrHistory
+        UTRHistory utrHistory,
+        int rank
         ) {
 
-    public static PlayerStats create(Player player, UTRDetails utrDetails, List<MatchInfo> matchInfos, UTRHistory utrHistory) {
+    public static PlayerStats create(Player player, UTRDetails utrDetails, List<MatchInfo> matchInfos, UTRHistory utrHistory, int rank) {
         
         int numberOfTournaments = (int)matchInfos.stream().map(match -> match.tournamentInfo().id()).distinct().count();
         int numberOfMatches = matchInfos.size();
@@ -72,7 +73,8 @@ public record PlayerStats(Player player,
                 gamesLossPercentage,
                 utrHigh,
                 bestUTRMatch, worstUTRMatch,
-                utrHistory);
+                utrHistory,
+                rank);
     }
     
     private static double calculatePercentage(double x, double n) {
