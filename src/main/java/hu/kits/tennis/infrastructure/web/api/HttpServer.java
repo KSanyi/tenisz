@@ -48,6 +48,9 @@ public class HttpServer {
             path("api/tournaments/DAILY", () -> {
                 get(restHandlers::listAllDailyTournaments);
             });
+            path("api/tournaments/TOUR", () -> {
+                get(restHandlers::listAllTourTournaments);
+            });
             path("api/utr-ranking", () -> {
                 get(restHandlers::calculateUTRRanking);
             });

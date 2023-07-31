@@ -2,6 +2,8 @@ package hu.kits.tennis.domain.tournament;
 
 import java.time.LocalDate;
 
+import hu.kits.tennis.domain.tournament.TournamentSummary.CourtInfo;
+
 public record TournamentParams(
         Organization organization,
         Type type,
@@ -10,8 +12,10 @@ public record TournamentParams(
         LocalDate date, 
         String name,
         String venue,
+        CourtInfo courtInfo,
         Structure structure,
-        int bestOfNSets) {
+        int bestOfNSets,
+        String description) {
     
     public enum Type {
         TOUR("Tour"), DAILY("Napi verseny");
@@ -35,6 +39,27 @@ public record TournamentParams(
         @Override
         public String toString() {
             return String.valueOf(value);
+        }
+    }
+    
+    public enum Surface {
+        CLAY("Salak"), HARD("Kemény");
+        
+        public final String label;
+
+        private Surface(String label) {
+            this.label = label;
+        }
+    }
+    
+    public enum VenueType {
+        
+        INDOOR("Csarnok"), OUTDOOR("Szabadtér");
+        
+        public final String label;
+
+        private VenueType(String label) {
+            this.label = label;
         }
     }
     

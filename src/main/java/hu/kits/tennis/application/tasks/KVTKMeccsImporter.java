@@ -31,16 +31,18 @@ import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.Players;
-import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentParams;
 import hu.kits.tennis.domain.tournament.TournamentParams.Level;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
+import hu.kits.tennis.domain.tournament.TournamentParams.Surface;
 import hu.kits.tennis.domain.tournament.TournamentParams.Type;
+import hu.kits.tennis.domain.tournament.TournamentParams.VenueType;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
+import hu.kits.tennis.domain.tournament.TournamentSummary.CourtInfo;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 
@@ -144,7 +146,7 @@ public class KVTKMeccsImporter {
     private String findOrCreateTournament(LocalDate date, String tournamentName) {
         String tournamentId = tournamentIdsByName.get(tournamentName);
         if(tournamentId == null) {
-            TournamentParams params = new TournamentParams(Organization.KVTK, Type.DAILY, Level.L90, Level.L1000, date, tournamentName, "Mini Garros", Structure.NA, 1);
+            TournamentParams params = new TournamentParams(Organization.KVTK, Type.DAILY, Level.L90, Level.L1000, date, tournamentName, "Mini Garros", new CourtInfo(4, Surface.CLAY, VenueType.INDOOR), Structure.NA, 1, "");
             logger.info("Saving tournament " + params);
             Tournament tournament = tournamentService.createTournament(params);
             tournamentId = tournament.id();

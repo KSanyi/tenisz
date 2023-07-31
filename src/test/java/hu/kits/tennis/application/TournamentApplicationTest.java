@@ -32,9 +32,12 @@ import hu.kits.tennis.domain.tournament.TournamentParams;
 import hu.kits.tennis.domain.tournament.TournamentParams.Level;
 import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
+import hu.kits.tennis.domain.tournament.TournamentParams.Surface;
 import hu.kits.tennis.domain.tournament.TournamentParams.Type;
+import hu.kits.tennis.domain.tournament.TournamentParams.VenueType;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
+import hu.kits.tennis.domain.tournament.TournamentSummary.CourtInfo;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 import hu.kits.tennis.testutil.InMemoryDataSourceFactory;
 import hu.kits.tennis.testutil.SpyEmailSender;
@@ -45,7 +48,7 @@ public class TournamentApplicationTest {
     
     private static TournamentService tournamentService;
     
-    private final TournamentParams DEFAULT_PARAMS = new TournamentParams(Organization.KVTK, Type.DAILY, Level.L250, Level.L250, LocalDate.of(2022, 1, 1), "Masters 500", "Mini Garros", Structure.SIMPLE_BOARD, 3);
+    private final TournamentParams DEFAULT_PARAMS = new TournamentParams(Organization.KVTK, Type.DAILY, Level.L250, Level.L250, LocalDate.of(2022, 1, 1), "Masters 500", "Mini Garros", new CourtInfo(4, Surface.CLAY, VenueType.INDOOR), Structure.SIMPLE_BOARD, 3, "");
     
     @SuppressWarnings("static-method")
     @BeforeEach
@@ -224,7 +227,7 @@ public class TournamentApplicationTest {
     @Test
     void tournamentWith3RoundsAndConsolation() {
         
-        TournamentParams params = new TournamentParams(Organization.KVTK, Type.DAILY, Level.L250, Level.L250, LocalDate.of(2022, 1, 1), "Napi", "Mini Garros", Structure.BOARD_AND_CONSOLATION, 3);
+        TournamentParams params = new TournamentParams(Organization.KVTK, Type.DAILY, Level.L250, Level.L250, LocalDate.of(2022, 1, 1), "Napi", "Mini Garros", new CourtInfo(4, Surface.CLAY, VenueType.INDOOR), Structure.BOARD_AND_CONSOLATION, 3, "");
         Tournament tournament = tournamentService.createTournament(params);
         
         tournamentService.updateContestants(tournament, Contestant.of(player1, player2, player3, player4, player5, player6, player7, player8));

@@ -23,7 +23,10 @@ import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.TournamentParams.Level;
 import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
+import hu.kits.tennis.domain.tournament.TournamentParams.Surface;
 import hu.kits.tennis.domain.tournament.TournamentParams.Type;
+import hu.kits.tennis.domain.tournament.TournamentParams.VenueType;
+import hu.kits.tennis.domain.tournament.TournamentSummary.CourtInfo;
 
 public class TournamentTest {
 
@@ -31,7 +34,7 @@ public class TournamentTest {
     
     private final LocalDate DATE = LocalDate.of(2022,1,11);
     
-    private final TournamentParams tournamentParams = new TournamentParams(Organization.KVTK, Type.DAILY, Level.L250, Level.L250, LocalDate.of(2022, 1, 1), "Napi", "Mini Garros", Structure.SIMPLE_BOARD, 1);
+    private final TournamentParams tournamentParams = new TournamentParams(Organization.KVTK, Type.DAILY, Level.L250, Level.L250, LocalDate.of(2022, 1, 1), "Napi", "Mini Garros", new CourtInfo(4, Surface.CLAY, VenueType.INDOOR), Structure.SIMPLE_BOARD, 1, "");
     
     @Test
     void lineupTestWith4Players() {

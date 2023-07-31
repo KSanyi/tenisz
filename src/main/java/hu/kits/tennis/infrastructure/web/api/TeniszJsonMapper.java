@@ -11,7 +11,9 @@ import javax.json.JsonValue;
 import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
+import hu.kits.tennis.domain.tournament.TournamentSummary.CourtInfo;
 import hu.kits.tennis.domain.utr.PlayerStats;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import hu.kits.tennis.domain.utr.UTR;
@@ -112,20 +114,37 @@ public class TeniszJsonMapper implements JsonMapper {
     }
     
     private static JsonObject mapTournamentSummaryToJson(TournamentSummary tournamentSummary) {
-        return Json.createObjectBuilder()
+        JsonObjectBuilder builder = Json.createObjectBuilder()
                 .add("id", tournamentSummary.id())
                 .add("name", tournamentSummary.name())
-                .add("date", tournamentSummary.date().toString())
+                .add("startDate", tournamentSummary.date().toString())
                 .add("levelFrom", tournamentSummary.levelFrom().name())
-                .add("levelTo", tournamentSummary.levelTo().name())
-                .add("status", tournamentSummary.status().name())
-                .add("type", tournamentSummary.type().name())
-                .add("winner", mapPlayerToJson(tournamentSummary.winner()))
-                .add("numberOfPlayers", tournamentSummary.numberOfPlayers())
-                .add("numberOfMatchesPlayed", tournamentSummary.numberOfMatchesPlayed())
-                .build();
+                .add("levelTo", tournamentSummary.levelTo().name());
+        
+        if(tournamentSummary.type() == Type.DAILY) {
+            builder
+                .add("venue", tournamentSummary.venue())
+                .add("courtInfo", mapCourtInfoToJson(tournamentSummary.courtInfo()));
+        }
+        
+        return builder
+            .add("type", tournamentSummary.type().name())
+            .add("description", tournamentSummary.description())
+            .add("status", tournamentSummary.status().name())
+            .add("winner", mapPlayerToJson(tournamentSummary.winner()))
+            .add("numberOfPlayers", tournamentSummary.numberOfPlayers())
+            .add("numberOfMatchesPlayed", tournamentSummary.numberOfMatchesPlayed())
+            .build();
     }
     
+    private static JsonValue mapCourtInfoToJson(CourtInfo courtInfo) {
+        return Json.createObjectBuilder()
+                .add("numberOfCourts", courtInfo.numberOfCourts())
+                .add("surface", courtInfo.surface().name())
+                .add("venueType", courtInfo.venueType().name())
+                .build();
+    }
+
     private static JsonObject mapPlayerStatsToJson(PlayerStats playerStats) {
         
         return Json.createObjectBuilder()

@@ -75,6 +75,11 @@ class TournamentsGrid extends Grid<TournamentSummary> {
             .setComparator(comparing(TournamentSummary::date))
             .setKey("date");
         
+        addColumn(t -> t.courtInfo().surface().label)
+            .setHeader("Borítás")
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setSortable(true);
+        
         addColumn(LitRenderer.<TournamentSummary>of("<b>${item.name}</b>")
                 .withProperty("name", t -> t.winner() != null ? t.winner().name() : ""))
             .setHeader("Győztes")

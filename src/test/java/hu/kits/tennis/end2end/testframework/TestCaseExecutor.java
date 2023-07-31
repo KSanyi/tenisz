@@ -43,7 +43,10 @@ import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentParams;
 import hu.kits.tennis.domain.tournament.TournamentParams.Level;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
+import hu.kits.tennis.domain.tournament.TournamentParams.Surface;
+import hu.kits.tennis.domain.tournament.TournamentParams.VenueType;
 import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.tournament.TournamentSummary.CourtInfo;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 import hu.kits.tennis.infrastructure.web.api.HttpServer;
@@ -81,7 +84,7 @@ public class TestCaseExecutor {
         Player player3 = playerRepository.saveNewPlayer(new Player(null, "Tóth Gábor", new Contact("toth.gabor@gmail.com", "", Address.EMPTY, ""), UTR.of(7.5), Set.of(Organization.KVTK)));
         
         TournamentService tournamentService = applicationContext.getTournamentService();
-        Tournament tournament = tournamentService.createTournament(new TournamentParams(Organization.KVTK, TournamentParams.Type.DAILY, Level.L500, Level.L500, LocalDate.of(2023,3,15), "Napi 500 verseny", "Mini Garros", Structure.SIMPLE_BOARD, 1));
+        Tournament tournament = tournamentService.createTournament(new TournamentParams(Organization.KVTK, TournamentParams.Type.DAILY, Level.L500, Level.L500, LocalDate.of(2023,3,15), "Napi 500 verseny", "Mini Garros", new CourtInfo(4, Surface.CLAY, VenueType.INDOOR), Structure.SIMPLE_BOARD, 1, ""));
         
         MatchService matchService = applicationContext.getMatchService();
         matchService.saveMatch(new Match(null, tournament.id(), 1, 1, LocalDate.of(2023,3,15), player1, player2, new MatchResult(6, 0)));

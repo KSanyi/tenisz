@@ -9,10 +9,17 @@ response-body:
         "id": "23c60001",
         "name": "Napi 500 verseny",
         "date": "2023-03-15",
-        "levelFrom": "L500",        // L90, L125, L250, L375, L500, L625, L750, L875, L1000
-        "levelTo": "L500",          // L90, L125, L250, L375, L500, L625, L750, L875, L1000
-        "status": "DRAFT",          // DRAFT, LIVE, COMPLETED
-        "type": "DAILY",            // DAILY, TOUR
+        "levelFrom": "L500",          // L90, L125, L250, L375, L500, L625, L750, L875, L1000
+        "levelTo": "L500",            // L90, L125, L250, L375, L500, L625, L750, L875, L1000
+        "venue": "Mini Garros",
+        "courtInfo": {
+            "numberOfCourts": 4,
+            "surface": "CLAY",        // CLAY, HARD
+            "venueType": "INDOOR"     // INDOOR, OUTDOOR
+        },
+        "type": "DAILY",              // DAILY, TOUR
+        "description": "",
+        "status": "DRAFT",            // DRAFT, LIVE, COMPLETED
         "winner": {
         },
         "numberOfPlayers": 0,

@@ -30,9 +30,12 @@ import hu.kits.tennis.domain.tournament.TournamentParams;
 import hu.kits.tennis.domain.tournament.TournamentParams.Level;
 import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
+import hu.kits.tennis.domain.tournament.TournamentParams.Surface;
 import hu.kits.tennis.domain.tournament.TournamentParams.Type;
+import hu.kits.tennis.domain.tournament.TournamentParams.VenueType;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
+import hu.kits.tennis.domain.tournament.TournamentSummary.CourtInfo;
 
 public class TournamentJdbcRepository implements TournamentRepository {
 
@@ -42,12 +45,16 @@ public class TournamentJdbcRepository implements TournamentRepository {
     private static final String COLUMN_DATE = "DATE";
     private static final String COLUMN_NAME = "NAME";
     private static final String COLUMN_VENUE = "VENUE";
+    private static final String COLUMN_VENUE_TYPE = "VENUE_TYPE";
+    private static final String COLUMN_NUMBER_OF_COURTS = "NUMBER_OF_COURTS";
+    private static final String COLUMN_SURFACE = "SURFACE";
     private static final String COLUMN_TYPE = "TYPE";
     private static final String COLUMN_STRUCTURE = "STRUCTURE";
     private static final String COLUMN_LEVEL_FROM = "LEVEL_FROM";
     private static final String COLUMN_LEVEL_TO = "LEVEL_TO";
     private static final String COLUMN_BEST_OF_N_SETS = "BEST_OF_N_SETS";
     private static final String COLUMN_STATUS = "STATUS";
+    private static final String COLUMN_DESCRIPTION = "DESCRIPTION";
     
     private final Jdbi jdbi;
     
@@ -113,12 +120,18 @@ public class TournamentJdbcRepository implements TournamentRepository {
                 Type.valueOf(rs.getString(COLUMN_TYPE)),
                 Level.valueOf(rs.getString(COLUMN_LEVEL_FROM)),
                 Level.valueOf(rs.getString(COLUMN_LEVEL_TO)),
+                rs.getString(COLUMN_VENUE),
+                new CourtInfo(
+                    rs.getInt(COLUMN_NUMBER_OF_COURTS),
+                    Surface.valueOf(rs.getString(COLUMN_SURFACE)),
+                    VenueType.valueOf(rs.getString(COLUMN_VENUE_TYPE))),
                 rs.getString(COLUMN_NAME),
                 rs.getDate(COLUMN_DATE).toLocalDate(),
                 Status.valueOf(rs.getString(COLUMN_STATUS)),
                 matchCountByTournament.getOrDefault(tournamentId, 0),
                 playerCountByTournament.getOrDefault(tournamentId, 0),
-                winnerByTournament.get(tournamentId));
+                winnerByTournament.get(tournamentId),
+                rs.getString(COLUMN_DESCRIPTION));
     }
     
     @Override
@@ -140,9 +153,13 @@ public class TournamentJdbcRepository implements TournamentRepository {
         valuesMap.put(COLUMN_DATE, params.date());
         valuesMap.put(COLUMN_NAME, params.name());
         valuesMap.put(COLUMN_VENUE, params.venue());
+        valuesMap.put(COLUMN_NUMBER_OF_COURTS, params.courtInfo().numberOfCourts());
+        valuesMap.put(COLUMN_SURFACE, params.courtInfo().surface().name());
+        valuesMap.put(COLUMN_VENUE_TYPE, params.courtInfo().venueType());
         valuesMap.put(COLUMN_STRUCTURE, params.structure());
         valuesMap.put(COLUMN_BEST_OF_N_SETS, params.bestOfNSets());
         valuesMap.put(COLUMN_STATUS, tournament.status());
+        valuesMap.put(COLUMN_DESCRIPTION, params.description());
         return valuesMap;
     }
 
@@ -189,8 +206,13 @@ public class TournamentJdbcRepository implements TournamentRepository {
                         rs.getDate(COLUMN_DATE).toLocalDate(),
                         rs.getString(COLUMN_NAME),
                         rs.getString(COLUMN_VENUE),
+                        new CourtInfo(
+                                rs.getInt(COLUMN_NUMBER_OF_COURTS),
+                                Surface.valueOf(rs.getString(COLUMN_SURFACE)),
+                                VenueType.valueOf(rs.getString(COLUMN_VENUE_TYPE))),
                         structure,
-                        rs.getInt(COLUMN_BEST_OF_N_SETS)),
+                        rs.getInt(COLUMN_BEST_OF_N_SETS),
+                        rs.getString(COLUMN_DESCRIPTION)),
                 contestants,
                 Status.valueOf(rs.getString(COLUMN_STATUS)),
                 boards);
