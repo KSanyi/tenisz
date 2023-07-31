@@ -114,17 +114,20 @@ public class TournamentJdbcRepository implements TournamentRepository {
         
         String tournamentId = rs.getString(COLUMN_ID);
         
+        Type type = Type.valueOf(rs.getString(COLUMN_TYPE));
+        CourtInfo courtInfo = type == Type.DAILY ? new CourtInfo(
+                rs.getInt(COLUMN_NUMBER_OF_COURTS),
+                Surface.valueOf(rs.getString(COLUMN_SURFACE)),
+                VenueType.valueOf(rs.getString(COLUMN_VENUE_TYPE))) : null;
+        
         return new TournamentSummary(
                 tournamentId,
                 Organization.valueOf(rs.getString(COLUMN_ORGANIZATION)),
-                Type.valueOf(rs.getString(COLUMN_TYPE)),
+                type,
                 Level.valueOf(rs.getString(COLUMN_LEVEL_FROM)),
                 Level.valueOf(rs.getString(COLUMN_LEVEL_TO)),
                 rs.getString(COLUMN_VENUE),
-                new CourtInfo(
-                    rs.getInt(COLUMN_NUMBER_OF_COURTS),
-                    Surface.valueOf(rs.getString(COLUMN_SURFACE)),
-                    VenueType.valueOf(rs.getString(COLUMN_VENUE_TYPE))),
+                courtInfo,
                 rs.getString(COLUMN_NAME),
                 rs.getDate(COLUMN_DATE).toLocalDate(),
                 Status.valueOf(rs.getString(COLUMN_STATUS)),
@@ -152,10 +155,12 @@ public class TournamentJdbcRepository implements TournamentRepository {
         valuesMap.put(COLUMN_LEVEL_TO, params.levelTo());
         valuesMap.put(COLUMN_DATE, params.date());
         valuesMap.put(COLUMN_NAME, params.name());
-        valuesMap.put(COLUMN_VENUE, params.venue());
-        valuesMap.put(COLUMN_NUMBER_OF_COURTS, params.courtInfo().numberOfCourts());
-        valuesMap.put(COLUMN_SURFACE, params.courtInfo().surface().name());
-        valuesMap.put(COLUMN_VENUE_TYPE, params.courtInfo().venueType());
+        if(params.type() == Type.DAILY) {
+            valuesMap.put(COLUMN_VENUE, params.venue());
+            valuesMap.put(COLUMN_NUMBER_OF_COURTS, params.courtInfo().numberOfCourts());
+            valuesMap.put(COLUMN_SURFACE, params.courtInfo().surface().name());
+            valuesMap.put(COLUMN_VENUE_TYPE, params.courtInfo().venueType());    
+        }
         valuesMap.put(COLUMN_STRUCTURE, params.structure());
         valuesMap.put(COLUMN_BEST_OF_N_SETS, params.bestOfNSets());
         valuesMap.put(COLUMN_STATUS, tournament.status());
@@ -196,20 +201,23 @@ public class TournamentJdbcRepository implements TournamentRepository {
             boards.add(new TournamentBoard(numberOfRounds - 1, tournamentMatches.matchesInBoard(2)));
         }
         
+        Type type = Type.valueOf(rs.getString(COLUMN_TYPE));
+        CourtInfo courtInfo = type == Type.DAILY ? new CourtInfo(
+                rs.getInt(COLUMN_NUMBER_OF_COURTS),
+                Surface.valueOf(rs.getString(COLUMN_SURFACE)),
+                VenueType.valueOf(rs.getString(COLUMN_VENUE_TYPE))) : null;
+        
         return new Tournament(
                 tournamentId,
                 new TournamentParams(
                         Organization.valueOf(rs.getString(COLUMN_ORGANIZATION)),
-                        Type.valueOf(rs.getString(COLUMN_TYPE)),
+                        type,
                         Level.valueOf(rs.getString(COLUMN_LEVEL_FROM)),
                         Level.valueOf(rs.getString(COLUMN_LEVEL_TO)),
                         rs.getDate(COLUMN_DATE).toLocalDate(),
                         rs.getString(COLUMN_NAME),
                         rs.getString(COLUMN_VENUE),
-                        new CourtInfo(
-                                rs.getInt(COLUMN_NUMBER_OF_COURTS),
-                                Surface.valueOf(rs.getString(COLUMN_SURFACE)),
-                                VenueType.valueOf(rs.getString(COLUMN_VENUE_TYPE))),
+                        courtInfo,
                         structure,
                         rs.getInt(COLUMN_BEST_OF_N_SETS),
                         rs.getString(COLUMN_DESCRIPTION)),

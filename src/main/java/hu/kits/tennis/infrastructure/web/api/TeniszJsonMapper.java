@@ -117,7 +117,7 @@ public class TeniszJsonMapper implements JsonMapper {
         JsonObjectBuilder builder = Json.createObjectBuilder()
                 .add("id", tournamentSummary.id())
                 .add("name", tournamentSummary.name())
-                .add("startDate", tournamentSummary.date().toString())
+                .add(tournamentSummary.type() == Type.DAILY ? "date" : "startDate", tournamentSummary.date().toString())
                 .add("levelFrom", tournamentSummary.levelFrom().name())
                 .add("levelTo", tournamentSummary.levelTo().name());
         

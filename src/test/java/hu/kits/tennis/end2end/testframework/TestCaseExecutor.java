@@ -84,12 +84,14 @@ public class TestCaseExecutor {
         Player player3 = playerRepository.saveNewPlayer(new Player(null, "Tóth Gábor", new Contact("toth.gabor@gmail.com", "", Address.EMPTY, ""), UTR.of(7.5), Set.of(Organization.KVTK)));
         
         TournamentService tournamentService = applicationContext.getTournamentService();
-        Tournament tournament = tournamentService.createTournament(new TournamentParams(Organization.KVTK, TournamentParams.Type.DAILY, Level.L500, Level.L500, LocalDate.of(2023,3,15), "Napi 500 verseny", "Mini Garros", new CourtInfo(4, Surface.CLAY, VenueType.INDOOR), Structure.SIMPLE_BOARD, 1, ""));
+        Tournament tournament1 = tournamentService.createTournament(new TournamentParams(Organization.KVTK, TournamentParams.Type.DAILY, Level.L500, Level.L500, LocalDate.of(2023,3,15), "Napi 500 verseny", "Mini Garros", new CourtInfo(4, Surface.CLAY, VenueType.INDOOR), Structure.SIMPLE_BOARD, 1, ""));
         
         MatchService matchService = applicationContext.getMatchService();
-        matchService.saveMatch(new Match(null, tournament.id(), 1, 1, LocalDate.of(2023,3,15), player1, player2, new MatchResult(6, 0)));
-        matchService.saveMatch(new Match(null, tournament.id(), 1, 1, LocalDate.of(2023,3,15), player1, player3, new MatchResult(6, 2)));
-        matchService.saveMatch(new Match(null, tournament.id(), 1, 1, LocalDate.of(2023,3,15), player2, player3, new MatchResult(7, 5)));
+        matchService.saveMatch(new Match(null, tournament1.id(), 1, 1, LocalDate.of(2023,3,15), player1, player2, new MatchResult(6, 0)));
+        matchService.saveMatch(new Match(null, tournament1.id(), 1, 1, LocalDate.of(2023,3,15), player1, player3, new MatchResult(6, 2)));
+        matchService.saveMatch(new Match(null, tournament1.id(), 1, 1, LocalDate.of(2023,3,15), player2, player3, new MatchResult(7, 5)));
+        
+        tournamentService.createTournament(new TournamentParams(Organization.KVTK, TournamentParams.Type.TOUR, Level.L500, Level.L500, LocalDate.of(2023,3,15), "TOUR I - 500", "Mini Garros", null, Structure.SIMPLE_BOARD, 1, ""));
         
         applicationContext.getUTRService().recalculateAllUTRs();
         

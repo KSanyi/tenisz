@@ -26,3 +26,26 @@ response-body:
         "numberOfMatchesPlayed": 3
     }
 ]
+
+Call 2
+description: List of all tours
+url: <url-base>/api/tournaments/TOUR
+method: GET
+response-status: 200
+response-body:
+[
+    {
+        "id": "23c60002",
+        "name": "TOUR I - 500",
+        "startDate": "2023-03-15",
+        "levelFrom": "L500",
+        "levelTo": "L500",
+        "type": "TOUR",
+        "description": "",
+        "status": "DRAFT",
+        "winner": {
+        },
+        "numberOfPlayers": 0,
+        "numberOfMatchesPlayed": 0
+    }
+]
