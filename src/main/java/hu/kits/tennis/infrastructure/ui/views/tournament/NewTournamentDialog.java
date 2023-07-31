@@ -84,6 +84,7 @@ public class NewTournamentDialog extends Dialog {
         binder.bind(dateField, "date");
         binder.bind(setsSelect, "bestOfNSets");
         binder.bind(structureSelect, "structure");
+        binder.bind(descriptionField, "description");
         
         organizationSelect.setValue(Organization.KVTK);
         venueSelect.setValue("Mini Garros");
@@ -126,7 +127,8 @@ public class NewTournamentDialog extends Dialog {
         surfaceSelect.setWidth("120px");
         venueTypeSelect.setWidth("120px");
         
-        descriptionField.setWidth("300px");
+        descriptionField.setWidth("350px");
+        descriptionField.setHeight("100px");
         
         VerticalLayout layout = new VerticalLayout(organizationSelect,
                 nameField,
