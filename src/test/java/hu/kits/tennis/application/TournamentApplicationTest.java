@@ -70,12 +70,12 @@ public class TournamentApplicationTest {
     
     @Test
     void createTournament() {
-        List<TournamentSummary> tournamentSummaries = tournamentService.loadTournamentSummariesList();
+        List<TournamentSummary> tournamentSummaries = tournamentService.loadDailyTournamentSummariesList();
         assertEquals(0, tournamentSummaries.size());
         
         tournamentService.createTournament(DEFAULT_PARAMS);
         
-        tournamentSummaries = tournamentService.loadTournamentSummariesList();
+        tournamentSummaries = tournamentService.loadDailyTournamentSummariesList();
         assertEquals(1, tournamentSummaries.size());
         
         TournamentSummary tournamentSummary = tournamentSummaries.get(0);
@@ -118,7 +118,7 @@ public class TournamentApplicationTest {
         Tournament tournament = tournamentService.createTournament(DEFAULT_PARAMS);
         
         tournamentService.deleteTournament(tournament);
-        List<TournamentSummary> tournamentSummaries = tournamentService.loadTournamentSummariesList();
+        List<TournamentSummary> tournamentSummaries = tournamentService.loadDailyTournamentSummariesList();
         assertEquals(0, tournamentSummaries.size());
     }
         
@@ -183,7 +183,7 @@ public class TournamentApplicationTest {
         matches = tournamentService.findTournament(tournament.id()).get().mainBoard().matches();
         assertEquals(3, matches.size());
         
-        TournamentSummary tournamentSummary = tournamentService.loadTournamentSummariesList().get(0);
+        TournamentSummary tournamentSummary = tournamentService.loadDailyTournamentSummariesList().get(0);
         
         assertEquals(Status.COMPLETED, tournamentSummary.status());
         assertEquals(player1, tournamentSummary.winner());

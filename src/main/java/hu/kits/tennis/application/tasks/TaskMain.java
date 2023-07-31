@@ -75,7 +75,7 @@ public class TaskMain {
     
     private static void setTournamentWinners() {
         TournamentService tournamentService = applicationContext.getTournamentService();
-        for(TournamentSummary summary : tournamentService.loadTournamentSummariesList()) {
+        for(TournamentSummary summary : tournamentService.loadDailyTournamentSummariesList()) {
             if(summary.status() == Status.COMPLETED && summary.winner() == null) {
                 Player winner;
                 Tournament tournament = tournamentService.findTournament(summary.id()).get();

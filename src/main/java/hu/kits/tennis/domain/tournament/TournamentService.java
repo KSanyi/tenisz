@@ -20,6 +20,7 @@ import hu.kits.tennis.domain.match.MatchResultInfo;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
+import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.utr.BookedMatch;
 import hu.kits.tennis.domain.utr.UTRService;
 
@@ -39,10 +40,20 @@ public class TournamentService {
         this.venueRepository = venueRepository;
     }
     
-    public List<TournamentSummary> loadTournamentSummariesList() {
-        logger.info("Loading tournament summaries list");
-        List<TournamentSummary> tournamentSummaries = tournamentRepository.loadTournamentSummariesList();
-        logger.info("{} tournament summaries list loaded", tournamentSummaries.size());
+    public List<TournamentSummary> loadDailyTournamentSummariesList() {
+        return loadTournamentSummariesList(Type.DAILY);
+    }
+    
+    public List<TournamentSummary> loadTourTournamentSummariesList() {
+        return loadTournamentSummariesList(Type.TOUR);
+    }
+    
+    private List<TournamentSummary> loadTournamentSummariesList(Type tournamentType) {
+        logger.info("Loading {} tournament summaries list", tournamentType);
+        List<TournamentSummary> tournamentSummaries = tournamentRepository.loadTournamentSummariesList().stream()
+                .filter(t -> t.type() == tournamentType)
+                .toList();
+        logger.info("{} {} tournament summaries list loaded", tournamentType, tournamentSummaries.size());
         return tournamentSummaries;
     }
 

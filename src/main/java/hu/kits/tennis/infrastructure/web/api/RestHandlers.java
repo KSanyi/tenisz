@@ -37,8 +37,13 @@ class RestHandlers {
         context.json(allMatches);
     }
     
-    void listAllTournaments(Context context) {
-        List<TournamentSummary> tournamentSummaries = tournamentService.loadTournamentSummariesList();
+    void listAllDailyTournaments(Context context) {
+        List<TournamentSummary> tournamentSummaries = tournamentService.loadDailyTournamentSummariesList();
+        context.json(tournamentSummaries);
+    }
+    
+    void listAllTourTournaments(Context context) {
+        List<TournamentSummary> tournamentSummaries = tournamentService.loadTourTournamentSummariesList();
         context.json(tournamentSummaries);
     }
     

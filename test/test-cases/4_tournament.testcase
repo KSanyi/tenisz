@@ -1,6 +1,6 @@
 Call 1
-description: Tournament test cases
-url: <url-base>/api/tournaments
+description: List of all daily tournaments
+url: <url-base>/api/tournaments/DAILY
 method: GET
 response-status: 200
 response-body:

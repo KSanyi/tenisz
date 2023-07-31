@@ -2,7 +2,6 @@ package hu.kits.tennis.infrastructure.ui.views.tournaments;
 
 import static com.vaadin.flow.component.grid.GridSortOrder.desc;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import com.vaadin.flow.component.AttachEvent;
@@ -18,9 +17,7 @@ import com.vaadin.flow.router.RouteParameters;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.domain.tournament.Tournament;
-import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
-import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.util.AllowedRoles;
@@ -88,11 +85,8 @@ public class TournamentsView extends SplitViewFrame implements View {
     }
     
     private void loadTournaments() {
-        List<TournamentSummary> tournamentSummaries = tournamentService.loadTournamentSummariesList();
-        List<TournamentSummary> dailyTournaments = tournamentSummaries.stream().filter(t -> t.type() == Type.DAILY).toList();
-        List<TournamentSummary> tourTournaments = tournamentSummaries.stream().filter(t -> t.type() == Type.TOUR).toList();
-        dailyTournamentsGrid.setItems(dailyTournaments);
-        tourTournamentsGrid.setItems(tourTournaments);
+        dailyTournamentsGrid.setItems(tournamentService.loadDailyTournamentSummariesList());
+        tourTournamentsGrid.setItems(tournamentService.loadTourTournamentSummariesList());
     }
 
 }

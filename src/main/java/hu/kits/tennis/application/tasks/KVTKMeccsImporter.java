@@ -155,7 +155,7 @@ public class KVTKMeccsImporter {
 
     public void setupTournaments() {
         
-        List<TournamentSummary> tournamentsNotSetup = tournamentService.loadTournamentSummariesList().stream()
+        List<TournamentSummary> tournamentsNotSetup = tournamentService.loadDailyTournamentSummariesList().stream()
                 .filter(tournament -> tournament.numberOfPlayers() == 0)
                 .collect(toList());
         
