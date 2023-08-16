@@ -26,6 +26,7 @@ response-body:
         {
             "id": 1,
             "date": "2023-03-15",
+            "tournamentId": "23c60001",
             "tournamentName": "Napi 500 verseny",
             "player1": {
                 "id": 1,
@@ -47,6 +48,7 @@ response-body:
         {
             "id": 2,
             "date": "2023-03-15",
+            "tournamentId": "23c60001",
             "tournamentName": "Napi 500 verseny",
             "player1": {
                 "id": 1,

@@ -93,7 +93,9 @@ public class TeniszJsonMapper implements JsonMapper {
             jsonObjectBuilder.add("date", matchInfo.date().toString());    
         }
         
-        jsonObjectBuilder.add("tournamentName", matchInfo.tournamentInfo().name())
+        jsonObjectBuilder
+                .add("tournamentId", matchInfo.tournamentInfo().id())
+                .add("tournamentName", matchInfo.tournamentInfo().name())
                 .add("player1", mapPlayerToJson(matchInfo.player1()))
                 .add("player1UTR", mapUTRToDouble(matchInfo.player1UTR()))
                 .add("player2", mapPlayerToJson(matchInfo.player2()))
