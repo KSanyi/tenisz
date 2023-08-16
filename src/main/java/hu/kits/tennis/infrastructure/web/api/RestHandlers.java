@@ -3,12 +3,14 @@ package hu.kits.tennis.infrastructure.web.api;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 import hu.kits.tennis.application.usecase.AllMatchesUseCase;
 import hu.kits.tennis.common.StringUtil;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayerRepository;
+import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.utr.PlayerStats;
@@ -17,6 +19,7 @@ import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 import io.javalin.http.ContentType;
 import io.javalin.http.Context;
+import io.javalin.http.HttpCode;
 
 class RestHandlers {
 
@@ -47,6 +50,15 @@ class RestHandlers {
         context.json(tournamentSummaries);
     }
     
+    void loadTournamentDetails(Context context) {
+        Optional<Tournament> tournament = tournamentService.findTournament(context.pathParam("tournamentId"));
+        if(tournament.isEmpty()) {
+            context.status(HttpCode.NOT_FOUND);
+        } else {
+            context.json(tournament.get());    
+        }
+    }
+    
     void calculateUTRRanking(Context context) {
         List<PlayerWithUTR> utrRanking = utrService.calculateUTRRanking(true);
         context.json(utrRanking);
@@ -54,9 +66,13 @@ class RestHandlers {
     
     void playerStats(Context context) {
         int playerId = Integer.parseInt(context.pathParam("playerId"));
-        Player player = playerRepository.findPlayer(playerId).get();
-        PlayerStats playerStats = utrService.loadPlayerStats(player);
-        context.json(playerStats);
+        Optional<Player> player = playerRepository.findPlayer(playerId);
+        if(player.isEmpty()) {
+            context.status(HttpCode.NOT_FOUND);
+        } else {
+            PlayerStats playerStats = utrService.loadPlayerStats(player.get());
+            context.json(playerStats);  
+        }
     }
     
     void listAllPlayersWithUtrInCSV(Context context) {

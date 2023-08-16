@@ -36,7 +36,7 @@ public class HttpServer {
             config.defaultContentType = "application/json";
             config.enableCorsForAllOrigins();
             config.requestLogger(this::log);
-            config.jsonMapper(new TeniszJsonMapper());
+            config.jsonMapper(new TeniszJsonMapper(applicationContext));
         }).routes(() -> {
             path("api/docs", () -> {
                 get(apiDocHandler::createTestCasesList);
@@ -50,6 +50,9 @@ public class HttpServer {
             });
             path("api/tournaments/TOUR", () -> {
                 get(restHandlers::listAllTourTournaments);
+            });
+            path("api/tournaments/{tournamentId}", () -> {
+                get(restHandlers::loadTournamentDetails);
             });
             path("api/utr-ranking", () -> {
                 get(restHandlers::calculateUTRRanking);

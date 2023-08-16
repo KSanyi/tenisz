@@ -38,6 +38,7 @@ import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.player.PlayerRepository;
+import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.Organization;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentParams;
@@ -86,10 +87,12 @@ public class TestCaseExecutor {
         TournamentService tournamentService = applicationContext.getTournamentService();
         Tournament tournament1 = tournamentService.createTournament(new TournamentParams(Organization.KVTK, TournamentParams.Type.DAILY, Level.L500, Level.L500, LocalDate.of(2023,3,15), "Napi 500 verseny", "Mini Garros", new CourtInfo(4, Surface.CLAY, VenueType.INDOOR), Structure.SIMPLE_BOARD, 1, ""));
         
+        tournamentService.updateContestants(tournament1, List.of(new Contestant(player1, 1), new Contestant(player2, 2), new Contestant(player3, 3)));
+        
         MatchService matchService = applicationContext.getMatchService();
         matchService.saveMatch(new Match(null, tournament1.id(), 1, 1, LocalDate.of(2023,3,15), player1, player2, new MatchResult(6, 0)));
-        matchService.saveMatch(new Match(null, tournament1.id(), 1, 1, LocalDate.of(2023,3,15), player1, player3, new MatchResult(6, 2)));
-        matchService.saveMatch(new Match(null, tournament1.id(), 1, 1, LocalDate.of(2023,3,15), player2, player3, new MatchResult(7, 5)));
+        matchService.saveMatch(new Match(null, tournament1.id(), 1, 2, LocalDate.of(2023,3,15), player1, player3, new MatchResult(6, 2)));
+        matchService.saveMatch(new Match(null, tournament1.id(), 1, 3, LocalDate.of(2023,3,15), player2, player3, new MatchResult(7, 5)));
         
         tournamentService.createTournament(new TournamentParams(Organization.KVTK, TournamentParams.Type.TOUR, Level.L500, Level.L500, LocalDate.of(2023,3,15), "TOUR I - 500", "Mini Garros", null, Structure.SIMPLE_BOARD, 1, ""));
         

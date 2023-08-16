@@ -22,7 +22,7 @@ response-body:
         "status": "DRAFT",            // DRAFT, LIVE, COMPLETED
         "winner": {
         },
-        "numberOfPlayers": 0,
+        "numberOfPlayers": 3,
         "numberOfMatchesPlayed": 3
     }
 ]
@@ -49,3 +49,111 @@ response-body:
         "numberOfMatchesPlayed": 0
     }
 ]
+
+Call 3
+description: List of all tours
+url: <url-base>/api/tournaments/23c60001
+method: GET
+response-status: 200
+response-body:
+{
+    "id": "23c60001",
+    "name": "Napi 500 verseny",
+    "date": "2023-03-15",
+    "levelFrom": "L500",
+    "levelTo": "L500",
+    "venue": "Mini Garros",
+    "courtInfo": {
+        "numberOfCourts": 4,
+        "surface": "CLAY",
+        "venueType": "INDOOR"
+    },
+    "type": "DAILY",
+    "description": "",
+    "status": "DRAFT",
+    "players": [
+        {
+            "id": 1,
+            "email": "nagy.robert@gmail.com",
+            "name": "Nagy Róbert"
+        },
+        {
+            "id": 2,
+            "email": "istvan.kiss@gmail.com",
+            "name": "Kiss István"
+        },
+        {
+            "id": 3,
+            "email": "toth.gabor@gmail.com",
+            "name": "Tóth Gábor"
+        }
+    ],
+    "matches": [
+        {
+            "id": 1,
+            "date": "2023-03-15",
+            "tournamentId": "23c60001",
+            "tournamentName": "Napi 500 verseny",
+            "player1": {
+                "id": 1,
+                "email": "nagy.robert@gmail.com",
+                "name": "Nagy Róbert"
+            },
+            "player1UTR": 8.0,
+            "player2": {
+                "id": 2,
+                "email": "istvan.kiss@gmail.com",
+                "name": "Kiss István"
+            },
+            "player2UTR": 7.0,
+            "result": "6:0",
+            "upset": false,
+            "matchUTRForPlayer1": 9.0,
+            "matchUTRForPlayer2": 6.0
+        },
+        {
+            "id": 2,
+            "date": "2023-03-15",
+            "tournamentId": "23c60001",
+            "tournamentName": "Napi 500 verseny",
+            "player1": {
+                "id": 1,
+                "email": "nagy.robert@gmail.com",
+                "name": "Nagy Róbert"
+            },
+            "player1UTR": 8.0,
+            "player2": {
+                "id": 3,
+                "email": "toth.gabor@gmail.com",
+                "name": "Tóth Gábor"
+            },
+            "player2UTR": 7.5,
+            "result": "6:2",
+            "upset": false,
+            "matchUTRForPlayer1": 8.83,
+            "matchUTRForPlayer2": 6.67
+        },
+        {
+            "id": 3,
+            "date": "2023-03-15",
+            "tournamentId": "23c60001",
+            "tournamentName": "Napi 500 verseny",
+            "player1": {
+                "id": 2,
+                "email": "istvan.kiss@gmail.com",
+                "name": "Kiss István"
+            },
+            "player1UTR": 7.0,
+            "player2": {
+                "id": 3,
+                "email": "toth.gabor@gmail.com",
+                "name": "Tóth Gábor"
+            },
+            "player2UTR": 7.5,
+            "result": "7:5",
+            "upset": false,
+            "matchUTRForPlayer1": 8.07,
+            "matchUTRForPlayer2": 6.43
+        }
+    ]
+}

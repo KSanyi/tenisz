@@ -1,6 +1,7 @@
 package hu.kits.tennis.infrastructure.web.api;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -11,6 +12,8 @@ import javax.json.JsonValue;
 import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.tournament.Contestant;
+import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.tournament.TournamentSummary.CourtInfo;
@@ -18,31 +21,40 @@ import hu.kits.tennis.domain.utr.PlayerStats;
 import hu.kits.tennis.domain.utr.PlayerWithUTR;
 import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.domain.utr.UTRHistory.UTRHistoryEntry;
+import hu.kits.tennis.infrastructure.ApplicationContext;
 import io.javalin.plugin.json.JsonMapper;
 
 public class TeniszJsonMapper implements JsonMapper {
+
+    private final ApplicationContext applicationContext;
+    
+    public TeniszJsonMapper(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public String toJsonString(Object object) {
         return mapToJson(object).toString();
     }
     
-    private static JsonValue mapToJson(Object object) {
+    private JsonValue mapToJson(Object object) {
         
         if(object instanceof Collection) {
             Collection<?> collection = (Collection<?>)object;
             JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
-            collection.stream().map(TeniszJsonMapper::mapToJson).forEach(jsonArrayBuilder::add);
+            collection.stream().map(this::mapToJson).forEach(jsonArrayBuilder::add);
             return jsonArrayBuilder.build();
         } else if(object instanceof Player player) {
             return mapPlayerToJson(player);    
+        } else if(object instanceof Tournament tournament) {
+            return mapTournamentToJson(tournament);    
+        } else if(object instanceof TournamentSummary tournamentSummary) {
+            return mapTournamentSummaryToJson(tournamentSummary);    
         } else if(object instanceof PlayerWithUTR playerWithUTR) {
             return mapPlayerWithUTRToJson(playerWithUTR);    
         } else if(object instanceof MatchInfo matchInfo) {
             return mapMatchToJson(matchInfo);    
-        } else if(object instanceof TournamentSummary tournamentSummary) {
-            return mapTournamentSummaryToJson(tournamentSummary);    
-        } else if(object instanceof PlayerStats playerStats) {
+        }  else if(object instanceof PlayerStats playerStats) {
             return mapPlayerStatsToJson(playerStats);    
         } else if(object instanceof UTRHistoryEntry utrHistoryEntry) {
             return mapUTRHistoryEntryToJson(utrHistoryEntry);    
@@ -139,6 +151,32 @@ public class TeniszJsonMapper implements JsonMapper {
             .build();
     }
     
+    private JsonObject mapTournamentToJson(Tournament tournament) {
+        JsonObjectBuilder builder = Json.createObjectBuilder()
+                .add("id", tournament.id())
+                .add("name", tournament.params().name())
+                .add(tournament.params().type() == Type.DAILY ? "date" : "startDate", tournament.params().date().toString())
+                .add("levelFrom", tournament.params().levelFrom().name())
+                .add("levelTo", tournament.params().levelTo().name());
+        
+        if(tournament.params().type() == Type.DAILY) {
+            builder
+                .add("venue", tournament.params().venue())
+                .add("courtInfo", mapCourtInfoToJson(tournament.params().courtInfo()));
+        }
+        
+        // TODO fix
+        List<MatchInfo> matches = applicationContext.getMatchService().loadMatchesOfTournament(tournament.id());
+        
+        return builder
+            .add("type", tournament.params().type().name())
+            .add("description", tournament.params().description())
+            .add("status", tournament.status().name())
+            .add("players", mapToJson(tournament.simplePlayersLineup().stream().map(Contestant::player).toList()))
+            .add("matches", mapToJson(matches))
+            .build();
+    }
+    
     private static JsonValue mapCourtInfoToJson(CourtInfo courtInfo) {
         return Json.createObjectBuilder()
                 .add("numberOfCourts", courtInfo.numberOfCourts())
@@ -147,7 +185,7 @@ public class TeniszJsonMapper implements JsonMapper {
                 .build();
     }
 
-    private static JsonObject mapPlayerStatsToJson(PlayerStats playerStats) {
+    private JsonObject mapPlayerStatsToJson(PlayerStats playerStats) {
         
         return Json.createObjectBuilder()
                 .add("player", mapPlayerToJson(playerStats.player()))
