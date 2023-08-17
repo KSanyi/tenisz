@@ -10,6 +10,10 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 import hu.kits.tennis.common.MathUtil;
+import hu.kits.tennis.domain.ktr.KTR;
+import hu.kits.tennis.domain.ktr.PlayerStats;
+import hu.kits.tennis.domain.ktr.PlayerWithKTR;
+import hu.kits.tennis.domain.ktr.KTRHistory.KTRHistoryEntry;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.Contestant;
@@ -17,10 +21,6 @@ import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.tournament.TournamentSummary.CourtInfo;
-import hu.kits.tennis.domain.utr.PlayerStats;
-import hu.kits.tennis.domain.utr.PlayerWithUTR;
-import hu.kits.tennis.domain.utr.UTR;
-import hu.kits.tennis.domain.utr.UTRHistory.UTRHistoryEntry;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 import io.javalin.plugin.json.JsonMapper;
 
@@ -50,14 +50,14 @@ public class TeniszJsonMapper implements JsonMapper {
             return mapTournamentToJson(tournament);    
         } else if(object instanceof TournamentSummary tournamentSummary) {
             return mapTournamentSummaryToJson(tournamentSummary);    
-        } else if(object instanceof PlayerWithUTR playerWithUTR) {
-            return mapPlayerWithUTRToJson(playerWithUTR);    
+        } else if(object instanceof PlayerWithKTR playerWithKTR) {
+            return mapPlayerWithKTRToJson(playerWithKTR);    
         } else if(object instanceof MatchInfo matchInfo) {
             return mapMatchToJson(matchInfo);    
         }  else if(object instanceof PlayerStats playerStats) {
             return mapPlayerStatsToJson(playerStats);    
-        } else if(object instanceof UTRHistoryEntry utrHistoryEntry) {
-            return mapUTRHistoryEntryToJson(utrHistoryEntry);    
+        } else if(object instanceof KTRHistoryEntry ktrHistoryEntry) {
+            return mapKTRHistoryEntryToJson(ktrHistoryEntry);    
         } else if(object instanceof String string) {
             return Json.createValue(string);
         } else if(object instanceof Double number) {
@@ -82,17 +82,17 @@ public class TeniszJsonMapper implements JsonMapper {
         }
     }
 
-    private static JsonObject mapPlayerWithUTRToJson(PlayerWithUTR playerWithUtr) {
+    private static JsonObject mapPlayerWithKTRToJson(PlayerWithKTR playerWithKTR) {
         
         return Json.createObjectBuilder()
-                .add("player", mapPlayerToJson(playerWithUtr.player()))
-                .add("numberOfMatches", playerWithUtr.numberOfMatches())
-                .add("numberOfWins", playerWithUtr.numberOfWins())
-                .add("numberOfTrophies", playerWithUtr.numberOfTrophies())
-                .add("rank", playerWithUtr.rank())
-                .add("utr", mapUTRToDouble(playerWithUtr.utr()))
-                .add("utrOneWeekAgo", mapUTRToDouble(playerWithUtr.utrOneWeekAgo()))
-                .add("utrChange", mapUTRToDouble(playerWithUtr.utrChange()))
+                .add("player", mapPlayerToJson(playerWithKTR.player()))
+                .add("numberOfMatches", playerWithKTR.numberOfMatches())
+                .add("numberOfWins", playerWithKTR.numberOfWins())
+                .add("numberOfTrophies", playerWithKTR.numberOfTrophies())
+                .add("rank", playerWithKTR.rank())
+                .add("ktr", mapKTRToDouble(playerWithKTR.ktr()))
+                .add("ktrOneWeekAgo", mapKTRToDouble(playerWithKTR.ktrOneWeekAgo()))
+                .add("ktrChange", mapKTRToDouble(playerWithKTR.ktrChange()))
                 .build();
     }
     
@@ -109,18 +109,18 @@ public class TeniszJsonMapper implements JsonMapper {
                 .add("tournamentId", matchInfo.tournamentInfo().id())
                 .add("tournamentName", matchInfo.tournamentInfo().name())
                 .add("player1", mapPlayerToJson(matchInfo.player1()))
-                .add("player1UTR", mapUTRToDouble(matchInfo.player1UTR()))
+                .add("player1KTR", mapKTRToDouble(matchInfo.player1KTR()))
                 .add("player2", mapPlayerToJson(matchInfo.player2()))
-                .add("player2UTR", mapUTRToDouble(matchInfo.player2UTR()));
+                .add("player2KTR", mapKTRToDouble(matchInfo.player2KTR()));
         
         if(matchInfo.result() != null) {
             jsonObjectBuilder = jsonObjectBuilder
                     .add("result", matchInfo.result().toString())
                     .add("upset", matchInfo.isUpset());
-            if(matchInfo.matchUTRForPlayer1() != null) {
+            if(matchInfo.matchKTRForPlayer1() != null) {
                 jsonObjectBuilder = jsonObjectBuilder
-                        .add("matchUTRForPlayer1", mapUTRToDouble(matchInfo.matchUTRForPlayer1()))
-                        .add("matchUTRForPlayer2", mapUTRToDouble(matchInfo.matchUTRForPlayer2()));
+                        .add("matchKTRForPlayer1", mapKTRToDouble(matchInfo.matchKTRForPlayer1()))
+                        .add("matchKTRForPlayer2", mapKTRToDouble(matchInfo.matchKTRForPlayer2()));
             }
         }
         
@@ -189,9 +189,9 @@ public class TeniszJsonMapper implements JsonMapper {
         
         return Json.createObjectBuilder()
                 .add("player", mapPlayerToJson(playerStats.player()))
-                .add("utr", mapUTRToDouble(playerStats.utrDetails().utr()))
+                .add("ktr", mapKTRToDouble(playerStats.ktrDetails().ktr()))
                 .add("numberOfTournaments", playerStats.numberOfTournaments())
-                .add("numberOfTrophies", playerStats.utrDetails().numberOfTrophies())
+                .add("numberOfTrophies", playerStats.ktrDetails().numberOfTrophies())
                 .add("numberOfWins", playerStats.numberOfWins())
                 .add("winPercentage", MathUtil.roundToTwoDigits(playerStats.winPercentage()))
                 .add("numberOfLosses", playerStats.numberOfLosses())
@@ -202,24 +202,24 @@ public class TeniszJsonMapper implements JsonMapper {
                 .add("numberOfGamesLost", playerStats.numberOfGamesLost())
                 .add("gamesLossPercentage", MathUtil.roundToTwoDigits(playerStats.gamesLossPercentage()))
                 .add("matches", mapToJson(playerStats.matches()))
-                .add("utrRelevantMatchIds", mapToJson(playerStats.utrDetails().relevantMatchIds()))
-                .add("bestUTRMatchId", playerStats.bestUTRMatch().id())
-                .add("worstUTRMatchId", playerStats.worstUTRMatch().id())
-                .add("utrHistory", mapToJson(playerStats.utrHistory().entries()))
-                .add("utrHigh", mapToJson(playerStats.utrHigh()))
+                .add("ktrRelevantMatchIds", mapToJson(playerStats.ktrDetails().relevantMatchIds()))
+                .add("bestKTRMatchId", playerStats.bestKTRMatch().id())
+                .add("worstKTRMatchId", playerStats.worstKTRMatch().id())
+                .add("ktrHistory", mapToJson(playerStats.ktrHistory().entries()))
+                .add("ktrHigh", mapToJson(playerStats.ktrHigh()))
                 .add("rank", playerStats.rank())
                 .build();
     }
     
-    private static JsonObject mapUTRHistoryEntryToJson(UTRHistoryEntry utrHistoryEntry) {
+    private static JsonObject mapKTRHistoryEntryToJson(KTRHistoryEntry ktrHistoryEntry) {
         return Json.createObjectBuilder()
-                .add("date", utrHistoryEntry.date().toString())
-                .add("utr", mapUTRToDouble(utrHistoryEntry.utr()))
+                .add("date", ktrHistoryEntry.date().toString())
+                .add("ktr", mapKTRToDouble(ktrHistoryEntry.ktr()))
                 .build();
     }
     
-    private static double mapUTRToDouble(UTR utr) {
-        return utr.isDefinded() ? MathUtil.roundToTwoDigits(utr.value()) : 0;
+    private static double mapKTRToDouble(KTR ktr) {
+        return ktr.isDefinded() ? MathUtil.roundToTwoDigits(ktr.value()) : 0;
     }
     
 }

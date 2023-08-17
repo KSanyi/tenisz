@@ -17,13 +17,13 @@ import javax.sql.DataSource;
 import org.jdbi.v3.core.Jdbi;
 
 import hu.kits.tennis.common.KITSException;
+import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.tournament.Organization;
-import hu.kits.tennis.domain.utr.UTR;
 
 public class PlayerJdbcRepository implements PlayerRepository {
 
@@ -36,7 +36,7 @@ public class PlayerJdbcRepository implements PlayerRepository {
     private static final String COLUMN_TOWN = "TOWN";
     private static final String COLUMN_STREET_ADDRESS = "STREET_ADDRESS";
     private static final String COLUMN_COMMENT = "COMMENT";
-    private static final String COLUMN_UTR_GROUP = "UTR_GROUP";
+    private static final String COLUMN_KTR_GROUP = "UTR_GROUP";
     private static final String COLUMN_ORGS = "ORGS";
     
     private final Jdbi jdbi;
@@ -66,7 +66,7 @@ public class PlayerJdbcRepository implements PlayerRepository {
                         rs.getString(COLUMN_PHONE),
                         mapToAddress(rs),
                         rs.getString(COLUMN_COMMENT)),
-                JdbiUtil.mapToOptionalDouble(rs, COLUMN_UTR_GROUP).map(UTR::of).orElse(UTR.UNDEFINED),
+                JdbiUtil.mapToOptionalDouble(rs, COLUMN_KTR_GROUP).map(KTR::of).orElse(KTR.UNDEFINED),
                 mapToOrganisations(rs.getString(COLUMN_ORGS)));
     }
     
@@ -87,7 +87,7 @@ public class PlayerJdbcRepository implements PlayerRepository {
         
         Map<String, Object> map = createMap(player);
         int playerId = jdbi.withHandle(handle -> JdbiUtil.createInsertStatement(handle, TABLE_PLAYER, map).executeAndReturnGeneratedKeys(COLUMN_ID).mapTo(Integer.class).one());
-        return new Player(playerId, player.name(), player.contact(), player.startingUTR(), player.organisations());
+        return new Player(playerId, player.name(), player.contact(), player.startingKTR(), player.organisations());
     }
     
     private static Map<String, Object> createMap(Player player) {
@@ -101,7 +101,7 @@ public class PlayerJdbcRepository implements PlayerRepository {
         valuesMap.put(COLUMN_TOWN, player.contact().address().town());
         valuesMap.put(COLUMN_STREET_ADDRESS, player.contact().address().streetAddress());
         valuesMap.put(COLUMN_COMMENT, player.contact().comment());
-        valuesMap.put(COLUMN_UTR_GROUP, player.startingUTR().value());
+        valuesMap.put(COLUMN_KTR_GROUP, player.startingKTR().value());
         valuesMap.put(COLUMN_ORGS, mapToOrganisationsString(player.organisations()));
         
         return valuesMap;

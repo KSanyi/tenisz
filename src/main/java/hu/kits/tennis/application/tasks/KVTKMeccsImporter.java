@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.common.LocaleUtil;
+import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.match.MatchRepository;
@@ -43,7 +44,6 @@ import hu.kits.tennis.domain.tournament.TournamentParams.VenueType;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.tournament.TournamentSummary.CourtInfo;
-import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 
 @SuppressWarnings("unused")
@@ -181,7 +181,7 @@ public class KVTKMeccsImporter {
         List<String> lines = Files.readAllLines(Paths.get("c:\\Users\\kocso\\Desktop\\Tenisz\\KVTK\\jatekosok.txt"));
         
         for(String line : lines) {
-            playerRepository.saveNewPlayer(new Player(null, line, null, UTR.UNDEFINED, Set.of(Organization.KVTK)));    
+            playerRepository.saveNewPlayer(new Player(null, line, null, KTR.UNDEFINED, Set.of(Organization.KVTK)));    
         }
     }
 
@@ -199,7 +199,7 @@ public class KVTKMeccsImporter {
                     System.err.println("Cant find player with id " + id);
                 } else {
                     Player updatedPlayer = p.get();
-                    updatedPlayer = new Player(id, updatedPlayer.name(), new Contact(email, phone, Address.EMPTY, ""), updatedPlayer.startingUTR(), updatedPlayer.organisations());
+                    updatedPlayer = new Player(id, updatedPlayer.name(), new Contact(email, phone, Address.EMPTY, ""), updatedPlayer.startingKTR(), updatedPlayer.organisations());
                     playerRepository.updatePlayer(updatedPlayer);
                 }  
             }

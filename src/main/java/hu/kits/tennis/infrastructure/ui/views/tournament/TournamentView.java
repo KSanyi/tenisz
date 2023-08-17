@@ -27,6 +27,7 @@ import com.vaadin.flow.router.Route;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.Formatters;
+import hu.kits.tennis.domain.ktr.KTRService;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.match.MatchService;
@@ -38,7 +39,6 @@ import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
 import hu.kits.tennis.domain.tournament.TournamentService;
-import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
@@ -47,9 +47,9 @@ import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 import hu.kits.tennis.infrastructure.ui.views.View;
+import hu.kits.tennis.infrastructure.ui.views.ktr.MatchesGrid;
+import hu.kits.tennis.infrastructure.ui.views.ktr.matches.SimpleMatchDialog;
 import hu.kits.tennis.infrastructure.ui.views.tournaments.TournamentsView;
-import hu.kits.tennis.infrastructure.ui.views.utr.MatchesGrid;
-import hu.kits.tennis.infrastructure.ui.views.utr.matches.SimpleMatchDialog;
 
 @Route(value = "tournament/:tournamentId", layout = MainLayout.class)
 @PageTitle("Tournament")
@@ -57,7 +57,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private final UTRService utrService = Main.applicationContext.getUTRService();
+    private final KTRService ktrService = Main.applicationContext.getKTRService();
     private final TournamentService tournamentService = Main.applicationContext.getTournamentService();
     private final MatchService matchService = Main.applicationContext.getMatchService();
     
@@ -149,18 +149,18 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     }
     
     private Button createRecalculateButton() {
-        Button button = new Button("UTR számolás");
+        Button button = new Button("KTR számolás");
         button.setIcon(new Icon(VaadinIcon.AUTOMATION));
 
         button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        button.addClickListener(click -> recalculateUTRs());
+        button.addClickListener(click -> recalculateKTRs());
         return button;
     }
     
-    private void recalculateUTRs() {
-        utrService.recalculateAllUTRs();
+    private void recalculateKTRs() {
+        ktrService.recalculateAllKTRs();
         refresh();
-        KITSNotification.showInfo("UTR kiszámolva");
+        KITSNotification.showInfo("KTR kiszámolva");
     }
     
     private void openMatchEditor(MatchInfo matchInfo) {

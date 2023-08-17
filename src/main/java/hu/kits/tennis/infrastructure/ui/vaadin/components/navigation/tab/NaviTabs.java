@@ -8,7 +8,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.css.Overflow;
-import hu.kits.tennis.infrastructure.ui.views.utr.ranking.UTRRankingView;
+import hu.kits.tennis.infrastructure.ui.views.ktr.ranking.KTRRankingView;
 
 /**
  * NaviTabs supports tabs that can be closed, and that can navigate to a
@@ -74,7 +74,7 @@ public class NaviTabs extends Tabs {
                 if (getTabCount() > 0) {
                     setSelectedIndex(getTabCount() - 1);
                 } else {
-                    UI.getCurrent().navigate(UTRRankingView.class);
+                    UI.getCurrent().navigate(KTRRankingView.class);
                 }
             }
         }

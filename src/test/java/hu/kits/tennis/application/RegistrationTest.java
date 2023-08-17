@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import hu.kits.tennis.common.Clock;
+import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.domain.player.PlayersService;
@@ -20,7 +21,6 @@ import hu.kits.tennis.domain.player.registration.Registration;
 import hu.kits.tennis.domain.player.registration.Registration.RegistrationData;
 import hu.kits.tennis.domain.player.registration.Registration.RegistrationStatus;
 import hu.kits.tennis.domain.player.registration.RegistrationService;
-import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 import hu.kits.tennis.testutil.InMemoryDataSourceFactory;
 import hu.kits.tennis.testutil.SpyEmailSender;
@@ -90,7 +90,7 @@ public class RegistrationTest {
                 "Mini Garros", "Igen"));
         
         Registration registration = registrationService.loadAllNewRegistrations().get(0);
-        registrationService.approveRegistration(registration, UTR.of(7.5), "Jó játékos");
+        registrationService.approveRegistration(registration, KTR.of(7.5), "Jó játékos");
         
         Assertions.assertTrue(registrationService.loadAllNewRegistrations().isEmpty());
         
@@ -103,7 +103,7 @@ public class RegistrationTest {
         Assertions.assertEquals("+36/70-123-4567", newPlayer.contact().phone());
         Assertions.assertEquals("petekiss@gmail.com", newPlayer.contact().email());
         Assertions.assertEquals(new Address(1132, "Budapest", "Teve utca 9"), newPlayer.contact().address());
-        Assertions.assertEquals(UTR.of(7.5), newPlayer.startingUTR());
+        Assertions.assertEquals(KTR.of(7.5), newPlayer.startingKTR());
         
         Assertions.assertEquals(newPlayer, spyInvoiceService.lastSavedPlayer);
     }

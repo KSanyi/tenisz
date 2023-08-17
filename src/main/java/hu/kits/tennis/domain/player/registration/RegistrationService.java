@@ -8,11 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.domain.invoice.InvoiceService;
+import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayersService;
 import hu.kits.tennis.domain.player.registration.Registration.RegistrationData;
 import hu.kits.tennis.domain.player.registration.Registration.RegistrationStatus;
-import hu.kits.tennis.domain.utr.UTR;
 
 public class RegistrationService {
 
@@ -41,10 +41,10 @@ public class RegistrationService {
         registartionRepository.saveNewRegistration(registation);
     }
     
-    public void approveRegistration(Registration registration, UTR statingUTR, String comment) {
-        logger.info("Registration is accepted for player: {} with starting  UTR {}", registration.data().name(), statingUTR);
+    public void approveRegistration(Registration registration, KTR statingKTR, String comment) {
+        logger.info("Registration is accepted for player: {} with starting  KTR {}", registration.data().name(), statingKTR);
         registartionRepository.setRegistrationStatus(registration.id(), RegistrationStatus.ACCEPTED);
-        Player player = registration.data().toPlayer(statingUTR, comment);
+        Player player = registration.data().toPlayer(statingKTR, comment);
         Player savedPlayer = playersService.saveNewPlayer(player);
         logger.info("Creating player in invoice system");
         invoiceService.createPartnerForPlayer(savedPlayer);

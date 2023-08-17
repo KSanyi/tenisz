@@ -18,8 +18,8 @@ import hu.kits.tennis.domain.player.registration.Registration.RegistrationData;
 import hu.kits.tennis.domain.player.registration.RegistrationService;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
+import hu.kits.tennis.infrastructure.ui.views.ktr.ranking.KTRRankingView;
 import hu.kits.tennis.infrastructure.ui.views.players.registration.RegistrationForm.RegistrationDataBean;
-import hu.kits.tennis.infrastructure.ui.views.utr.ranking.UTRRankingView;
 
 @Route(value = "registration")
 @PageTitle("Regisztráció")
@@ -62,7 +62,7 @@ public class RegistrationView extends VerticalLayout {
             }
             registrationService.saveNewRegistration(registrationData);
             KITSNotification.showInfo("Sikeres regisztráció! Köszönjük. Hamarosan értesítünk a továbbiakról!", 5000);
-            UI.getCurrent().navigate(UTRRankingView.class);
+            UI.getCurrent().navigate(KTRRankingView.class);
         } else {
             KITSNotification.showError("Hibás adatok");
         }

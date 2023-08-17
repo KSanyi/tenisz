@@ -8,25 +8,25 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchResult;
 import hu.kits.tennis.domain.match.MatchResult.SetResult;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.Player.Contact;
-import hu.kits.tennis.domain.utr.UTR;
 
 public class TestUtil {
 
     private static Random random = new Random();
     
-    public static final Player player1 = new Player(1, "P1", Contact.EMPTY, UTR.of(9.), Set.of());
-    public static final Player player2 = new Player(2, "P2", Contact.EMPTY, UTR.of(9.), Set.of());
-    public static final Player player3 = new Player(3, "P3", Contact.EMPTY, UTR.of(8.5), Set.of());
-    public static final Player player4 = new Player(4, "P4", Contact.EMPTY, UTR.of(8.5), Set.of());
-    public static final Player player5 = new Player(5, "P5", Contact.EMPTY, UTR.of(8.), Set.of());
-    public static final Player player6 = new Player(6, "P6", Contact.EMPTY, UTR.of(8.), Set.of());
-    public static final Player player7 = new Player(7, "P7", Contact.EMPTY, UTR.of(7.7), Set.of());
-    public static final Player player8 = new Player(8, "P8", Contact.EMPTY, UTR.of(7.5), Set.of());
+    public static final Player player1 = new Player(1, "P1", Contact.EMPTY, KTR.of(9.), Set.of());
+    public static final Player player2 = new Player(2, "P2", Contact.EMPTY, KTR.of(9.), Set.of());
+    public static final Player player3 = new Player(3, "P3", Contact.EMPTY, KTR.of(8.5), Set.of());
+    public static final Player player4 = new Player(4, "P4", Contact.EMPTY, KTR.of(8.5), Set.of());
+    public static final Player player5 = new Player(5, "P5", Contact.EMPTY, KTR.of(8.), Set.of());
+    public static final Player player6 = new Player(6, "P6", Contact.EMPTY, KTR.of(8.), Set.of());
+    public static final Player player7 = new Player(7, "P7", Contact.EMPTY, KTR.of(7.7), Set.of());
+    public static final Player player8 = new Player(8, "P8", Contact.EMPTY, KTR.of(7.5), Set.of());
     
     public static final List<Player> players = List.of(player1, player2, player3, player4, player5, player6, player7, player8);
     
@@ -53,15 +53,15 @@ public class TestUtil {
     }
 
     private static SetResult generateSetResult(Player player1, Player player2) {
-        double player1UTR = player1.startingUTR().value();
-        double player2UTR = player2.startingUTR().value();
+        double player1KTR = player1.startingKTR().value();
+        double player2KTR = player2.startingKTR().value();
         
         int player1Games = 0;
         int player2Games = 0;
         
         while(player1Games < 6 && player2Games < 6) {
             double value = random.nextDouble();
-            if(value < player1UTR / (player1UTR + player2UTR)) {
+            if(value < player1KTR / (player1KTR + player2KTR)) {
                 player1Games++;
             } else {
                 player2Games++;

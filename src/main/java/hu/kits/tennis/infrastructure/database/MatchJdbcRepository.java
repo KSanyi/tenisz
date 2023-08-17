@@ -22,6 +22,8 @@ import org.jdbi.v3.core.Jdbi;
 
 import hu.kits.tennis.common.CollectionsUtil;
 import hu.kits.tennis.common.Pair;
+import hu.kits.tennis.domain.ktr.BookedMatch;
+import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchRepository;
 import hu.kits.tennis.domain.match.MatchResult;
@@ -30,8 +32,6 @@ import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.Players;
 import hu.kits.tennis.domain.tournament.TournamentMatches;
-import hu.kits.tennis.domain.utr.BookedMatch;
-import hu.kits.tennis.domain.utr.UTR;
 
 public class MatchJdbcRepository implements MatchRepository  {
 
@@ -44,10 +44,10 @@ public class MatchJdbcRepository implements MatchRepository  {
     private static final String COLUMN_PLAYER1_ID = "PLAYER1_ID";
     private static final String COLUMN_PLAYER2_ID = "PLAYER2_ID";
     private static final String COLUMN_RESULT = "RESULT";
-    private static final String COLUMN_PLAYER1_UTR = "PLAYER1_UTR";
-    private static final String COLUMN_PLAYER2_UTR = "PLAYER2_UTR";
-    private static final String COLUMN_MATCH_UTR_FOR_PLAYER1 = "MATCH_UTR_FOR_PLAYER1";
-    private static final String COLUMN_MATCH_UTR_FOR_PLAYER2 = "MATCH_UTR_FOR_PLAYER2";
+    private static final String COLUMN_PLAYER1_KTR = "PLAYER1_UTR";
+    private static final String COLUMN_PLAYER2_KTR = "PLAYER2_UTR";
+    private static final String COLUMN_MATCH_KTR_FOR_PLAYER1 = "MATCH_UTR_FOR_PLAYER1";
+    private static final String COLUMN_MATCH_KTR_FOR_PLAYER2 = "MATCH_UTR_FOR_PLAYER2";
     
     private final Jdbi jdbi;
     private final PlayerRepository playerRepository;
@@ -161,18 +161,18 @@ public class MatchJdbcRepository implements MatchRepository  {
                     players.get(rs.getInt(COLUMN_PLAYER1_ID)), 
                     players.get(rs.getInt(COLUMN_PLAYER2_ID)), 
                     MatchResult.parse(rs.getString(COLUMN_RESULT))),
-                readUTR(rs, COLUMN_PLAYER1_UTR), 
-                readUTR(rs, COLUMN_PLAYER2_UTR),
-                readUTR(rs, COLUMN_MATCH_UTR_FOR_PLAYER1),
-                readUTR(rs, COLUMN_MATCH_UTR_FOR_PLAYER2));
+                readUTR(rs, COLUMN_PLAYER1_KTR), 
+                readUTR(rs, COLUMN_PLAYER2_KTR),
+                readUTR(rs, COLUMN_MATCH_KTR_FOR_PLAYER1),
+                readUTR(rs, COLUMN_MATCH_KTR_FOR_PLAYER2));
     }
     
-    private static UTR readUTR(ResultSet rs, String column) throws SQLException {
+    private static KTR readUTR(ResultSet rs, String column) throws SQLException {
         double value = rs.getDouble(column);
         if(rs.wasNull()) {
-            return UTR.UNDEFINED;
+            return KTR.UNDEFINED;
         } else {
-            return new UTR(value);
+            return new KTR(value);
         }
     }
 
@@ -199,7 +199,7 @@ public class MatchJdbcRepository implements MatchRepository  {
                         bookedMatch.playedMatch().date(),
                         bookedMatch.playedMatch().player1(), bookedMatch.playedMatch().player2(), 
                         bookedMatch.playedMatch().result()),
-                bookedMatch.player1UTR(), bookedMatch.player2UTR(), bookedMatch.matchUTRForPlayer1(), bookedMatch.matchUTRForPlayer2());
+                bookedMatch.player1KTR(), bookedMatch.player2KTR(), bookedMatch.matchKTRForPlayer1(), bookedMatch.matchKTRForPlayer2());
     }
     
     private static Map<String, Object> createMap(BookedMatch bookedMatch) {
@@ -214,11 +214,11 @@ public class MatchJdbcRepository implements MatchRepository  {
         valuesMap.put(COLUMN_PLAYER2_ID, bookedMatch.playedMatch().player2() != null ? bookedMatch.playedMatch().player2().id() : null);
         valuesMap.put(COLUMN_RESULT, bookedMatch.playedMatch().result() != null ? bookedMatch.playedMatch().result().serialize() : null);
         
-        if(bookedMatch.player1UTR() != null && bookedMatch.player2UTR() != null && bookedMatch.matchUTRForPlayer1() != null && bookedMatch.matchUTRForPlayer2() != null) {
-            valuesMap.put(COLUMN_PLAYER1_UTR, bookedMatch.player1UTR().value());
-            valuesMap.put(COLUMN_PLAYER2_UTR, bookedMatch.player2UTR().value());
-            valuesMap.put(COLUMN_MATCH_UTR_FOR_PLAYER1, bookedMatch.matchUTRForPlayer1().value());
-            valuesMap.put(COLUMN_MATCH_UTR_FOR_PLAYER2, bookedMatch.matchUTRForPlayer2().value());
+        if(bookedMatch.player1KTR() != null && bookedMatch.player2KTR() != null && bookedMatch.matchKTRForPlayer1() != null && bookedMatch.matchKTRForPlayer2() != null) {
+            valuesMap.put(COLUMN_PLAYER1_KTR, bookedMatch.player1KTR().value());
+            valuesMap.put(COLUMN_PLAYER2_KTR, bookedMatch.player2KTR().value());
+            valuesMap.put(COLUMN_MATCH_KTR_FOR_PLAYER1, bookedMatch.matchKTRForPlayer1().value());
+            valuesMap.put(COLUMN_MATCH_KTR_FOR_PLAYER2, bookedMatch.matchKTRForPlayer2().value());
         }
         
         return valuesMap;

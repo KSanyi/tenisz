@@ -39,8 +39,8 @@ import hu.kits.tennis.infrastructure.ui.views.players.PlayersView;
 import hu.kits.tennis.infrastructure.ui.views.players.registration.RegistrationsView;
 import hu.kits.tennis.infrastructure.ui.views.tournaments.TournamentsView;
 import hu.kits.tennis.infrastructure.ui.views.users.UsersView;
-import hu.kits.tennis.infrastructure.ui.views.utr.matches.MatchesView;
-import hu.kits.tennis.infrastructure.ui.views.utr.ranking.UTRRankingView;
+import hu.kits.tennis.infrastructure.ui.views.ktr.matches.MatchesView;
+import hu.kits.tennis.infrastructure.ui.views.ktr.ranking.KTRRankingView;
 import hu.kits.tennis.infrastructure.web.CookieUtil;
 
 @CssImport(value = "./styles/components/floating-action-button.css", themeFor = "vaadin-button")
@@ -123,11 +123,11 @@ public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavi
         menu.addNaviItem(VaadinIcon.USERS, "Felhasználók", UsersView.class);
         menu.addNaviItem(VaadinIcon.TROPHY, "Versenyek", TournamentsView.class);
         
-        NaviItem utrMenu = menu.addNaviItem(VaadinIcon.AUTOMATION, "UTR", null);
-        menu.addNaviItem(utrMenu, "Regisztrációk", RegistrationsView.class);
-        menu.addNaviItem(utrMenu, "Játékosok", PlayersView.class);
-        menu.addNaviItem(utrMenu, "Meccsek", MatchesView.class);
-        menu.addNaviItem(utrMenu, "UTR ranking", UTRRankingView.class);
+        NaviItem ktrMenu = menu.addNaviItem(VaadinIcon.AUTOMATION, "KTR", null);
+        menu.addNaviItem(ktrMenu, "Regisztrációk", RegistrationsView.class);
+        menu.addNaviItem(ktrMenu, "Játékosok", PlayersView.class);
+        menu.addNaviItem(ktrMenu, "Meccsek", MatchesView.class);
+        menu.addNaviItem(ktrMenu, "KTR ranking", KTRRankingView.class);
     }
 
     /**
@@ -217,7 +217,7 @@ public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavi
         @SuppressWarnings("deprecation")
         Class<?> navigationTarget = UI.getCurrent().getRouter().resolveNavigationTarget(loc).map(n -> n.getNavigationTarget()).get();
         if(!VaadinUtil.isViewAllowed(navigationTarget)) {
-            event.forwardTo(UTRRankingView.class);
+            event.forwardTo(KTRRankingView.class);
         }
         
         // Configure the headers and footers (optional)

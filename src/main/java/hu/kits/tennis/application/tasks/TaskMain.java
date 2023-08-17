@@ -21,6 +21,8 @@ import com.mysql.cj.jdbc.MysqlDataSource;
 import hu.kits.tennis.common.Clock;
 import hu.kits.tennis.common.Environment;
 import hu.kits.tennis.domain.invoice.InvoiceService;
+import hu.kits.tennis.domain.ktr.KTRDetails;
+import hu.kits.tennis.domain.ktr.KTRService;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayerRepository;
@@ -29,8 +31,6 @@ import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
-import hu.kits.tennis.domain.utr.UTRDetails;
-import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 import hu.kits.tennis.infrastructure.invoice.BillingoInvoiceService;
 
@@ -64,11 +64,9 @@ public class TaskMain {
         //new TeniszPartnerMeccsImporter(applicationContext).importPlayers();
         //new TeniszPartnerMeccsImporter(applicationContext).importTournaments();
         
-        //runUTRFluctationsTask();
-        
         //setTournamentWinners();
         
-        //new UTRChangeAnalyzer(resourceFactory).analyse();
+        //new KTRChangeAnalyzer(resourceFactory).analyse();
         
         new BillingoClient(applicationContext).createInvoice();
     }
@@ -101,16 +99,16 @@ public class TaskMain {
         return players.isEmpty() ? null : players.iterator().next();
     }
 
-    private static void runUTRFluctationsTask() {
-        UTRService utrService = applicationContext.getUTRService();
+    private static void runKTRFluctationsTask() {
+        KTRService ktrService = applicationContext.getKTRService();
         LocalDateTime time = LocalDateTime.now();
         List<Double> values = new ArrayList<>();
         for(int i=0;i<152;i++) {
             Clock.setStaticTime(time.plusWeeks(i));
             LocalDate date = Clock.today();
-            UTRDetails utrDetails = utrService.calculatePlayersUTR(new Player(20112, null, null, null, null));
-            System.out.println(date + " - " + utrDetails.utr());
-            values.add(utrDetails.utr().value());
+            KTRDetails ktrDetails = ktrService.calculatePlayersKTR(new Player(20112, null, null, null, null));
+            System.out.println(date + " - " + ktrDetails.ktr());
+            values.add(ktrDetails.ktr().value());
         }
         
         double min = values.stream().mapToDouble(v -> v).min().orElse(0);

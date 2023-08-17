@@ -15,8 +15,8 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.common.StringUtil;
+import hu.kits.tennis.domain.ktr.PlayerWithKTR;
 import hu.kits.tennis.domain.player.Player;
-import hu.kits.tennis.domain.utr.PlayerWithUTR;
 
 public class PlayerSelector extends VerticalLayout {
 
@@ -25,10 +25,10 @@ public class PlayerSelector extends VerticalLayout {
     private final Consumer<Player> callBack;
     
     public PlayerSelector(Consumer<Player> callBack) {
-        this(callBack, Main.applicationContext.getPlayersService().loadAllPlayersWithUTR().entries());
+        this(callBack, Main.applicationContext.getPlayersService().loadAllPlayersWithKTR().entries());
     }
     
-    public PlayerSelector(Consumer<Player> callBack, List<PlayerWithUTR> players) {
+    public PlayerSelector(Consumer<Player> callBack, List<PlayerWithKTR> players) {
         
         setPadding(false);
         setMargin(false);
@@ -49,21 +49,21 @@ public class PlayerSelector extends VerticalLayout {
         filter.focus();
     }
     
-    private void clicked(ItemClickEvent<PlayerWithUTR> e) {
+    private void clicked(ItemClickEvent<PlayerWithKTR> e) {
         if(e.getClickCount() > 1) {
             callBack.accept(e.getItem().player());
         }
     }
 
-    public void addSelectionListener(SelectionListener<Grid<PlayerWithUTR>, PlayerWithUTR> listener) {
+    public void addSelectionListener(SelectionListener<Grid<PlayerWithKTR>, PlayerWithKTR> listener) {
         playersGrid.addSelectionListener(listener);
     }
     
-    private static class PlayersGrid extends Grid<PlayerWithUTR> {
+    private static class PlayersGrid extends Grid<PlayerWithKTR> {
 
-        private ListDataProvider<PlayerWithUTR> dataProvider;
+        private ListDataProvider<PlayerWithKTR> dataProvider;
         
-        public PlayersGrid(List<PlayerWithUTR> players) {
+        public PlayersGrid(List<PlayerWithKTR> players) {
             addColumn(p -> p.player().id())
                 .setHeader("Id")
                 .setSortable(true)
@@ -74,8 +74,8 @@ public class PlayerSelector extends VerticalLayout {
                 .setSortable(true)
                 .setFlexGrow(3);
             
-            addColumn(p -> p.utr())
-                .setHeader("UTR")
+            addColumn(p -> p.ktr())
+                .setHeader("KTR")
                 .setSortable(true)
                 .setFlexGrow(0);
             

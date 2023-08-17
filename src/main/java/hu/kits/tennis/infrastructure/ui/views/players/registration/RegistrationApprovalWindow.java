@@ -8,9 +8,9 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 
 import hu.kits.tennis.Main;
+import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.player.registration.Registration;
 import hu.kits.tennis.domain.player.registration.RegistrationService;
-import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
@@ -21,7 +21,7 @@ public class RegistrationApprovalWindow extends Dialog {
     private final Registration registration;
     private final Runnable callback;
     
-    private final NumberField startingUTRField = new NumberField("Kezdő UTR");
+    private final NumberField startingKTRField = new NumberField("Kezdő KTR");
     private final TextArea commentField = new TextArea("Megjegyzés");
     
     private final Button cancelButton = UIUtils.createContrastButton("Mégsem");
@@ -43,16 +43,16 @@ public class RegistrationApprovalWindow extends Dialog {
         registrationForm.setReadOnly();
         VerticalLayout layout = new VerticalLayout(
                 registrationForm, 
-                startingUTRField, 
+                startingKTRField, 
                 commentField);
         
         setHeaderTitle("Új regisztráció");
         
-        startingUTRField.setWidth("120px");
-        startingUTRField.setMin(1);
-        startingUTRField.setMax(16);
-        startingUTRField.setStep(0.01);
-        startingUTRField.setStepButtonsVisible(true);
+        startingKTRField.setWidth("120px");
+        startingKTRField.setMin(1);
+        startingKTRField.setMax(16);
+        startingKTRField.setStep(0.01);
+        startingKTRField.setStepButtonsVisible(true);
         
         commentField.setWidthFull();
         commentField.setHeight("100px");
@@ -64,16 +64,16 @@ public class RegistrationApprovalWindow extends Dialog {
 
     private void approve() {
 
-        if(startingUTRField.isEmpty()) {
-            KITSNotification.showError("Add meg a kezdő UTR-t!");
+        if(startingKTRField.isEmpty()) {
+            KITSNotification.showError("Add meg a kezdő KTR-t!");
             return;
         }
         
-        UTR startingUTR = UTR.of(startingUTRField.getValue());
+        KTR startingKTR = KTR.of(startingKTRField.getValue());
         
         String comment = commentField.getValue();
         
-        registrationService.approveRegistration(registration, startingUTR, comment);
+        registrationService.approveRegistration(registration, startingKTR, comment);
         callback.run();
         close();
         KITSNotification.showInfo(registration.data().name() + " felvéve a játékos adatbázisba!");

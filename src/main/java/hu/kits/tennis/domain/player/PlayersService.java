@@ -7,12 +7,12 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.kits.tennis.domain.ktr.PlayerWithKTR;
+import hu.kits.tennis.domain.ktr.PlayersWithKTR;
+import hu.kits.tennis.domain.ktr.KTRService;
 import hu.kits.tennis.domain.match.MatchRepository;
 import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.domain.player.Player.Contact;
-import hu.kits.tennis.domain.utr.PlayerWithUTR;
-import hu.kits.tennis.domain.utr.PlayersWithUTR;
-import hu.kits.tennis.domain.utr.UTRService;
 
 public class PlayersService {
 
@@ -21,17 +21,17 @@ public class PlayersService {
     private final PlayerRepository playerRepository;
     private final MatchRepository matchRepository;
     
-    private final UTRService utrService;
+    private final KTRService ktrService;
 
-    public PlayersService(PlayerRepository playerRepository, MatchRepository matchRepository, UTRService utrService) {
+    public PlayersService(PlayerRepository playerRepository, MatchRepository matchRepository, KTRService ktrService) {
         this.playerRepository = playerRepository;
         this.matchRepository = matchRepository;
-        this.utrService = utrService;
+        this.ktrService = ktrService;
     }
     
-    public PlayersWithUTR loadAllPlayersWithUTR() {
-        List<PlayerWithUTR> playersWithUTR = utrService.calculateUTRRanking(true);
-        return new PlayersWithUTR(playersWithUTR);
+    public PlayersWithKTR loadAllPlayersWithKTR() {
+        List<PlayerWithKTR> playersWithKTR = ktrService.calculateKTRRanking(true);
+        return new PlayersWithKTR(playersWithKTR);
     }
     
     public Players loadAllPlayers() {
@@ -69,7 +69,7 @@ public class PlayersService {
             Player p = player.get();
             Contact c = p.contact();
             Contact updatedContact = new Contact(c.email(), c.phone(), address, c.comment());
-            Player updatedPlayer = new Player(p.id(), p.name(), updatedContact, p.startingUTR(), p.organisations());
+            Player updatedPlayer = new Player(p.id(), p.name(), updatedContact, p.startingKTR(), p.organisations());
             playerRepository.updatePlayer(updatedPlayer);
             logger.info("Address data saved");
         } else {

@@ -1,0 +1,52 @@
+Call 1
+description: KTR ranking of all players
+url: <url-base>/api/ktr-ranking
+method: GET
+response-status: 200
+response-body:
+
+
+[
+    {
+        "player": {
+            "id": 1,
+            "email": "nagy.robert@gmail.com",
+            "name": "Nagy Róbert"
+        },
+        "numberOfMatches": 2,
+        "numberOfWins": 2,
+        "numberOfTrophies": 0,
+        "rank": 1,
+        "ktr": 8.15,
+        "ktrOneWeekAgo": 8.15,
+        "ktrChange": 0.0
+    },
+    {
+        "player": {
+            "id": 3,
+             "email": "toth.gabor@gmail.com",
+            "name": "Tóth Gábor"
+        },
+        "numberOfMatches": 2,
+        "numberOfWins": 0,
+        "numberOfTrophies": 0,
+        "rank": 2,
+        "ktr": 7.34,
+        "ktrOneWeekAgo": 7.34,
+        "ktrChange": 0.0
+    },
+    {
+        "player": {
+            "id": 2,
+            "email": "istvan.kiss@gmail.com",
+            "name": "Kiss István"
+        },
+        "numberOfMatches": 2,
+        "numberOfWins": 1,
+        "numberOfTrophies": 0,
+        "rank": 3,
+        "ktr": 7.01,
+        "ktrOneWeekAgo": 7.01,
+        "ktrChange": 0.0
+    }
+]

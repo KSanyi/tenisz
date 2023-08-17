@@ -7,15 +7,15 @@ import java.util.Optional;
 
 import hu.kits.tennis.application.usecase.AllMatchesUseCase;
 import hu.kits.tennis.common.StringUtil;
+import hu.kits.tennis.domain.ktr.PlayerStats;
+import hu.kits.tennis.domain.ktr.PlayerWithKTR;
+import hu.kits.tennis.domain.ktr.KTRService;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
-import hu.kits.tennis.domain.utr.PlayerStats;
-import hu.kits.tennis.domain.utr.PlayerWithUTR;
-import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 import io.javalin.http.ContentType;
 import io.javalin.http.Context;
@@ -24,13 +24,13 @@ import io.javalin.http.HttpCode;
 class RestHandlers {
 
     private final PlayerRepository playerRepository;
-    private final UTRService utrService;
+    private final KTRService ktrService;
     private final TournamentService tournamentService;
     private final AllMatchesUseCase allMatchesUseCase;
     
     RestHandlers(ApplicationContext applicationContext) {
         playerRepository = applicationContext.getPlayerRepository();
-        utrService = applicationContext.getUTRService();
+        ktrService = applicationContext.getKTRService();
         tournamentService = applicationContext.getTournamentService();
         allMatchesUseCase = applicationContext.getAllMatchesUseCase();
     }
@@ -59,9 +59,9 @@ class RestHandlers {
         }
     }
     
-    void calculateUTRRanking(Context context) {
-        List<PlayerWithUTR> utrRanking = utrService.calculateUTRRanking(true);
-        context.json(utrRanking);
+    void calculateKTRRanking(Context context) {
+        List<PlayerWithKTR> ktrRanking = ktrService.calculateKTRRanking(true);
+        context.json(ktrRanking);
     }
     
     void playerStats(Context context) {
@@ -70,30 +70,30 @@ class RestHandlers {
         if(player.isEmpty()) {
             context.status(HttpCode.NOT_FOUND);
         } else {
-            PlayerStats playerStats = utrService.loadPlayerStats(player.get());
+            PlayerStats playerStats = ktrService.loadPlayerStats(player.get());
             context.json(playerStats);  
         }
     }
     
-    void listAllPlayersWithUtrInCSV(Context context) {
-        List<PlayerWithUTR> playersWithUTR = utrService.calculateUTRRanking(true);
+    void listAllPlayersWithKTRInCSV(Context context) {
+        List<PlayerWithKTR> playersWithKTR = ktrService.calculateKTRRanking(true);
         
-        String content = playersWithUTR.stream()
+        String content = playersWithKTR.stream()
                 .sorted((p1, p2) -> StringUtil.HUN_COLLATOR.compare(p1.player().name(), p2.player().name()))
-                .map(playerWithUtr -> createCsvRow(playerWithUtr))
+                .map(playerWithKTR -> createCsvRow(playerWithKTR))
                 .collect(Collectors.joining("\n"));
         
         context.result(content);
         context.contentType(ContentType.TEXT_CSV);
     }
     
-    private static String createCsvRow(PlayerWithUTR playerWithUtr) {
+    private static String createCsvRow(PlayerWithKTR playerWithKTR) {
         return createCsvRow(
-                playerWithUtr.player().name(),
-                String.valueOf(playerWithUtr.player().id()),
-                playerWithUtr.player().contact().phone(),
-                playerWithUtr.player().contact().email(), 
-                playerWithUtr.utr().toString().replace(".", ","));
+                playerWithKTR.player().name(),
+                String.valueOf(playerWithKTR.player().id()),
+                playerWithKTR.player().contact().phone(),
+                playerWithKTR.player().contact().email(), 
+                playerWithKTR.ktr().toString().replace(".", ","));
     }
     
     private static String createCsvRow(String ... values) {

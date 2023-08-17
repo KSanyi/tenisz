@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.match.Match.MatchType;
-import hu.kits.tennis.domain.utr.UTR;
 
 public record MatchResult(List<SetResult> setResults) {
 
@@ -35,20 +35,20 @@ public record MatchResult(List<SetResult> setResults) {
         return setResults.stream().mapToInt(SetResult::player2Games).sum();
     }
     
-    public UTR calculateUTRForPlayer1(UTR player2UTR) {
+    public KTR calculateKTRForPlayer1(KTR player2KTR) {
         if(matchType() == Match.MatchType.SUPER_TIE_BREAK || !isMatchLongEnough()) {
-            return UTR.UNDEFINED;
+            return KTR.UNDEFINED;
         }
         double scoreOfPlayer1 = scoreOfPlayer1();
-        return player2UTR.calculateMatchUTR(scoreOfPlayer1);
+        return player2KTR.calculateMatchKTR(scoreOfPlayer1);
     }
     
-    public UTR calculateUTRForPlayer2(UTR player1UTR) {
+    public KTR calculateKTRForPlayer2(KTR player1KTR) {
         if(matchType() == Match.MatchType.SUPER_TIE_BREAK || !isMatchLongEnough()) {
-            return UTR.UNDEFINED;
+            return KTR.UNDEFINED;
         }
         double scoreOfPlayer2 = scoreOfPlayer2();
-        return player1UTR.calculateMatchUTR(scoreOfPlayer2);
+        return player1KTR.calculateMatchKTR(scoreOfPlayer2);
     }
     
     private boolean isMatchLongEnough() {

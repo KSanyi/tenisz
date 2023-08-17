@@ -21,6 +21,9 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
+import hu.kits.tennis.domain.ktr.BookedMatch;
+import hu.kits.tennis.domain.ktr.KTR;
+import hu.kits.tennis.domain.ktr.KTRService;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.match.MatchResult;
@@ -42,21 +45,18 @@ import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.tournament.TournamentParams.VenueType;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.TournamentSummary.CourtInfo;
-import hu.kits.tennis.domain.utr.BookedMatch;
-import hu.kits.tennis.domain.utr.UTR;
-import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 
 public class TeniszPartnerMeccsImporter {
 
     private final PlayerRepository playerRepository;
-    private final UTRService utrService;
+    private final KTRService ktrService;
     private final TournamentService tournamentService;
     private final MatchService matchService;
     
     public TeniszPartnerMeccsImporter(ApplicationContext resourceFactory) {
         playerRepository = resourceFactory.getPlayerRepository();
-        utrService = resourceFactory.getUTRService();
+        ktrService = resourceFactory.getKTRService();
         tournamentService = resourceFactory.getTournamentService();
         matchService = resourceFactory.getMatchService();
     }
@@ -101,12 +101,12 @@ public class TeniszPartnerMeccsImporter {
         for(var playerNameAndId : loadPlayerIds().entrySet()) {
             List<Match> matchesForPlayer = parseMatches(playerNameAndId.getValue());
             matches.addAll(matchesForPlayer);
-            matchesForPlayer.forEach(utrService::calculatUTRAndSaveMatch);
+            matchesForPlayer.forEach(ktrService::calculatKTRAndSaveMatch);
             System.out.println(matchesForPlayer.size() + " matches added for " + playerNameAndId.getKey());
             Thread.sleep(1000);
         }
         
-        //matches.stream().sorted(Comparator.comparing(PlayedMatch::date)).forEach(utrService::calculatUTRAndSaveMatch);
+        //matches.stream().sorted(Comparator.comparing(PlayedMatch::date)).forEach(ktrService::calculatKTRAndSaveMatch);
     }
     
     private List<Match> parseMatches(int playerId) throws Exception {
@@ -173,7 +173,7 @@ public class TeniszPartnerMeccsImporter {
     
     private Player findOrCreatePlayer(Players players, String playerName) {
         return players.findPlayer(playerName)
-                .orElseGet(() -> playerRepository.saveNewPlayer(new Player(0, playerName, Contact.EMPTY, UTR.UNDEFINED, Set.of(Organization.KVTK))));
+                .orElseGet(() -> playerRepository.saveNewPlayer(new Player(0, playerName, Contact.EMPTY, KTR.UNDEFINED, Set.of(Organization.KVTK))));
     }
     
     private static Optional<SetResult> parseSetResult(String resultString) {
@@ -254,7 +254,7 @@ public class TeniszPartnerMeccsImporter {
     }
 
     public void cleanupDuplicates() {
-        List<BookedMatch> matches = utrService.loadBookedMatches();
+        List<BookedMatch> matches = ktrService.loadBookedMatches();
         for(var match : matches) {
             Optional<BookedMatch> duplicate = matches.stream()
                     .filter(m -> m.playedMatch().date().equals(match.playedMatch().date()))

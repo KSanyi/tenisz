@@ -11,10 +11,10 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.kits.tennis.domain.ktr.BookedMatch;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
 import hu.kits.tennis.domain.tournament.TournamentRepository;
-import hu.kits.tennis.domain.utr.BookedMatch;
 
 public class MatchService {
 
@@ -49,12 +49,12 @@ public class MatchService {
                 tournamentInfo, 
                 bookedMatch.playedMatch().date(), 
                 bookedMatch.playedMatch().player1(), 
-                bookedMatch.player1UTR(), 
+                bookedMatch.player1KTR(), 
                 bookedMatch.playedMatch().player2(), 
-                bookedMatch.player2UTR(), 
+                bookedMatch.player2KTR(), 
                 bookedMatch.playedMatch().result(), 
-                bookedMatch.matchUTRForPlayer1(), 
-                bookedMatch.matchUTRForPlayer2(),
+                bookedMatch.matchKTRForPlayer1(), 
+                bookedMatch.matchKTRForPlayer2(),
                 bookedMatch.isUpset());
     }
 

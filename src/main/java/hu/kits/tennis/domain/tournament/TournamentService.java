@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.tennis.common.IdGenerator;
+import hu.kits.tennis.domain.ktr.BookedMatch;
+import hu.kits.tennis.domain.ktr.KTRService;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchRepository;
 import hu.kits.tennis.domain.match.MatchResult;
@@ -21,8 +23,6 @@ import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
 import hu.kits.tennis.domain.tournament.TournamentParams.Type;
-import hu.kits.tennis.domain.utr.BookedMatch;
-import hu.kits.tennis.domain.utr.UTRService;
 
 public class TournamentService {
 
@@ -31,12 +31,12 @@ public class TournamentService {
     private final TournamentRepository tournamentRepository;
     private final MatchRepository matchRepository;
     private final VenueRepository venueRepository;
-    private final UTRService utrService;
+    private final KTRService ktrService;
 
-    public TournamentService(TournamentRepository tournamentRepository, MatchRepository matchRepository, VenueRepository venueRepository, UTRService utrService) {
+    public TournamentService(TournamentRepository tournamentRepository, MatchRepository matchRepository, VenueRepository venueRepository, KTRService ktrService) {
         this.tournamentRepository = tournamentRepository;
         this.matchRepository = matchRepository;
-        this.utrService = utrService;
+        this.ktrService = ktrService;
         this.venueRepository = venueRepository;
     }
     
@@ -248,7 +248,7 @@ public class TournamentService {
             }
         }
         
-        utrService.recalculateAllUTRs();
+        ktrService.recalculateAllKTRs();
     }
     
     private Tournament loadTournament(String tournamentId) {

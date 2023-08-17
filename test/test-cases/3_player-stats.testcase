@@ -10,7 +10,7 @@ response-body:
         "email": "nagy.robert@gmail.com",
         "name": "Nagy Róbert"
     },
-    "utr": 8.15,
+    "ktr": 8.15,
     "numberOfTournaments": 1,
     "numberOfTrophies": 0,
     "numberOfWins": 2,
@@ -33,17 +33,17 @@ response-body:
                 "email": "nagy.robert@gmail.com",
                 "name": "Nagy Róbert"
             },
-            "player1UTR": 8.0,
+            "player1KTR": 8.0,
             "player2": {
                 "id": 2,
                 "email": "istvan.kiss@gmail.com",
                 "name": "Kiss István"
             },
-            "player2UTR": 7.0,
+            "player2KTR": 7.0,
             "result": "6:0",
             "upset": false,
-            "matchUTRForPlayer1": 9.0,
-            "matchUTRForPlayer2": 6.0
+            "matchKTRForPlayer1": 9.0,
+            "matchKTRForPlayer2": 6.0
         },
         {
             "id": 2,
@@ -55,102 +55,102 @@ response-body:
                 "email": "nagy.robert@gmail.com",
                 "name": "Nagy Róbert"
             },
-            "player1UTR": 8.0,
+            "player1KTR": 8.0,
             "player2": {
                 "id": 3,
                 "email": "toth.gabor@gmail.com",
                 "name": "Tóth Gábor"
             },
-            "player2UTR": 7.5,
+            "player2KTR": 7.5,
             "result": "6:2",
             "upset": false,
-            "matchUTRForPlayer1": 8.83,
-            "matchUTRForPlayer2": 6.67
+            "matchKTRForPlayer1": 8.83,
+            "matchKTRForPlayer2": 6.67
         }
     ],
-    "utrRelevantMatchIds": [
+    "ktrRelevantMatchIds": [
         1,
         2
     ],
-    "bestUTRMatchId": 1,
-    "worstUTRMatchId": 2,
-    "utrHistory": [
+    "bestKTRMatchId": 1,
+    "worstKTRMatchId": 2,
+    "ktrHistory": [
         {
             "date": "2023-03-15",
-            "utr": 8.0
+            "ktr": 8.0
         },
         {
             "date": "2023-03-16",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-17",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-18",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-19",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-20",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-21",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-22",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-23",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-24",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-25",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-26",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-27",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-28",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-29",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-30",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-03-31",
-            "utr": 8.15
+            "ktr": 8.15
         },
         {
             "date": "2023-04-01",
-            "utr": 8.15
+            "ktr": 8.15
         }
     ],
-    "utrHigh": {
+    "ktrHigh": {
         "date": "2023-04-01",
-        "utr": 8.15
+        "ktr": 8.15
     },
     "rank": 1
 }

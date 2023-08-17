@@ -28,8 +28,8 @@ import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
-import hu.kits.tennis.infrastructure.ui.views.utr.playerstats.PlayerStatsView;
-import hu.kits.tennis.infrastructure.ui.views.utr.ranking.UTRRankingView;
+import hu.kits.tennis.infrastructure.ui.views.ktr.playerstats.PlayerStatsView;
+import hu.kits.tennis.infrastructure.ui.views.ktr.ranking.KTRRankingView;
 
 @Route(value = "data-request")
 @PageTitle("Adatbekérő")
@@ -120,7 +120,7 @@ public class PlayerAddressDataGatherView extends VerticalLayout {
             if(player.isPresent()) {
                 UI.getCurrent().navigate(PlayerStatsView.class, new RouteParameters("playerId" , String.valueOf(player.get().id())));
             } else {
-                UI.getCurrent().navigate(UTRRankingView.class);                
+                UI.getCurrent().navigate(KTRRankingView.class);                
             }
         } else {
             KITSNotification.showError("Hibás adatok");

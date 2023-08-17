@@ -22,10 +22,10 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import hu.kits.tennis.Main;
+import hu.kits.tennis.domain.ktr.PlayersWithKTR;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.PaymentStatus;
-import hu.kits.tennis.domain.utr.PlayersWithUTR;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.component.PlayerSelectorDialog;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
@@ -82,7 +82,7 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         
         this.tournamentView = tournamentView;
         
-        PlayersWithUTR playersWithUTR = Main.applicationContext.getPlayersService().loadAllPlayersWithUTR();
+        PlayersWithKTR playersWithKTR = Main.applicationContext.getPlayersService().loadAllPlayersWithKTR();
         
         addColumn(item -> items.indexOf(item) + 1)
             .setHeader("Rank")
@@ -90,7 +90,7 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(0);
         
-        addColumn(item -> formatNameAndUTR(item.player, playersWithUTR))
+        addColumn(item -> formatNameAndKTR(item.player, playersWithKTR))
             .setHeader("Név")
             .setAutoWidth(true)
             .setFlexGrow(1);
@@ -110,11 +110,11 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         addItemClickListener(e -> handleClick(e));
     }
     
-    private static String formatNameAndUTR(Player player, PlayersWithUTR playersWithUTR) {
+    private static String formatNameAndKTR(Player player, PlayersWithKTR playersWithKTR) {
         if(player.equals(Player.BYE)) {
             return "Bye";
         } else {
-            return player.name() + " (" + playersWithUTR.getUTR(player.id()) + ")";
+            return player.name() + " (" + playersWithKTR.getKTR(player.id()) + ")";
         }
     }
     

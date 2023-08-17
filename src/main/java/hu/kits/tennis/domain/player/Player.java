@@ -4,19 +4,19 @@ import java.util.Objects;
 import java.util.Set;
 
 import hu.kits.tennis.common.StringUtil;
+import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.tournament.Organization;
-import hu.kits.tennis.domain.utr.UTR;
 
 public record Player(Integer id,
         String name,
         Contact contact,
-        UTR startingUTR, 
+        KTR startingKTR, 
         Set<Organization> organisations) {
 
-    public static Player BYE = new Player(0, "Bye", Contact.EMPTY, UTR.UNDEFINED, Set.of());
+    public static Player BYE = new Player(0, "Bye", Contact.EMPTY, KTR.UNDEFINED, Set.of());
 
     public static Player createNew(String name) {
-        return new Player(null, name, Contact.EMPTY, UTR.UNDEFINED, Set.of());
+        return new Player(null, name, Contact.EMPTY, KTR.UNDEFINED, Set.of());
     }
     public boolean matches(String filter) {
         String cleanedFilter = StringUtil.cleanNameString(filter);

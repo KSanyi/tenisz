@@ -9,6 +9,7 @@ import hu.kits.tennis.application.usecase.AllMatchesUseCase;
 import hu.kits.tennis.application.usecase.InvoicingUseCase;
 import hu.kits.tennis.domain.email.EmailSender;
 import hu.kits.tennis.domain.invoice.InvoiceService;
+import hu.kits.tennis.domain.ktr.KTRService;
 import hu.kits.tennis.domain.match.MatchRepository;
 import hu.kits.tennis.domain.match.MatchService;
 import hu.kits.tennis.domain.player.PlayerRepository;
@@ -20,7 +21,6 @@ import hu.kits.tennis.domain.tournament.VenueRepository;
 import hu.kits.tennis.domain.user.UserRepository;
 import hu.kits.tennis.domain.user.UserService;
 import hu.kits.tennis.domain.user.password.DummyPasswordHasher;
-import hu.kits.tennis.domain.utr.UTRService;
 import hu.kits.tennis.infrastructure.database.MatchJdbcRepository;
 import hu.kits.tennis.infrastructure.database.PlayerJdbcRepository;
 import hu.kits.tennis.infrastructure.database.RegistrationJdbcRepository;
@@ -35,7 +35,7 @@ public class ApplicationContext {
     private final PlayersService playersService;
     private final MatchRepository matchRepository;
     private final TournamentService tournamentService;
-    private final UTRService utrService;
+    private final KTRService ktrService;
     private final MatchService matchService;
     private final InvoiceService invoiceService;
     private final RegistrationService registrationService;
@@ -54,12 +54,12 @@ public class ApplicationContext {
         TournamentRepository tournamentRepository = new TournamentJdbcRepository(dataSource, playerRepository, matchRepository);
         
         matchService = new MatchService(matchRepository, tournamentRepository);
-        utrService = new UTRService(matchService, matchRepository, playerRepository, tournamentRepository);
+        ktrService = new KTRService(matchService, matchRepository, playerRepository, tournamentRepository);
         
-        playersService = new PlayersService(playerRepository, matchRepository, utrService);
+        playersService = new PlayersService(playerRepository, matchRepository, ktrService);
         
         VenueRepository venueRepository = new VenueHardcodedRepository();
-        tournamentService = new TournamentService(tournamentRepository, matchRepository, venueRepository, utrService);
+        tournamentService = new TournamentService(tournamentRepository, matchRepository, venueRepository, ktrService);
         this.invoiceService = invoiceService;
         registrationService = new RegistrationService(playersService, new RegistrationJdbcRepository(dataSource), invoiceService);
         
@@ -76,8 +76,8 @@ public class ApplicationContext {
         return playerRepository;
     }
     
-    public UTRService getUTRService() {
-        return utrService;
+    public KTRService getKTRService() {
+        return ktrService;
     }
 
     public TournamentService getTournamentService() {

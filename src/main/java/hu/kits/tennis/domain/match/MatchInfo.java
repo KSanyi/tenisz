@@ -4,20 +4,20 @@ import java.time.LocalDate;
 
 import hu.kits.tennis.common.Formatters;
 import hu.kits.tennis.common.StringUtil;
+import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.BasicTournamentInfo;
-import hu.kits.tennis.domain.utr.UTR;
 
 public record MatchInfo(Integer id, 
         BasicTournamentInfo tournamentInfo, 
         LocalDate date,
         Player player1,
-        UTR player1UTR,
+        KTR player1KTR,
         Player player2,
-        UTR player2UTR,
+        KTR player2KTR,
         MatchResult result,
-        UTR matchUTRForPlayer1,
-        UTR matchUTRForPlayer2,
+        KTR matchKTRForPlayer1,
+        KTR matchKTRForPlayer2,
         boolean isUpset) {
 
     public boolean matches(String filterPart) {

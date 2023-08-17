@@ -4,11 +4,11 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import hu.kits.tennis.common.Clock;
+import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.tournament.Organization;
-import hu.kits.tennis.domain.utr.UTR;
 
 public record Registration(Integer id, RegistrationData data, RegistrationStatus status, LocalDateTime timestamp) {
 
@@ -24,12 +24,12 @@ public record Registration(Integer id, RegistrationData data, RegistrationStatus
             String venue,
             String hasPlayedInTournament) {
 
-        public Player toPlayer(UTR stratingUTR, String comment) {
+        public Player toPlayer(KTR stratingKTR, String comment) {
             return new Player(
                     null,
                     name,
                     new Contact(email, phone, new Address(zip, town, streetAddress), comment),
-                    stratingUTR,
+                    stratingKTR,
                     Set.of(Organization.KVTK));
         }
 

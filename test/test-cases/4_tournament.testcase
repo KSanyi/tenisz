@@ -99,17 +99,17 @@ response-body:
                 "email": "nagy.robert@gmail.com",
                 "name": "Nagy Róbert"
             },
-            "player1UTR": 8.0,
+            "player1KTR": 8.0,
             "player2": {
                 "id": 2,
                 "email": "istvan.kiss@gmail.com",
                 "name": "Kiss István"
             },
-            "player2UTR": 7.0,
+            "player2KTR": 7.0,
             "result": "6:0",
             "upset": false,
-            "matchUTRForPlayer1": 9.0,
-            "matchUTRForPlayer2": 6.0
+            "matchKTRForPlayer1": 9.0,
+            "matchKTRForPlayer2": 6.0
         },
         {
             "id": 2,
@@ -121,17 +121,17 @@ response-body:
                 "email": "nagy.robert@gmail.com",
                 "name": "Nagy Róbert"
             },
-            "player1UTR": 8.0,
+            "player1KTR": 8.0,
             "player2": {
                 "id": 3,
                 "email": "toth.gabor@gmail.com",
                 "name": "Tóth Gábor"
             },
-            "player2UTR": 7.5,
+            "player2KTR": 7.5,
             "result": "6:2",
             "upset": false,
-            "matchUTRForPlayer1": 8.83,
-            "matchUTRForPlayer2": 6.67
+            "matchKTRForPlayer1": 8.83,
+            "matchKTRForPlayer2": 6.67
         },
         {
             "id": 3,
@@ -143,17 +143,17 @@ response-body:
                 "email": "istvan.kiss@gmail.com",
                 "name": "Kiss István"
             },
-            "player1UTR": 7.0,
+            "player1KTR": 7.0,
             "player2": {
                 "id": 3,
                 "email": "toth.gabor@gmail.com",
                 "name": "Tóth Gábor"
             },
-            "player2UTR": 7.5,
+            "player2KTR": 7.5,
             "result": "7:5",
             "upset": false,
-            "matchUTRForPlayer1": 8.07,
-            "matchUTRForPlayer2": 6.43
+            "matchKTRForPlayer1": 8.07,
+            "matchKTRForPlayer2": 6.43
         }
     ]
 }

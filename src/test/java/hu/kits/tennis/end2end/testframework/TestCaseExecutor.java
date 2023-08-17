@@ -31,6 +31,7 @@ import hu.kits.tennis.common.IdGenerator;
 import hu.kits.tennis.common.JsonUtil;
 import hu.kits.tennis.common.UseCaseFileParser;
 import hu.kits.tennis.common.UseCaseFileParser.TestCall;
+import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchResult;
 import hu.kits.tennis.domain.match.MatchService;
@@ -48,7 +49,6 @@ import hu.kits.tennis.domain.tournament.TournamentParams.Surface;
 import hu.kits.tennis.domain.tournament.TournamentParams.VenueType;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.tournament.TournamentSummary.CourtInfo;
-import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 import hu.kits.tennis.infrastructure.web.api.HttpServer;
 import hu.kits.tennis.testutil.FakeInvoiceService;
@@ -80,9 +80,9 @@ public class TestCaseExecutor {
     
     private static void setup(ApplicationContext applicationContext) {
         PlayerRepository playerRepository = applicationContext.getPlayerRepository();
-        Player player1 = playerRepository.saveNewPlayer(new Player(null, "Nagy Róbert", new Contact("nagy.robert@gmail.com", "", Address.EMPTY, ""), UTR.of(8.), Set.of(Organization.KVTK)));
-        Player player2 = playerRepository.saveNewPlayer(new Player(null, "Kiss István", new Contact("istvan.kiss@gmail.com", "", Address.EMPTY, ""), UTR.of(7.), Set.of(Organization.KVTK)));
-        Player player3 = playerRepository.saveNewPlayer(new Player(null, "Tóth Gábor", new Contact("toth.gabor@gmail.com", "", Address.EMPTY, ""), UTR.of(7.5), Set.of(Organization.KVTK)));
+        Player player1 = playerRepository.saveNewPlayer(new Player(null, "Nagy Róbert", new Contact("nagy.robert@gmail.com", "", Address.EMPTY, ""), KTR.of(8.), Set.of(Organization.KVTK)));
+        Player player2 = playerRepository.saveNewPlayer(new Player(null, "Kiss István", new Contact("istvan.kiss@gmail.com", "", Address.EMPTY, ""), KTR.of(7.), Set.of(Organization.KVTK)));
+        Player player3 = playerRepository.saveNewPlayer(new Player(null, "Tóth Gábor", new Contact("toth.gabor@gmail.com", "", Address.EMPTY, ""), KTR.of(7.5), Set.of(Organization.KVTK)));
         
         TournamentService tournamentService = applicationContext.getTournamentService();
         Tournament tournament1 = tournamentService.createTournament(new TournamentParams(Organization.KVTK, TournamentParams.Type.DAILY, Level.L500, Level.L500, LocalDate.of(2023,3,15), "Napi 500 verseny", "Mini Garros", new CourtInfo(4, Surface.CLAY, VenueType.INDOOR), Structure.SIMPLE_BOARD, 1, ""));
@@ -96,7 +96,7 @@ public class TestCaseExecutor {
         
         tournamentService.createTournament(new TournamentParams(Organization.KVTK, TournamentParams.Type.TOUR, Level.L500, Level.L500, LocalDate.of(2023,3,15), "TOUR I - 500", "Mini Garros", null, Structure.SIMPLE_BOARD, 1, ""));
         
-        applicationContext.getUTRService().recalculateAllUTRs();
+        applicationContext.getKTRService().recalculateAllKTRs();
         
         Clock.setStaticTime(LocalDateTime.of(2023,4,1, 10,0));
     }

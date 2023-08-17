@@ -54,11 +54,11 @@ public class HttpServer {
             path("api/tournaments/{tournamentId}", () -> {
                 get(restHandlers::loadTournamentDetails);
             });
-            path("api/utr-ranking", () -> {
-                get(restHandlers::calculateUTRRanking);
+            path("api/ktr-ranking", () -> {
+                get(restHandlers::calculateKTRRanking);
             });
-            path("api/utr-csv", () -> {
-                get(restHandlers::listAllPlayersWithUtrInCSV);
+            path("api/ktr-csv", () -> {
+                get(restHandlers::listAllPlayersWithKTRInCSV);
             });
             path("api/player-stats/{playerId}", () -> {
                 get(restHandlers::playerStats);

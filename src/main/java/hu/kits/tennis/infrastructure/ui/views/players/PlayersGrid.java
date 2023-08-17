@@ -11,9 +11,9 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
 import hu.kits.tennis.common.StringUtil;
+import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayersService;
-import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.Badge;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.FlexBoxLayout;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.FontSize;
@@ -77,8 +77,8 @@ class PlayersGrid extends Grid<Player> {
             .setSortable(true)
             .setFlexGrow(2);
         
-        addColumn(Player::startingUTR)
-            .setHeader("Induló UTR")
+        addColumn(Player::startingKTR)
+            .setHeader("Induló KTR")
             .setSortable(true)
             .setFlexGrow(1);
         
@@ -92,9 +92,9 @@ class PlayersGrid extends Grid<Player> {
         refresh();
     }
     
-    private static Badge createUTRGroupBadge(UTR startingUTR) {
+    private static Badge createKTRGroupBadge(KTR startingKTR) {
         
-        BadgeColor badgeColor = switch(startingUTR.utrGroup()) {
+        BadgeColor badgeColor = switch(startingKTR.ktrGroup()) {
             case 10 -> BadgeColor.ERROR_PRIMARY;
             case 9 -> BadgeColor.ERROR_PRIMARY;
             case 8 -> BadgeColor.ERROR;
@@ -103,7 +103,7 @@ class PlayersGrid extends Grid<Player> {
             case 5 -> BadgeColor.NORMAL;
             default -> BadgeColor.SUCCESS;
         };
-        Badge badge = new Badge(startingUTR != null ? startingUTR.toString() : "", badgeColor, BadgeSize.M, BadgeShape.PILL);
+        Badge badge = new Badge(startingKTR != null ? startingKTR.toString() : "", badgeColor, BadgeSize.M, BadgeShape.PILL);
         badge.setWidth("80px");
         return badge;
     }
@@ -156,12 +156,12 @@ class PlayersGrid extends Grid<Player> {
             UIUtils.setOverflow(Overflow.HIDDEN, owner);
             UIUtils.setTextOverflow(TextOverflow.ELLIPSIS, owner);
 
-            Badge utrBadge = createUTRGroupBadge(player.startingUTR());
+            Badge ktrBadge = createKTRGroupBadge(player.startingKTR());
             
-            FlexBoxLayout wrapper = new FlexBoxLayout(owner, utrBadge);
+            FlexBoxLayout wrapper = new FlexBoxLayout(owner, ktrBadge);
             wrapper.setAlignItems(Alignment.CENTER);
             wrapper.setFlexGrow(1, owner);
-            wrapper.setFlexShrink("0", utrBadge);
+            wrapper.setFlexShrink("0", ktrBadge);
             wrapper.setSpacing(Right.M);
             return wrapper;
         }

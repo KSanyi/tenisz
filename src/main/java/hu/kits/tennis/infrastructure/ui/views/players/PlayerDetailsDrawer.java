@@ -23,12 +23,12 @@ import com.vaadin.flow.data.validator.DoubleRangeValidator;
 import com.vaadin.flow.data.validator.EmailValidator;
 
 import hu.kits.tennis.common.KITSException;
+import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.domain.player.Player.Contact;
 import hu.kits.tennis.domain.player.PlayersService;
 import hu.kits.tennis.domain.tournament.Organization;
-import hu.kits.tennis.domain.utr.UTR;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.util.DataValidator.PhoneValidator;
@@ -51,7 +51,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
     private final TextField townField = new TextField("Város");
     private final TextArea streetAddressField = new TextArea("Utca, házszám");
     private final TextArea commentField = new TextArea("Megjegyzés");
-    private final NumberField startingUTRField = new NumberField("Induló UTR");
+    private final NumberField startingKTRField = new NumberField("Induló KTR");
     private final Checkbox kvtkCheckBox = new Checkbox("KVTK tag");
     private final Binder<PlayerDataBean> binder = new Binder<>(PlayerDataBean.class);
 
@@ -111,9 +111,9 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         binder.forField(commentField)
             .bind("comment");
         
-        binder.forField(startingUTRField)
+        binder.forField(startingKTRField)
             .withValidator(new DoubleRangeValidator("1 es 16 között", 1., 16.))
-            .bind("startingUTR");
+            .bind("startingKTR");
         
         binder.forField(kvtkCheckBox).bind(p -> p.getOrganisations().contains(Organization.KVTK), (p, b) -> p.addKVTK(b));
     }
@@ -173,7 +173,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
                 townField, 
                 streetAddressField, 
                 commentField,
-                startingUTRField,
+                startingKTRField,
                 kvtkCheckBox,
                 new Hr(),
                 deleteButton);
@@ -188,14 +188,14 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         townField.setWidth("250px");
         streetAddressField.setWidth("300px");
         streetAddressField.setHeight("90px");
-        startingUTRField.setWidth("120px");
+        startingKTRField.setWidth("120px");
         
         zipField.addValueChangeListener(e -> zipChanged(e.getValue()));
         
-        startingUTRField.setMin(1);
-        startingUTRField.setMax(16);
-        startingUTRField.setStep(0.01);
-        startingUTRField.setStepButtonsVisible(true);
+        startingKTRField.setMin(1);
+        startingKTRField.setMax(16);
+        startingKTRField.setStep(0.01);
+        startingKTRField.setStepButtonsVisible(true);
         
         return fieldsLayout;
     }
@@ -239,7 +239,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
         private String town;
         private String streetAddress;
         private String comment;
-        private Double startingUTR;
+        private Double startingKTR;
         private Set<Organization> organisations;
         
         public PlayerDataBean(Player player) {
@@ -248,7 +248,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
             this.email = player.contact().email();
             this.phone = player.contact().phone();
             this.comment = player.contact().comment();
-            this.startingUTR = player.startingUTR().value();
+            this.startingKTR = player.startingKTR().value();
             this.organisations = new HashSet<>(player.organisations());
             if(!player.contact().address().isEmpty()) {
                 this.zip = player.contact().address().zip();
@@ -264,7 +264,7 @@ class PlayerDetailsDrawer extends DetailsDrawer {
             return new Player(!playerId.isEmpty() ? Integer.parseInt(playerId) : null,
                     name, 
                     new Contact(email, phone, address, comment), 
-                    UTR.of(startingUTR), 
+                    KTR.of(startingKTR), 
                     organisations);
         }
 
@@ -340,12 +340,12 @@ class PlayerDetailsDrawer extends DetailsDrawer {
             this.comment = comment;
         }
 
-        public Double getStartingUTR() {
-            return startingUTR;
+        public Double getStartingKTR() {
+            return startingKTR;
         }
         
-        public void setStartingUTR(Double startingUTR) {
-            this.startingUTR = startingUTR;
+        public void setStartingKTR(Double startingKTR) {
+            this.startingKTR = startingKTR;
         }
 
         public Set<Organization> getOrganisations() {
