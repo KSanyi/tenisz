@@ -14,6 +14,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -109,10 +110,14 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             VerticalLayout leftColumn = new VerticalLayout(matchesGrid, new HorizontalLayout(matchCounter, addMatchButton, recalculateButton));
             leftColumn.setPadding(false);
             
+            List<Player> players = tournament.contestants().stream().map(c -> c.player()).collect(toList());
+            Player winner = tournament.contestants().stream().filter(c -> c.rank() == 1).findAny().map(c -> c.player()).orElse(null);
+            ComboBox<Player> winnerCombo = createPlayerCombo(players, winner);
+            
             HorizontalLayout horizontalLayout = new HorizontalLayout(leftColumn, contestantsTable);
             horizontalLayout.setSizeFull();
             horizontalLayout.setFlexGrow(1, leftColumn);
-            layout.add(header, horizontalLayout, deleteButton);
+            layout.add(header, horizontalLayout, winnerCombo, deleteButton);
             layout.setHorizontalComponentAlignment(Alignment.END, deleteButton);
         } else if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION || tournament.params().structure() == Structure.SIMPLE_BOARD) {
 
@@ -277,6 +282,20 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
 
     public void setPaymentStatus(Player player, PaymentStatus paymentStatus) {
         tournamentService.setPaymentStatus(tournament, player, paymentStatus);
+    }
+    
+    private ComboBox<Player> createPlayerCombo(List<Player> players, Player player) {
+        ComboBox<Player> comboBox = new ComboBox<>("Győztes");
+        comboBox.setMaxWidth("250px");
+        comboBox.setWidthFull();
+        comboBox.setItemLabelGenerator(Player::name);
+        comboBox.setItems(players);
+        if(player != null) {
+            comboBox.setValue(player);
+        }
+        comboBox.setPageSize(players.size());
+        comboBox.addValueChangeListener(e -> tournamentService.setWinner(tournament.id(), e.getValue()));
+        return comboBox;
     }
     
 }

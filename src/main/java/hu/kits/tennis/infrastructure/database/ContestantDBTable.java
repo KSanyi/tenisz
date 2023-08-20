@@ -170,6 +170,15 @@ class ContestantDBTable {
     }
 
     public void setPosition(String tournamentId, int playerId, int position) {
+        Integer oldWinnerId = findWinnerByTournament().get(tournamentId);
+        if(oldWinnerId != null) {
+            String sql = String.format("UPDATE %s SET %s = NULL WHERE %s = :tournamentId AND %s = :playerId", TABLE_TOURNAMENT_CONTESTANT, COLUMN_POSITION, COLUMN_TOURNAMENT_ID, COLUMN_PLAYER_ID);
+            int x = jdbi.withHandle(handle -> handle.createUpdate(sql)
+                    .bind("tournamentId", tournamentId)
+                    .bind("playerId", oldWinnerId)
+                    .execute());
+            System.out.println(x);
+        }
         JdbiUtil.executeUpdate(jdbi, TABLE_TOURNAMENT_CONTESTANT, Map.of(), Map.of(COLUMN_POSITION, position), Map.of(COLUMN_TOURNAMENT_ID, tournamentId, COLUMN_PLAYER_ID, playerId));
     }
 
