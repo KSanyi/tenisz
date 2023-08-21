@@ -212,7 +212,7 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         }
         
         Contestant toContestant() {
-            return new Contestant(player, 0, paymentStatus);
+            return new Contestant(player, 0, paymentStatus, 0);
         }
     }
     

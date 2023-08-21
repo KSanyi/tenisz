@@ -67,7 +67,8 @@ class ContestantDBTable {
         return Pair.of(rs.getString(COLUMN_TOURNAMENT_ID), 
                 new Contestant(player, 
                         rs.getInt(COLUMN_RANK_NUMBER),
-                        PaymentStatus.valueOf(rs.getString(COLUMN_PAYMENT_STATUS))));
+                        PaymentStatus.valueOf(rs.getString(COLUMN_PAYMENT_STATUS)),
+                        rs.getInt(COLUMN_POSITION)));
     }
 
     void updateContestants(String tournamentId, List<Contestant> contestants) {

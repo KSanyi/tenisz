@@ -196,9 +196,6 @@ public class TournamentService {
         Player winner = match.winner();
         
         if(tournament.isBoardFinal(match)) {
-            tournamentRepository.updateTournamentStatus(match.tournamentId(), Status.COMPLETED);
-            logger.info("Tournament {} status is updated to COMPLETED", tournament);
-
             setWinner(tournament.id(), match.winner());
         } else {
             int nextRoundMatchNumber = tournament.nextRoundMatchNumber(match);
@@ -311,6 +308,9 @@ public class TournamentService {
 
     public void setWinner(String tournamentId, Player winner) {
         tournamentRepository.setWinner(tournamentId, winner.id());
+        tournamentRepository.updateTournamentStatus(tournamentId, Status.COMPLETED);
+        logger.info("Tournament {} winner ({}) is set, status is updated to COMPLETED", winner.name(), tournamentId);
+        
     }
     
     public List<String> loadVenues() {

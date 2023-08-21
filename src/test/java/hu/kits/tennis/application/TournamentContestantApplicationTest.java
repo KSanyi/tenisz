@@ -97,12 +97,12 @@ public class TournamentContestantApplicationTest {
         tournamentService.setPaymentStatus(tournament, player1, PaymentStatus.PAID);
         
         tournament = loadTournament();
-        assertEquals(List.of(new Contestant(player1, 1, PaymentStatus.PAID), new Contestant(player2, 2)), tournament.contestants());
+        assertEquals(List.of(new Contestant(player1, 1, PaymentStatus.PAID, 0), new Contestant(player2, 2)), tournament.contestants());
         
         // player1 invoice sent
         tournamentService.setPaymentStatus(tournament, player1,PaymentStatus.INVOICE_SENT);
         tournament = loadTournament();
-        assertEquals(List.of(new Contestant(player1, 1, PaymentStatus.INVOICE_SENT), new Contestant(player2, 2)), tournament.contestants());
+        assertEquals(List.of(new Contestant(player1, 1, PaymentStatus.INVOICE_SENT, 0), new Contestant(player2, 2)), tournament.contestants());
     }
     
     @Test
@@ -117,7 +117,7 @@ public class TournamentContestantApplicationTest {
         List<Contestant> contestants = loadTournament().contestants();
         tournamentService.updateContestants(tournament, List.of(contestants.get(1), contestants.get(0)));
         
-        assertEquals(List.of(new Contestant(player2, 1), new Contestant(player1, 2, PaymentStatus.PAID)), loadTournament().contestants());
+        assertEquals(List.of(new Contestant(player2, 1), new Contestant(player1, 2, PaymentStatus.PAID, 0)), loadTournament().contestants());
     }
     
     private Tournament loadTournament() {

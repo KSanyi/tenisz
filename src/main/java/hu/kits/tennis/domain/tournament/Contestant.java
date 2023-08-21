@@ -10,14 +10,15 @@ import hu.kits.tennis.domain.player.Player;
 
 public record Contestant(Player player,
         int rank,
-        PaymentStatus paymentStatus) {
+        PaymentStatus paymentStatus,
+        int position) {
 
     public Contestant(Player player, int rank) {
-        this(player, rank, PaymentStatus.NOT_PAID);
+        this(player, rank, PaymentStatus.NOT_PAID, 0);
     }
     
     public Contestant withRank(int rank) {
-        return new Contestant(player, rank, paymentStatus);
+        return new Contestant(player, rank, paymentStatus, position);
     }
 
     public static List<Contestant> of(Player ... players) {
