@@ -13,19 +13,20 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
 import com.vaadin.flow.component.grid.dnd.GridDropLocation;
 import com.vaadin.flow.component.grid.dnd.GridDropMode;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.theme.lumo.LumoIcon;
 
 import hu.kits.tennis.Main;
 import hu.kits.tennis.domain.ktr.PlayersWithKTR;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.Contestant;
 import hu.kits.tennis.domain.tournament.PaymentStatus;
+import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.component.PlayerSelectorDialog;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
@@ -101,13 +102,16 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(1);
         
-        setMaxWidth("500px");
+        addComponentColumn(item -> item.player.equals(Player.BYE) ? null : createDeleteButton(item))
+            .setAutoWidth(true)
+            .setTextAlign(ColumnTextAlign.CENTER)
+            .setFlexGrow(1);
+        
+        setMaxWidth("600px");
         
         setAllRowsVisible(true);
         
         configurDragAndDrop();
-        
-        addItemClickListener(e -> handleClick(e));
     }
     
     private static String formatNameAndKTR(Player player, PlayersWithKTR playersWithKTR) {
@@ -118,12 +122,6 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
         }
     }
     
-    private void handleClick(ItemClickEvent<ContestantBean> e) {
-        if(e.getClickCount() > 1) {
-            new PlayerSelectorDialog(player -> changePlayer(e.getItem().player, player)).open(); 
-        }
-    }
-
     private void configurDragAndDrop() {
         setRowsDraggable(true);
         setDropMode(GridDropMode.BETWEEN);
@@ -150,19 +148,18 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
     
     // TODO refactor these methods
     
-    private void changePlayer(Player playerToRemove, Player playerToAdd) {
+    private Button createDeleteButton(ContestantBean contestant) {
+        Button deleteButton = new Button(LumoIcon.CROSS.create(), click -> new ConfirmationDialog("Biztosan eltávolítod " + contestant.player.name() + "-t a versenyről?", () -> deleteContestant(contestant)).open());
+        deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
+        return deleteButton;
+    }
+    
+    private void deleteContestant(ContestantBean contestantToDelete) {
         List<ContestantBean> contestants = items.stream().map(gridItem -> gridItem).collect(toList());
-        List<Player> players = contestants.stream().map(c -> c.player).collect(toList());
-        if(!players.contains(playerToAdd)) {
-            int index = players.indexOf(playerToRemove);
-            contestants.remove(index);
-            contestants.add(index, new ContestantBean(playerToAdd));
-            setContestants(contestants);
-            update();
-            KITSNotification.showInfo(playerToAdd.name() + " hozzáadva a versenyhez " + playerToRemove.name() + " helyére");
-        } else {
-            KITSNotification.showError(playerToAdd.name() + " már hozzá van adva a versenyhez");
-        }
+        contestants.remove(contestantToDelete);
+        setContestants(contestants);
+        update();
+        KITSNotification.showInfo(contestantToDelete.player.name() + " eltávolítva");
     }
     
     void setContestants(List<ContestantBean> contestants) {
