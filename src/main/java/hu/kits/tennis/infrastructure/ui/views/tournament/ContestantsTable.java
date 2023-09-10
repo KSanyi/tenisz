@@ -1,10 +1,11 @@
 package hu.kits.tennis.infrastructure.ui.views.tournament;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +60,7 @@ class ContestantsTable extends VerticalLayout {
         new PlayerSelectorDialog(grid::addPlayer).open();
     }
 
-    void setPlayers(List<Contestant> contestants) {
+    void setContestants(List<Contestant> contestants) {
         grid.setContestants(contestants.stream().map(ContestantBean::new).toList());
     }
     
@@ -79,11 +80,11 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
     
     private final TournamentView tournamentView;
     
+    private final PlayersWithKTR playersWithKTR = Main.applicationContext.getPlayersService().loadAllPlayersWithKTR();
+    
     ContestantsGrid(TournamentView tournamentView) {
         
         this.tournamentView = tournamentView;
-        
-        PlayersWithKTR playersWithKTR = Main.applicationContext.getPlayersService().loadAllPlayersWithKTR();
         
         addColumn(item -> items.indexOf(item) + 1)
             .setHeader("Rank")
@@ -163,7 +164,9 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
     }
     
     void setContestants(List<ContestantBean> contestants) {
-        items = new ArrayList<>(contestants);
+        items = contestants.stream()
+                .sorted(comparing((ContestantBean c) -> playersWithKTR.getKTR(c.player.id())).reversed())
+                .collect(Collectors.toList());
         dataView = this.setItems(items);
     }
     
@@ -195,7 +198,7 @@ class ContestantsGrid extends Grid<hu.kits.tennis.infrastructure.ui.views.tourna
     
     static class ContestantBean {
         
-        private final Player player;
+        final Player player;
         private PaymentStatus paymentStatus;
         
         ContestantBean(Contestant contestant) {

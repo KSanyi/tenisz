@@ -223,12 +223,12 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     private void loadData() {
         
         if(tournament.params().structure() == Structure.NA) {
-            contestantsTable.setPlayers(tournament.simplePlayersLineup());
+            contestantsTable.setContestants(tournament.simplePlayersLineup());
             List<MatchInfo> matches = matchService.loadMatchesOfTournament(tournament.id());
             matchesGrid.setItems(matches);
             matchCounter.setText(matches.size() + " meccs");
         } else if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION || tournament.params().structure() == Structure.SIMPLE_BOARD) {
-            contestantsTable.setPlayers(tournament.playersLineup());
+            contestantsTable.setContestants(tournament.playersLineup());
             mainBoard.setBoard(tournament, tournament.mainBoard());
             if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION) {
                 consolationBoard.setBoard(tournament, tournament.consolationBoard());    
