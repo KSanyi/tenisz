@@ -25,6 +25,7 @@ public record PlayerStats(Player player,
         KTRHistoryEntry ktrHigh,
         MatchInfo bestKTRMatch,
         MatchInfo worstKTRMatch,
+        MatchInfo winAgainstStrongest,
         KTRHistory ktrHistory,
         int rank
         ) {
@@ -55,6 +56,12 @@ public record PlayerStats(Player player,
                 .min(Comparator.comparing(MatchInfo::matchKTRForPlayer1))
                 .get();
         
+        MatchInfo winAgainstStrongest = matchInfos.stream()
+                .filter(match -> match.player2KTR().isDefinded())
+                .filter(match -> match.result().isPlayer1Winner())
+                .max(Comparator.comparing(MatchInfo::player2KTR))
+                .orElse(null);
+        
         KTRHistoryEntry ktrHigh = findKTRHeight(ktrDetails.ktr(), matchInfos);
         
         return new PlayerStats(player,
@@ -73,6 +80,7 @@ public record PlayerStats(Player player,
                 gamesLossPercentage,
                 ktrHigh,
                 bestKTRMatch, worstKTRMatch,
+                winAgainstStrongest,
                 ktrHistory,
                 rank);
     }

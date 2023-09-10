@@ -74,6 +74,7 @@ response-body:
     ],
     "bestKTRMatchId": 1,
     "worstKTRMatchId": 2,
+    "winAgainstStrongestId": 2,
     "ktrHistory": [
         {
             "date": "2023-03-15",

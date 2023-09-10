@@ -74,7 +74,7 @@ public class PlayerStatsComponent extends VerticalLayout {
         tournamentMatchesComponent.setMatches(playerStats.matches());
         matchesGrid.setItems(playerStats.matches());
         matchesGrid.hidePlayer2KTRColumn();
-        matchesGrid.setBestWorstAndKTRRelevantMatches(playerStats.bestKTRMatch(), playerStats.worstKTRMatch(), playerStats.ktrDetails().relevantMatchIds());
+        matchesGrid.setBestWorstAndKTRRelevantMatches(playerStats.bestKTRMatch(), playerStats.worstKTRMatch(), playerStats.winAgainstStrongest(), playerStats.ktrDetails().relevantMatchIds());
         
         ktrHistoryChartHolder.removeAll();
         KTRHistoryChart chart = new KTRHistoryChart(playerStats.ktrHistory());

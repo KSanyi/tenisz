@@ -93,9 +93,9 @@ public class MatchesGrid extends Grid<MatchInfo> {
         return ktr.isDefinded() ? "(" + ktr + ")" : "";
     }
     
-    public void setBestWorstAndKTRRelevantMatches(MatchInfo bestMatch, MatchInfo worstMatch, Set<Integer> ktrRelevantMatchIds) {
+    public void setBestWorstAndKTRRelevantMatches(MatchInfo bestMatch, MatchInfo worstMatch, MatchInfo winAgainstStrongest, Set<Integer> ktrRelevantMatchIds) {
         setClassNameGenerator(match -> {
-            if(match.equals(bestMatch)) {
+            if(match.equals(bestMatch) || match.equals(winAgainstStrongest)) {
                 return "green";
             } else if(match.equals(worstMatch)) {
                 return "red";

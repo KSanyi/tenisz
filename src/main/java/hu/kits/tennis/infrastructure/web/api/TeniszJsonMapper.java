@@ -229,6 +229,7 @@ public class TeniszJsonMapper implements JsonMapper {
                 .add("ktrRelevantMatchIds", mapToJson(playerStats.ktrDetails().relevantMatchIds()))
                 .add("bestKTRMatchId", playerStats.bestKTRMatch().id())
                 .add("worstKTRMatchId", playerStats.worstKTRMatch().id())
+                .add("winAgainstStrongestId", playerStats.winAgainstStrongest() != null ? playerStats.winAgainstStrongest().id() : null)
                 .add("ktrHistory", mapToJson(playerStats.ktrHistory().entries()))
                 .add("ktrHigh", mapToJson(playerStats.ktrHigh()))
                 .add("rank", playerStats.rank())
