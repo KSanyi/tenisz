@@ -61,6 +61,10 @@ public class NewTournamentDialog extends Dialog {
         venueSelect.setLabel("Helyszín");
         venueSelect.setItems(tournamentService.loadVenues());
         
+        typeSelect.addValueChangeListener(e -> {
+            venueSelect.setVisible(e.getValue() == Type.DAILY);
+        });
+        
         bind();
         
         add(createContent());
