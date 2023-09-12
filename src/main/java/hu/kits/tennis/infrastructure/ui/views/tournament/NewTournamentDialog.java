@@ -63,6 +63,9 @@ public class NewTournamentDialog extends Dialog {
         
         typeSelect.addValueChangeListener(e -> {
             venueSelect.setVisible(e.getValue() == Type.DAILY);
+            surfaceSelect.setVisible(e.getValue() == Type.DAILY);
+            venueTypeSelect.setVisible(e.getValue() == Type.DAILY);
+            numberOfCourtsSelect.setVisible(e.getValue() == Type.DAILY);
         });
         
         bind();
