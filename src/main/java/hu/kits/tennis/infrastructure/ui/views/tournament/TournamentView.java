@@ -129,6 +129,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             Button fillBoardButton = UIUtils.createButton("Táblára", VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
             fillBoardButton.setVisible(VaadinUtil.isUserLoggedIn() && tournament.status() == Status.DRAFT);
             fillBoardButton.addClickListener(click -> fillMainBoard());
+            fillBoardButton.setVisible(tournament.status() == Status.DRAFT);
             
             tableWithButton = new VerticalLayout(contestantsTable, fillBoardButton);
             tableWithButton.setPadding(false);
