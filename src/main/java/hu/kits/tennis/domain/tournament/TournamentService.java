@@ -5,8 +5,11 @@ import static java.util.stream.Collectors.toList;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
@@ -15,11 +18,13 @@ import org.slf4j.LoggerFactory;
 import hu.kits.tennis.common.IdGenerator;
 import hu.kits.tennis.domain.ktr.BookedMatch;
 import hu.kits.tennis.domain.ktr.KTRService;
+import hu.kits.tennis.domain.ktr.PlayersWithKTR;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchRepository;
 import hu.kits.tennis.domain.match.MatchResult;
 import hu.kits.tennis.domain.match.MatchResultInfo;
 import hu.kits.tennis.domain.player.Player;
+import hu.kits.tennis.domain.player.PlayersService;
 import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
 import hu.kits.tennis.domain.tournament.TournamentParams.Type;
@@ -28,16 +33,24 @@ public class TournamentService {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
+    private static Map<Integer, List<Integer>> ORDER_MAP = Map.of(
+            2, List.of(1, 2),
+            4, List.of(1, 4, 3, 2),
+            8, List.of(1, 8, 5, 4, 3, 6, 7, 2),
+            16, List.of(1, 16, 9, 8, 5, 12, 13, 4, 3, 14, 11, 6, 7, 10, 15, 2));
+    
     private final TournamentRepository tournamentRepository;
     private final MatchRepository matchRepository;
     private final VenueRepository venueRepository;
     private final KTRService ktrService;
+    private final PlayersService playersService;
 
-    public TournamentService(TournamentRepository tournamentRepository, MatchRepository matchRepository, VenueRepository venueRepository, KTRService ktrService) {
+    public TournamentService(TournamentRepository tournamentRepository, MatchRepository matchRepository, VenueRepository venueRepository, KTRService ktrService, PlayersService playersService) {
         this.tournamentRepository = tournamentRepository;
         this.matchRepository = matchRepository;
         this.ktrService = ktrService;
         this.venueRepository = venueRepository;
+        this.playersService = playersService;
     }
     
     public List<TournamentSummary> loadDailyTournamentSummariesList() {
@@ -115,18 +128,24 @@ public class TournamentService {
     public void createMatches(String tournamentId) {
         
         Tournament tournament = loadTournament(tournamentId);
+        PlayersWithKTR playersWithKTR = playersService.loadAllPlayersWithKTR();
         
         if(tournament.status() == Status.DRAFT) {
             
             matchRepository.deleteMatchesForTournament(tournament.id());
             
-            List<Contestant> contestants = tournament.playersLineup();
+            List<Contestant> contestantsByKTR = tournament.playersLineup().stream()
+                    .sorted(Comparator.comparing((Contestant c) -> playersWithKTR.getKTR(c.player().id())).reversed())
+                    .collect(Collectors.toList());
+            
+            List<Integer> order = ORDER_MAP.get(contestantsByKTR.size());
+            List<Contestant> contestantsInOrder = order.stream().map(i -> contestantsByKTR.get(i-1)).toList(); 
             
             int matchNumber = 1;
             List<Match> matches = new ArrayList<>();
-            for(int i=0;i<contestants.size();i+=2) {
-                Player player1 = contestants.get(i).player();
-                Player player2 = contestants.get(i+1).player();
+            for(int i=0;i<contestantsInOrder.size();i+=2) {
+                Player player1 = contestantsInOrder.get(i).player();
+                Player player2 = contestantsInOrder.get(i+1).player();
                 Match match = Match.createNew(tournament.id(), 1, matchNumber, null, player1, player2);
                 matchRepository.save(new BookedMatch(match, null, null, null, null));
                 matches.add(match);

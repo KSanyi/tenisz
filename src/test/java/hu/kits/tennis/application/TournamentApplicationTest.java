@@ -150,12 +150,12 @@ public class TournamentApplicationTest {
         
         Match semiFinal1 = matches.get(1);
         assertEquals(player1, semiFinal1.player1());
-        assertEquals(player2, semiFinal1.player2());
+        assertEquals(player4, semiFinal1.player2());
         assertNull(semiFinal1.result());
         
         Match semiFinal2 = matches.get(2);
         assertEquals(player3, semiFinal2.player1());
-        assertEquals(player4, semiFinal2.player2());
+        assertEquals(player2, semiFinal2.player2());
         assertNull(semiFinal2.result());
         
         // ************** PLAY MATCHES **************
@@ -179,7 +179,7 @@ public class TournamentApplicationTest {
         assertEquals(3, matches.size());
         theFinal = matches.get(3);
         assertEquals(player1, theFinal.player1());
-        assertEquals(player4, theFinal.player2());
+        assertEquals(player2, theFinal.player2());
         assertNull(theFinal.result());
         
         tournamentService.setTournamentMatchResult(new MatchResultInfo(theFinal, LocalDate.of(2022,1,1), new MatchResult(6, 0)));
@@ -221,7 +221,7 @@ public class TournamentApplicationTest {
 
         Match semiFinal2 = matches.get(6);
         assertNull(semiFinal2.player1());
-        assertEquals(player6, semiFinal2.player2());
+        assertEquals(player2, semiFinal2.player2());
     }
     
     @Test
@@ -240,7 +240,7 @@ public class TournamentApplicationTest {
         var consolationMatches = tournamentService.findTournament(tournament.id()).get().consolationBoard().matches();
         assertEquals(1, consolationMatches.size());
         
-        assertEquals(player2, consolationMatches.get(1).player1());
+        assertEquals(player8, consolationMatches.get(1).player1());
         assertNull(consolationMatches.get(1).player2());
         
         Match quarterFinal2 = mainBoardMatches.get(2);
@@ -249,8 +249,8 @@ public class TournamentApplicationTest {
         consolationMatches = tournamentService.findTournament(tournament.id()).get().consolationBoard().matches();
         assertEquals(1, consolationMatches.size());
         
-        assertEquals(player2, consolationMatches.get(1).player1());
-        assertEquals(player3, consolationMatches.get(1).player2());
+        assertEquals(player8, consolationMatches.get(1).player1());
+        assertEquals(player5, consolationMatches.get(1).player2());
         
     }
     
