@@ -51,7 +51,7 @@ response-body:
 ]
 
 Call 3
-description: List of all tours
+description: Details of a tournament
 url: <url-base>/api/tournaments/23c60001
 method: GET
 response-status: 200
@@ -87,6 +87,26 @@ response-body:
             "id": 3,
             "email": "toth.gabor@gmail.com",
             "name": "Tóth Gábor"
+        }
+    ],
+    "contestants": [
+        {
+            "id": 1,
+            "email": "nagy.robert@gmail.com",
+            "name": "Nagy Róbert",
+            "ktr": 8.15
+        },
+        {
+            "id": 3,
+            "email": "toth.gabor@gmail.com",
+            "name": "Tóth Gábor",
+            "ktr": 7.34
+        },
+        {
+            "id": 2,
+            "email": "istvan.kiss@gmail.com",
+            "name": "Kiss István",
+            "ktr": 7.01
         }
     ],
     "matches": [

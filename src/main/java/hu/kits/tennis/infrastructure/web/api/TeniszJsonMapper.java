@@ -1,6 +1,8 @@
 package hu.kits.tennis.infrastructure.web.api;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -13,6 +15,7 @@ import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.ktr.KTRHistory.KTRHistoryEntry;
 import hu.kits.tennis.domain.ktr.PlayerStats;
 import hu.kits.tennis.domain.ktr.PlayerWithKTR;
+import hu.kits.tennis.domain.ktr.PlayersWithKTR;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchInfo;
 import hu.kits.tennis.domain.player.Player;
@@ -46,6 +49,8 @@ public class TeniszJsonMapper implements JsonMapper {
             return jsonArrayBuilder.build();
         } else if(object instanceof Player player) {
             return mapPlayerToJson(player);    
+        } else if(object instanceof PlayerAndKTR playerAndKTR) {
+            return mapPlayerAndKTRToJson(playerAndKTR);    
         } else if(object instanceof Tournament tournament) {
             return mapTournamentToJson(tournament);    
         } else if(object instanceof TournamentSummary tournamentSummary) {
@@ -69,6 +74,16 @@ public class TeniszJsonMapper implements JsonMapper {
         } else {
             throw new IllegalArgumentException("Can not convert " + object.getClass() + " to JsonValue");
         }
+    }
+    
+    private static JsonObject mapPlayerAndKTRToJson(PlayerAndKTR playerAndKTR) {
+        
+        return Json.createObjectBuilder()
+                .add("id", playerAndKTR.player().id())
+                .add("email", playerAndKTR.player().contact().email())
+                .add("name", playerAndKTR.player().name())
+                .add("ktr", mapKTRToDouble(playerAndKTR.ktr))
+                .build();
     }
     
     private static JsonObject mapPlayerToJson(Player player) {
@@ -192,14 +207,24 @@ public class TeniszJsonMapper implements JsonMapper {
         
         // TODO fix
         
+        PlayersWithKTR playersWithKTR = applicationContext.getPlayersService().loadAllPlayersWithKTR();
+        
+        List<PlayerAndKTR> contestants = tournament.simplePlayersLineup().stream()
+                .map(c -> new PlayerAndKTR(c.player(), playersWithKTR.getKTR(c.player().id())))
+                .sorted(Comparator.comparing((PlayerAndKTR p) -> p.ktr).reversed())
+                .toList();
+        
         return builder
             .add("type", tournament.params().type().name())
             .add("description", tournament.params().description())
             .add("status", tournament.status().name())
             .add("players", mapToJson(tournament.simplePlayersLineup().stream().map(Contestant::player).toList()))
+            .add("contestants", mapToJson(contestants))
             .add("matches", mapToJson(tournament.matches()))
             .build();
     }
+    
+    private static record PlayerAndKTR(Player player, KTR ktr) {}
     
     private static JsonValue mapCourtInfoToJson(CourtInfo courtInfo) {
         return Json.createObjectBuilder()
