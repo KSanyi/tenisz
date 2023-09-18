@@ -266,11 +266,21 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
 
     private void updateVisibleParts(int width) {
         boolean mobile = width < VaadinUtil.MOBILE_BREAKPOINT;
-        if(tableWithButton != null) {
-            tableWithButton.setVisible(!mobile);    
+        
+        if(tournament.status() == Status.DRAFT) {
+            tableWithButton.setVisible(true);
+            contestantsTable.setVisible(true);
+            mainBoard.setVisible(!mobile);
+            if(consolationBoard != null) {
+                mainBoard.setVisible(!mobile);                
+            }
+        } else {
+            if(tableWithButton != null) {
+                tableWithButton.setVisible(!mobile);    
+            }
+            contestantsTable.setVisible(!mobile);
+            deleteButton.setVisible(!mobile);    
         }
-        contestantsTable.setVisible(!mobile);
-        deleteButton.setVisible(!mobile);
     }
     
     private void deleteTournament() {
