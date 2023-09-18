@@ -268,7 +268,9 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         boolean mobile = width < VaadinUtil.MOBILE_BREAKPOINT;
         
         if(tournament.status() == Status.DRAFT) {
-            tableWithButton.setVisible(true);
+            if(tableWithButton != null) {
+                tableWithButton.setVisible(true);    
+            }
             contestantsTable.setVisible(true);
             mainBoard.setVisible(!mobile);
             if(consolationBoard != null) {
