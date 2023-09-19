@@ -272,7 +272,9 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
                 tableWithButton.setVisible(true);    
             }
             contestantsTable.setVisible(true);
-            mainBoard.setVisible(!mobile);
+            if(mainBoard != null) {
+                mainBoard.setVisible(!mobile);    
+            }
             if(consolationBoard != null) {
                 mainBoard.setVisible(!mobile);                
             }
