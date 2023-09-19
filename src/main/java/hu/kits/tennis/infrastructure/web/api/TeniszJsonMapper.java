@@ -125,9 +125,9 @@ public class TeniszJsonMapper implements JsonMapper {
         jsonObjectBuilder
                 .add("tournamentId", matchInfo.tournamentInfo().id())
                 .add("tournamentName", matchInfo.tournamentInfo().name())
-                .add("player1", mapPlayerToJson(matchInfo.player1()))
+                .add("player1", mapPlayerAndKTRToJson(new PlayerAndKTR(matchInfo.player1(), matchInfo.player1KTR())))
                 .add("player1KTR", mapKTRToDouble(matchInfo.player1KTR()))
-                .add("player2", mapPlayerToJson(matchInfo.player2()))
+                .add("player2", mapPlayerAndKTRToJson(new PlayerAndKTR(matchInfo.player2(), matchInfo.player2KTR())))
                 .add("player2KTR", mapKTRToDouble(matchInfo.player2KTR()));
         
         if(matchInfo.result() != null) {
