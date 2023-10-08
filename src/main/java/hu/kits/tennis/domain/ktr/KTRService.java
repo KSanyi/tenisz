@@ -54,7 +54,7 @@ public class KTRService {
         return matchRepository.save(bookedMatch);
     }
     
-    public List<PlayerWithKTR> calculateKTRRanking(boolean includePlayersWithoutMatches) {
+    public List<PlayerWithKTR> calculateKTRRanking() {
         
         logger.info("Calculating KTR ranking");
         
@@ -65,7 +65,6 @@ public class KTRService {
         
         List<PlayerWithKTR> ranking = players.stream()
                 .map(player -> createPlayerWithKTR(player, allBookedMatches, numberOfTrophiesByPlayer.getOrDefault(player, 0L)))
-                .filter(playerWithKTR -> includePlayersWithoutMatches || playerWithKTR.numberOfMatches() > 0)
                 .sorted(comparing(PlayerWithKTR::ktr).reversed())
                 .collect(toList());
         
@@ -139,7 +138,7 @@ public class KTRService {
         if(matchInfos.isEmpty()) {
             return PlayerStats.create(player, ktrDetails, matchInfos, KTRHistory.EMPTY, 0);
         } else {
-            List<PlayerWithKTR> ktrRanking = calculateKTRRanking(false);
+            List<PlayerWithKTR> ktrRanking = calculateKTRRanking();
             PlayerWithKTR playerWithKTR = ktrRanking.stream().filter(p -> p.player().equals(player)).findFirst().get();
             int rank = ktrRanking.indexOf(playerWithKTR) + 1;
             

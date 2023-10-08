@@ -123,7 +123,7 @@ public class KTRRankingView extends SplitViewFrame implements View {
     }
     
     public void refresh() {
-        ktrRankingList = ktrService.calculateKTRRanking(false);
+        ktrRankingList = ktrService.calculateKTRRanking();
         ktrRankingGrid.setKTRRankingList(ktrRankingList);
         ktrRankingGridMobile.setKTRRankingList(ktrRankingList);
     }
