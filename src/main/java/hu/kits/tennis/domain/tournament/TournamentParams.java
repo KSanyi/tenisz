@@ -54,7 +54,7 @@ public record TournamentParams(
     
     public enum VenueType {
         
-        INDOOR("Csarnok"), OUTDOOR("Szabadtér");
+        INDOOR("Csarnok"), TENT("Sátor"), OUTDOOR("Szabadtér");
         
         public final String label;
 
