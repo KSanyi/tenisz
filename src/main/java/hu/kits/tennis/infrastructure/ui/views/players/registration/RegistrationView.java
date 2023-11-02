@@ -56,7 +56,7 @@ public class RegistrationView extends VerticalLayout {
         if(valid) {
             RegistrationData registrationData = bean.toRegistration();
             if(registrationService.isEmailAlreadyRegistered(registrationData.email())) {
-                logger.debug("Reistration attempt with existing email address: {}", registrationData);
+                logger.debug("Registration attempt with existing email address: {}", registrationData);
                 KITSNotification.showError("Már regisztráltak ezzel az email címmel!");
                 return;
             }

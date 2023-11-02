@@ -236,7 +236,7 @@ public class BillingoInvoiceService implements InvoiceService {
                 .add("items", itemsArray)
                 .build();
         
-        String jsonString = JsonUtil.printJson(jsonObject);
+        String jsonString = jsonObject.toString();
         
         try {
             HttpClient client = HttpClient.newBuilder()

@@ -128,7 +128,7 @@ public class KTRService {
     }
 
     public PlayerStats loadPlayerStats(Player player) {
-        
+        logger.info("Loading player stats for: {}", player);
         KTRDetails ktrDetails = calculatePlayersKTR(player);
         
         List<MatchInfo> matchInfos = matchService.loadMatchesForPlayer(player).stream()
