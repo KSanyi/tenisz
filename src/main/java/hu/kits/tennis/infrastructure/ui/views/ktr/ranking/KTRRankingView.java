@@ -85,11 +85,12 @@ public class KTRRankingView extends SplitViewFrame implements View {
     
     private void playerSelected(SelectionEvent<Grid<PlayerWithKTR>, PlayerWithKTR> event) {
         if(event.getFirstSelectedItem().isPresent()) {
-            
-            Player player = event.getFirstSelectedItem().get().player();
-            VaadinUtil.logUserAction(logger, "Looking for {}'s stats", player.name());
-            if(playerStatsView.isVisible()) {
-                playerStatsView.setPlayer(player);
+            if(event.getFirstSelectedItem().get().numberOfMatches() > 0) {
+                Player player = event.getFirstSelectedItem().get().player();
+                VaadinUtil.logUserAction(logger, "Looking for {}'s stats", player.name());
+                if(playerStatsView.isVisible()) {
+                    playerStatsView.setPlayer(player);
+                }
             }
         }
     }
