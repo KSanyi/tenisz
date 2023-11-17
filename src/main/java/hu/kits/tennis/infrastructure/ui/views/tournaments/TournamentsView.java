@@ -1,16 +1,17 @@
 package hu.kits.tennis.infrastructure.ui.views.tournaments;
 
-import static com.vaadin.flow.component.grid.GridSortOrder.desc;
-
+import java.util.List;
 import java.util.function.Consumer;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
@@ -44,8 +45,10 @@ public class TournamentsView extends SplitViewFrame implements View {
         addButton.addClickListener(click -> openNewTournamentDialog());
         loadTournaments();
         
-        dailyTournamentsGrid.sort(desc(dailyTournamentsGrid.getColumnByKey("date")).build());
-        tourTournamentsGrid.sort(desc(tourTournamentsGrid.getColumnByKey("name")).build());
+        dailyTournamentsGrid.sort(List.of(new GridSortOrder<>(tourTournamentsGrid.getColumnByKey("date"), SortDirection.DESCENDING)));
+        
+        tourTournamentsGrid.sort(List.of(new GridSortOrder<>(tourTournamentsGrid.getColumnByKey("date"), SortDirection.DESCENDING),
+                                         new GridSortOrder<>(tourTournamentsGrid.getColumnByKey("name"), SortDirection.DESCENDING)));
     }
     
     private static void openNewTournamentDialog() {

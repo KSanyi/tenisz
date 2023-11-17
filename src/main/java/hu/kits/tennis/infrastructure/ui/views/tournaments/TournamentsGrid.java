@@ -102,7 +102,7 @@ class TournamentsGrid extends Grid<TournamentSummary> {
         UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> updateVisibleColumns(e.getBodyClientWidth()));
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> updateVisibleColumns(e.getWidth()));
         
-        this.setMultiSort(true);
+        setMultiSort(true);
         
         addSelectionListener(this::rowSelected);
     }
