@@ -8,7 +8,7 @@ public class VenueHardcodedRepository implements VenueRepository {
 
     @Override
     public List<String> loadVenues() {
-        return List.of("Építők", "GS Tenisz Klub", "BVSC Tatai", "BVSC Szőnyi", "Mini Garros", "Open Teniszvölgy");
+        return List.of("Építők", "GS Tenisz Klub", "BVSC Tatai", "BVSC Szőnyi", "Mini Garros", "Open Teniszvölgy", "Normafa");
     }
 
 }
