@@ -35,7 +35,7 @@ import hu.kits.tennis.domain.tournament.TournamentMatches;
 
 public class MatchJdbcRepository implements MatchRepository  {
 
-    private static final String TABLE_TENNIS_MATCH = "TENNIS_MATCH";
+    private static final String TABLE_TENNIS_MATCH = "TENISZ_TENNIS_MATCH";
     private static final String COLUMN_ID = "ID";
     private static final String COLUMN_TOURNAMENT_ID = "TOURNAMENT_ID";
     private static final String COLUMN_TOURNAMENT_BOARD_NUMBER = "TOURNAMENT_BOARD_NUMBER";

@@ -26,7 +26,7 @@ import hu.kits.tennis.domain.tournament.PaymentStatus;
 
 class ContestantDBTable {
 
-    private static final String TABLE_TOURNAMENT_CONTESTANT = "TOURNAMENT_CONTESTANT";
+    private static final String TABLE_TOURNAMENT_CONTESTANT = "TENISZ_TOURNAMENT_CONTESTANT";
     private static final String COLUMN_TOURNAMENT_ID = "TOURNAMENT_ID";
     private static final String COLUMN_PLAYER_ID = "PLAYER_ID";
     private static final String COLUMN_RANK_NUMBER = "RANK_NUMBER";

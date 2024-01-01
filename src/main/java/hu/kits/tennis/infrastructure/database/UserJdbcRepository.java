@@ -21,7 +21,7 @@ import hu.kits.tennis.domain.user.Users;
 
 public class UserJdbcRepository implements UserRepository {
 
-    private static final String TABLE_USER = "USER";
+    private static final String TABLE_USER = "TENISZ_USER";
     private static final String COLUMN_USERID = "USERID";
     private static final String COLUMN_NAME = "NAME";
     private static final String COLUMN_PASSWORD_HASH = "PASSWORD_HASH";

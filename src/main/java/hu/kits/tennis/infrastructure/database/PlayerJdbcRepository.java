@@ -27,7 +27,7 @@ import hu.kits.tennis.domain.tournament.Organization;
 
 public class PlayerJdbcRepository implements PlayerRepository {
 
-    private static final String TABLE_PLAYER = "PLAYER";
+    private static final String TABLE_PLAYER = "TENISZ_PLAYER";
     private static final String COLUMN_ID = "ID";
     private static final String COLUMN_NAME = "NAME";
     private static final String COLUMN_EMAIL = "EMAIL";

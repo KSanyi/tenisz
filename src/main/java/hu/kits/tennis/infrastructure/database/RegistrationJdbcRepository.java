@@ -17,7 +17,7 @@ import hu.kits.tennis.domain.player.registration.RegistrationRepository;
 
 public class RegistrationJdbcRepository implements RegistrationRepository {
 
-    private static final String TABLE_REGISTRATION = "REGISTRATION";
+    private static final String TABLE_REGISTRATION = "TENISZ_REGISTRATION";
     private static final String COLUMN_ID = "ID";
     private static final String COLUMN_NAME = "NAME";
     private static final String COLUMN_EMAIL = "EMAIL";

@@ -39,7 +39,7 @@ import hu.kits.tennis.domain.tournament.TournamentSummary.CourtInfo;
 
 public class TournamentJdbcRepository implements TournamentRepository {
 
-    private static final String TABLE_TOURNAMENT = "TOURNAMENT";
+    private static final String TABLE_TOURNAMENT = "TENISZ_TOURNAMENT";
     private static final String COLUMN_ID = "ID";
     private static final String COLUMN_ORGANIZATION = "ORGANIZER";
     private static final String COLUMN_DATE = "DATE";

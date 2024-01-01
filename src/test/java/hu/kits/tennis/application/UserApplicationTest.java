@@ -37,8 +37,8 @@ public class UserApplicationTest {
     @BeforeEach
     private void init() throws Exception {
         DataSource dataSource = InMemoryDataSourceFactory.createDataSource(
-                "INSERT INTO USER VALUES('ksanyi', 'PWD', 'Kócsó Sanyi', 'ADMIN', '06703699209', 'kocso.sandor.gabor@gmail.com', 'ACTIVE', 1)",
-                "INSERT INTO USER VALUES('csányika', 'PWD', 'Csányi Zsolt', 'MEMBER', '', 'csanyika@xxx.hu', 'ACTIVE', 0)");
+                "INSERT INTO TENISZ_USER VALUES('ksanyi', 'PWD', 'Kócsó Sanyi', 'ADMIN', '06703699209', 'kocso.sandor.gabor@gmail.com', 'ACTIVE', 1)",
+                "INSERT INTO TENISZ_USER VALUES('csányika', 'PWD', 'Csányi Zsolt', 'MEMBER', '', 'csanyika@xxx.hu', 'ACTIVE', 0)");
         
         ApplicationContext resourceFactory = new ApplicationContext(dataSource, spyEmailSender, null, null);
         userService = resourceFactory.getUserService();
