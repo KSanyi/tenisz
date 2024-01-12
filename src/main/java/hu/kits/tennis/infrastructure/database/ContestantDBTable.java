@@ -186,5 +186,14 @@ class ContestantDBTable {
     public void setPaymentStatus(String tournamentId, int playerId, PaymentStatus status) {
         JdbiUtil.executeUpdate(jdbi, TABLE_TOURNAMENT_CONTESTANT, Map.of(), Map.of(COLUMN_PAYMENT_STATUS, status.name()), Map.of(COLUMN_TOURNAMENT_ID, tournamentId, COLUMN_PLAYER_ID, playerId));
     }
+    
+    List<String> loadTournamentIdsForPlayer(int playerId) {
+        String sql = String.format("SELECT %s FROM %s WHERE %s = :playerId", COLUMN_TOURNAMENT_ID, TABLE_TOURNAMENT_CONTESTANT, COLUMN_PLAYER_ID);
+        
+        return  jdbi.withHandle(handle -> 
+            handle.createQuery(sql)
+                .bind("playerId", playerId)
+                .map((rs, ctx) -> rs.getString(COLUMN_TOURNAMENT_ID)).list());
+    }
 
 }

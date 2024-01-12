@@ -13,6 +13,7 @@ import hu.kits.tennis.domain.ktr.KTRService;
 import hu.kits.tennis.domain.match.MatchRepository;
 import hu.kits.tennis.domain.player.Player.Address;
 import hu.kits.tennis.domain.player.Player.Contact;
+import hu.kits.tennis.domain.tournament.TournamentRepository;
 
 public class PlayersService {
 
@@ -20,12 +21,14 @@ public class PlayersService {
     
     private final PlayerRepository playerRepository;
     private final MatchRepository matchRepository;
+    private final TournamentRepository tournamentRepository;
     
     private final KTRService ktrService;
 
-    public PlayersService(PlayerRepository playerRepository, MatchRepository matchRepository, KTRService ktrService) {
+    public PlayersService(PlayerRepository playerRepository, MatchRepository matchRepository, TournamentRepository tournamentRepository, KTRService ktrService) {
         this.playerRepository = playerRepository;
         this.matchRepository = matchRepository;
+        this.tournamentRepository = tournamentRepository;
         this.ktrService = ktrService;
     }
     
@@ -48,13 +51,16 @@ public class PlayersService {
         playerRepository.updatePlayer(updatedPlayer);
     }
 
-    public boolean deletePlayer(Player player) {
-        if(matchRepository.loadAllPlayedMatches(player).isEmpty()) {
+    public Optional<String> deletePlayer(Player player) {
+        
+        if(!matchRepository.loadAllPlayedMatches(player).isEmpty()) {
+            return Optional.of("van már mérkőzése a játékosnak.");
+        } else if(tournamentRepository.countTournamentForPlayer(player) > 0) {
+            return Optional.of("már regisztrálva van versenyre a játékos.");
+        } else {
             playerRepository.deletePlayer(player);
             logger.info("Player deleted: {}", player);
-            return true;
-        } else {
-            return false;
+            return Optional.empty();
         }
     }
 

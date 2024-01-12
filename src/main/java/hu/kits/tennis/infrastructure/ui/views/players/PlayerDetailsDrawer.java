@@ -2,6 +2,7 @@ package hu.kits.tennis.infrastructure.ui.views.players;
 
 import java.lang.invoke.MethodHandles;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -147,13 +148,13 @@ class PlayerDetailsDrawer extends DetailsDrawer {
     
     private void delete() {
         new ConfirmationDialog("Biztosan törölni akarod a " + player.name() + " nevű játékost?", () -> {
-            boolean isDeleted = playersService.deletePlayer(player);
-            if(isDeleted) {
+            Optional<String> errorMessage = playersService.deletePlayer(player);
+            if(errorMessage.isEmpty()) {
                 KITSNotification.showInfo("Játékos törölve");
                 hide();
                 playersView.refresh();    
             } else {
-                KITSNotification.showError("Nem lehet törölni a játékost, mert vannak már mérkőzései");
+                KITSNotification.showError("Nem lehet törölni a játékost: " + errorMessage.get());
             }
         }).open();
     }

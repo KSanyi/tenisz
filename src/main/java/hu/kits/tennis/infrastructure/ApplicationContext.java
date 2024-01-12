@@ -56,7 +56,7 @@ public class ApplicationContext {
         matchService = new MatchService(matchRepository, tournamentRepository);
         ktrService = new KTRService(matchService, matchRepository, playerRepository, tournamentRepository);
         
-        playersService = new PlayersService(playerRepository, matchRepository, ktrService);
+        playersService = new PlayersService(playerRepository, matchRepository, tournamentRepository, ktrService);
         
         VenueRepository venueRepository = new VenueHardcodedRepository();
         tournamentService = new TournamentService(tournamentRepository, matchRepository, venueRepository, ktrService, playersService);

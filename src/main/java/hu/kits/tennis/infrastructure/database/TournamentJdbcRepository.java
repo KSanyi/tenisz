@@ -107,6 +107,10 @@ public class TournamentJdbcRepository implements TournamentRepository {
                     winnerByTournament)).list());
     }
     
+    public int countTournamentForPlayer(Player player) {
+        return contestantDBTable.loadTournamentIdsForPlayer(player.id()).size();
+    }
+    
     private static TournamentSummary mapToTournamentSummary(ResultSet rs, 
             Map<String, Integer> matchCountByTournament,
             Map<String, Integer> playerCountByTournament,
