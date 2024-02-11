@@ -39,6 +39,7 @@ import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.ktr.PlayerWithKTR;
 import hu.kits.tennis.domain.ktr.KTRCalculator;
 import hu.kits.tennis.domain.ktr.KTRForecastResult;
+import hu.kits.tennis.domain.ktr.KTRUpdate;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchResult;
 import hu.kits.tennis.domain.match.MatchService;
@@ -65,9 +66,11 @@ public class KTRForecastWindow extends Dialog {
     private final KTRChangeGrid ktrChangeGrid = new KTRChangeGrid();
     
     private final List<BookedMatch> allBookedMatches;
+    private final List<KTRUpdate> ktrUpdates;
     
     public KTRForecastWindow(List<PlayerWithKTR> ktrRankingList) {
         allBookedMatches = Main.applicationContext.getKTRService().loadBookedMatches();
+        ktrUpdates = Main.applicationContext.getPlayerRepository().loadAllKTRUpdates();
         matchScoreField = new MatchScoreField(3);
         matchScoreField.addScoreChangedListener(() -> inputChanged());
         
@@ -166,7 +169,7 @@ public class KTRForecastWindow extends Dialog {
     private void calculate() {
         MatchResult matchResult = matchScoreField.getMatchResult();
         VaadinUtil.logUserAction(logger, "forecasts match: {} vs {} {}", player1Combo.getValue().player().name(), player2Combo.getValue().player().name(), matchResult);
-        KTRForecastResult ktrForecastResult = KTRCalculator.forecast(player1Combo.getValue(), player2Combo.getValue(), allBookedMatches, matchResult);
+        KTRForecastResult ktrForecastResult = KTRCalculator.forecast(player1Combo.getValue(), player2Combo.getValue(), allBookedMatches, ktrUpdates, matchResult);
         matchGrid.setMatch(ktrForecastResult.bookedMatch());
         ktrChangeGrid.setResult(player1Combo.getValue(), player2Combo.getValue(), ktrForecastResult);
     }

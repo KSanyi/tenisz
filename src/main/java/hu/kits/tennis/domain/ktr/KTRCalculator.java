@@ -8,7 +8,9 @@ import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -27,7 +29,9 @@ public class KTRCalculator {
     
     private static final int RELEVANT_MATCH_COUNT = 25;
     
-    public static KTRDetails calculatePlayersKTRDetails(Player player, List<BookedMatch> allBookedMatches, LocalDate referenceDate, int numberOfTrophies) {
+    public static KTRDetails calculatePlayersKTRDetails(Player player, List<BookedMatch> allBookedMatches, LocalDate referenceDate, int numberOfTrophies, List<KTRUpdate> ktrUpdates) {
+        
+        KTR ktr = calculateKTR(player, allBookedMatches, referenceDate, ktrUpdates);
         
         List<BookedMatch> allPlayedMatchesForPlayer = allBookedMatches.stream()
                 .filter(match -> match.playedMatch().isPlayed())
@@ -41,17 +45,46 @@ public class KTRCalculator {
                 .collect(toList());
         
         if(allRelevantMatchesForPlayer.isEmpty()) {
-            return new KTRDetails(player.startingKTR(), Set.of(), 0, 0, 0);
+            return new KTRDetails(ktr, Set.of(), 0, 0, 0);
+        }
+        
+        List<BookedMatch> lastRelevantMatches = findLastRelevantMatches(allRelevantMatchesForPlayer);
+        
+        Set<Integer> relevantMatchIds = lastRelevantMatches.stream()
+                .map(b -> b.playedMatch().id())
+                .collect(toSet());
+        
+        int numberOfWins = (int)allPlayedMatchesForPlayer.stream().filter(b -> b.playedMatch().winner().equals(player)).count();
+        
+        return new KTRDetails(ktr, relevantMatchIds, allPlayedMatchesForPlayer.size(), numberOfWins, numberOfTrophies);
+    }
+    
+    public static KTR calculateKTR(Player player, List<BookedMatch> allBookedMatches, LocalDate referenceDate, List<KTRUpdate> ktrUpdates) {
+        
+        Optional<KTRUpdate> relevantKTRUpdate = calculateRelevantKTRUpdate(player, referenceDate, ktrUpdates);
+        
+        List<BookedMatch> allPlayedMatchesForPlayer = allBookedMatches.stream()
+                .filter(match -> match.playedMatch().isPlayed())
+                .filter(match -> match.playedMatch().date().isBefore(referenceDate))
+                .filter(match -> match.playedMatch().date().isAfter(relevantKTRUpdate.map(KTRUpdate::date).orElse(LocalDate.MIN)))
+                .filter(match -> match.hasPlayed(player))
+                .collect(toList());
+        
+        List<BookedMatch> allRelevantMatchesForPlayer = allPlayedMatchesForPlayer.stream()
+                .filter(match -> match.ktrOfMatchFor(player).isDefinded())
+                .sorted(comparing((BookedMatch m) -> m.playedMatch().date()).reversed())
+                .collect(toList());
+        
+        KTR baseKTR = relevantKTRUpdate.map(KTRUpdate::updatedKTR).orElse(player.startingKTR());
+        
+        if(allRelevantMatchesForPlayer.isEmpty()) {
+            return baseKTR;
         }
         
         List<BookedMatch> lastRelevantMatches = findLastRelevantMatches(allRelevantMatchesForPlayer);
         
         List<BookedMatch> effectiveMatches = lastRelevantMatches.size() < RELEVANT_MATCH_COUNT ?
-            addDummyMatches(player, lastRelevantMatches) : lastRelevantMatches;
-        
-        Set<Integer> relevantMatchIds = lastRelevantMatches.stream()
-                .map(b -> b.playedMatch().id())
-                .collect(toSet());
+            addDummyMatches(player, baseKTR, lastRelevantMatches) : lastRelevantMatches;
         
         List<Pair<Double, Integer>> ktrWithWeights = effectiveMatches.stream()
                 .map(match -> Pair.of(match.ktrOfMatchFor(player).value(),
@@ -60,11 +93,16 @@ public class KTRCalculator {
         
         double weightedAverage = calculatWeightedAverage(ktrWithWeights);
         
-        int numberOfWins = (int)allPlayedMatchesForPlayer.stream().filter(b -> b.playedMatch().winner().equals(player)).count();
-        
-        return new KTRDetails(new KTR(weightedAverage), relevantMatchIds, allPlayedMatchesForPlayer.size(), numberOfWins, numberOfTrophies);
+        return new KTR(weightedAverage);
     }
     
+    private static Optional<KTRUpdate> calculateRelevantKTRUpdate(Player player, LocalDate referenceDate, List<KTRUpdate> ktrUpdates) {
+        return ktrUpdates.stream()
+            .filter(ktrUpdate -> ktrUpdate.player().equals(player))
+            .filter(ktrUpdate -> !ktrUpdate.date().isAfter(referenceDate))
+            .max(Comparator.comparing(KTRUpdate::date));
+    }
+
     private static List<BookedMatch> findLastRelevantMatches(List<BookedMatch> allRelevantMatchesForPlayer) {
         
         LocalDate cutoffDate = allRelevantMatchesForPlayer.size() >= RELEVANT_MATCH_COUNT ? 
@@ -81,21 +119,20 @@ public class KTRCalculator {
         return sumProduct / weightSum;
     }
 
-    private static List<BookedMatch> addDummyMatches(Player player, List<BookedMatch> matches) {
+    private static List<BookedMatch> addDummyMatches(Player player, KTR baseKTR, List<BookedMatch> matches) {
         
-        if(player.startingKTR() == KTR.UNDEFINED) {
+        if(baseKTR == KTR.UNDEFINED) {
             return matches;
         }
         
         int dummyMatchCount = (int)Math.max(Math.round(RELEVANT_MATCH_COUNT * 0.5) - matches.size(), 0);
         
-        KTR ktr = player.startingKTR();
         List<BookedMatch> extendedMatches = new ArrayList<>(matches);
         LocalDate firstMatchDate = matches.get(matches.size()-1).playedMatch().date();
         LocalDate dummyDate = firstMatchDate.minusMonths(1);
         for(int i=0;i<dummyMatchCount;i++) {
             extendedMatches.add(new BookedMatch(new Match(0, null, null, null, dummyDate, player, null, new MatchResult(List.of(new SetResult(6,0)))), 
-                    KTR.UNDEFINED, KTR.UNDEFINED, ktr, KTR.UNDEFINED));
+                    KTR.UNDEFINED, KTR.UNDEFINED, baseKTR, KTR.UNDEFINED));
         }
         return extendedMatches;
     }
@@ -120,10 +157,10 @@ public class KTRCalculator {
         };
     }
 
-    public static BookedMatch bookKTRForMatch(Match playedMatch, List<BookedMatch> allPlayedMatches) {
+    public static BookedMatch bookKTRForMatch(Match playedMatch, List<BookedMatch> allPlayedMatches, List<KTRUpdate> ktrUpdates) {
         
-        KTR player1KTR = calculatePlayersKTRDetails(playedMatch.player1(), allPlayedMatches, playedMatch.date(), 0).ktr();
-        KTR player2KTR = calculatePlayersKTRDetails(playedMatch.player2(), allPlayedMatches, playedMatch.date(), 0).ktr();
+        KTR player1KTR = calculateKTR(playedMatch.player1(), allPlayedMatches, playedMatch.date(), ktrUpdates);
+        KTR player2KTR = calculateKTR(playedMatch.player2(), allPlayedMatches, playedMatch.date(), ktrUpdates);
         
         boolean arePlayersComparable = player1KTR.comparable(player2KTR);
         
@@ -133,7 +170,7 @@ public class KTRCalculator {
         return new BookedMatch(playedMatch, player1KTR, player2KTR, matchKTRForPlayer1, matchKTRForPlayer2);
     }
 
-    public static List<BookedMatch> recalculateAllKTRs(List<BookedMatch> bookedMatches) {
+    public static List<BookedMatch> recalculateAllKTRs(List<BookedMatch> bookedMatches, List<KTRUpdate> ktrUpdates) {
         
         logger.info("Recalculating all KTRs");
         
@@ -145,7 +182,7 @@ public class KTRCalculator {
         List<BookedMatch> recalculatedBookedMatches = new ArrayList<>();
         List<BookedMatch> changedBookedMatches = new ArrayList<>();
         for(BookedMatch match : allPlayedMatches) {
-            BookedMatch recalculatedBookedMatch = bookKTRForMatch(match.playedMatch(), recalculatedBookedMatches);
+            BookedMatch recalculatedBookedMatch = bookKTRForMatch(match.playedMatch(), recalculatedBookedMatches, ktrUpdates);
             recalculatedBookedMatches.add(recalculatedBookedMatch);
             if(!recalculatedBookedMatch.equals(match)) {
                 changedBookedMatches.add(recalculatedBookedMatch);
@@ -158,13 +195,13 @@ public class KTRCalculator {
         return changedBookedMatches;
     }
     
-    public static KTRForecastResult forecast(PlayerWithKTR player1, PlayerWithKTR player2, List<BookedMatch> allMatches, MatchResult matchResult) {
+    public static KTRForecastResult forecast(PlayerWithKTR player1, PlayerWithKTR player2, List<BookedMatch> allMatches, List<KTRUpdate> ktrUpdates, MatchResult matchResult) {
         List<BookedMatch> updatedMatches = new ArrayList<>(allMatches);
         Match newMatch = new Match(0, "", 0, 0, Clock.today(), player1.player(), player2.player(), matchResult);
-        BookedMatch newBookedMatch = bookKTRForMatch(newMatch, allMatches);
+        BookedMatch newBookedMatch = bookKTRForMatch(newMatch, allMatches, ktrUpdates);
         updatedMatches.add(newBookedMatch);
-        KTR player1NewKTR = calculatePlayersKTRDetails(player1.player(), updatedMatches, Clock.today().plusDays(1), 0).ktr();
-        KTR player2NewKTR = calculatePlayersKTRDetails(player2.player(), updatedMatches, Clock.today().plusDays(1), 0).ktr();
+        KTR player1NewKTR = calculateKTR(player1.player(), updatedMatches, Clock.today().plusDays(1), ktrUpdates);
+        KTR player2NewKTR = calculateKTR(player2.player(), updatedMatches, Clock.today().plusDays(1), ktrUpdates);
         return new KTRForecastResult(newBookedMatch, player1NewKTR, player2NewKTR);
     }
 

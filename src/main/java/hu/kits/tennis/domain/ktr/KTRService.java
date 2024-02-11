@@ -45,12 +45,14 @@ public class KTRService {
 
     public KTRDetails calculatePlayersKTR(Player player) {
         List<BookedMatch> matches = matchRepository.loadAllPlayedMatches(player);
-        return KTRCalculator.calculatePlayersKTRDetails(player, matches, Clock.today().plusDays(1), 0);
+        List<KTRUpdate> ktrUpdates = playerRepository.loadAllKTRUpdates();
+        return KTRCalculator.calculatePlayersKTRDetails(player, matches, Clock.today().plusDays(1), 0, ktrUpdates);
     }
     
     public BookedMatch calculatKTRAndSaveMatch(Match playedMatch) {
         List<BookedMatch> allBookedMatches = matchRepository.loadAllBookedMatches();
-        BookedMatch bookedMatch = KTRCalculator.bookKTRForMatch(playedMatch, allBookedMatches);
+        List<KTRUpdate> ktrUpdates = playerRepository.loadAllKTRUpdates();
+        BookedMatch bookedMatch = KTRCalculator.bookKTRForMatch(playedMatch, allBookedMatches, ktrUpdates);
         return matchRepository.save(bookedMatch);
     }
     
@@ -60,11 +62,12 @@ public class KTRService {
         
         List<Player> players = playerRepository.loadAllPlayers().entries();
         List<BookedMatch> allBookedMatches = getAllMatches();
+        List<KTRUpdate> ktrUpdates = playerRepository.loadAllKTRUpdates();
         
         Map<Player, Long> numberOfTrophiesByPlayer = loadNumberOfTrophiesByPlayer();
         
         List<PlayerWithKTR> ranking = players.stream()
-                .map(player -> createPlayerWithKTR(player, allBookedMatches, numberOfTrophiesByPlayer.getOrDefault(player, 0L)))
+                .map(player -> createPlayerWithKTR(player, allBookedMatches, ktrUpdates, numberOfTrophiesByPlayer.getOrDefault(player, 0L)))
                 .sorted(comparing(PlayerWithKTR::ktr).reversed())
                 .collect(toList());
         
@@ -93,13 +96,13 @@ public class KTRService {
             .toList();
     }
     
-    private static PlayerWithKTR createPlayerWithKTR(Player player, List<BookedMatch> allKVTKBookedMatches, long numberOfTrophies) {
+    private static PlayerWithKTR createPlayerWithKTR(Player player, List<BookedMatch> allKVTKBookedMatches, List<KTRUpdate> ktrUpdates, long numberOfTrophies) {
         
         LocalDate tomorrow = Clock.today().plusDays(1); 
         LocalDate oneWeekAgo = Clock.today().minusWeeks(1).plusDays(1);
         
-        KTRDetails ktrDetails = KTRCalculator.calculatePlayersKTRDetails(player, allKVTKBookedMatches, tomorrow, (int)numberOfTrophies);
-        KTRDetails ktrDetailsOneWekAgo = KTRCalculator.calculatePlayersKTRDetails(player, allKVTKBookedMatches, oneWeekAgo, (int)numberOfTrophies);
+        KTRDetails ktrDetails = KTRCalculator.calculatePlayersKTRDetails(player, allKVTKBookedMatches, tomorrow, (int)numberOfTrophies, ktrUpdates);
+        KTRDetails ktrDetailsOneWekAgo = KTRCalculator.calculatePlayersKTRDetails(player, allKVTKBookedMatches, oneWeekAgo, (int)numberOfTrophies, ktrUpdates);
         
         return new PlayerWithKTR(player, 0, ktrDetails.ktr(), ktrDetailsOneWekAgo.ktr(), ktrDetails.numberOfMatches(), ktrDetails.numberOfWins(), ktrDetails.numberOfTrophies());
         
@@ -110,8 +113,8 @@ public class KTRService {
         logger.info("Recalculating and saving all KTRs");
         
         List<BookedMatch> allBookedMatches = getAllMatches();
-        
-        List<BookedMatch> recalculatedBookedMatches = KTRCalculator.recalculateAllKTRs(allBookedMatches);
+        List<KTRUpdate> ktrUpdates = playerRepository.loadAllKTRUpdates();
+        List<BookedMatch> recalculatedBookedMatches = KTRCalculator.recalculateAllKTRs(allBookedMatches, ktrUpdates);
         
         logger.info("Saving recalculated KTRs");
         
@@ -151,9 +154,10 @@ public class KTRService {
     private KTRHistory calculateKTRHistory(Player player, LocalDate startDate) {
         
         List<BookedMatch> matches = matchRepository.loadAllPlayedMatches(player);
+        List<KTRUpdate> ktrUpdates = playerRepository.loadAllKTRUpdates();
         List<KTRHistoryEntry> historyEntries = new ArrayList<>();
         for(LocalDate date = startDate; !date.isAfter(Clock.today()); date = date.plusDays(1)) {
-            KTR ktr = KTRCalculator.calculatePlayersKTRDetails(player, matches, date, 0).ktr();
+            KTR ktr = KTRCalculator.calculateKTR(player, matches, date, ktrUpdates);
             historyEntries.add(new KTRHistoryEntry(date, ktr));
         }
         

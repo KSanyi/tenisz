@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.jdbi.v3.core.Jdbi;
 
 import hu.kits.tennis.common.KITSException;
 import hu.kits.tennis.domain.ktr.KTR;
+import hu.kits.tennis.domain.ktr.KTRUpdate;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.player.Players;
@@ -157,6 +159,13 @@ public class PlayerJdbcRepository implements PlayerRepository {
     public void deletePlayer(Player player) {
         
         jdbi.withHandle(handle -> handle.execute(String.format("DELETE FROM %s WHERE %s = ?", TABLE_PLAYER, COLUMN_ID), player.id()));
+    }
+
+    @Override
+    public List<KTRUpdate> loadAllKTRUpdates() {
+        Players players = loadAllPlayers();
+        return List.of(
+                new KTRUpdate(players.get(21691), LocalDate.of(2024, 1, 1), KTR.of(7.2))); // Vereckey Mátyás
     }
 
 }

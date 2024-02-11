@@ -10,9 +10,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import hu.kits.tennis.domain.ktr.BookedMatch;
-import hu.kits.tennis.domain.ktr.KTR;
-import hu.kits.tennis.domain.ktr.KTRCalculator;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchResult;
 import hu.kits.tennis.domain.player.Player;
@@ -109,7 +106,7 @@ public class KTRCalculatorTest {
     
     private void test(List<BookedMatch> matches, double expectedKTR) {
         
-        KTR ktr = KTRCalculator.calculatePlayersKTRDetails(player1, matches, date, 0).ktr();
+        KTR ktr = KTRCalculator.calculatePlayersKTRDetails(player1, matches, date, 0, List.of()).ktr();
         
         assertEquals(expectedKTR, ktr.value(), EPSILON);
     }

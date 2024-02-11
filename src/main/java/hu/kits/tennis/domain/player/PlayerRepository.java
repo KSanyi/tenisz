@@ -1,6 +1,9 @@
 package hu.kits.tennis.domain.player;
 
+import java.util.List;
 import java.util.Optional;
+
+import hu.kits.tennis.domain.ktr.KTRUpdate;
 
 public interface PlayerRepository {
 
@@ -15,5 +18,7 @@ public interface PlayerRepository {
     Optional<Player> findPlayer(int id);
 
     Optional<Player> findPlayerByEmail(String email);
+
+    List<KTRUpdate> loadAllKTRUpdates();
 
 }
