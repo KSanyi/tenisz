@@ -52,7 +52,7 @@ public record MatchResult(List<SetResult> setResults) {
     }
     
     private boolean isMatchLongEnough() {
-        return !setResults.isEmpty() && Math.max(setResults.get(0).player1Games(), setResults.get(0).player2Games())  >= 4;
+        return !setResults.isEmpty() && setResults.get(0).player1Games() + setResults.get(0).player2Games()  >= 4;
     }
 
     public MatchResult swap() {
@@ -104,8 +104,8 @@ public record MatchResult(List<SetResult> setResults) {
             SetResult setResult = setResults.get(0);
             if(setResult.isSuperTieBreak()) {
                 return MatchType.SUPER_TIE_BREAK;
-            } else if(setResult.isFourGamesSet()) {
-                return MatchType.ONE_FOUR_GAMES_SET;
+            } else if(setResult.isPartialSet()) {
+                return MatchType.PARTIAL_SET;
             } else {
                 return MatchType.ONE_SET;
             }
@@ -147,8 +147,8 @@ public record MatchResult(List<SetResult> setResults) {
             return Math.max(player1Score, player2Score) >= 10;
         }
         
-        public boolean isFourGamesSet() {
-            return Math.max(player1Score, player2Score) == 4;
+        public boolean isPartialSet() {
+            return Math.max(player1Score, player2Score) < 6 && player1Score + player2Score >= 4;
         }
 
         @Override
