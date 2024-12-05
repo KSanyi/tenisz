@@ -88,12 +88,14 @@ class RestHandlers {
     }
     
     private static String createCsvRow(PlayerWithKTR playerWithKTR) {
+        
         return createCsvRow(
                 playerWithKTR.player().name(),
                 String.valueOf(playerWithKTR.player().id()),
                 playerWithKTR.player().contact().phone(),
                 playerWithKTR.player().contact().email(), 
-                playerWithKTR.ktr().toString().replace(".", ","));
+                playerWithKTR.ktr().toString().replace(".", ","),
+                String.valueOf(playerWithKTR.numberOfMatches()));
     }
     
     private static String createCsvRow(String ... values) {
