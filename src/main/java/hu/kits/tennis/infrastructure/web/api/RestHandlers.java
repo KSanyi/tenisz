@@ -1,5 +1,6 @@
 package hu.kits.tennis.infrastructure.web.api;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -95,7 +96,8 @@ class RestHandlers {
                 playerWithKTR.player().contact().phone(),
                 playerWithKTR.player().contact().email(), 
                 playerWithKTR.ktr().toString().replace(".", ","),
-                String.valueOf(playerWithKTR.numberOfMatches()));
+                String.valueOf(playerWithKTR.numberOfMatches()),
+                playerWithKTR.lastMatchDate().map(LocalDate::toString).orElse(""));
     }
     
     private static String createCsvRow(String ... values) {

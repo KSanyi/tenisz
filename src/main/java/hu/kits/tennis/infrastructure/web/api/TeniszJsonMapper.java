@@ -1,5 +1,6 @@
 package hu.kits.tennis.infrastructure.web.api;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -110,6 +111,7 @@ public class TeniszJsonMapper implements JsonMapper {
                 .add("ktr", mapKTRToDouble(playerWithKTR.ktr()))
                 .add("ktrOneWeekAgo", mapKTRToDouble(playerWithKTR.ktrOneWeekAgo()))
                 .add("ktrChange", mapKTRToDouble(playerWithKTR.ktrChange()))
+                .add("lastMatchDate", playerWithKTR.lastMatchDate().map(LocalDate::toString).orElse(""))
                 .build();
     }
     
