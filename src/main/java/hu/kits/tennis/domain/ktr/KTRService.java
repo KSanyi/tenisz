@@ -72,12 +72,8 @@ public class KTRService {
                 .sorted(comparing(PlayerWithKTR::ktr).reversed())
                 .collect(toList());
         
-        Optional<LocalDate> lastMatchDate = allBookedMatches.stream()
-                .filter(m -> m.playedMatch().date() != null)
-                .map(m -> m.playedMatch().date()).max(Comparator.naturalOrder()); 
-        
         List<PlayerWithKTR> result = ranking.stream()
-                .map(playerWithKTR -> new PlayerWithKTR(playerWithKTR.player(), ranking.indexOf(playerWithKTR)+1, playerWithKTR.ktr(), playerWithKTR.ktrOneWeekAgo(), playerWithKTR.numberOfMatches(), playerWithKTR.numberOfWins(), playerWithKTR.numberOfTrophies(), lastMatchDate))
+                .map(playerWithKTR -> new PlayerWithKTR(playerWithKTR.player(), ranking.indexOf(playerWithKTR)+1, playerWithKTR.ktr(), playerWithKTR.ktrOneWeekAgo(), playerWithKTR.numberOfMatches(), playerWithKTR.numberOfWins(), playerWithKTR.numberOfTrophies(), playerWithKTR.lastMatchDate()))
                 .collect(toList());
         
         logger.info("KTR ranking calculated with {} entries", result.size());
@@ -111,6 +107,7 @@ public class KTRService {
         
         Optional<LocalDate> lastMatchDate = allKVTKBookedMatches.stream()
                 .filter(m -> m.playedMatch().date() != null)
+                .filter(m -> m.playedMatch().hasPlayer(player))
                 .map(m -> m.playedMatch().date()).max(Comparator.naturalOrder()); 
         
         return new PlayerWithKTR(player, 0, ktrDetails.ktr(), ktrDetailsOneWekAgo.ktr(), ktrDetails.numberOfMatches(), ktrDetails.numberOfWins(), ktrDetails.numberOfTrophies(), lastMatchDate);
