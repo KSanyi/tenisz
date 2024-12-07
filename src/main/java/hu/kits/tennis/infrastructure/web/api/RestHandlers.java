@@ -1,6 +1,7 @@
 package hu.kits.tennis.infrastructure.web.api;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -13,6 +14,7 @@ import hu.kits.tennis.domain.ktr.PlayerStats;
 import hu.kits.tennis.domain.ktr.PlayerWithKTR;
 import hu.kits.tennis.domain.ktr.KTRService;
 import hu.kits.tennis.domain.match.MatchInfo;
+import hu.kits.tennis.domain.match.MatchResult;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.player.PlayerRepository;
 import hu.kits.tennis.domain.tournament.Tournament;
@@ -115,15 +117,32 @@ class RestHandlers {
     
     private static String createCsvRow(MatchInfo matchInfo) {
         
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY/MM/DD");
+        
+        String[] resultParts = toParts(matchInfo.result());
+        
         return createCsvRow(
-                matchInfo.date() != null ? matchInfo.date().toString() : "",
-                String.valueOf(matchInfo.player1().id()),
+                matchInfo.date() != null ? matchInfo.date().format(formatter) : "",
                 matchInfo.player1().name(),
-                String.valueOf(matchInfo.player2().id()),
+                String.valueOf(matchInfo.player1().id()),
                 matchInfo.player2().name(),
-                matchInfo.result() != null ? matchInfo.result().toString() : "");
+                String.valueOf(matchInfo.player2().id()),
+                resultParts[0], resultParts[1], resultParts[2], resultParts[3], resultParts[4], resultParts[5],
+                matchInfo.tournamentInfo().name());
     }
     
+    private static String[] toParts(MatchResult result) {
+        String[] games = new String[6];
+        Arrays.fill(games, "");
+        if(result != null) {
+            for(int i=0;i<result.setResults().size();i++) {
+                games[i*2] = String.valueOf(result.setResults().get(i).player1Score());
+                games[i*2+1] = String.valueOf(result.setResults().get(i).player2Score());
+            }
+        } 
+        return games;
+    }
+
     private static String createCsvRow(String ... values) {
         return Arrays.stream(values).collect(Collectors.joining(";"));
     }
