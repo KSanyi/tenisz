@@ -60,6 +60,9 @@ public class HttpServer {
             path("api/ktr-csv", () -> {
                 get(restHandlers::listAllPlayersWithKTRInCSV);
             });
+            path("api/matches-csv", () -> {
+                get(restHandlers::listAllMatchesInCSV);
+            });
             path("api/player-stats/{playerId}", () -> {
                 get(restHandlers::playerStats);
             });

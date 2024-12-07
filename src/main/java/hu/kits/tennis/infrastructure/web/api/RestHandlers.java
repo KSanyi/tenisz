@@ -2,6 +2,7 @@ package hu.kits.tennis.infrastructure.web.api;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
@@ -98,6 +99,29 @@ class RestHandlers {
                 playerWithKTR.ktr().toString().replace(".", ","),
                 String.valueOf(playerWithKTR.numberOfMatches()),
                 playerWithKTR.lastMatchDate().map(LocalDate::toString).orElse(""));
+    }
+    
+    void listAllMatchesInCSV(Context context) {
+        List<MatchInfo> allMatches = allMatchesUseCase.loadAllMatches();
+        
+        String content = allMatches.stream()
+                .sorted(Comparator.comparing(MatchInfo::date, Comparator.nullsFirst(Comparator.naturalOrder())))
+                .map(matchInfo -> createCsvRow(matchInfo))
+                .collect(Collectors.joining("\n"));
+        
+        context.result(content);
+        context.contentType(ContentType.TEXT_CSV);
+    }
+    
+    private static String createCsvRow(MatchInfo matchInfo) {
+        
+        return createCsvRow(
+                matchInfo.date() != null ? matchInfo.date().toString() : "",
+                String.valueOf(matchInfo.player1().id()),
+                matchInfo.player1().name(),
+                String.valueOf(matchInfo.player2().id()),
+                matchInfo.player2().name(),
+                matchInfo.result() != null ? matchInfo.result().toString() : "");
     }
     
     private static String createCsvRow(String ... values) {
