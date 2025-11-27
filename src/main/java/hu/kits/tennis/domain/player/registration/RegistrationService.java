@@ -50,6 +50,11 @@ public class RegistrationService {
         invoiceService.createPartnerForPlayer(savedPlayer);
         logger.info("Player created in invoice system");
     }
+    
+    public void deleteRegistration(Registration registration) {
+        registartionRepository.setRegistrationStatus(registration.id(), RegistrationStatus.DELETED);
+        logger.info("Registration is deleted for player: {}", registration.data().name());
+    }
 
     public boolean isEmailAlreadyRegistered(String email) {
         return playersService.findPlayerByEmail(email).isPresent();

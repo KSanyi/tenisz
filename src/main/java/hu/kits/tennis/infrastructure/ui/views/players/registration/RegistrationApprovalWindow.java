@@ -11,6 +11,7 @@ import hu.kits.tennis.Main;
 import hu.kits.tennis.domain.ktr.KTR;
 import hu.kits.tennis.domain.player.registration.Registration;
 import hu.kits.tennis.domain.player.registration.RegistrationService;
+import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
@@ -23,7 +24,8 @@ public class RegistrationApprovalWindow extends Dialog {
     
     private final NumberField startingKTRField = new NumberField("Kezdő KTR");
     private final TextArea commentField = new TextArea("Megjegyzés");
-    
+
+    private final Button deleteButton = UIUtils.createErrorPrimaryButton("Törlés");
     private final Button cancelButton = UIUtils.createContrastButton("Mégsem");
     private final Button approveButton = UIUtils.createPrimaryButton("Jóváhagy");
     
@@ -31,6 +33,7 @@ public class RegistrationApprovalWindow extends Dialog {
         this.registration = registration;
         this.callback = callback;
         
+        deleteButton.addClickListener(click -> delete());
         cancelButton.addClickListener(click -> close());
         approveButton.addClickListener(click -> approve());
         
@@ -57,7 +60,7 @@ public class RegistrationApprovalWindow extends Dialog {
         commentField.setWidthFull();
         commentField.setHeight("100px");
         
-        getFooter().add(cancelButton, approveButton);
+        getFooter().add(deleteButton, cancelButton, approveButton);
         
         return layout;
     }
@@ -77,6 +80,15 @@ public class RegistrationApprovalWindow extends Dialog {
         callback.run();
         close();
         KITSNotification.showInfo(registration.data().name() + " felvéve a játékos adatbázisba!");
+    }
+    
+    private void delete() {
+        new ConfirmationDialog("Biztos hogy törlöd a regisztrációt?", () -> {
+            registrationService.deleteRegistration(registration);
+            callback.run();
+            close();
+            KITSNotification.showInfo(registration.data().name() + " regisztráció törölve!");
+        }).open();
     }
 
 }

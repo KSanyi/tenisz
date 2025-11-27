@@ -39,7 +39,7 @@ public record Registration(Integer id, RegistrationData data, RegistrationStatus
     }
     
     public enum RegistrationStatus {
-        NEW, ACCEPTED
+        NEW, ACCEPTED, DELETED
     }
     
     public static Registration createNew(RegistrationData data) {
