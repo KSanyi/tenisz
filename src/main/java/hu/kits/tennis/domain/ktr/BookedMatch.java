@@ -34,7 +34,7 @@ public record BookedMatch(Match playedMatch, KTR player1KTR, KTR player2KTR, KTR
     }
 
     public boolean isUpset() {
-        if(playedMatch.result() != null && player1KTR != null && player2KTR != null && player1KTR.isDefinded() && player2KTR.isDefinded()) {
+        if(playedMatch.result() != null && playedMatch.result().isMatchLongEnough() && player1KTR != null && player2KTR != null && player1KTR.isDefinded() && player2KTR.isDefinded()) {
             return player2KTR.value() - player1KTR.value() > 1 && playedMatch.winner().equals(playedMatch.player1()) ||
                    player1KTR.value() - player2KTR.value() > 1 && playedMatch.winner().equals(playedMatch.player2());
         } else {
