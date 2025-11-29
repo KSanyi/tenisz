@@ -51,7 +51,7 @@ public record MatchResult(List<SetResult> setResults) {
         return player1KTR.calculateMatchKTR(scoreOfPlayer2);
     }
     
-    private boolean isMatchLongEnough() {
+    public boolean isMatchLongEnough() {
         return !setResults.isEmpty() && setResults.get(0).player1Games() + setResults.get(0).player2Games()  >= 4;
     }
 
@@ -120,7 +120,7 @@ public record MatchResult(List<SetResult> setResults) {
     public String toString() {
         return setResults.stream().map(SetResult::toString).collect(joining(" "));
     }
-    
+
     public static record SetResult(int player1Score, int player2Score) {
         
         public int sumGames() {
