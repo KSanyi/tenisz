@@ -41,7 +41,7 @@ class KTRInfoDialog extends Dialog {
                 <li><b>3:6 3:6</b>: a meccs KTR Kokónak <b>6.0</b>, Sanyinak <b>9.0</b></li>
                 <li><b>0:6 0:6</b>: a meccs KTR Kokónak <b>5.0</b>, Sanyinak <b>10.0</b></li>
                 <br/>
-                Ha a két játékos KTR-jének különbsége nagyobb mint 2, akkor a mérkőzésen nem számolunk KTR-t függetlenül az eredménytől.
+                Ha a két játékos KTR-jének különbsége nagyobb mint 1.5, akkor a mérkőzésen nem számolunk KTR-t függetlenül az eredménytől.
                 <br/>
                 <h4>Meccs táblázat</h4>
                 Az KTR rangsorban egy játékosra kattintva megjelenik a játékos összes mérkőzése.<br/>
