@@ -25,7 +25,7 @@ public record KTR(Double value) implements Comparable<KTR> {
 
     public boolean comparable(KTR otherKRT) {
         boolean onlyOneIsUndefined = (isUndefinded() && !otherKRT.isUndefinded()) || (!isUndefinded() && otherKRT.isUndefinded());
-        return  onlyOneIsUndefined || Math.abs(value - otherKRT.value) <= 2;
+        return  onlyOneIsUndefined || Math.abs(value - otherKRT.value) <= 1.5;
     }
 
     @Override
