@@ -198,9 +198,11 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             openDialog();
             KITSNotification.showInfo("Meccs elmentve");
         };
+
+        int matchNumber = tournament.matches().stream().mapToInt(m -> m.tournamentMatchNumber()).max().orElse(0) + 1;
         
         new SimpleMatchDialog(
-            Match.createNew(tournament.id(), 1, tournament.matches().size()+1, tournament.params().date(), null, null),
+            Match.createNew(tournament.id(), 1, matchNumber, tournament.params().date(), null, null),
             players, 
             tournament.params().bestOfNSets(), 
             callback).open();
