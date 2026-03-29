@@ -63,7 +63,7 @@ public class TournamentJdbcRepository implements TournamentRepository {
     private final MatchRepository matchRepository;
     
     public TournamentJdbcRepository(DataSource dataSource, PlayerRepository playerRepository, MatchRepository matchRepository) {
-        jdbi = Jdbi.create(dataSource);
+        jdbi = JdbiUtil.create(dataSource);
         contestantDBTable = new ContestantDBTable(dataSource);
         this.playerRepository = playerRepository;
         this.matchRepository = matchRepository;

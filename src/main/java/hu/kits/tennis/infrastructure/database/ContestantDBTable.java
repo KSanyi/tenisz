@@ -36,7 +36,7 @@ class ContestantDBTable {
     private final Jdbi jdbi;
     
     ContestantDBTable(DataSource dataSource) {
-        jdbi = Jdbi.create(dataSource);
+        jdbi = JdbiUtil.create(dataSource);
     }
     
     Map<String, List<Contestant>> loadAllContestantsByTournament(Players players) {

@@ -35,7 +35,7 @@ public class RegistrationJdbcRepository implements RegistrationRepository {
     private final Jdbi jdbi;
     
     public RegistrationJdbcRepository(DataSource dataSource) {
-        jdbi = Jdbi.create(dataSource);
+        jdbi = JdbiUtil.create(dataSource);
     }
     
     @Override

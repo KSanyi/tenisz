@@ -44,7 +44,7 @@ public class PlayerJdbcRepository implements PlayerRepository {
     private final Jdbi jdbi;
     
     public PlayerJdbcRepository(DataSource dataSource) {
-        jdbi = Jdbi.create(dataSource);
+        jdbi = JdbiUtil.create(dataSource);
     }
     
     @Override

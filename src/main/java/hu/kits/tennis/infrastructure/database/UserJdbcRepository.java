@@ -34,7 +34,7 @@ public class UserJdbcRepository implements UserRepository {
     private final Jdbi jdbi;
     
     public UserJdbcRepository(DataSource dataSource) {
-        jdbi = Jdbi.create(dataSource);
+        jdbi = JdbiUtil.create(dataSource);
     }
     
     @Override

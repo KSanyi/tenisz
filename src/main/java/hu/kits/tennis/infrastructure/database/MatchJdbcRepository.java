@@ -53,7 +53,7 @@ public class MatchJdbcRepository implements MatchRepository  {
     private final PlayerRepository playerRepository;
     
     public MatchJdbcRepository(DataSource dataSource, PlayerRepository playerRepository) {
-        jdbi = Jdbi.create(dataSource);
+        jdbi = JdbiUtil.create(dataSource);
         this.playerRepository = playerRepository;
     }
 

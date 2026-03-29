@@ -11,12 +11,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import javax.sql.DataSource;
 
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.PreparedBatch;
+import org.jdbi.v3.core.statement.SqlLogger;
+import org.jdbi.v3.core.statement.StatementContext;
 import org.jdbi.v3.core.statement.Update;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,4 +129,23 @@ public class JdbiUtil {
         return rs.wasNull() ? Optional.empty() : Optional.of(value);
     }
     
+    public static Jdbi create(DataSource dataSource) {
+        Jdbi jdbi = Jdbi.create(dataSource);
+        jdbi.setSqlLogger(countingSqlLogger);
+        return jdbi;
+    }
+    
+    private static SqlLogger countingSqlLogger = new SqlLogger() {
+        
+        private final AtomicInteger counter = new AtomicInteger();
+
+        @Override
+        public void logAfterExecution(StatementContext context) {
+            int count = counter.incrementAndGet();
+            if(count % 100 == 0) {
+                log.debug("Sql counter: {}", count);
+            }
+        }
+
+    };
 }
