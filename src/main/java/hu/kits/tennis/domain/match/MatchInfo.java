@@ -30,5 +30,9 @@ public record MatchInfo(Integer id,
     public LocalDate dateForCompare() {
         return date != null ? date : LocalDate.MAX;
     }
+
+    public boolean isWinner(Player player) {
+        return result != null && (player.equals(player1) && result.isPlayer1Winner() || player.equals(player2) && result.isPlayer2Winner());
+    }
     
 }

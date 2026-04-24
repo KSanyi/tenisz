@@ -39,6 +39,7 @@ import hu.kits.tennis.infrastructure.ui.views.players.PlayersView;
 import hu.kits.tennis.infrastructure.ui.views.players.registration.RegistrationsView;
 import hu.kits.tennis.infrastructure.ui.views.tournaments.TournamentsView;
 import hu.kits.tennis.infrastructure.ui.views.users.UsersView;
+import hu.kits.tennis.infrastructure.ui.views.ktr.head2head.Head2HeadView;
 import hu.kits.tennis.infrastructure.ui.views.ktr.matches.MatchesView;
 import hu.kits.tennis.infrastructure.ui.views.ktr.ranking.KTRRankingView;
 import hu.kits.tennis.infrastructure.web.CookieUtil;
@@ -128,6 +129,7 @@ public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavi
         menu.addNaviItem(ktrMenu, "Játékosok", PlayersView.class);
         menu.addNaviItem(ktrMenu, "Meccsek", MatchesView.class);
         menu.addNaviItem(ktrMenu, "KTR ranking", KTRRankingView.class);
+        menu.addNaviItem(ktrMenu, "Head-2-Head", Head2HeadView.class);
     }
 
     /**

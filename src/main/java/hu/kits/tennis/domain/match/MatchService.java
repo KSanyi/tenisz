@@ -3,10 +3,13 @@ package hu.kits.tennis.domain.match;
 import static java.util.stream.Collectors.toList;
 
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,6 +117,24 @@ public class MatchService {
     
     public Match loadMatch(int id) {
         return matchRepository.loadMatch(id);
+    }
+    
+    public List<Head2HeadData> loadHead2HeadDataTopList(int numberOfEntries) {
+        
+        List<MatchInfo> allMatches = loadAllMatches();
+        
+        Map<Set<Player>, List<MatchInfo>> map = new HashMap<>();
+        for(MatchInfo matchInfo : allMatches) {
+            Set<Player> key = Set.of(matchInfo.player1(), matchInfo.player2());
+            List<MatchInfo> matches = map.getOrDefault(key, new ArrayList<>());
+            matches.add(matchInfo);
+            map.put(key, matches);
+        }
+        
+        return map.values()
+            .stream().map(matches -> new Head2HeadData(matches.get(0).player1(), matches.get(0).player2(), matches))
+            .sorted(Comparator.comparing(Head2HeadData::numberOfMatches).reversed())
+            .limit(numberOfEntries).toList();
     }
 
 }
