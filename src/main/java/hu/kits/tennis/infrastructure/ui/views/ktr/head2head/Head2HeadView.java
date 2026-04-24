@@ -31,7 +31,7 @@ import hu.kits.tennis.infrastructure.ui.views.ktr.ranking.KTRRankingView;
 
 @Route(value = "head2head", layout = MainLayout.class)
 @PageTitle("Head-2-Head")
-@AllowedRoles({Role.ADMIN})
+@AllowedRoles({Role.ADMIN, Role.ANONYMUS, Role.VISITOR, Role.MEMBER})
 public class Head2HeadView extends SplitViewFrame implements View {
 
     private final MatchService matchService = Main.applicationContext.getMatchService();
