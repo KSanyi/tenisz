@@ -35,6 +35,7 @@ import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 import hu.kits.tennis.infrastructure.ui.views.View;
 import hu.kits.tennis.infrastructure.ui.views.ktr.forecast.KTRForecastWindow;
+import hu.kits.tennis.infrastructure.ui.views.ktr.head2head.Head2HeadView;
 import hu.kits.tennis.infrastructure.ui.views.ktr.playerstats.PlayerStatsComponent;
 
 @Route(value = "ktr-ranking", layout = MainLayout.class)
@@ -52,6 +53,7 @@ public class KTRRankingView extends SplitViewFrame implements View {
     private final PlayerStatsComponent playerStatsView = new PlayerStatsComponent();
     
     private final Button ktrForecastButton = UIUtils.createButton("KTR előrejelzés", ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
+    private final Button head2headButton = UIUtils.createButton("Head-2-Head", ButtonVariant.LUMO_SMALL);
     
     private List<PlayerWithKTR> ktrRankingList;
     
@@ -67,6 +69,7 @@ public class KTRRankingView extends SplitViewFrame implements View {
         ktrRankingGridMobile.setVisible(false);
         
         ktrForecastButton.addClickListener(click -> KTRForecastWindow.open(ktrRankingList));
+        head2headButton.addClickListener(click -> UI.getCurrent().navigate(Head2HeadView.class));
     }
     
     @Override
@@ -106,7 +109,7 @@ public class KTRRankingView extends SplitViewFrame implements View {
         UIUtils.setTooltip("KTR infó", helpIcon);
         helpIcon.setColor("#0C6CE9");
         helpIcon.addClickListener(click -> KTRInfoDialog.openDialog());
-        HorizontalLayout header = new HorizontalLayout(filter, helpIcon, ktrForecastButton);
+        HorizontalLayout header = new HorizontalLayout(filter, helpIcon, ktrForecastButton, head2headButton);
         
         VerticalLayout column1 = new VerticalLayout(header, ktrRankingGrid, ktrRankingGridMobile);
         column1.setPadding(false);

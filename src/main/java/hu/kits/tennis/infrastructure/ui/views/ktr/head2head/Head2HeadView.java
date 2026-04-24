@@ -8,6 +8,8 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -23,7 +25,9 @@ import hu.kits.tennis.infrastructure.ui.util.AllowedRoles;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
 import hu.kits.tennis.infrastructure.ui.vaadin.SplitViewFrame;
 import hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.bar.AppBar;
+import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 import hu.kits.tennis.infrastructure.ui.views.View;
+import hu.kits.tennis.infrastructure.ui.views.ktr.ranking.KTRRankingView;
 
 @Route(value = "head2head", layout = MainLayout.class)
 @PageTitle("Head-2-Head")
@@ -35,6 +39,7 @@ public class Head2HeadView extends SplitViewFrame implements View {
     private final TextField filterField = new TextField();
     private final Head2HeadGrid head2HeadGrid = new Head2HeadGrid();
     private final Head2HeadMatchesPanel matchesPanel = new Head2HeadMatchesPanel();
+    private final Button ktrRankingButton = UIUtils.createButton("KTR Rangsor", ButtonVariant.LUMO_SMALL);
 
     private HorizontalLayout content;
 
@@ -42,6 +47,7 @@ public class Head2HeadView extends SplitViewFrame implements View {
         filterField.setPlaceholder("Játékos szűrő");
         filterField.setValueChangeMode(ValueChangeMode.EAGER);
         filterField.addValueChangeListener(e -> head2HeadGrid.filter(e.getValue()));
+        ktrRankingButton.addClickListener(click -> UI.getCurrent().navigate(KTRRankingView.class));
     }
 
     @Override
@@ -64,7 +70,10 @@ public class Head2HeadView extends SplitViewFrame implements View {
     }
 
     private Component createContent() {
-        VerticalLayout gridColumn = new VerticalLayout(filterField, head2HeadGrid);
+        HorizontalLayout toolbar = new HorizontalLayout(filterField, ktrRankingButton);
+        toolbar.setDefaultVerticalComponentAlignment(com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment.CENTER);
+
+        VerticalLayout gridColumn = new VerticalLayout(toolbar, head2HeadGrid);
         gridColumn.setPadding(false);
         gridColumn.setSpacing(false);
         gridColumn.setSizeUndefined();
