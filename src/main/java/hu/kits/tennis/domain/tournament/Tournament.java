@@ -1,5 +1,6 @@
 package hu.kits.tennis.domain.tournament;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.util.ArrayList;
@@ -38,6 +39,12 @@ public record Tournament(String id,
     
     public List<Contestant> simplePlayersLineup() {
         return contestants;
+    }
+    
+    public List<Player> players() {
+        return contestants.stream()
+                .map(Contestant::player)
+                .collect(toList());
     }
     
     @Override

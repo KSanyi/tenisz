@@ -125,6 +125,25 @@ public class TournamentService {
         return tournamentRepository.findTournament(tournamentId);
     }
     
+    public void createRoundRobinMatches(String tournamentId) {
+        Tournament tournament = loadTournament(tournamentId);
+        if (tournament.status() != Status.DRAFT) return;
+
+        matchRepository.deleteMatchesForTournament(tournament.id());
+
+        List<Player> players = tournament.players();
+
+        int matchNumber = 1;
+        for (int i = 0; i < players.size(); i++) {
+            for (int j = i + 1; j < players.size(); j++) {
+                Match match = Match.createNew(tournamentId, 1, matchNumber, tournament.params().date(), players.get(i), players.get(j));
+                matchRepository.save(new BookedMatch(match, null, null, null, null));
+                matchNumber++;
+            }
+        }
+        logger.info("{} round-robin matches created for {}", matchNumber - 1, tournament);
+    }
+
     public void createMatches(String tournamentId) {
         
         Tournament tournament = loadTournament(tournamentId);
@@ -211,9 +230,19 @@ public class TournamentService {
             tournamentRepository.updateTournamentStatus(match.tournamentId(), Status.LIVE);
             logger.info("Tournament {} status is updated to LIVE", tournament);
         }
-        
+
+        if(tournament.params().structure() == Structure.ROUND_ROBIN) {
+            boolean allPlayed = tournament.matches().stream().allMatch(Match::isPlayed);
+            if(allPlayed) {
+                List<RoundRobinStanding> standings = RoundRobinStanding.calculate(tournament.players(), tournament.matches());
+                setWinner(tournament.id(), standings.get(0).player());
+            }
+            ktrService.recalculateAllKTRs();
+            return;
+        }
+
         Player winner = match.winner();
-        
+
         if(tournament.isBoardFinal(match)) {
             setWinner(tournament.id(), match.winner());
         } else {
@@ -302,6 +331,14 @@ public class TournamentService {
     public void deleteMatchResult(Match match) {
         if(match.tournamentId() != null) {
             Tournament tournament = loadTournament(match.tournamentId());
+            if(tournament.params().structure() == Structure.ROUND_ROBIN) {
+                matchRepository.setResult(new MatchResultInfo(match, null, null));
+                if(tournament.status() == Status.COMPLETED) {
+                    tournamentRepository.updateTournamentStatus(match.tournamentId(), Status.LIVE);
+                }
+                logger.info("Round-robin match result deleted: {}", match);
+                return;
+            }
             Match followUpMatch = tournament.followUpMatch(match);
             Player winner = match.winner();
             if(followUpMatch != null && followUpMatch.hasPlayer(winner)) {

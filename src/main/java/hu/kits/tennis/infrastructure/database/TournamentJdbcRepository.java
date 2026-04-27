@@ -198,11 +198,16 @@ public class TournamentJdbcRepository implements TournamentRepository {
         TournamentMatches tournamentMatches = matchesByTournament.getOrDefault(tournamentId, TournamentMatches.empty());
         
         List<TournamentBoard> boards = new ArrayList<>();
-        
-        int numberOfRounds = MathUtil.log2(contestants.stream().mapToInt(c -> c.rank()).max().orElse(0));
-        boards.add(new TournamentBoard(numberOfRounds, tournamentMatches.matchesInBoard(1)));
-        if(structure == Structure.BOARD_AND_CONSOLATION) {
-            boards.add(new TournamentBoard(numberOfRounds - 1, tournamentMatches.matchesInBoard(2)));
+
+        if(structure == Structure.SIMPLE_BOARD || structure == Structure.BOARD_AND_CONSOLATION) {
+            int numberOfRounds = MathUtil.log2(contestants.stream().mapToInt(c -> c.rank()).max().orElse(0));
+            boards.add(new TournamentBoard(numberOfRounds, tournamentMatches.matchesInBoard(1)));
+            if(structure == Structure.BOARD_AND_CONSOLATION) {
+                boards.add(new TournamentBoard(numberOfRounds - 1, tournamentMatches.matchesInBoard(2)));
+            }
+        } else {
+            // ROUND_ROBIN and NA: flat match list stored in board 1, no bracket structure
+            boards.add(new TournamentBoard(0, tournamentMatches.matchesInBoard(1)));
         }
         
         Type type = Type.valueOf(rs.getString(COLUMN_TYPE));

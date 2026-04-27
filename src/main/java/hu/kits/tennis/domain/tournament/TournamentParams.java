@@ -72,8 +72,9 @@ public record TournamentParams(
     public enum Structure {
         SIMPLE_BOARD("Főtábla"),
         BOARD_AND_CONSOLATION("Főtábla és vigasztábla"),
+        ROUND_ROBIN("Körmérkőzés"),
         NA("Csak meccsek");
-        
+
         public final String label;
 
         private Structure(String label) {

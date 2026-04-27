@@ -69,6 +69,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     private TournamentBoardComponent consolationBoard;
     private VerticalLayout tableWithButton;
     private MatchesGrid matchesGrid;
+    private RoundRobinComponent roundRobinComponent;
     private final Label matchCounter = new Label("");
     
     private Tournament tournament;
@@ -119,6 +120,32 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             horizontalLayout.setFlexGrow(1, leftColumn);
             layout.add(header, horizontalLayout, winnerCombo, deleteButton);
             layout.setHorizontalComponentAlignment(Alignment.END, deleteButton);
+        } else if(tournament.params().structure() == Structure.ROUND_ROBIN) {
+
+            Runnable matchChangeCallback = () -> refresh();
+
+            roundRobinComponent = new RoundRobinComponent(tournament, matchChangeCallback);
+
+            contestantsTable.setAddButtonVisible(tournament.status() == Status.DRAFT);
+            Button fillMatchesButton = UIUtils.createButton("Meccsek létrehozása", VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
+            fillMatchesButton.setVisible(tournament.status() == Status.DRAFT);
+            fillMatchesButton.addClickListener(click -> {
+                tournamentService.createRoundRobinMatches(tournament.id());
+                refresh();
+            });
+
+            tableWithButton = new VerticalLayout(contestantsTable, fillMatchesButton);
+            tableWithButton.setPadding(false);
+            tableWithButton.setSizeUndefined();
+            tableWithButton.setAlignItems(Alignment.CENTER);
+
+            HorizontalLayout rrLayout = new HorizontalLayout(roundRobinComponent, tableWithButton);
+            rrLayout.setWidthFull();
+            rrLayout.setFlexGrow(1, roundRobinComponent);
+
+            layout.add(header, rrLayout, deleteButton);
+            layout.setHorizontalComponentAlignment(Alignment.END, deleteButton);
+
         } else if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION || tournament.params().structure() == Structure.SIMPLE_BOARD) {
 
             Runnable matchChangeCallback = () -> refresh();
@@ -230,11 +257,14 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             List<MatchInfo> matches = matchService.loadMatchesOfTournament(tournament.id());
             matchesGrid.setItems(matches);
             matchCounter.setText(matches.size() + " meccs");
+        } else if(tournament.params().structure() == Structure.ROUND_ROBIN) {
+            contestantsTable.setContestants(tournament.simplePlayersLineup());
+            roundRobinComponent.setTournament(tournament);
         } else if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION || tournament.params().structure() == Structure.SIMPLE_BOARD) {
             contestantsTable.setContestants(tournament.playersLineup());
             mainBoard.setBoard(tournament, tournament.mainBoard());
             if(tournament.params().structure() == Structure.BOARD_AND_CONSOLATION) {
-                consolationBoard.setBoard(tournament, tournament.consolationBoard());    
+                consolationBoard.setBoard(tournament, tournament.consolationBoard());
             }
         }
     }
