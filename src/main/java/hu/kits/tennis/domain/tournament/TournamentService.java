@@ -136,7 +136,8 @@ public class TournamentService {
         int matchNumber = 1;
         for (int i = 0; i < players.size(); i++) {
             for (int j = i + 1; j < players.size(); j++) {
-                Match match = Match.createNew(tournamentId, 1, matchNumber, tournament.params().date(), players.get(i), players.get(j));
+                LocalDate date = tournament.params().type() == Type.DAILY ? tournament.params().date() : null;
+                Match match = Match.createNew(tournamentId, 1, matchNumber, date, players.get(i), players.get(j));
                 matchRepository.save(new BookedMatch(match, null, null, null, null));
                 matchNumber++;
             }
