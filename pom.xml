@@ -243,6 +243,14 @@
             <resource>
                 <directory>src/main</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>bundles/**</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/bundles</directory>
+                <targetPath>bundles</targetPath>
+                <filtering>false</filtering>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
