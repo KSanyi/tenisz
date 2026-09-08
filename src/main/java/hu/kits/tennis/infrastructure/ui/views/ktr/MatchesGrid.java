@@ -24,7 +24,12 @@ import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
 @CssImport(themeFor = "vaadin-grid", value = "./styles/match-grid.css")
 public class MatchesGrid extends Grid<MatchInfo> {
- 
+
+    static final String PLAYER_NAME_TEMPLATE = "${item.name} <small>${item.ktr}</small> "
+            + "<a href=\"/ui/player-stats/${item.playerId}\" target=\"_blank\" "
+            + "style=\"font-size: 0.75em; text-decoration: none; opacity: 0.6; font-weight: bold;\" "
+            + "@click=\"${(e) => e.stopPropagation()}\" title=\"Játékos statisztika\">↗</a>";
+
     private final Column<MatchInfo> player1KTRColumn;
     private final Column<MatchInfo> player2KTRColumn;
     
@@ -45,9 +50,10 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(1);
         
-        addColumn(LitRenderer.<MatchInfo>of("${item.name1} <small>${item.ktr1}</small>")
-                .withProperty("name1", match -> match.player1().name())
-                .withProperty("ktr1", match -> displayKTR(match.player1KTR())))
+        addColumn(LitRenderer.<MatchInfo>of(PLAYER_NAME_TEMPLATE)
+                .withProperty("name", match -> match.player1().name())
+                .withProperty("ktr", match -> displayKTR(match.player1KTR()))
+                .withProperty("playerId", match -> match.player1().id()))
             .setPartNameGenerator(match -> match.result() != null && match.result().isPlayer1Winner() ? "bold" : "")
             .setKey("player1")
             .setComparator(Comparator.comparing(MatchInfo::player1KTR))
@@ -55,10 +61,11 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setAutoWidth(true)
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(3);
-        
-        addColumn(LitRenderer.<MatchInfo>of("${item.name2} ${item.ktr2}")
-                .withProperty("name2", match -> match.player2().name())
-                .withProperty("ktr2", match -> displayKTR(match.player2KTR())))
+
+        addColumn(LitRenderer.<MatchInfo>of(PLAYER_NAME_TEMPLATE)
+                .withProperty("name", match -> match.player2().name())
+                .withProperty("ktr", match -> displayKTR(match.player2KTR()))
+                .withProperty("playerId", match -> match.player2().id()))
             .setPartNameGenerator(match -> match.result() != null && match.result().isPlayer2Winner() ? "bold" : "")
             .setKey("player2")
             .setComparator(Comparator.comparing(MatchInfo::player2KTR))

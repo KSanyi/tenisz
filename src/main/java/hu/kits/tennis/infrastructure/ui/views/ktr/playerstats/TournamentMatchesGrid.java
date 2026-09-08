@@ -26,7 +26,12 @@ import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
 @CssImport(themeFor = "vaadin-grid", value = "./styles/match-grid.css")
 class TournamentMatchesGrid extends Grid<MatchInfo> {
- 
+
+    private static final String PLAYER_NAME_TEMPLATE = "${item.name1} <small>${item.ktr1}</small> "
+            + "<a href=\"/ui/player-stats/${item.playerId1}\" target=\"_blank\" "
+            + "style=\"font-size: 0.75em; text-decoration: none; opacity: 0.6; font-weight: normal;\" "
+            + "@click=\"${(e) => e.stopPropagation()}\" title=\"Játékos statisztika\">↗</a>";
+
     TournamentMatchesGrid() {
         
         addColumn(match -> match.date() != null ? Formatters.formatDate(match.date()) : "")
@@ -36,19 +41,21 @@ class TournamentMatchesGrid extends Grid<MatchInfo> {
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(1);
         
-        addColumn(LitRenderer.<MatchInfo>of("${item.name1} <small>${item.ktr1}</small>")
+        addColumn(LitRenderer.<MatchInfo>of(PLAYER_NAME_TEMPLATE)
                 .withProperty("name1", match -> match.player1().name())
-                .withProperty("ktr1", match -> displayKTR(match.player1KTR())))
+                .withProperty("ktr1", match -> displayKTR(match.player1KTR()))
+                .withProperty("playerId1", match -> match.player1().id()))
             .setPartNameGenerator(match -> match.result() != null && match.result().isPlayer1Winner() ? "bold" : "")
             .setKey("player1")
             .setComparator(Comparator.comparing(MatchInfo::player1KTR))
             .setAutoWidth(true)
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(3);
-        
-        addColumn(LitRenderer.<MatchInfo>of("${item.name2} ${item.ktr2}")
-                .withProperty("name2", match -> match.player2().name())
-                .withProperty("ktr2", match -> displayKTR(match.player2KTR())))
+
+        addColumn(LitRenderer.<MatchInfo>of(PLAYER_NAME_TEMPLATE)
+                .withProperty("name1", match -> match.player2().name())
+                .withProperty("ktr1", match -> displayKTR(match.player2KTR()))
+                .withProperty("playerId1", match -> match.player2().id()))
             .setPartNameGenerator(match -> match.result() != null && match.result().isPlayer2Winner() ? "bold" : "")
             .setKey("player2")
             .setComparator(Comparator.comparing(MatchInfo::player2KTR))

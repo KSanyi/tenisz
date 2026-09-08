@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.AnchorTarget;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.Span;
@@ -90,8 +92,13 @@ public class MatchesGridMobile extends Grid<MatchInfo> {
             player.addClassNames(FontSize.MEDIUM);
             Span playerKTR = new Span("(" + (player1 ? matchInfo.player1KTR() : matchInfo.player2KTR()) + ")");
             playerKTR.addClassNames(FontSize.XSMALL);
-            
-            Span playerAndKTR = new Span(player, playerKTR);
+
+            Integer playerId = player1 ? matchInfo.player1().id() : matchInfo.player2().id();
+            Anchor playerStatsLink = new Anchor("/ui/player-stats/" + playerId, "↗", AnchorTarget.BLANK);
+            playerStatsLink.getElement().setAttribute("title", "Játékos statisztika");
+            playerStatsLink.getStyle().set("font-size", "0.75em").set("opacity", "0.6").set("font-weight", "normal");
+
+            Span playerAndKTR = new Span(player, playerKTR, playerStatsLink);
             playerAndKTR.setWidth("220px");
             
             Span span = new Span(playerAndKTR);
