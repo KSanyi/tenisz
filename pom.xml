@@ -153,6 +153,10 @@
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <version>6.1.0</version>
+            <!-- The vaadin-bom manages this as "provided" (assuming deployment to an external
+                 servlet container), but we run our own embedded Jetty and shade everything into
+                 a self-contained jar, so it must be bundled. -->
+            <scope>compile</scope>
         </dependency>
 		
 		<dependency>
