@@ -7,7 +7,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -48,7 +48,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
         addColumn(LitRenderer.<MatchInfo>of("${item.name1} <small>${item.ktr1}</small>")
                 .withProperty("name1", match -> match.player1().name())
                 .withProperty("ktr1", match -> displayKTR(match.player1KTR())))
-            .setClassNameGenerator(match -> match.result() != null && match.result().isPlayer1Winner() ? "bold" : "")
+            .setPartNameGenerator(match -> match.result() != null && match.result().isPlayer1Winner() ? "bold" : "")
             .setKey("player1")
             .setComparator(Comparator.comparing(MatchInfo::player1KTR))
             .setHeader("")
@@ -59,7 +59,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
         addColumn(LitRenderer.<MatchInfo>of("${item.name2} ${item.ktr2}")
                 .withProperty("name2", match -> match.player2().name())
                 .withProperty("ktr2", match -> displayKTR(match.player2KTR())))
-            .setClassNameGenerator(match -> match.result() != null && match.result().isPlayer2Winner() ? "bold" : "")
+            .setPartNameGenerator(match -> match.result() != null && match.result().isPlayer2Winner() ? "bold" : "")
             .setKey("player2")
             .setComparator(Comparator.comparing(MatchInfo::player2KTR))
             .setHeader("")
@@ -68,7 +68,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setFlexGrow(3);
         
         addComponentColumn(this::matchResult)
-            .setClassNameGenerator(match -> "bold")
+            .setPartNameGenerator(match -> "bold")
             .setHeader("Eredmény")
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(1);
@@ -94,7 +94,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
     }
     
     public void setBestWorstAndKTRRelevantMatches(MatchInfo bestMatch, MatchInfo worstMatch, MatchInfo winAgainstStrongest, Set<Integer> ktrRelevantMatchIds) {
-        setClassNameGenerator(match -> {
+        setPartNameGenerator(match -> {
             if(match.equals(bestMatch) || match.equals(winAgainstStrongest)) {
                 return "green";
             } else if(match.equals(worstMatch)) {
@@ -112,7 +112,7 @@ public class MatchesGrid extends Grid<MatchInfo> {
         if(result == null) {
             return new Span();
         } else {
-            Label label = new Label(matchInfo.result().toString());
+            NativeLabel label = new NativeLabel(matchInfo.result().toString());
             HorizontalLayout layout = new HorizontalLayout(label);
             layout.setSpacing(false);
             layout.setAlignItems(Alignment.CENTER);

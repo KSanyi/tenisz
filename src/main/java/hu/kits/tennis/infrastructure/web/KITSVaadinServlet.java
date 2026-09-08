@@ -2,8 +2,8 @@ package hu.kits.tennis.infrastructure.web;
 
 import java.lang.invoke.MethodHandles;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -16,7 +16,7 @@ class Head2HeadGrid extends Grid<Head2HeadData> {
     Head2HeadGrid() {
         addColumn(h2h -> h2h.player1().name())
             .setHeader("Játékos 1")
-            .setClassNameGenerator(h2h -> h2h.player1Wins() > h2h.player2Wins() ? "bold" : "")
+            .setPartNameGenerator(h2h -> h2h.player1Wins() > h2h.player2Wins() ? "bold" : "")
             .setFlexGrow(3)
             .setSortable(true);
 
@@ -28,7 +28,7 @@ class Head2HeadGrid extends Grid<Head2HeadData> {
 
         addColumn(h2h -> h2h.player2().name())
             .setHeader("Játékos 2")
-            .setClassNameGenerator(h2h -> h2h.player2Wins() > h2h.player1Wins() ? "bold" : "")
+            .setPartNameGenerator(h2h -> h2h.player2Wins() > h2h.player1Wins() ? "bold" : "")
             .setFlexGrow(3)
             .setSortable(true);
 

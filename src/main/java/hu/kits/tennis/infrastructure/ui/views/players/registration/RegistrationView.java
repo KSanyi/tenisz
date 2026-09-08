@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -42,7 +42,7 @@ public class RegistrationView extends VerticalLayout {
         setSpacing(false);
         
         add(new H3("KVTK regisztráció"),
-            new Label("Kérlek töltsd ki a az alábbi regisztrációs űrlapot. Adataidat bizalmasan kezeljük."),
+            new NativeLabel("Kérlek töltsd ki a az alábbi regisztrációs űrlapot. Adataidat bizalmasan kezeljük."),
             registrationForm,
             saveButton);
         

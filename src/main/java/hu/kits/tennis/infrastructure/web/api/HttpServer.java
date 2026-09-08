@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 import hu.kits.tennis.infrastructure.web.VaadinJettyServer;
 import io.javalin.Javalin;
-import io.javalin.core.util.RouteOverviewPlugin;
-import io.javalin.core.validation.JavalinValidation;
 import io.javalin.http.Context;
 
 public class HttpServer {
@@ -31,13 +29,15 @@ public class HttpServer {
         ApiDocHandler apiDocHandler = new ApiDocHandler();
         
         javalin = Javalin.create(config -> {
-            config.server(() -> new VaadinJettyServer(port));
-            config.registerPlugin(new RouteOverviewPlugin("/routes")); 
-            config.defaultContentType = "application/json";
-            config.enableCorsForAllOrigins();
-            config.requestLogger(this::log);
+            config.jetty.port = port;
+            config.jetty.modifyServer(VaadinJettyServer::attachTo);
+            config.bundledPlugins.enableRouteOverview("/routes");
+            config.http.defaultContentType = "application/json";
+            config.bundledPlugins.enableCors(cors -> cors.addRule(rule -> rule.anyHost()));
+            config.requestLogger.http(this::log);
             config.jsonMapper(new TeniszJsonMapper(applicationContext));
-        }).routes(() -> {
+            config.fileRenderer(new MustacheFileRenderer());
+            config.routes.apiBuilder(() -> {
             path("api/docs", () -> {
                 get(apiDocHandler::createTestCasesList);
                 get("{testCase}", apiDocHandler::createTestCaseDoc);
@@ -72,10 +72,11 @@ public class HttpServer {
             path("tournaments", () -> {
                 get(restHandlers::redirectToVaadin);
             });
-        }).exception(BadRequestException.class, this::handleException);
-        
-        JavalinValidation.register(LocalDate.class, LocalDate::parse);
-        
+            });
+            config.routes.exception(BadRequestException.class, this::handleException);
+            config.validation.register(LocalDate.class, LocalDate::parse);
+        });
+
         logger.info("Server initialized on port {}", port);
     }
     

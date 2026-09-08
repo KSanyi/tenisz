@@ -38,7 +38,7 @@ public class MatchesGridMobile extends Grid<MatchInfo> {
     }
     
     public void setBestWorstAndKTRRelevantMatches(MatchInfo bestMatch, MatchInfo worstMatch, Set<Integer> ktrRelevantMatchIds) {
-        setClassNameGenerator(match -> {
+        setPartNameGenerator(match -> {
             if(match.equals(bestMatch)) {
                 return "green";
             } else if(match.equals(worstMatch)) {

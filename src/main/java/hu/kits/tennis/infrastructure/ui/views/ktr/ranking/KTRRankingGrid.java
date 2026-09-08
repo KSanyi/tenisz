@@ -11,7 +11,7 @@ import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.AnchorTarget;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -84,7 +84,7 @@ class KTRRankingGrid extends Grid<PlayerWithKTR> {
     }
     
     private static Component createKTRComponent(PlayerWithKTR playerWithKTR) {
-        Span span = new Span(new Label(playerWithKTR.ktr().toString()));
+        Span span = new Span(new NativeLabel(playerWithKTR.ktr().toString()));
         span.add(createKTRChangeSpan(playerWithKTR.ktrChange()));
         return span;
     }
@@ -105,7 +105,7 @@ class KTRRankingGrid extends Grid<PlayerWithKTR> {
     
     private static Span createKTRChangeSpan(KTR ktrChange, String arrow, String color) {
         Icon icon = new Icon("lumo", arrow);
-        Label label = new Label(ktrChange.toString());
+        NativeLabel label = new NativeLabel(ktrChange.toString());
         label.getStyle().set("font-size", "11px");
         Span span = new Span(icon, label);
         span.getStyle().set("color", color);

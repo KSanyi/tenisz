@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
@@ -52,7 +52,7 @@ class KTRInfoDialog extends Dialog {
                 &ast; <small>amennyiben a játékos 25. mérkőzése napján több meccset is játszott (pl egy napi versenyen szerepelt), akkor minden aznap játszott mérkőzés beleszámít az KTR-be</small>
                 """;
         
-        Label contentLabel = new Label();
+        NativeLabel contentLabel = new NativeLabel();
         contentLabel.getElement().setProperty("innerHTML", content);
         add(contentLabel);
     }

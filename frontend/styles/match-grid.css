@@ -1,15 +1,15 @@
-.bold {
+[part~="bold"] {
   font-weight: bold
 }
 
-.green {
+[part~="green"] {
   background-color: var(--lumo-success-color-10pct);
 }
 
-.red {
+[part~="red"] {
   background-color: var(--lumo-error-color-10pct);
 }
 
-.grey {
+[part~="grey"] {
   background-color: var(--lumo-contrast-5pct);
 }

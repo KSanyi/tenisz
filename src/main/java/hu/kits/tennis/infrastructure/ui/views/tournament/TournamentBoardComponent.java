@@ -65,7 +65,7 @@ class TournamentBoardComponent extends Grid<Row> {
                 .setTextAlign(ColumnTextAlign.CENTER)
                 .setFlexGrow(1)
                 .setWidth(i == 1 ? "200px" : "250px")
-                .setClassNameGenerator(row -> createCellStyle(round, row.rowNum));
+                .setPartNameGenerator(row -> createCellStyle(round, row.rowNum));
         }
         
         for(int i=1;i<=MathUtil.pow2(rounds+1)-1;i++) {

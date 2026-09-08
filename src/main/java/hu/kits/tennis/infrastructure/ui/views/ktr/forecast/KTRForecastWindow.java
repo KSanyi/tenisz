@@ -22,7 +22,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow.HeaderCell;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -145,7 +145,7 @@ public class KTRForecastWindow extends Dialog {
 
         layout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         
-        Label description = new Label("Megnézheted, hogy egy fiktív mérkőzés után hogyan változna az KTR-ed.");
+        NativeLabel description = new NativeLabel("Megnézheted, hogy egy fiktív mérkőzés után hogyan változna az KTR-ed.");
         
         VerticalLayout playersLayout = new VerticalLayout(player1Combo, player2Combo);
         playersLayout.setPadding(false);
@@ -184,7 +184,7 @@ public class KTRForecastWindow extends Dialog {
             
             addColumn(LitRenderer.<BookedMatch>of("${item.name1}")
                     .withProperty("name1", match -> match.playedMatch().player1().name()))
-                .setClassNameGenerator(match -> match.playedMatch().result().isPlayer1Winner() ? "bold" : "")
+                .setPartNameGenerator(match -> match.playedMatch().result().isPlayer1Winner() ? "bold" : "")
                 .setHeader("")
                 .setAutoWidth(true)
                 .setTextAlign(ColumnTextAlign.CENTER)
@@ -192,14 +192,14 @@ public class KTRForecastWindow extends Dialog {
             
             addColumn(LitRenderer.<BookedMatch>of("${item.name}")
                     .withProperty("name2", match -> match.playedMatch().player2().name()))
-                .setClassNameGenerator(match -> match.playedMatch().result().isPlayer2Winner() ? "bold" : "")
+                .setPartNameGenerator(match -> match.playedMatch().result().isPlayer2Winner() ? "bold" : "")
                 .setHeader("")
                 .setAutoWidth(true)
                 .setTextAlign(ColumnTextAlign.CENTER)
                 .setFlexGrow(3);
             
             addComponentColumn(this::matchResult)
-                .setClassNameGenerator(match -> "bold")
+                .setPartNameGenerator(match -> "bold")
                 .setHeader("Eredmény")
                 .setTextAlign(ColumnTextAlign.CENTER)
                 .setFlexGrow(1);
@@ -230,7 +230,7 @@ public class KTRForecastWindow extends Dialog {
             if(result == null) {
                 return new Span();
             } else {
-                Label label = new Label(result.toString());
+                NativeLabel label = new NativeLabel(result.toString());
                 HorizontalLayout layout = new HorizontalLayout(label);
                 layout.setSpacing(false);
                 layout.setAlignItems(Alignment.CENTER);
@@ -255,7 +255,7 @@ public class KTRForecastWindow extends Dialog {
         }
         
         private void updateMatchKTRColumn(String columnKey, Player player) {
-            Label label = new Label("Meccs KTR " + getInitials(player.name()));
+            NativeLabel label = new NativeLabel("Meccs KTR " + getInitials(player.name()));
             UIUtils.setTooltip("Meccs KTR " + player.name() + " számára", label);
             
             HeaderCell headerCell = getHeaderRows().get(0).getCell(getColumnByKey(columnKey));

@@ -23,7 +23,7 @@ import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.infrastructure.ApplicationContext;
 import io.javalin.http.ContentType;
 import io.javalin.http.Context;
-import io.javalin.http.HttpCode;
+import io.javalin.http.HttpStatus;
 
 class RestHandlers {
 
@@ -57,7 +57,7 @@ class RestHandlers {
     void loadTournamentDetails(Context context) {
         Optional<Tournament> tournament = tournamentService.findTournament(context.pathParam("tournamentId"));
         if(tournament.isEmpty()) {
-            context.status(HttpCode.NOT_FOUND);
+            context.status(HttpStatus.NOT_FOUND);
         } else {
             context.json(tournament.get());    
         }
@@ -72,7 +72,7 @@ class RestHandlers {
         int playerId = Integer.parseInt(context.pathParam("playerId"));
         Optional<Player> player = playerRepository.findPlayer(playerId);
         if(player.isEmpty()) {
-            context.status(HttpCode.NOT_FOUND);
+            context.status(HttpStatus.NOT_FOUND);
         } else {
             PlayerStats playerStats = ktrService.loadPlayerStats(player.get());
             context.json(playerStats);  

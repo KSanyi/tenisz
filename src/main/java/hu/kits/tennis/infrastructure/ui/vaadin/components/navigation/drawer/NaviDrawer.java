@@ -12,8 +12,8 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 
-import elemental.json.JsonObject;
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
+import tools.jackson.databind.JsonNode;
 
 @CssImport("./styles/components/navi-drawer.css")
 @JsModule("./swipe-away.js")
@@ -36,12 +36,12 @@ public class NaviDrawer extends Div implements AfterNavigationObserver {
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
         UI ui = attachEvent.getUI();
-        ui.getPage().executeJavaScript("window.addSwipeAway($0,$1,$2,$3)", mainContent.getElement(), this, "onSwipeAway", scrim.getElement());
+        ui.getPage().executeJs("window.addSwipeAway($0,$1,$2,$3)", mainContent.getElement(), this, "onSwipeAway", scrim.getElement());
         railButton.click();
     }
 
     @ClientCallable
-    public void onSwipeAway(@SuppressWarnings("unused") JsonObject data) {
+    public void onSwipeAway(@SuppressWarnings("unused") JsonNode data) {
         close();
     }
 
@@ -98,7 +98,7 @@ public class NaviDrawer extends Div implements AfterNavigationObserver {
             railButton.setIcon(new Icon(VaadinIcon.CHEVRON_RIGHT_SMALL));
             railButton.setText("Kinyit");
             UIUtils.setAriaLabel("Expand menu", railButton);
-            getUI().get().getPage().executeJavaScript("var originalStyle = getComputedStyle($0).pointerEvents;" //
+            getUI().get().getPage().executeJs("var originalStyle = getComputedStyle($0).pointerEvents;" //
                     + "$0.style.pointerEvents='none';" //
                     + "setTimeout(function() {$0.style.pointerEvents=originalStyle;}, 170);", getElement());
         }
@@ -126,7 +126,7 @@ public class NaviDrawer extends Div implements AfterNavigationObserver {
         // iOS 12.2 sometimes fails to animate the menu away.
         // It should be gone after 240ms
         // This will make sure it disappears even when the browser fails.
-        getUI().get().getPage().executeJavaScript("var originalStyle = getComputedStyle($0).transitionProperty;" //
+        getUI().get().getPage().executeJs("var originalStyle = getComputedStyle($0).transitionProperty;" //
                 + "setTimeout(function() {$0.style.transitionProperty='padding'; requestAnimationFrame(function() {$0.style.transitionProperty=originalStyle})}, 250);",
                 mainContent.getElement());
     }

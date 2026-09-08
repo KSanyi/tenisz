@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 
 import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.domain.user.UserData;
@@ -118,7 +118,7 @@ class UsersGrid extends Grid<UserData> {
             setSpacing(Right.L);
 
             FlexBoxLayout name = getName();
-            Label email = getEmail();
+            NativeLabel email = getEmail();
             FlexBoxLayout phone = getPhone();
 
             FlexBoxLayout column = new FlexBoxLayout(name, email, phone);
@@ -129,7 +129,7 @@ class UsersGrid extends Grid<UserData> {
         }
 
         private FlexBoxLayout getName() {
-            Label owner = UIUtils.createLabel(FontSize.M, TextColor.BODY, userData.name());
+            NativeLabel owner = UIUtils.createLabel(FontSize.M, TextColor.BODY, userData.name());
             UIUtils.setOverflow(Overflow.HIDDEN, owner);
             UIUtils.setTextOverflow(TextOverflow.ELLIPSIS, owner);
 
@@ -143,8 +143,8 @@ class UsersGrid extends Grid<UserData> {
             return wrapper;
         }
 
-        private Label getEmail() {
-            Label account = UIUtils.createLabel(FontSize.S, TextColor.SECONDARY, userData.email());
+        private NativeLabel getEmail() {
+            NativeLabel account = UIUtils.createLabel(FontSize.S, TextColor.SECONDARY, userData.email());
             account.addClassNames(LumoStyles.Margin.Bottom.S);
             UIUtils.setOverflow(Overflow.HIDDEN, account);
             UIUtils.setTextOverflow(TextOverflow.ELLIPSIS, account);
@@ -152,7 +152,7 @@ class UsersGrid extends Grid<UserData> {
         }
 
         private FlexBoxLayout getPhone() {
-            Label phone = UIUtils.createH5Label(userData.phone());
+            NativeLabel phone = UIUtils.createH5Label(userData.phone());
             phone.addClassName(LumoStyles.FontFamily.MONOSPACE);
 
             FlexBoxLayout wrapper = new FlexBoxLayout(phone);

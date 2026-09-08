@@ -26,18 +26,18 @@ import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.tournament.TournamentSummary;
 import hu.kits.tennis.domain.tournament.TournamentSummary.CourtInfo;
 import hu.kits.tennis.infrastructure.ApplicationContext;
-import io.javalin.plugin.json.JsonMapper;
+import io.javalin.json.JsonMapper;
 
 public class TeniszJsonMapper implements JsonMapper {
 
     private final ApplicationContext applicationContext;
-    
+
     public TeniszJsonMapper(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public String toJsonString(Object object) {
+    public String toJsonString(Object object, java.lang.reflect.Type type) {
         return mapToJson(object).toString();
     }
     

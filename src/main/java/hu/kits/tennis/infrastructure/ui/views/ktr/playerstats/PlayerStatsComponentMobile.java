@@ -1,7 +1,7 @@
 package hu.kits.tennis.infrastructure.ui.views.ktr.playerstats;
 
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.theme.lumo.LumoUtility.Display;
@@ -26,7 +26,7 @@ class PlayerStatsComponentMobile extends VerticalLayout {
 
     private final KTRService ktrService = Main.applicationContext.getKTRService();
     
-    private final Label nameLabel = UIUtils.createH3Label("");
+    private final NativeLabel nameLabel = UIUtils.createH3Label("");
     private final Badge ktrBadge = new Badge("", BadgeColor.CONTRAST_PRIMARY, BadgeSize.M, BadgeShape.PILL);
     private final Div ktrHistoryChartHolder = new Div();
     

@@ -3,7 +3,7 @@ package hu.kits.tennis.infrastructure.ui.vaadin.components.detailsdrawer;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -18,7 +18,7 @@ import hu.kits.tennis.infrastructure.ui.vaadin.util.layout.size.Vertical;
 public class DetailsDrawerHeader extends FlexBoxLayout {
 
     private final Button close;
-    private final Label title;
+    private final NativeLabel title;
 
     public DetailsDrawerHeader(String title) {
         addClassName(BoxShadowBorders.BOTTOM);

@@ -8,7 +8,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
@@ -166,7 +166,7 @@ class TournamentsGrid extends Grid<TournamentSummary> {
             setSpacing(Right.L);
 
             FlexBoxLayout name = getName();
-            Label date = getDate();
+            NativeLabel date = getDate();
 
             FlexBoxLayout column = new FlexBoxLayout(name, date);
             column.setFlexDirection(FlexDirection.COLUMN);
@@ -176,7 +176,7 @@ class TournamentsGrid extends Grid<TournamentSummary> {
         }
 
         private FlexBoxLayout getName() {
-            Label owner = UIUtils.createLabel(FontSize.M, TextColor.BODY, tournament.name());
+            NativeLabel owner = UIUtils.createLabel(FontSize.M, TextColor.BODY, tournament.name());
             UIUtils.setOverflow(Overflow.HIDDEN, owner);
             UIUtils.setTextOverflow(TextOverflow.ELLIPSIS, owner);
 
@@ -191,8 +191,8 @@ class TournamentsGrid extends Grid<TournamentSummary> {
             return wrapper;
         }
 
-        private Label getDate() {
-            Label account = UIUtils.createLabel(FontSize.S, TextColor.SECONDARY,  Formatters.formatDateLong(tournament.date()));
+        private NativeLabel getDate() {
+            NativeLabel account = UIUtils.createLabel(FontSize.S, TextColor.SECONDARY,  Formatters.formatDateLong(tournament.date()));
             account.addClassNames(LumoStyles.Margin.Bottom.S);
             UIUtils.setOverflow(Overflow.HIDDEN, account);
             UIUtils.setTextOverflow(TextOverflow.ELLIPSIS, account);

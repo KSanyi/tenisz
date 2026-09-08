@@ -9,7 +9,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -54,8 +53,7 @@ import hu.kits.tennis.infrastructure.web.CookieUtil;
 @CssImport("./styles/lumo/spacing.css")
 @CssImport("./styles/lumo/typography.css")
 @CssImport("./styles/misc/box-shadow-borders.css")
-@CssImport(value = "./styles/styles.css", include = "lumo-badge")
-@JsModule("@vaadin/vaadin-lumo-styles/badge")
+@CssImport("./styles/styles.css")
 public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavigationObserver, BeforeEnterObserver  {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -217,7 +215,7 @@ public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavi
         
         var loc = event.getLocation();
         @SuppressWarnings("deprecation")
-        Class<?> navigationTarget = UI.getCurrent().getRouter().resolveNavigationTarget(loc).map(n -> n.getNavigationTarget()).get();
+        Class<?> navigationTarget = event.getSource().resolveNavigationTarget(loc).map(n -> n.getNavigationTarget()).get();
         if(!VaadinUtil.isViewAllowed(navigationTarget)) {
             event.forwardTo(KTRRankingView.class);
         }

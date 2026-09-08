@@ -3,7 +3,7 @@ package hu.kits.tennis.infrastructure.ui.vaadin.components.navigation.drawer;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 
 import hu.kits.tennis.infrastructure.ui.vaadin.util.UIUtils;
 
@@ -13,7 +13,7 @@ public class BrandExpression extends Div {
     private static final String CLASS_NAME = "brand-expression";
 
     private final Image logo;
-    private final Label title;
+    private final NativeLabel title;
 
     public BrandExpression() {
         setClassName(CLASS_NAME);

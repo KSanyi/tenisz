@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
 import hu.kits.tennis.common.StringUtil;
@@ -152,7 +152,7 @@ class PlayersGrid extends Grid<Player> {
         }
 
         private FlexBoxLayout getName() {
-            Label owner = UIUtils.createLabel(FontSize.M, TextColor.BODY, player.name());
+            NativeLabel owner = UIUtils.createLabel(FontSize.M, TextColor.BODY, player.name());
             UIUtils.setOverflow(Overflow.HIDDEN, owner);
             UIUtils.setTextOverflow(TextOverflow.ELLIPSIS, owner);
 

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -56,7 +56,7 @@ public class PlayerAddressDataGatherView extends VerticalLayout {
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         setSpacing(false);
         
-        Label info = new Label("""
+        NativeLabel info = new NativeLabel("""
                 Kérlek töltsd ki a az alábbi űrlapot a későbbi hatékonyabb számlakészítés érdekében. Adataidat bizalmasan kezeljük. 
                 """);
         

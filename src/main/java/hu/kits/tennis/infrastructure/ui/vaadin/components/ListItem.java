@@ -3,7 +3,7 @@ package hu.kits.tennis.infrastructure.ui.vaadin.components;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 
 import hu.kits.tennis.infrastructure.ui.vaadin.util.FontSize;
@@ -23,8 +23,8 @@ public class ListItem extends FlexBoxLayout {
 
     private final FlexBoxLayout content;
 
-    private final Label primary;
-    private final Label secondary;
+    private final NativeLabel primary;
+    private final NativeLabel secondary;
 
     public ListItem(String primary, String secondary) {
         addClassName(CLASS_NAME);
@@ -33,7 +33,7 @@ public class ListItem extends FlexBoxLayout {
         setPadding(Wide.RESPONSIVE_L);
         setSpacing(Right.L);
 
-        this.primary = new Label(primary);
+        this.primary = new NativeLabel(primary);
         this.secondary = UIUtils.createLabel(FontSize.S, TextColor.SECONDARY, secondary);
         this.primary.setClassName(CLASS_NAME + "__primary");
         this.secondary.setClassName(CLASS_NAME + "__secondary");
@@ -114,7 +114,7 @@ public class ListItem extends FlexBoxLayout {
         primary.setText(text);
     }
 
-    public Label getPrimary() {
+    public NativeLabel getPrimary() {
         return primary;
     }
 

@@ -14,7 +14,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
@@ -70,7 +70,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
     private VerticalLayout tableWithButton;
     private MatchesGrid matchesGrid;
     private RoundRobinComponent roundRobinComponent;
-    private final Label matchCounter = new Label("");
+    private final NativeLabel matchCounter = new NativeLabel("");
     
     private Tournament tournament;
     
@@ -88,7 +88,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         VerticalLayout layout = new VerticalLayout();
         layout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         
-        Label title = UIUtils.createH2Label(tournament.params().name() + " " + Formatters.formatDateLong(tournament.params().date()));
+        NativeLabel title = UIUtils.createH2Label(tournament.params().name() + " " + Formatters.formatDateLong(tournament.params().date()));
         HorizontalLayout header = new HorizontalLayout(title);
         
         contestantsTable = new ContestantsTable(tournament.id(), this);

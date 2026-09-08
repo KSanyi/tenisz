@@ -1,7 +1,7 @@
 package hu.kits.tennis.infrastructure.ui.views.ktr.playerstats;
 
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
@@ -19,10 +19,10 @@ public class PlayerStatsComponent extends VerticalLayout {
 
     private final KTRService ktrService = Main.applicationContext.getKTRService();
     
-    private final Label nameLabel = UIUtils.createH2Label("");
-    private final Label ktrHighLabel = new Label();
-    private final Label matchStatsLabel = new Label();
-    private final Label gameStatsLabel = new Label();
+    private final NativeLabel nameLabel = UIUtils.createH2Label("");
+    private final NativeLabel ktrHighLabel = new NativeLabel();
+    private final NativeLabel matchStatsLabel = new NativeLabel();
+    private final NativeLabel gameStatsLabel = new NativeLabel();
     private final Div ktrHistoryChartHolder = new Div();
     
     private final TournamentMatchesComponent tournamentMatchesComponent = new TournamentMatchesComponent();
