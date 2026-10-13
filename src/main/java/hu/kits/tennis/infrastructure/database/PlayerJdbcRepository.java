@@ -165,7 +165,8 @@ public class PlayerJdbcRepository implements PlayerRepository {
     public List<KTRUpdate> loadAllKTRUpdates() {
         Players players = loadAllPlayers();
         return List.of(
-                new KTRUpdate(players.get(21691), LocalDate.of(2024, 1, 1), KTR.of(7.2))); // Vereckey Mátyás
+                new KTRUpdate(players.get(21691), LocalDate.of(2024, 1, 1), KTR.of(7.2)),  // Vereckey Mátyás
+                new KTRUpdate(players.get(25211), LocalDate.of(2026, 1, 1), KTR.of(6.6))); // Jelfy Maximilián
     }
 
 }
