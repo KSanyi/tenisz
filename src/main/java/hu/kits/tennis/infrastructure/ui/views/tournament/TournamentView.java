@@ -39,6 +39,7 @@ import hu.kits.tennis.domain.tournament.PaymentStatus;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
+import hu.kits.tennis.domain.tournament.TournamentParams.Type;
 import hu.kits.tennis.domain.tournament.TournamentService;
 import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
@@ -89,7 +90,12 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
         VerticalLayout layout = new VerticalLayout();
         layout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         
-        NativeLabel title = UIUtils.createH2Label(tournament.params().name() + " " + Formatters.formatDateLong(tournament.params().date()));
+        String caption = tournament.params().name();
+        if(tournament.params().type() == Type.DAILY) {
+            caption += " " + Formatters.formatDateLong(tournament.params().date());
+        }
+        
+        NativeLabel title = UIUtils.createH2Label(caption);
         HorizontalLayout header = new HorizontalLayout(title);
         
         contestantsTable = new ContestantsTable(tournament.id(), this);

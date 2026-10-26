@@ -163,7 +163,10 @@ class TournamentBoardComponent extends Div {
         Div scores = new Div();
         scores.addClassName("scores");
 
-        Div row = new Div(name, ktr, statsLink, scores);
+        Div nameWithKTR = new Div(name, ktr, statsLink);
+        nameWithKTR.addClassName("player-name-with-ktr");
+
+        Div row = new Div(nameWithKTR, scores);
         row.addClassName("player-row");
 
         if(result != null) {
