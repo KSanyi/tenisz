@@ -1,6 +1,8 @@
 package hu.kits.tennis.infrastructure.ui.views.tournament;
 
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.AnchorTarget;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -149,10 +151,19 @@ class TournamentBoardComponent extends Div {
             }
         }
 
+        Span statsLink = new Span();
+        if(player != null && !player.equals(Player.BYE)) {
+            Anchor anchor = new Anchor("/ui/player-stats/" + player.id(), "↗", AnchorTarget.BLANK);
+            anchor.addClassName("player-stats-link");
+            anchor.getElement().setAttribute("title", "Játékos statisztika");
+            anchor.getElement().setAttribute("onclick", "event.stopPropagation()");
+            statsLink.add(anchor);
+        }
+
         Div scores = new Div();
         scores.addClassName("scores");
 
-        Div row = new Div(name, ktr, scores);
+        Div row = new Div(name, ktr, statsLink, scores);
         row.addClassName("player-row");
 
         if(result != null) {
