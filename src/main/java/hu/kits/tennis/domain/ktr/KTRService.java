@@ -36,6 +36,8 @@ public class KTRService {
     private final MatchRepository matchRepository;
     private final PlayerRepository playerRepository;
     private final TournamentRepository tournamentRepository;
+    
+    private List<PlayerWithKTR> cachedPlayersWithKtrList = null;
 
     public KTRService(MatchService matchService, MatchRepository matchRepository, PlayerRepository playerRepository, TournamentRepository tournamentRepository) {
         this.tournamentRepository = tournamentRepository;
@@ -57,8 +59,16 @@ public class KTRService {
         return matchRepository.save(bookedMatch);
     }
     
-    public List<PlayerWithKTR> calculateKTRRanking() {
+    public List<PlayerWithKTR> loadKTRRanking() {
         
+        if(cachedPlayersWithKtrList == null) {
+            cachedPlayersWithKtrList = calculateKTRRanking();
+        }
+
+        return cachedPlayersWithKtrList;
+    }
+    
+    private List<PlayerWithKTR> calculateKTRRanking() {
         logger.info("Calculating KTR ranking");
         
         List<Player> players = playerRepository.loadAllPlayers().entries();
@@ -127,6 +137,8 @@ public class KTRService {
         matchRepository.replaceAllBookedMatches(recalculatedBookedMatches);
         
         logger.info("Recalculated KTRs saved");
+        
+        cachedPlayersWithKtrList = calculateKTRRanking();
     }
 
     public List<BookedMatch> loadBookedMatches() {
@@ -147,7 +159,7 @@ public class KTRService {
         if(matchInfos.isEmpty()) {
             return PlayerStats.create(player, ktrDetails, matchInfos, KTRHistory.EMPTY, 0);
         } else {
-            List<PlayerWithKTR> ktrRanking = calculateKTRRanking();
+            List<PlayerWithKTR> ktrRanking = loadKTRRanking();
             PlayerWithKTR playerWithKTR = ktrRanking.stream().filter(p -> p.player().equals(player)).findFirst().get();
             int rank = ktrRanking.indexOf(playerWithKTR) + 1;
             

@@ -22,7 +22,7 @@ public class KTRChangeAnalyzer {
     
     public void analyse() {
         
-        List<NameAndKTR> currentKTRs = ktrService.calculateKTRRanking().stream()
+        List<NameAndKTR> currentKTRs = ktrService.loadKTRRanking().stream()
                 .map(u -> new NameAndKTR(u.player().name(), u.ktr().value())).toList();
         
         List<NameAndKTR> ktrsFromFile = loadNamesAndKTRsFromFile();

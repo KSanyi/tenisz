@@ -64,7 +64,7 @@ class RestHandlers {
     }
     
     void calculateKTRRanking(Context context) {
-        List<PlayerWithKTR> ktrRanking = ktrService.calculateKTRRanking();
+        List<PlayerWithKTR> ktrRanking = ktrService.loadKTRRanking();
         context.json(ktrRanking);
     }
     
@@ -80,7 +80,7 @@ class RestHandlers {
     }
     
     void listAllPlayersWithKTRInCSV(Context context) {
-        List<PlayerWithKTR> playersWithKTR = ktrService.calculateKTRRanking();
+        List<PlayerWithKTR> playersWithKTR = ktrService.loadKTRRanking();
         
         String content = playersWithKTR.stream()
                 .sorted((p1, p2) -> StringUtil.HUN_COLLATOR.compare(p1.player().name(), p2.player().name()))

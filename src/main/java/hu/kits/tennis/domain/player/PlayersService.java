@@ -33,7 +33,7 @@ public class PlayersService {
     }
     
     public PlayersWithKTR loadAllPlayersWithKTR() {
-        List<PlayerWithKTR> playersWithKTR = ktrService.calculateKTRRanking();
+        List<PlayerWithKTR> playersWithKTR = ktrService.loadKTRRanking();
         return new PlayersWithKTR(playersWithKTR);
     }
     

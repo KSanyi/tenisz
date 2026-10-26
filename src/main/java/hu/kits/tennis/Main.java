@@ -48,6 +48,8 @@ public class Main {
         
         applicationContext = new ApplicationContext(dataSource, emailSender, oAuthService, invoiceService);
         
+        applicationContext.getKTRService().loadKTRRanking(); // to fill cache
+        
         new HttpServer(port, applicationContext).start();
     }
     
