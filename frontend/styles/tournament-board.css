@@ -11,12 +11,12 @@
 .tournament-board .round {
   display: flex;
   flex-direction: column;
-  flex: 1 0 230px;
+  flex: 1 0 auto;
   min-width: 230px;
 }
 
 .tournament-board .winner-round {
-  flex: 0 0 200px;
+  flex: 0 0 auto;
   min-width: 200px;
 }
 
@@ -131,19 +131,15 @@
 }
 
 .tournament-board .player-name-with-ktr {
-  flex: 1;
-  min-width: 0;
+  flex: 1 0 auto;
   display: flex;
   align-items: baseline;
   gap: 4px;
 }
 
 .tournament-board .player-name {
-  flex: 0 1 auto;
-  min-width: 0;
+  flex: none;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .tournament-board .scores {
