@@ -35,7 +35,7 @@ import hu.kits.tennis.infrastructure.ui.views.View;
 
 @Route(value = "matches", layout = MainLayout.class)
 @PageTitle("Meccsek")
-@AllowedRoles({Role.ADMIN})
+@AllowedRoles({Role.ADMIN, Role.ANONYMUS, Role.VISITOR, Role.MEMBER})
 public class MatchesView extends SplitViewFrame implements View {
 
     private final KTRService ktrService = Main.applicationContext.getKTRService();

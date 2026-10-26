@@ -119,15 +119,17 @@ public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavi
     private void initNaviItems() {
         NaviMenu menu = naviDrawer.getMenu();
         
-        menu.addNaviItem(VaadinIcon.USERS, "Felhasználók", UsersView.class);
-        menu.addNaviItem(VaadinIcon.TROPHY, "Versenyek", TournamentsView.class);
+        if(VaadinUtil.getUser().role() == Role.ADMIN) {
+            NaviItem adminMenu = menu.addNaviItem(VaadinIcon.AUTOMATION, "Admin", null);    
+            menu.addNaviItem(adminMenu, "Felhasználók", UsersView.class);
+            menu.addNaviItem(adminMenu, "Regisztrációk", RegistrationsView.class);
+            menu.addNaviItem(adminMenu, "Játékosok", PlayersView.class);
+        }
         
-        NaviItem ktrMenu = menu.addNaviItem(VaadinIcon.AUTOMATION, "KTR", null);
-        menu.addNaviItem(ktrMenu, "Regisztrációk", RegistrationsView.class);
-        menu.addNaviItem(ktrMenu, "Játékosok", PlayersView.class);
-        menu.addNaviItem(ktrMenu, "Meccsek", MatchesView.class);
-        menu.addNaviItem(ktrMenu, "KTR ranking", KTRRankingView.class);
-        menu.addNaviItem(ktrMenu, "Head-2-Head", Head2HeadView.class);
+        menu.addNaviItem(VaadinIcon.TROPHY, "Versenyek", TournamentsView.class);
+        menu.addNaviItem(VaadinIcon.GOLF, "Meccsek", MatchesView.class);
+        menu.addNaviItem(VaadinIcon.TASKS, "KTR ranking", KTRRankingView.class);
+        menu.addNaviItem(VaadinIcon.USERS, "Head-2-Head", Head2HeadView.class);
     }
 
     /**
@@ -193,7 +195,6 @@ public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavi
         VaadinUtil.setUser(user);
         CookieUtil.createUserCookie(user.userId());
         appBar.userLoggedIn();
-        naviDrawer.setVisible(user.role() == Role.ADMIN);
         naviDrawer.refresh();
         currentView.refresh();
         UI.getCurrent().getSession().getSession().setMaxInactiveInterval(60 * 60 * 24);
@@ -208,8 +209,6 @@ public class MainLayout extends FlexBoxLayout implements RouterLayout, AfterNavi
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        
-        naviDrawer.setVisible(VaadinUtil.getUser().role() == Role.ADMIN);
         
         naviDrawer.getMenu().refresh();
         

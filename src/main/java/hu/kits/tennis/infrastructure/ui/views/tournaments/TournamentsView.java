@@ -31,7 +31,7 @@ import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentView;
 
 @Route(value = "tournaments", layout = MainLayout.class)
 @PageTitle("Versenyek")
-@AllowedRoles({Role.ADMIN})
+@AllowedRoles({Role.ADMIN, Role.ANONYMUS, Role.VISITOR, Role.MEMBER})
 public class TournamentsView extends SplitViewFrame implements View {
 
     private final TournamentService tournamentService = Main.applicationContext.getTournamentService();

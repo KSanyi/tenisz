@@ -40,6 +40,7 @@ import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentParams.Status;
 import hu.kits.tennis.domain.tournament.TournamentParams.Structure;
 import hu.kits.tennis.domain.tournament.TournamentService;
+import hu.kits.tennis.domain.user.Role;
 import hu.kits.tennis.infrastructure.ui.MainLayout;
 import hu.kits.tennis.infrastructure.ui.component.ConfirmationDialog;
 import hu.kits.tennis.infrastructure.ui.component.KITSNotification;
@@ -156,7 +157,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             Button fillBoardButton = UIUtils.createButton("Táblára", VaadinIcon.ARROW_LEFT, ButtonVariant.LUMO_PRIMARY);
             fillBoardButton.setVisible(VaadinUtil.isUserLoggedIn() && tournament.status() == Status.DRAFT);
             fillBoardButton.addClickListener(click -> fillMainBoard());
-            fillBoardButton.setVisible(tournament.status() == Status.DRAFT);
+            fillBoardButton.setVisible(tournament.status() == Status.DRAFT && VaadinUtil.getUser().role() == Role.ADMIN);
             
             tableWithButton = new VerticalLayout(contestantsTable, fillBoardButton);
             tableWithButton.setPadding(false);
@@ -303,19 +304,20 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             if(tableWithButton != null) {
                 tableWithButton.setVisible(true);    
             }
-            contestantsTable.setVisible(true);
+            contestantsTable.setVisible(true && VaadinUtil.getUser().role() == Role.ADMIN);
             if(mainBoard != null) {
                 mainBoard.setVisible(!mobile);    
             }
             if(consolationBoard != null) {
                 mainBoard.setVisible(!mobile);                
             }
+            deleteButton.setVisible(!mobile && VaadinUtil.getUser().role() == Role.ADMIN); 
         } else {
             if(tableWithButton != null) {
                 tableWithButton.setVisible(!mobile);    
             }
-            contestantsTable.setVisible(!mobile);
-            deleteButton.setVisible(!mobile);    
+            contestantsTable.setVisible(!mobile && VaadinUtil.getUser().role() == Role.ADMIN);
+            deleteButton.setVisible(!mobile && VaadinUtil.getUser().role() == Role.ADMIN);    
         }
     }
     
