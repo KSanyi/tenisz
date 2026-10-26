@@ -1,8 +1,185 @@
-[part~="playerCell"] {
-  background-color: var(--lumo-primary-color-50pct);
-  color: white;
+.tournament-board {
+  --board-line-color: var(--lumo-contrast-30pct);
+  --board-gap: 14px;
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  min-width: 0;
+  padding-bottom: var(--lumo-space-s);
 }
 
-[part~="emptyCell"] {
-  border-right: 0 !important;
+.tournament-board .round {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 230px;
+  min-width: 230px;
+}
+
+.tournament-board .winner-round {
+  flex: 0 0 200px;
+  min-width: 200px;
+}
+
+.tournament-board .round-header {
+  margin: 0 var(--board-gap) var(--lumo-space-s);
+  padding: var(--lumo-space-xs) 0;
+  background: var(--lumo-contrast-5pct);
+  border-bottom: 2px solid var(--lumo-primary-color);
+  text-align: center;
+  font-size: var(--lumo-font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lumo-secondary-text-color);
+}
+
+.tournament-board .round-matches {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.tournament-board .match-pair {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.tournament-board .match-slot {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 5px var(--board-gap);
+}
+
+/* connector lines */
+.tournament-board .match-slot::before,
+.tournament-board .match-slot::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: var(--board-gap);
+  border-top: 1px solid var(--board-line-color);
+}
+
+.tournament-board .match-slot::before {
+  left: 0;
+}
+
+.tournament-board .match-slot::after {
+  right: 0;
+}
+
+.tournament-board .first-round .match-slot::before,
+.tournament-board .winner-round .match-slot::after {
+  display: none;
+}
+
+.tournament-board .match-pair::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 25%;
+  bottom: 25%;
+  border-right: 1px solid var(--board-line-color);
+}
+
+/* match card */
+.tournament-board .match-card {
+  width: 100%;
+  background: var(--lumo-base-color);
+  border: 1px solid var(--lumo-contrast-10pct);
+  border-radius: var(--lumo-border-radius-m);
+  box-shadow: var(--lumo-box-shadow-xs);
+  overflow: hidden;
+}
+
+.tournament-board .match-card.clickable {
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.tournament-board .match-card.clickable:hover {
+  border-color: var(--lumo-primary-color-50pct);
+  box-shadow: var(--lumo-box-shadow-s);
+}
+
+.tournament-board .player-row {
+  display: flex;
+  align-items: center;
+  gap: var(--lumo-space-s);
+  height: 30px;
+  padding: 0 var(--lumo-space-s);
+  border-left: 3px solid transparent;
+  font-size: var(--lumo-font-size-s);
+  color: var(--lumo-body-text-color);
+}
+
+.tournament-board .player-row + .player-row {
+  border-top: 1px solid var(--lumo-contrast-10pct);
+}
+
+.tournament-board .player-row.winner {
+  border-left-color: var(--lumo-primary-color);
+  font-weight: 600;
+}
+
+.tournament-board .player-row.loser {
+  color: var(--lumo-secondary-text-color);
+}
+
+.tournament-board .player-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tournament-board .scores {
+  display: flex;
+  gap: 2px;
+}
+
+.tournament-board .set-score {
+  min-width: 18px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+  color: var(--lumo-secondary-text-color);
+}
+
+.tournament-board .set-score.set-won {
+  font-weight: 700;
+  color: var(--lumo-header-text-color);
+}
+
+/* champion */
+.tournament-board .champion-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--lumo-space-s);
+  min-height: 40px;
+  padding: 0 var(--lumo-space-m);
+  border-radius: var(--lumo-border-radius-m);
+  background: var(--lumo-primary-color);
+  color: var(--lumo-primary-contrast-color);
+  font-weight: 600;
+  box-shadow: var(--lumo-box-shadow-s);
+}
+
+.tournament-board .champion-card.empty {
+  background: transparent;
+  border: 1px dashed var(--lumo-contrast-20pct);
+  box-shadow: none;
+}
+
+.tournament-board .champion-icon {
+  flex: none;
+  width: var(--lumo-icon-size-s);
+  height: var(--lumo-icon-size-s);
+  color: #f5c518;
 }

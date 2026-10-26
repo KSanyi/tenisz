@@ -1,170 +1,164 @@
 package hu.kits.tennis.infrastructure.ui.views.tournament;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.grid.ColumnTextAlign;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.grid.ItemClickEvent;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 
 import hu.kits.tennis.common.MathUtil;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchResult;
+import hu.kits.tennis.domain.match.MatchResult.SetResult;
 import hu.kits.tennis.domain.player.Player;
 import hu.kits.tennis.domain.tournament.Tournament;
 import hu.kits.tennis.domain.tournament.TournamentBoard;
 import hu.kits.tennis.infrastructure.ui.util.VaadinUtil;
-import hu.kits.tennis.infrastructure.ui.views.tournament.TournamentBoardComponent.Row;
 
-@CssImport(value = "./styles/tournament-board.css", themeFor = "vaadin-grid")
-class TournamentBoardComponent extends Grid<Row> {
+@CssImport("./styles/tournament-board.css")
+class TournamentBoardComponent extends Div {
 
     private Tournament tournament;
-    
+
     private TournamentBoard board;
-    
-    private final List<Row> rows = new ArrayList<>();
-    
+
     private final Runnable matchChangeCallback;
-    
+
     TournamentBoardComponent(Tournament tournament, TournamentBoard board, Runnable matchChangeCallback) {
-        
-        this.tournament = tournament;
-        this.board = board;
+
         this.matchChangeCallback = matchChangeCallback;
-        
-        setBoard(board);
-        
-        setAllRowsVisible(true);
-        
-        setSelectionMode(SelectionMode.NONE);
-        
-        addItemClickListener(e -> itemClicked(e));
-        
-        addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
-        addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
-        addThemeVariants(GridVariant.LUMO_COMPACT);
-    }
-    
-    private void setBoard(TournamentBoard board) {
-        this.board = board;
-        int rounds = board.numberOfRounds();
-        
-        this.removeAllColumns();
-        rows.clear();
-        
-        for(int i=1;i<=rounds+1;i++) {
-            int round = i;
-            
-            addColumn(row -> playerNameAndResult(row, round - 1))
-                .setKey(String.valueOf(round))
-                .setHeader(createHeader(rounds, round))
-                .setTextAlign(ColumnTextAlign.CENTER)
-                .setFlexGrow(1)
-                .setWidth(i == 1 ? "200px" : "250px")
-                .setPartNameGenerator(row -> createCellStyle(round, row.rowNum));
-        }
-        
-        for(int i=1;i<=MathUtil.pow2(rounds+1)-1;i++) {
-            rows.add(new Row(rounds, i));
-        }
-    }
-    
-    private PlayerWithResult findPlayerWithResult(Match match, Player player) {
-        if(player == null) {
-            return new PlayerWithResult(null, null);
-        }
-        
-        Optional<Match> prevMatchForPlayer = board.findPrevMatch(match, player);
-        MatchResult prevMatchResultForPlayer = prevMatchForPlayer.map(Match::result).orElse(null);
-        return new PlayerWithResult(player, prevMatchResultForPlayer);
-    }
-    
-    private static String playerNameAndResult(Row row, int round) {
-        PlayerWithResult playerWithResult = row.values.get(round);
-        if(playerWithResult != null && playerWithResult.player != null) {
-            return playerWithResult.player.name() + (playerWithResult.result() != null ? (" " + playerWithResult.result()) : ""); 
-        } else {
-            return null;
-        }
-    }
-    
-    private void itemClicked(ItemClickEvent<Row> e) {
-        
-        if(VaadinUtil.isUserLoggedIn()) {
-            Row row = e.getItem();
-            String key = e.getColumn().getKey();
-            int round = Integer.parseInt(key) - 1;
-            
-            if(round > 0 && isMatchCell(round, row.rowNum)) {
-                int matchNumberInRound = row.rowNum / MathUtil.pow2(round+1) + 1;
-                Match match = board.getMatch(round, matchNumberInRound);
-                if(match != null) {
-                    String title = createHeader(board.numberOfRounds(), round) + " meccs " + matchNumberInRound;
-                    new TournamentMatchDialog(title, match, tournament.params().bestOfNSets(), matchChangeCallback).open();
-                }
-            } 
-        }
+
+        addClassName("tournament-board");
+
+        setBoard(tournament, board);
     }
 
-    private static boolean isMatchCell(int round, int rowNum) {
-        return (rowNum) % MathUtil.pow2(round+1) == MathUtil.pow2(round);
-    }
-
-    private static String createCellStyle(int round, int rowNum) {
-        int startRow = MathUtil.pow2(round-1) - 1;
-        
-        int rowsBetweenMatches = MathUtil.pow2(round + 1);
-        int x = (rowNum - startRow) % rowsBetweenMatches;
-        
-        if(isMatchCell(round-1, rowNum)) {
-            return "playerCell";
-        } else if(x <= rowsBetweenMatches/2 && x > 0) {
-            return null;
-        } else {
-            return "emptyCell";
-        }
-    }
-    
     void setBoard(Tournament tournament, TournamentBoard board) {
-        
+
         this.tournament = tournament;
-        setBoard(board);
-        
-        for(Match match : board.matches().values()) {
-            Player player1 = match.player1();
-            Player player2 = match.player2();
-            
-            var roundAndMatchNumberInRound = MathUtil.roundAndMatchNumberInRound(match.tournamentMatchNumber(), board.numberOfRounds());
-            int round = roundAndMatchNumberInRound.first();
-            int matchNumberInRound = roundAndMatchNumberInRound.second();
-            
-            setPlayer(round, matchNumberInRound, 1, findPlayerWithResult(match, player1));
-            setPlayer(round, matchNumberInRound, 2, findPlayerWithResult(match, player2));
+        this.board = board;
+
+        removeAll();
+
+        int rounds = board.numberOfRounds();
+        for(int round=1;round<=rounds;round++) {
+            add(createRoundColumn(round));
         }
-        
-        Match finalMatch = board.finalMatch();
-        
-        if(finalMatch != null && finalMatch.result() != null) {
-            setPlayer(board.numberOfRounds() + 1, 1, 1, new PlayerWithResult(finalMatch.winner(), finalMatch.result()));
-        }
-        
-        setItems(rows);
+        add(createWinnerColumn());
     }
 
-    private void setPlayer(int round, int match, int playerNumber, PlayerWithResult playerWithResult) {
-        int startRow = MathUtil.pow2(round-1) - 1;
-        
-        int rowsBetweenMatches = MathUtil.pow2(round + 1);
-        int rowsBetweenPlayers = MathUtil.pow2(round);
-        
-        int rowNumber = startRow + (match-1) * rowsBetweenMatches + (playerNumber-1) * rowsBetweenPlayers;
-        rows.get(rowNumber).values.set(round-1, playerWithResult);
+    private Div createRoundColumn(int round) {
+        int rounds = board.numberOfRounds();
+        int matchesInRound = MathUtil.pow2(rounds - round);
+
+        Div matches = new Div();
+        matches.addClassName("round-matches");
+
+        if(matchesInRound == 1) {
+            matches.add(createMatchSlot(round, 1));
+        } else {
+            for(int i=1;i<=matchesInRound;i+=2) {
+                Div pair = new Div(createMatchSlot(round, i), createMatchSlot(round, i+1));
+                pair.addClassName("match-pair");
+                matches.add(pair);
+            }
+        }
+
+        Div column = new Div(createRoundHeader(createHeader(rounds, round)), matches);
+        column.addClassName("round");
+        if(round == 1) {
+            column.addClassName("first-round");
+        }
+        return column;
     }
-    
+
+    private Div createWinnerColumn() {
+        Match finalMatch = board.finalMatch();
+
+        Div card = new Div();
+        card.addClassName("champion-card");
+        if(finalMatch != null && finalMatch.result() != null) {
+            Icon trophy = VaadinIcon.TROPHY.create();
+            trophy.addClassName("champion-icon");
+            Span name = new Span(finalMatch.winner().name());
+            name.addClassName("player-name");
+            card.add(trophy, name);
+        } else {
+            card.addClassName("empty");
+        }
+
+        Div slot = new Div(card);
+        slot.addClassName("match-slot");
+
+        Div matches = new Div(slot);
+        matches.addClassName("round-matches");
+
+        Div column = new Div(createRoundHeader(createHeader(board.numberOfRounds(), board.numberOfRounds() + 1)), matches);
+        column.addClassNames("round", "winner-round");
+        return column;
+    }
+
+    private static Div createRoundHeader(String title) {
+        Div header = new Div(new Span(title));
+        header.addClassName("round-header");
+        return header;
+    }
+
+    private Div createMatchSlot(int round, int matchNumberInRound) {
+        Match match = board.getMatch(round, matchNumberInRound);
+
+        Div card = new Div();
+        card.addClassName("match-card");
+
+        Player player1 = match != null ? match.player1() : null;
+        Player player2 = match != null ? match.player2() : null;
+        MatchResult result = match != null ? match.result() : null;
+
+        card.add(createPlayerRow(player1, result, true), createPlayerRow(player2, result, false));
+
+        if(match != null && VaadinUtil.isUserLoggedIn()) {
+            card.addClassName("clickable");
+            card.addClickListener(click -> {
+                String title = createHeader(board.numberOfRounds(), round) + " meccs " + matchNumberInRound;
+                new TournamentMatchDialog(title, match, tournament.params().bestOfNSets(), matchChangeCallback).open();
+            });
+        }
+
+        Div slot = new Div(card);
+        slot.addClassName("match-slot");
+        return slot;
+    }
+
+    private static Div createPlayerRow(Player player, MatchResult result, boolean isPlayer1) {
+
+        Span name = new Span(player != null ? player.name() : "");
+        name.addClassName("player-name");
+
+        Div scores = new Div();
+        scores.addClassName("scores");
+
+        Div row = new Div(name, scores);
+        row.addClassName("player-row");
+
+        if(result != null) {
+            boolean isWinner = isPlayer1 ? result.isPlayer1Winner() : result.isPlayer2Winner();
+            row.addClassName(isWinner ? "winner" : "loser");
+
+            for(SetResult setResult : result.setResults()) {
+                int games = isPlayer1 ? setResult.player1Score() : setResult.player2Score();
+                boolean setWon = isPlayer1 ? setResult.isPlayer1Winner() : setResult.isPlayer2Winner();
+                Span setScore = new Span(String.valueOf(games));
+                setScore.addClassName("set-score");
+                if(setWon) {
+                    setScore.addClassName("set-won");
+                }
+                scores.add(setScore);
+            }
+        }
+
+        return row;
+    }
+
     private static String createHeader(int rounds, int round) {
         if(round == rounds + 1) {
             return "Winner";
@@ -177,29 +171,6 @@ class TournamentBoardComponent extends Grid<Row> {
         } else {
             return "Round " + round;
         }
-    }
-    
-    static class Row {
-        
-        final int rowNum;
-        final List<PlayerWithResult> values;
-        
-        Row(int rounds, int rowNum) {
-            this.rowNum = rowNum;
-            values = new ArrayList<>();
-            for(int i=0;i<=rounds;i++) {
-                values.add(null);
-            }
-        }
-        
-        void clear() {
-            values.replaceAll(p -> null);
-        }
-
-    }
-    
-    static record PlayerWithResult(Player player, MatchResult result) {
-        
     }
 
 }
