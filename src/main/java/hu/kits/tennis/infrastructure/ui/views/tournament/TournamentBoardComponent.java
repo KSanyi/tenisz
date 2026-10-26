@@ -6,7 +6,10 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
+import hu.kits.tennis.Main;
 import hu.kits.tennis.common.MathUtil;
+import hu.kits.tennis.domain.ktr.KTR;
+import hu.kits.tennis.domain.ktr.PlayersWithKTR;
 import hu.kits.tennis.domain.match.Match;
 import hu.kits.tennis.domain.match.MatchResult;
 import hu.kits.tennis.domain.match.MatchResult.SetResult;
@@ -21,6 +24,8 @@ class TournamentBoardComponent extends Div {
     private Tournament tournament;
 
     private TournamentBoard board;
+
+    private PlayersWithKTR playersWithKTR;
 
     private final Runnable matchChangeCallback;
 
@@ -37,6 +42,7 @@ class TournamentBoardComponent extends Div {
 
         this.tournament = tournament;
         this.board = board;
+        this.playersWithKTR = Main.applicationContext.getPlayersService().loadAllPlayersWithKTR();
 
         removeAll();
 
@@ -129,15 +135,24 @@ class TournamentBoardComponent extends Div {
         return slot;
     }
 
-    private static Div createPlayerRow(Player player, MatchResult result, boolean isPlayer1) {
+    private Div createPlayerRow(Player player, MatchResult result, boolean isPlayer1) {
 
         Span name = new Span(player != null ? player.name() : "");
         name.addClassName("player-name");
 
+        Span ktr = new Span();
+        ktr.addClassName("player-ktr");
+        if(player != null) {
+            KTR playerKTR = playersWithKTR.getKTR(player.id());
+            if(playerKTR.isDefinded()) {
+                ktr.setText("KTR " + playerKTR);
+            }
+        }
+
         Div scores = new Div();
         scores.addClassName("scores");
 
-        Div row = new Div(name, scores);
+        Div row = new Div(name, ktr, scores);
         row.addClassName("player-row");
 
         if(result != null) {
