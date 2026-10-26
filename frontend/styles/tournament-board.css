@@ -130,8 +130,16 @@
   color: var(--lumo-secondary-text-color);
 }
 
-.tournament-board .player-name {
+.tournament-board .player-name-with-ktr {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.tournament-board .player-name {
+  flex: 0 1 auto;
   min-width: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -140,6 +148,7 @@
 
 .tournament-board .scores {
   display: flex;
+  margin-left: auto;
   gap: 2px;
 }
 
@@ -182,4 +191,24 @@
   width: var(--lumo-icon-size-s);
   height: var(--lumo-icon-size-s);
   color: #f5c518;
+}
+
+.tournament-board .player-ktr {
+  flex: none;
+  white-space: nowrap;
+  font-size: var(--lumo-font-size-xxs);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--lumo-tertiary-text-color);
+}
+
+.tournament-board .player-stats-link {
+  font-size: var(--lumo-font-size-xs);
+  font-weight: bold;
+  text-decoration: none;
+  opacity: 0.6;
+}
+
+.tournament-board .player-stats-link:hover {
+  opacity: 1;
 }
