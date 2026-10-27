@@ -114,6 +114,8 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
 
             Button addMatchButton = createAddMatchButton();
             Button recalculateButton = createRecalculateButton();
+            addMatchButton.setVisible(VaadinUtil.getUser().role() == Role.ADMIN);
+            recalculateButton.setVisible(VaadinUtil.getUser().role() == Role.ADMIN);
             
             VerticalLayout leftColumn = new VerticalLayout(matchesGrid, new HorizontalLayout(matchCounter, addMatchButton, recalculateButton));
             leftColumn.setPadding(false);
@@ -121,6 +123,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
             List<Player> players = tournament.contestants().stream().map(c -> c.player()).collect(toList());
             Player winner = tournament.contestants().stream().filter(c -> c.position() == 1).findAny().map(c -> c.player()).orElse(null);
             Select<Player> winnerCombo = createPlayerCombo(players, winner);
+            winnerCombo.setEnabled(VaadinUtil.getUser().role() == Role.ADMIN);
             
             HorizontalLayout horizontalLayout = new HorizontalLayout(leftColumn, contestantsTable);
             horizontalLayout.setSizeFull();
@@ -315,7 +318,7 @@ public class TournamentView extends SplitViewFrame implements View, BeforeEnterO
                 mainBoard.setVisible(!mobile);    
             }
             if(consolationBoard != null) {
-                mainBoard.setVisible(!mobile);                
+                consolationBoard.setVisible(!mobile);                
             }
             deleteButton.setVisible(!mobile && VaadinUtil.getUser().role() == Role.ADMIN); 
         } else {
