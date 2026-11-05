@@ -3,6 +3,7 @@ package hu.kits.tennis.infrastructure.ui.views.ktr;
 import java.util.List;
 import java.util.Set;
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.AnchorTarget;
@@ -66,7 +67,11 @@ public class MatchesGridMobile extends Grid<MatchInfo> {
                     JustifyContent.BETWEEN);
             
             String date = matchInfo.date() != null ? Formatters.formatDateLong(matchInfo.date()) : "?";
-            Span dateAndTournament = new Span(date + " " + matchInfo.tournamentInfo().name());
+            Anchor tournamentLink = new Anchor("/ui/tournament/" + matchInfo.tournamentInfo().id(), "↗", AnchorTarget.BLANK);
+            tournamentLink.getElement().setAttribute("title", "Verseny megnyitása");
+            tournamentLink.getStyle().set("font-size", "0.75em").set("opacity", "0.6").set("font-weight", "normal");
+
+            Span dateAndTournament = new Span(new Text(date + " " + matchInfo.tournamentInfo().name() + " "), tournamentLink);
             dateAndTournament.addClassNames(FontSize.SMALL, TextColor.SECONDARY);
             
             Span playersAndResult = new Span();

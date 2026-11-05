@@ -30,6 +30,11 @@ public class MatchesGrid extends Grid<MatchInfo> {
             + "style=\"font-size: 0.75em; text-decoration: none; opacity: 0.6; font-weight: bold;\" "
             + "@click=\"${(e) => e.stopPropagation()}\" title=\"Játékos statisztika\">↗</a>";
 
+    private static final String TOURNAMENT_NAME_TEMPLATE = "${item.name} "
+            + "<a href=\"/ui/tournament/${item.tournamentId}\" target=\"_blank\" "
+            + "style=\"font-size: 0.75em; text-decoration: none; opacity: 0.6; font-weight: bold;\" "
+            + "@click=\"${(e) => e.stopPropagation()}\" title=\"Verseny megnyitása\">↗</a>";
+
     private final Column<MatchInfo> player1KTRColumn;
     private final Column<MatchInfo> player2KTRColumn;
     
@@ -43,7 +48,9 @@ public class MatchesGrid extends Grid<MatchInfo> {
             .setTextAlign(ColumnTextAlign.CENTER)
             .setFlexGrow(1);
         
-        addColumn(match -> match.tournamentInfo().name())
+        addColumn(LitRenderer.<MatchInfo>of(TOURNAMENT_NAME_TEMPLATE)
+                .withProperty("name", match -> match.tournamentInfo().name())
+                .withProperty("tournamentId", match -> match.tournamentInfo().id()))
             .setKey("tournament")
             .setHeader("Verseny")
             .setAutoWidth(true)
